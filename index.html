@@ -20,7 +20,7 @@
     content="#07090d"
   >
 
-  <title>Football — Deeprowss</title>
+  <title>Deeprowss Football</title>
 
   <link
     rel="stylesheet"
@@ -107,7 +107,7 @@
 
 
     <!-- =======================================================
-         MAIN SCREEN
+         SCREEN
          ======================================================= -->
 
     <section
@@ -117,11 +117,13 @@
 
       <div class="container">
 
-
         <div
           class="screen-player"
           id="screenPlayer"
         >
+
+
+          <!-- SCREEN STATUS -->
 
           <div class="screen-status">
 
@@ -134,14 +136,19 @@
           </div>
 
 
+          <!-- VIDEO / STREAM SCREEN -->
+
           <iframe
             id="screenFrame"
             src="about:blank"
             title="Deeprowss Football Screen"
             allow="autoplay; fullscreen; picture-in-picture"
             allowfullscreen
+            referrerpolicy="no-referrer"
           ></iframe>
 
+
+          <!-- SCREEN PLACEHOLDER -->
 
           <div
             class="screen-placeholder"
@@ -158,6 +165,8 @@
 
           </div>
 
+
+          <!-- SCREEN INFORMATION -->
 
           <div class="screen-bottom">
 
@@ -185,8 +194,8 @@
 
           </div>
 
-        </div>
 
+        </div>
 
       </div>
 
@@ -195,7 +204,7 @@
 
 
     <!-- =======================================================
-         HOME BUTTONS
+         MAIN TWO BUTTONS
          ======================================================= -->
 
     <section
@@ -205,9 +214,10 @@
 
       <div class="container">
 
-
         <div class="app-buttons">
 
+
+          <!-- FOOTBALL LIVE -->
 
           <button
             type="button"
@@ -225,6 +235,8 @@
 
           </button>
 
+
+          <!-- HIGHLIGHTS -->
 
           <button
             type="button"
@@ -245,7 +257,6 @@
 
         </div>
 
-
       </div>
 
     </section>
@@ -253,7 +264,7 @@
 
 
     <!-- =======================================================
-         FOOTBALL LIVE CONTENT
+         FOOTBALL LIVE
          ======================================================= -->
 
     <section
@@ -274,7 +285,7 @@
             class="content-count"
             id="matchCount"
           >
-            0
+            1
           </span>
 
         </div>
@@ -286,14 +297,15 @@
         >
 
 
-          <!-- MATCHES WILL BE ADDED HERE -->
-
+          <!-- =================================================
+               CHELSEA VS JUVENTUS
+               ================================================= -->
 
           <button
             type="button"
             class="match-card"
             data-name="Chelsea vs Juventus"
-            data-url=""
+            data-url="https://filemoon.org/en/E1x3AqDe3yk6/embed"
           >
 
             <span class="match-status live">
@@ -311,72 +323,6 @@
           </button>
 
 
-          <button
-            type="button"
-            class="match-card"
-            data-name="Barcelona vs PSG"
-            data-url=""
-          >
-
-            <span class="match-status upcoming">
-              UPCOMING
-            </span>
-
-            <span class="match-teams">
-              Barcelona vs PSG
-            </span>
-
-            <span class="match-time">
-              Coming Soon
-            </span>
-
-          </button>
-
-
-          <button
-            type="button"
-            class="match-card"
-            data-name="Arsenal vs Liverpool"
-            data-url=""
-          >
-
-            <span class="match-status upcoming">
-              UPCOMING
-            </span>
-
-            <span class="match-teams">
-              Arsenal vs Liverpool
-            </span>
-
-            <span class="match-time">
-              Coming Soon
-            </span>
-
-          </button>
-
-
-          <button
-            type="button"
-            class="match-card"
-            data-name="Real Madrid vs Manchester City"
-            data-url=""
-          >
-
-            <span class="match-status upcoming">
-              UPCOMING
-            </span>
-
-            <span class="match-teams">
-              Real Madrid vs Manchester City
-            </span>
-
-            <span class="match-time">
-              Coming Soon
-            </span>
-
-          </button>
-
-
         </div>
 
 
@@ -385,9 +331,7 @@
           id="footballEmpty"
           hidden
         >
-
           No matches available.
-
         </div>
 
 
@@ -398,7 +342,7 @@
 
 
     <!-- =======================================================
-         HIGHLIGHTS CONTENT
+         HIGHLIGHTS
          ======================================================= -->
 
     <section
@@ -420,7 +364,7 @@
             class="content-count"
             id="highlightCount"
           >
-            0
+            1
           </span>
 
         </div>
@@ -432,14 +376,15 @@
         >
 
 
-          <!-- HIGHLIGHTS WILL BE ADDED HERE -->
-
+          <!-- =================================================
+               CHELSEA VS JUVENTUS HIGHLIGHT
+               ================================================= -->
 
           <button
             type="button"
             class="highlight-card"
             data-name="Chelsea vs Juventus Highlights"
-            data-url=""
+            data-url="https://filemoon.org/en/LJlGnPwv315w/embed"
           >
 
             <div class="highlight-thumbnail">
@@ -461,84 +406,6 @@
           </button>
 
 
-          <button
-            type="button"
-            class="highlight-card"
-            data-name="Barcelona vs PSG Highlights"
-            data-url=""
-          >
-
-            <div class="highlight-thumbnail">
-
-              <span>
-                ▶
-              </span>
-
-            </div>
-
-            <strong>
-              Barcelona vs PSG
-            </strong>
-
-            <small>
-              Highlights
-            </small>
-
-          </button>
-
-
-          <button
-            type="button"
-            class="highlight-card"
-            data-name="Arsenal vs Liverpool Highlights"
-            data-url=""
-          >
-
-            <div class="highlight-thumbnail">
-
-              <span>
-                ▶
-              </span>
-
-            </div>
-
-            <strong>
-              Arsenal vs Liverpool
-            </strong>
-
-            <small>
-              Highlights
-            </small>
-
-          </button>
-
-
-          <button
-            type="button"
-            class="highlight-card"
-            data-name="Real Madrid vs Manchester City Highlights"
-            data-url=""
-          >
-
-            <div class="highlight-thumbnail">
-
-              <span>
-                ▶
-              </span>
-
-            </div>
-
-            <strong>
-              Real Madrid vs Manchester City
-            </strong>
-
-            <small>
-              Highlights
-            </small>
-
-          </button>
-
-
         </div>
 
 
@@ -547,9 +414,7 @@
           id="highlightEmpty"
           hidden
         >
-
           No highlights available.
-
         </div>
 
 
