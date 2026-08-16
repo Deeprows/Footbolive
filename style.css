@@ -1,0 +1,642 @@
+/* =========================
+   FOOTBALL APP STYLE
+========================= */
+
+:root {
+  --bg: #07090d;
+  --surface: #10141b;
+  --surface-2: #171c24;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #ffffff;
+  --muted: #9ca3af;
+  --accent: #00e676;
+  --danger: #ff1744;
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  overflow-x: hidden;
+}
+
+
+/* =========================
+   APP
+========================= */
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+/* =========================
+   PAGES
+========================= */
+
+.page {
+  display: none;
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+.page.active {
+  display: block;
+}
+
+
+/* =========================
+   HOME
+========================= */
+
+#homePage {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+
+#homePage.active {
+  display: flex;
+}
+
+
+.home-container {
+  width: 100%;
+  max-width: 520px;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+
+/* =========================
+   LOGO
+========================= */
+
+.app-logo {
+  width: 76px;
+  height: 76px;
+
+  margin: 0 auto 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 22px;
+
+  background: var(--surface-2);
+
+  border: 1px solid var(--border);
+
+  font-size: 38px;
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.35);
+}
+
+
+.home-container h1 {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 30px;
+}
+
+
+/* =========================
+   HOME BUTTONS
+========================= */
+
+.home-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+.main-button {
+  width: 100%;
+  min-height: 76px;
+
+  padding: 16px 20px;
+
+  border: 1px solid var(--border);
+  border-radius: 18px;
+
+  background: var(--surface);
+
+  color: var(--text);
+
+  font-size: 18px;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.main-button:hover {
+  background: var(--surface-2);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+
+.main-button:active {
+  transform: scale(0.97);
+}
+
+
+.button-icon {
+  font-size: 25px;
+}
+
+
+/* =========================
+   PAGE HEADER
+========================= */
+
+.page-header {
+  width: 100%;
+  height: 64px;
+
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  background: rgba(7, 9, 13, 0.96);
+
+  border-bottom: 1px solid var(--border);
+
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+
+.page-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+.back-button {
+  width: 42px;
+  height: 42px;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: var(--surface-2);
+
+  color: var(--text);
+
+  font-size: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+
+.back-button:active {
+  transform: scale(0.94);
+}
+
+
+/* =========================
+   FOOTBALL TABS
+========================= */
+
+.football-tabs {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  position: sticky;
+  top: 64px;
+
+  background: var(--bg);
+
+  z-index: 15;
+}
+
+
+.football-tab {
+  min-height: 52px;
+
+  padding: 10px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 14px;
+
+  background: var(--surface);
+
+  color: var(--muted);
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+
+.football-tab.active {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+
+.football-tab:active {
+  transform: scale(0.97);
+}
+
+
+/* =========================
+   CONTENT SECTIONS
+========================= */
+
+.content-section {
+  display: none;
+
+  width: 100%;
+  max-width: 700px;
+
+  margin: 0 auto;
+
+  padding: 6px 16px 30px;
+}
+
+
+.content-section.active {
+  display: block;
+}
+
+
+/* =========================
+   SECTION TITLE
+========================= */
+
+.section-title {
+  padding: 14px 2px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.7px;
+}
+
+
+/* =========================
+   CONTENT LIST
+========================= */
+
+.content-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+/* =========================
+   MATCH / HIGHLIGHT CARD
+========================= */
+
+.content-card {
+  width: 100%;
+
+  min-height: 68px;
+
+  padding: 14px 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 16px;
+
+  background: var(--surface);
+
+  color: var(--text);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.content-card:hover {
+  background: var(--surface-2);
+}
+
+
+.content-card:active {
+  transform: scale(0.98);
+}
+
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.card-status {
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+
+.card-arrow {
+  flex-shrink: 0;
+
+  font-size: 20px;
+
+  color: var(--muted);
+}
+
+
+/* =========================
+   LIVE STATUS
+========================= */
+
+.live-status {
+  color: var(--danger);
+
+  font-size: 12px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+
+.upcoming-status {
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+
+/* =========================
+   SCREEN
+========================= */
+
+.screen-container {
+  width: 100%;
+}
+
+
+.now-showing {
+  width: 100%;
+
+  min-height: 54px;
+
+  padding: 12px 16px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  background: var(--surface);
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 13px;
+
+  overflow: hidden;
+}
+
+
+.now-showing strong {
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+
+.live-indicator {
+  color: var(--danger);
+
+  font-size: 12px;
+
+  animation: pulse 1.4s infinite;
+}
+
+
+@keyframes pulse {
+
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+
+  100% {
+    opacity: 1;
+  }
+
+}
+
+
+/* =========================
+   PLAYER
+========================= */
+
+.screen-player {
+  width: 100%;
+
+  aspect-ratio: 16 / 9;
+
+  background: #000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+
+.screen-player iframe,
+.screen-player video {
+  width: 100%;
+  height: 100%;
+
+  border: 0;
+
+  display: block;
+}
+
+
+.screen-placeholder {
+  text-align: center;
+
+  color: var(--muted);
+
+  padding: 20px;
+}
+
+
+.screen-icon {
+  font-size: 48px;
+
+  margin-bottom: 12px;
+}
+
+
+.screen-placeholder p {
+  font-size: 14px;
+}
+
+
+/* =========================
+   EMPTY CONTENT
+========================= */
+
+.empty-message {
+  padding: 40px 20px;
+
+  text-align: center;
+
+  color: var(--muted);
+
+  font-size: 14px;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+  .home-container {
+    padding: 24px 16px;
+  }
+
+
+  .home-container h1 {
+    font-size: 26px;
+  }
+
+
+  .main-button {
+    min-height: 72px;
+
+    font-size: 16px;
+  }
+
+
+  .football-tab {
+    font-size: 13px;
+  }
+
+
+  .card-title {
+    font-size: 15px;
+  }
+
+}
+
+
+/* =========================
+   LARGER SCREENS
+========================= */
+
+@media (min-width: 768px) {
+
+  .home-container {
+    max-width: 560px;
+  }
+
+
+  .screen-container {
+    max-width: 1200px;
+
+    margin: 0 auto;
+  }
+
+
+  .screen-player {
+    max-height: 675px;
+  }
+
+}
