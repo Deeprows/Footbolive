@@ -32,13 +32,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const fullscreenButton =
     document.getElementById("fullscreenButton");
 
-
   const footballButton =
     document.getElementById("footballButton");
 
   const highlightsButton =
     document.getElementById("highlightsButton");
-
 
   const footballContent =
     document.getElementById("footballContent");
@@ -46,13 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const highlightsContent =
     document.getElementById("highlightsContent");
 
-
   const matchList =
     document.getElementById("matchList");
 
   const highlightList =
     document.getElementById("highlightList");
-
 
   const matchCount =
     document.getElementById("matchCount");
@@ -60,20 +56,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const highlightCount =
     document.getElementById("highlightCount");
 
-
   const footballEmpty =
     document.getElementById("footballEmpty");
 
   const highlightEmpty =
     document.getElementById("highlightEmpty");
 
-
   const navFootball =
     document.getElementById("navFootball");
 
   const navHighlights =
     document.getElementById("navHighlights");
-
 
   const menuToggle =
     document.getElementById("menuToggle");
@@ -83,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     INITIAL STATE
+     CURRENT STATE
      ========================================================= */
 
   let currentMode = "football";
@@ -92,7 +85,95 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     SCREEN
+     MATCH LINKS
+     ========================================================= */
+
+  const matchLinks = {
+
+    "Chelsea vs Juventus":
+      "https://filemoon.org/en/E1x3AqDe3yk6/embed"
+
+  };
+
+
+  /* =========================================================
+     HIGHLIGHT LINKS
+     ========================================================= */
+
+  const highlightLinks = {
+
+    "Chelsea vs Juventus Highlights":
+      "https://filemoon.org/en/LJlGnPwv315w/embed"
+
+  };
+
+
+  /* =========================================================
+     APPLY MATCH LINKS
+     ========================================================= */
+
+  function applyMatchLinks() {
+
+    if (!matchList) {
+      return;
+    }
+
+
+    matchList
+      .querySelectorAll(".match-card")
+      .forEach(function (button) {
+
+        const name =
+          button.dataset.name || "";
+
+        if (
+          matchLinks[name]
+        ) {
+
+          button.dataset.url =
+            matchLinks[name];
+
+        }
+
+      });
+
+  }
+
+
+  /* =========================================================
+     APPLY HIGHLIGHT LINKS
+     ========================================================= */
+
+  function applyHighlightLinks() {
+
+    if (!highlightList) {
+      return;
+    }
+
+
+    highlightList
+      .querySelectorAll(".highlight-card")
+      .forEach(function (button) {
+
+        const name =
+          button.dataset.name || "";
+
+        if (
+          highlightLinks[name]
+        ) {
+
+          button.dataset.url =
+            highlightLinks[name];
+
+        }
+
+      });
+
+  }
+
+
+  /* =========================================================
+     RESET SCREEN
      ========================================================= */
 
   function resetScreen() {
@@ -101,15 +182,13 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    screenFrame.style.opacity = "0";
 
-    screenFrame.src = "about:blank";
+    screenFrame.src =
+      "about:blank";
 
-    setTimeout(function () {
 
-      screenFrame.style.opacity = "1";
-
-    }, 150);
+    screenFrame.style.opacity =
+      "1";
 
 
     if (screenPlaceholder) {
@@ -135,8 +214,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
+    currentItem =
+      null;
+
+
+    document
+      .querySelectorAll(
+        ".match-card, .highlight-card"
+      )
+      .forEach(function (item) {
+
+        item.classList.remove(
+          "active"
+        );
+
+      });
+
   }
 
+
+  /* =========================================================
+     LOAD CONTENT INTO SCREEN
+     ========================================================= */
 
   function loadItem(button, type) {
 
@@ -146,23 +246,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     const name =
-      button.dataset.name || "Selected content";
+      button.dataset.name ||
+      "Selected content";
 
 
     const url =
-      button.dataset.url || "";
+      button.dataset.url ||
+      "";
 
 
     currentItem = {
+
       name: name,
+
       url: url,
+
       type: type
+
     };
 
 
     /*
-     * Remove active state from all
-     * football and highlight buttons.
+     * Remove active state
      */
 
     document
@@ -171,16 +276,20 @@ document.addEventListener("DOMContentLoaded", function () {
       )
       .forEach(function (item) {
 
-        item.classList.remove("active");
+        item.classList.remove(
+          "active"
+        );
 
       });
 
 
-    button.classList.add("active");
+    button.classList.add(
+      "active"
+    );
 
 
     /*
-     * Update screen title.
+     * Update NOW SHOWING
      */
 
     if (nowShowing) {
@@ -192,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Update screen status.
+     * Update status
      */
 
     if (screenStatus) {
@@ -206,8 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * If no URL has been added yet,
-     * keep the player blank.
+     * No URL
      */
 
     if (!url) {
@@ -234,7 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Hide placeholder.
+     * Hide placeholder
      */
 
     if (screenPlaceholder) {
@@ -246,14 +354,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Fade screen while changing
-     * content.
+     * Fade screen during loading
      */
 
     if (screenFrame) {
 
       screenFrame.style.opacity =
         "0.25";
+
 
       screenFrame.src =
         "about:blank";
@@ -273,14 +381,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Bring the screen into view.
+     * Move user to screen
      */
 
     if (screenPlayer) {
 
       screenPlayer.scrollIntoView({
+
         behavior: "smooth",
+
         block: "start"
+
       });
 
     }
@@ -289,7 +400,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     FOOTBALL MATCH CLICKING
+     MATCH EVENTS
      ========================================================= */
 
   function attachMatchEvents() {
@@ -321,7 +432,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     HIGHLIGHT CLICKING
+     HIGHLIGHT EVENTS
      ========================================================= */
 
   function attachHighlightEvents() {
@@ -416,7 +527,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateCounts();
 
-
     closeMobileMenu();
 
   }
@@ -486,14 +596,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateCounts();
 
-
     closeMobileMenu();
 
   }
 
 
   /* =========================================================
-     APP BUTTONS
+     FOOTBALL BUTTON
      ========================================================= */
 
   if (footballButton) {
@@ -504,11 +613,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         showFootball();
 
+
         if (footballContent) {
 
           footballContent.scrollIntoView({
+
             behavior: "smooth",
+
             block: "start"
+
           });
 
         }
@@ -519,6 +632,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
+  /* =========================================================
+     HIGHLIGHTS BUTTON
+     ========================================================= */
+
   if (highlightsButton) {
 
     highlightsButton.addEventListener(
@@ -527,11 +644,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         showHighlights();
 
+
         if (highlightsContent) {
 
           highlightsContent.scrollIntoView({
+
             behavior: "smooth",
+
             block: "start"
+
           });
 
         }
@@ -649,7 +770,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        if (document.fullscreenElement) {
+        if (
+          document.fullscreenElement
+        ) {
 
           if (
             document.exitFullscreen
@@ -676,35 +799,6 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
   }
-
-
-  /* =========================================================
-     FULLSCREEN BUTTON ICON
-     ========================================================= */
-
-  document.addEventListener(
-    "fullscreenchange",
-    function () {
-
-      if (!fullscreenButton) {
-        return;
-      }
-
-
-      if (document.fullscreenElement) {
-
-        fullscreenButton.textContent =
-          "⛶";
-
-      } else {
-
-        fullscreenButton.textContent =
-          "⛶";
-
-      }
-
-    }
-  );
 
 
   /* =========================================================
@@ -744,7 +838,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "click",
       function () {
 
-        const open =
+        const isOpen =
           mainNav.classList.toggle(
             "open"
           );
@@ -752,7 +846,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         menuToggle.setAttribute(
           "aria-expanded",
-          open
+          isOpen
             ? "true"
             : "false"
         );
@@ -780,8 +874,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     CLOSE MOBILE MENU WHEN CLICKING
-     OUTSIDE
+     CLICK OUTSIDE MOBILE MENU
      ========================================================= */
 
   document.addEventListener(
@@ -797,8 +890,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
       if (
-        mainNav.contains(event.target) ||
-        menuToggle.contains(event.target)
+        mainNav.contains(
+          event.target
+        ) ||
+        menuToggle.contains(
+          event.target
+        )
       ) {
 
         return;
@@ -813,14 +910,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     ESCAPE KEY
+     ESCAPE
      ========================================================= */
 
   document.addEventListener(
     "keydown",
     function (event) {
 
-      if (event.key === "Escape") {
+      if (
+        event.key === "Escape"
+      ) {
 
         closeMobileMenu();
 
@@ -831,30 +930,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     PREVENT EMPTY LINKS FROM JUMPING
-     ========================================================= */
-
-  document
-    .querySelectorAll(
-      'a[href="#"]'
-    )
-    .forEach(function (link) {
-
-      link.addEventListener(
-        "click",
-        function (event) {
-
-          event.preventDefault();
-
-        }
-      );
-
-    });
-
-
-  /* =========================================================
      INITIALIZE
      ========================================================= */
+
+  applyMatchLinks();
+
+  applyHighlightLinks();
 
   attachMatchEvents();
 
@@ -868,7 +949,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     EXPOSE OPTIONAL APP FUNCTIONS
+     OPTIONAL GLOBAL CONTROLS
      ========================================================= */
 
   window.DeeprowssFootball = {
