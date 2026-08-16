@@ -32,15 +32,11 @@
    ========================================================= */
 
 * {
-
   box-sizing: border-box;
-
 }
 
 html {
-
   scroll-behavior: smooth;
-
 }
 
 body {
@@ -65,30 +61,21 @@ body {
     sans-serif;
 
   -webkit-font-smoothing: antialiased;
-
 }
 
 button,
 input {
-
   font: inherit;
-
 }
 
 button {
-
   border: 0;
-
   outline: 0;
-
 }
 
 a {
-
   color: inherit;
-
   text-decoration: none;
-
 }
 
 .container {
@@ -99,7 +86,6 @@ a {
   );
 
   margin: 0 auto;
-
 }
 
 
@@ -124,7 +110,6 @@ a {
 
   backdrop-filter:
     blur(15px);
-
 }
 
 .nav-wrap {
@@ -136,7 +121,6 @@ a {
   align-items: center;
 
   gap: 25px;
-
 }
 
 
@@ -157,13 +141,10 @@ a {
   font-weight: 950;
 
   letter-spacing: 1px;
-
 }
 
 .brand > span:last-child span {
-
   color: var(--accent);
-
 }
 
 .brand-mark {
@@ -191,7 +172,6 @@ a {
   box-shadow:
     0 5px 18px
     rgba(255,23,68,.25);
-
 }
 
 
@@ -206,7 +186,6 @@ a {
   gap: 5px;
 
   margin-left: auto;
-
 }
 
 .main-nav a {
@@ -224,7 +203,6 @@ a {
   transition:
     background .2s ease,
     color .2s ease;
-
 }
 
 .main-nav a:hover {
@@ -233,7 +211,6 @@ a {
 
   background:
     rgba(255,255,255,.05);
-
 }
 
 .main-nav a.active {
@@ -242,7 +219,6 @@ a {
 
   background:
     var(--accent-soft);
-
 }
 
 
@@ -265,7 +241,6 @@ a {
   font-size: 20px;
 
   cursor: pointer;
-
 }
 
 
@@ -274,9 +249,7 @@ a {
    ========================================================= */
 
 .football-app {
-
   padding-bottom: 50px;
-
 }
 
 
@@ -297,7 +270,6 @@ a {
 
   background:
     var(--bg);
-
 }
 
 .screen-player {
@@ -317,7 +289,6 @@ a {
   box-shadow:
     0 20px 60px
     rgba(0,0,0,.35);
-
 }
 
 
@@ -355,7 +326,6 @@ a {
   font-weight: 950;
 
   letter-spacing: 1.2px;
-
 }
 
 .screen-live-dot {
@@ -371,7 +341,6 @@ a {
   box-shadow:
     0 0 10px
     rgba(255,23,68,.8);
-
 }
 
 
@@ -393,7 +362,6 @@ a {
 
   transition:
     opacity .25s ease;
-
 }
 
 
@@ -432,7 +400,6 @@ a {
 
   transition:
     opacity .25s ease;
-
 }
 
 .screen-placeholder.hidden {
@@ -440,7 +407,6 @@ a {
   opacity: 0;
 
   visibility: hidden;
-
 }
 
 .screen-placeholder-icon {
@@ -458,15 +424,11 @@ a {
     rgba(255,255,255,.06);
 
   font-size: 27px;
-
 }
 
 .screen-placeholder strong {
-
   font-size: 14px;
-
   color: #dce1e8;
-
 }
 
 
@@ -495,13 +457,10 @@ a {
   border-top:
     1px solid
     var(--line);
-
 }
 
 .now-showing {
-
   min-width: 0;
-
 }
 
 .now-showing span {
@@ -517,7 +476,6 @@ a {
   font-weight: 900;
 
   letter-spacing: 1.5px;
-
 }
 
 #nowShowing {
@@ -535,7 +493,6 @@ a {
   text-overflow: ellipsis;
 
   white-space: nowrap;
-
 }
 
 
@@ -566,7 +523,6 @@ a {
   transition:
     background .2s ease,
     transform .2s ease;
-
 }
 
 .fullscreen-button:hover {
@@ -576,7 +532,6 @@ a {
 
   transform:
     translateY(-1px);
-
 }
 
 
@@ -585,17 +540,8 @@ a {
    ========================================================= */
 
 .app-menu {
-
-  padding:
-    17px 0 8px;
-
+  padding: 17px 0 8px;
 }
-
-
-/*
- * Four buttons stay on ONE horizontal row.
- * On smaller screens the row can scroll left/right.
- */
 
 .app-buttons {
 
@@ -605,40 +551,24 @@ a {
 
   gap: 10px;
 
-  width: 100%;
-
   overflow-x: auto;
 
   overflow-y: hidden;
 
-  flex-wrap: nowrap;
-
-  padding:
-    2px 0 6px;
-
-  scroll-behavior: smooth;
-
-  -webkit-overflow-scrolling: touch;
-
   scrollbar-width: none;
 
+  -webkit-overflow-scrolling: touch;
 }
 
 .app-buttons::-webkit-scrollbar {
-
   display: none;
-
 }
-
-
-/* APP BUTTON */
 
 .app-button {
 
-  flex:
-    0 0 auto;
+  flex: 0 0 auto;
 
-  min-width: 175px;
+  min-width: 150px;
 
   min-height: 58px;
 
@@ -648,16 +578,16 @@ a {
 
   justify-content: center;
 
-  gap: 9px;
+  gap: 8px;
 
   padding:
-    10px 17px;
+    10px 16px;
 
   border:
     1px solid
     var(--line);
 
-  border-radius: 12px;
+  border-radius: 11px;
 
   background:
     linear-gradient(
@@ -681,7 +611,6 @@ a {
     background .2s ease,
     border-color .2s ease,
     color .2s ease;
-
 }
 
 .app-button:hover {
@@ -693,7 +622,6 @@ a {
 
   border-color:
     rgba(255,255,255,.14);
-
 }
 
 .app-button.active {
@@ -713,15 +641,13 @@ a {
   box-shadow:
     0 8px 25px
     rgba(255,23,68,.07);
-
 }
 
 .app-button-icon {
 
-  font-size: 19px;
+  font-size: 18px;
 
   line-height: 1;
-
 }
 
 
@@ -733,7 +659,6 @@ a {
 
   padding:
     25px 0 20px;
-
 }
 
 .content-heading {
@@ -747,7 +672,6 @@ a {
   gap: 15px;
 
   margin-bottom: 16px;
-
 }
 
 .content-heading h1 {
@@ -758,7 +682,6 @@ a {
     clamp(20px, 3vw, 26px);
 
   letter-spacing: -.5px;
-
 }
 
 .content-count {
@@ -783,7 +706,6 @@ a {
   font-size: 11px;
 
   font-weight: 900;
-
 }
 
 
@@ -799,7 +721,6 @@ a {
     repeat(3, minmax(0,1fr));
 
   gap: 12px;
-
 }
 
 .match-card {
@@ -843,7 +764,6 @@ a {
     transform .2s ease,
     border-color .2s ease,
     box-shadow .2s ease;
-
 }
 
 .match-card:hover {
@@ -857,7 +777,6 @@ a {
   box-shadow:
     0 10px 25px
     rgba(0,0,0,.22);
-
 }
 
 .match-status {
@@ -873,7 +792,6 @@ a {
   font-weight: 950;
 
   letter-spacing: 1px;
-
 }
 
 .match-status.live {
@@ -883,7 +801,6 @@ a {
 
   color:
     #ff637d;
-
 }
 
 .match-teams {
@@ -891,7 +808,6 @@ a {
   font-size: 16px;
 
   font-weight: 900;
-
 }
 
 .match-time {
@@ -899,7 +815,6 @@ a {
   color: var(--muted);
 
   font-size: 11px;
-
 }
 
 
@@ -915,8 +830,12 @@ a {
     repeat(2, minmax(0,1fr));
 
   gap: 10px;
-
 }
+
+
+/* =========================================================
+   HIGHLIGHT CARD
+   ========================================================= */
 
 .highlight-card {
 
@@ -964,7 +883,6 @@ a {
     border-color .2s ease,
     background .2s ease,
     box-shadow .2s ease;
-
 }
 
 .highlight-card::before {
@@ -985,7 +903,6 @@ a {
     rgba(255,23,68,.09);
 
   z-index: -1;
-
 }
 
 .highlight-card::after {
@@ -1006,7 +923,6 @@ a {
     rgba(255,23,68,.035);
 
   z-index: -1;
-
 }
 
 .highlight-card:hover {
@@ -1020,7 +936,6 @@ a {
   box-shadow:
     0 10px 25px
     rgba(0,0,0,.28);
-
 }
 
 .highlight-thumbnail {
@@ -1060,7 +975,6 @@ a {
   position: relative;
 
   z-index: 2;
-
 }
 
 .highlight-thumbnail span {
@@ -1081,7 +995,6 @@ a {
   font-size: 22px;
 
   line-height: 1;
-
 }
 
 .highlight-card strong {
@@ -1112,7 +1025,6 @@ a {
   position: relative;
 
   z-index: 2;
-
 }
 
 .highlight-card small {
@@ -1134,7 +1046,6 @@ a {
   position: relative;
 
   z-index: 2;
-
 }
 
 
@@ -1143,15 +1054,11 @@ a {
    ========================================================= */
 
 .tv-content {
-
   padding-top: 20px;
-
 }
 
 .tv-category {
-
   padding-top: 22px;
-
 }
 
 .tv-category-heading {
@@ -1165,7 +1072,6 @@ a {
   gap: 15px;
 
   margin-bottom: 12px;
-
 }
 
 .tv-category-heading h2 {
@@ -1175,7 +1081,6 @@ a {
   font-size: 18px;
 
   letter-spacing: -.3px;
-
 }
 
 .tv-category-heading span {
@@ -1185,8 +1090,12 @@ a {
   font-size: 10px;
 
   font-weight: 700;
-
 }
+
+
+/* =========================================================
+   TV CHANNEL GRID
+   ========================================================= */
 
 .tv-channel-grid {
 
@@ -1196,8 +1105,12 @@ a {
     repeat(2, minmax(0, 1fr));
 
   gap: 10px;
-
 }
+
+
+/* =========================================================
+   TV CHANNEL CARD
+   ========================================================= */
 
 .tv-channel {
 
@@ -1245,7 +1158,6 @@ a {
     border-color .2s ease,
     background .2s ease,
     box-shadow .2s ease;
-
 }
 
 .tv-channel::before {
@@ -1266,7 +1178,6 @@ a {
     rgba(255,23,68,.09);
 
   z-index: -1;
-
 }
 
 .tv-channel::after {
@@ -1287,7 +1198,6 @@ a {
     rgba(255,23,68,.035);
 
   z-index: -1;
-
 }
 
 .tv-channel:hover {
@@ -1301,7 +1211,6 @@ a {
   box-shadow:
     0 10px 25px
     rgba(0,0,0,.28);
-
 }
 
 .tv-channel.active {
@@ -1321,7 +1230,6 @@ a {
     rgba(255,23,68,.08),
     0 10px 25px
     rgba(0,0,0,.22);
-
 }
 
 .tv-channel-icon {
@@ -1361,7 +1269,6 @@ a {
   position: relative;
 
   z-index: 2;
-
 }
 
 .tv-channel-info {
@@ -1377,7 +1284,6 @@ a {
   position: relative;
 
   z-index: 2;
-
 }
 
 .tv-channel-info strong {
@@ -1399,7 +1305,6 @@ a {
   text-overflow: ellipsis;
 
   white-space: nowrap;
-
 }
 
 .tv-channel-info small {
@@ -1412,7 +1317,6 @@ a {
   font-size: 10px;
 
   line-height: 1.2;
-
 }
 
 .tv-channel-status {
@@ -1429,8 +1333,6 @@ a {
   align-items: center;
 
   justify-content: center;
-
-  min-width: auto;
 
   min-height: 32px;
 
@@ -1450,11 +1352,6 @@ a {
   font-weight: 950;
 
   letter-spacing: 1px;
-
-  box-shadow:
-    inset 0 0 0 1px
-    rgba(255,23,68,.05);
-
 }
 
 .tv-channel.active .tv-channel-status {
@@ -1464,7 +1361,6 @@ a {
 
   color:
     #ff6b86;
-
 }
 
 
@@ -1473,25 +1369,28 @@ a {
    ========================================================= */
 
 .movies-content {
-
-  padding-top: 20px;
-
+  padding-top: 25px;
 }
+
+
+/* =========================================================
+   MOVIE GRID
+   ========================================================= */
 
 .movie-grid {
 
   display: grid;
 
   grid-template-columns:
-    repeat(2, minmax(0,1fr));
+    repeat(3, minmax(0,1fr));
 
-  gap: 10px;
-
+  gap: 12px;
 }
 
 
 /* =========================================================
    MOVIE CARD
+   SAME GENERAL SIZE/STYLE AS FOOTBALL LIVE CARD
    ========================================================= */
 
 .movie-card {
@@ -1500,7 +1399,7 @@ a {
 
   min-width: 0;
 
-  min-height: 135px;
+  min-height: 125px;
 
   display: flex;
 
@@ -1508,25 +1407,25 @@ a {
 
   align-items: flex-start;
 
-  justify-content: space-between;
+  justify-content: center;
 
-  padding: 13px;
+  gap: 9px;
+
+  padding: 17px;
 
   overflow: hidden;
 
-  isolation: isolate;
-
   border:
     1px solid
-    rgba(255,255,255,.09);
+    var(--line);
 
-  border-radius: 16px;
+  border-radius: 14px;
 
   background:
     linear-gradient(
       145deg,
-      #11151c,
-      #0b0e14
+      var(--surface),
+      #0c1016
     );
 
   color: #fff;
@@ -1538,9 +1437,7 @@ a {
   transition:
     transform .2s ease,
     border-color .2s ease,
-    background .2s ease,
     box-shadow .2s ease;
-
 }
 
 .movie-card::before {
@@ -1549,40 +1446,18 @@ a {
 
   position: absolute;
 
-  width: 115px;
-  height: 115px;
+  width: 110px;
+  height: 110px;
 
-  top: -62px;
-  right: -6px;
-
-  border-radius: 50%;
-
-  background:
-    rgba(255,23,68,.09);
-
-  z-index: -1;
-
-}
-
-.movie-card::after {
-
-  content: "";
-
-  position: absolute;
-
-  width: 88px;
-  height: 88px;
-
-  top: -48px;
-  right: 23px;
+  top: -58px;
+  right: -8px;
 
   border-radius: 50%;
 
   background:
-    rgba(255,23,68,.035);
+    rgba(255,23,68,.08);
 
-  z-index: -1;
-
+  pointer-events: none;
 }
 
 .movie-card:hover {
@@ -1591,49 +1466,53 @@ a {
     translateY(-3px);
 
   border-color:
-    rgba(255,23,68,.4);
+    rgba(255,23,68,.45);
 
   box-shadow:
-    0 10px 25px
-    rgba(0,0,0,.28);
-
-}
-
-.movie-card.active {
-
-  border-color:
-    rgba(255,23,68,.65);
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,23,68,.13),
-      #10141b
-    );
-
-  box-shadow:
-    0 0 0 1px
-    rgba(255,23,68,.08),
     0 10px 25px
     rgba(0,0,0,.22);
-
 }
 
+.movie-status {
 
-/* MOVIE THUMBNAIL */
+  display: inline-flex;
 
-.movie-thumbnail {
+  padding: 4px 7px;
 
-  width: 50px;
-  height: 50px;
+  border-radius: 999px;
+
+  background:
+    rgba(255,23,68,.12);
+
+  color:
+    #ff637d;
+
+  font-size: 8px;
+
+  font-weight: 950;
+
+  letter-spacing: 1px;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+.movie-icon {
+
+  position: absolute;
+
+  top: 15px;
+  right: 15px;
+
+  width: 42px;
+  height: 42px;
 
   display: grid;
 
   place-items: center;
 
-  flex-shrink: 0;
-
-  border-radius: 14px;
+  border-radius: 12px;
 
   background:
     linear-gradient(
@@ -1646,49 +1525,20 @@ a {
     1px solid
     rgba(255,255,255,.09);
 
-  box-shadow:
-    inset 0 1px 0
-    rgba(255,255,255,.05),
-    0 5px 15px
-    rgba(0,0,0,.2);
-
-  font-size: 24px;
-
-  line-height: 1;
-
-  position: relative;
+  font-size: 20px;
 
   z-index: 2;
-
 }
 
-.movie-thumbnail span {
-
-  color: #fff;
-
-  font-size: 22px;
-
-}
-
-
-/* MOVIE INFO */
-
-.movie-card strong {
+.movie-title {
 
   display: block;
 
-  width: 100%;
-
-  min-width: 0;
+  max-width: 75%;
 
   overflow: hidden;
 
-  padding:
-    9px 5px 0 0;
-
-  color: #fff;
-
-  font-size: 14px;
+  font-size: 16px;
 
   font-weight: 900;
 
@@ -1701,29 +1551,18 @@ a {
   position: relative;
 
   z-index: 2;
-
 }
 
-.movie-card small {
-
-  display: block;
-
-  width: 100%;
-
-  padding:
-    5px 5px 0 0;
+.movie-rating {
 
   color:
-    #9aa3b2;
+    var(--muted);
 
-  font-size: 10px;
-
-  line-height: 1.2;
+  font-size: 11px;
 
   position: relative;
 
   z-index: 2;
-
 }
 
 
@@ -1741,7 +1580,6 @@ a {
   text-align: center;
 
   font-size: 13px;
-
 }
 
 
@@ -1760,7 +1598,6 @@ a {
 
   background:
     #05070a;
-
 }
 
 .footer-wrap {
@@ -1776,7 +1613,6 @@ a {
   color: var(--muted);
 
   font-size: 11px;
-
 }
 
 .footer strong {
@@ -1786,13 +1622,10 @@ a {
   font-size: 12px;
 
   letter-spacing: .7px;
-
 }
 
 .footer strong span {
-
   color: var(--accent);
-
 }
 
 
@@ -1806,28 +1639,24 @@ a {
 
     grid-template-columns:
       repeat(2, minmax(0,1fr));
-
   }
 
   .highlight-grid {
 
     grid-template-columns:
       repeat(2, minmax(0,1fr));
-
   }
 
   .tv-channel-grid {
 
     grid-template-columns:
       repeat(2, minmax(0,1fr));
-
   }
 
   .movie-grid {
 
     grid-template-columns:
       repeat(2, minmax(0,1fr));
-
   }
 
 }
@@ -1844,7 +1673,6 @@ a {
     position: relative;
 
     min-height: 60px;
-
   }
 
   .menu-toggle {
@@ -1854,7 +1682,6 @@ a {
     place-items: center;
 
     margin-left: auto;
-
   }
 
   .main-nav {
@@ -1886,19 +1713,14 @@ a {
     box-shadow:
       0 15px 30px
       rgba(0,0,0,.3);
-
   }
 
   .main-nav.open {
-
     display: flex;
-
   }
 
   .main-nav a {
-
     padding: 12px;
-
   }
 
   .screen-section {
@@ -1911,51 +1733,37 @@ a {
 
     background:
       var(--bg);
-
   }
 
   .screen-player {
-
     border-radius: 12px;
-
   }
 
   .screen-player iframe {
-
     height: 400px;
-
   }
-
-
-  /* APP BUTTONS */
 
   .app-buttons {
 
-    gap: 9px;
+    gap: 8px;
 
-    overflow-x: auto;
-
-    flex-wrap: nowrap;
-
+    padding-bottom: 2px;
   }
 
   .app-button {
 
-    min-width: 170px;
+    min-width: 145px;
 
-    min-height: 56px;
+    min-height: 52px;
 
     padding:
-      9px 15px;
+      8px 13px;
 
-    font-size: 12px;
-
+    font-size: 11px;
   }
 
   .app-button-icon {
-
-    font-size: 18px;
-
+    font-size: 16px;
   }
 
 }
@@ -1971,7 +1779,6 @@ a {
 
     width:
       calc(100% - 20px);
-
   }
 
   .screen-section {
@@ -1986,26 +1793,20 @@ a {
 
     background:
       var(--bg);
-
   }
 
   .screen-player iframe {
-
     height: 235px;
-
   }
 
   .screen-bottom {
 
     padding:
       11px 12px;
-
   }
 
   #nowShowing {
-
     font-size: 13px;
-
   }
 
   .fullscreen-button {
@@ -2014,93 +1815,25 @@ a {
     height: 34px;
 
     font-size: 16px;
-
   }
 
   .content-section {
-
     padding-top: 18px;
-
   }
 
   .content-heading h1 {
-
     font-size: 19px;
-
   }
 
   .match-grid {
 
     grid-template-columns:
       1fr;
-
   }
 
+  .match-card {
 
-  /* =======================================================
-     APP BUTTONS — HORIZONTAL SCROLL
-     ======================================================= */
-
-  .app-menu {
-
-    padding:
-      12px 0 7px;
-
-  }
-
-  .app-buttons {
-
-    display: flex;
-
-    flex-wrap: nowrap;
-
-    gap: 8px;
-
-    width: 100%;
-
-    overflow-x: auto;
-
-    overflow-y: hidden;
-
-    padding:
-      2px 0 5px;
-
-    scrollbar-width: none;
-
-    -webkit-overflow-scrolling: touch;
-
-  }
-
-  .app-buttons::-webkit-scrollbar {
-
-    display: none;
-
-  }
-
-  .app-button {
-
-    flex:
-      0 0 auto;
-
-    min-width: 165px;
-
-    min-height: 54px;
-
-    padding:
-      8px 14px;
-
-    border-radius: 11px;
-
-    font-size: 12px;
-
-    gap: 8px;
-
-  }
-
-  .app-button-icon {
-
-    font-size: 18px;
-
+    min-height: 105px;
   }
 
 
@@ -2111,10 +1844,9 @@ a {
   .highlight-grid {
 
     grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+      repeat(2, minmax(0,1fr));
 
     gap: 8px;
-
   }
 
   .highlight-card {
@@ -2124,7 +1856,6 @@ a {
     padding: 11px;
 
     border-radius: 14px;
-
   }
 
   .highlight-thumbnail {
@@ -2135,13 +1866,10 @@ a {
     border-radius: 13px;
 
     font-size: 22px;
-
   }
 
   .highlight-thumbnail span {
-
     font-size: 21px;
-
   }
 
   .highlight-card strong {
@@ -2150,7 +1878,6 @@ a {
       7px 4px 0 0;
 
     font-size: 12px;
-
   }
 
   .highlight-card small {
@@ -2159,7 +1886,6 @@ a {
       4px 4px 0 0;
 
     font-size: 9px;
-
   }
 
   .highlight-card::before {
@@ -2169,7 +1895,6 @@ a {
 
     top: -54px;
     right: -8px;
-
   }
 
   .highlight-card::after {
@@ -2179,55 +1904,32 @@ a {
 
     top: -42px;
     right: 18px;
-
-  }
-
-
-  /* MATCH */
-
-  .match-card {
-
-    min-height: 105px;
-
-  }
-
-
-  /* TV */
-
-  .tv-category {
-
-    padding-top: 18px;
-
-  }
-
-  .tv-category-heading h2 {
-
-    font-size: 16px;
-
-  }
-
-  .tv-category-heading span {
-
-    font-size: 9px;
-
   }
 
 
   /* =======================================================
-     TV CHANNELS — 2 COLUMNS
+     TV
      ======================================================= */
+
+  .tv-category {
+    padding-top: 18px;
+  }
+
+  .tv-category-heading h2 {
+    font-size: 16px;
+  }
+
+  .tv-category-heading span {
+    font-size: 9px;
+  }
 
   .tv-channel-grid {
 
     grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+      repeat(2, minmax(0,1fr));
 
     gap: 8px;
-
   }
-
-
-  /* SMALLER MOBILE TV CARDS */
 
   .tv-channel {
 
@@ -2236,11 +1938,7 @@ a {
     padding: 11px;
 
     border-radius: 14px;
-
   }
-
-
-  /* MOBILE ICON */
 
   .tv-channel-icon {
 
@@ -2250,11 +1948,7 @@ a {
     border-radius: 13px;
 
     font-size: 22px;
-
   }
-
-
-  /* MOBILE LIVE BADGE */
 
   .tv-channel-status {
 
@@ -2269,16 +1963,10 @@ a {
     font-size: 8px;
 
     letter-spacing: .8px;
-
   }
 
-
-  /* MOBILE CHANNEL INFO */
-
   .tv-channel-info {
-
     padding-top: 7px;
-
   }
 
   .tv-channel-info strong {
@@ -2286,17 +1974,11 @@ a {
     margin-bottom: 4px;
 
     font-size: 12px;
-
   }
 
   .tv-channel-info small {
-
     font-size: 9px;
-
   }
-
-
-  /* MOBILE DECORATION */
 
   .tv-channel::before {
 
@@ -2305,7 +1987,6 @@ a {
 
     top: -54px;
     right: -8px;
-
   }
 
   .tv-channel::after {
@@ -2315,97 +1996,72 @@ a {
 
     top: -42px;
     right: 18px;
-
   }
 
 
   /* =======================================================
-     MOVIES — 2 COLUMNS
+     MOVIES — FOOTBALL CARD SIZE
      ======================================================= */
 
   .movie-grid {
 
     grid-template-columns:
-      repeat(2, minmax(0,1fr));
+      1fr;
 
-    gap: 8px;
-
+    gap: 10px;
   }
 
   .movie-card {
 
-    min-height: 128px;
+    min-height: 105px;
 
-    padding: 11px;
+    padding: 15px;
 
     border-radius: 14px;
-
   }
 
-  .movie-thumbnail {
+  .movie-status {
 
-    width: 45px;
-    height: 45px;
+    font-size: 8px;
 
-    border-radius: 13px;
-
-    font-size: 22px;
-
+    padding: 4px 7px;
   }
 
-  .movie-thumbnail span {
+  .movie-title {
 
-    font-size: 21px;
+    font-size: 15px;
 
+    max-width: 72%;
   }
 
-  .movie-card strong {
+  .movie-rating {
 
-    padding:
-      7px 4px 0 0;
-
-    font-size: 12px;
-
+    font-size: 10px;
   }
 
-  .movie-card small {
+  .movie-icon {
 
-    padding:
-      4px 4px 0 0;
+    width: 43px;
+    height: 43px;
 
-    font-size: 9px;
+    top: 13px;
+    right: 13px;
 
-  }
+    border-radius: 12px;
 
-  .movie-card::before {
-
-    width: 100px;
-    height: 100px;
-
-    top: -54px;
-    right: -8px;
-
-  }
-
-  .movie-card::after {
-
-    width: 76px;
-    height: 76px;
-
-    top: -42px;
-    right: 18px;
-
+    font-size: 20px;
   }
 
 
-  /* FOOTER */
+  /* =======================================================
+     FOOTER
+     ======================================================= */
 
   .footer-wrap {
 
     flex-direction: column;
 
     align-items: flex-start;
-
   }
 
 }
@@ -2419,32 +2075,22 @@ a {
 
   .app-button {
 
-    min-width: 155px;
+    min-width: 140px;
 
-    min-height: 52px;
+    font-size: 10px;
 
-    padding:
-      8px 12px;
-
-    font-size: 11px;
-
-    gap: 6px;
-
+    gap: 5px;
   }
 
   .app-button-icon {
-
-    font-size: 16px;
-
+    font-size: 14px;
   }
 
 
   /* HIGHLIGHTS */
 
   .highlight-grid {
-
     gap: 7px;
-
   }
 
   .highlight-card {
@@ -2454,7 +2100,6 @@ a {
     padding: 10px;
 
     border-radius: 13px;
-
   }
 
   .highlight-thumbnail {
@@ -2465,38 +2110,26 @@ a {
     border-radius: 12px;
 
     font-size: 21px;
-
   }
 
   .highlight-thumbnail span {
-
     font-size: 20px;
-
   }
 
   .highlight-card strong {
-
     font-size: 12px;
-
   }
 
   .highlight-card small {
-
     font-size: 9px;
-
   }
 
 
   /* TV GRID */
 
   .tv-channel-grid {
-
     gap: 7px;
-
   }
-
-
-  /* TV CARD */
 
   .tv-channel {
 
@@ -2505,11 +2138,7 @@ a {
     padding: 10px;
 
     border-radius: 13px;
-
   }
-
-
-  /* TV ICON */
 
   .tv-channel-icon {
 
@@ -2519,11 +2148,7 @@ a {
     border-radius: 12px;
 
     font-size: 21px;
-
   }
-
-
-  /* LIVE */
 
   .tv-channel-status {
 
@@ -2534,70 +2159,39 @@ a {
       5px 7px;
 
     font-size: 7px;
-
   }
 
-
-  /* INFO */
-
   .tv-channel-info strong {
-
     font-size: 12px;
-
   }
 
   .tv-channel-info small {
-
     font-size: 9px;
-
   }
 
 
-  /* MOVIES */
-
-  .movie-grid {
-
-    gap: 7px;
-
-  }
+  /* MOVIE */
 
   .movie-card {
 
-    min-height: 122px;
+    min-height: 102px;
 
-    padding: 10px;
-
-    border-radius: 13px;
-
+    padding: 14px;
   }
 
-  .movie-thumbnail {
-
-    width: 43px;
-    height: 43px;
-
-    border-radius: 12px;
-
-    font-size: 21px;
-
+  .movie-title {
+    font-size: 14px;
   }
 
-  .movie-thumbnail span {
+  .movie-icon {
 
-    font-size: 20px;
+    width: 40px;
+    height: 40px;
 
-  }
+    top: 12px;
+    right: 12px;
 
-  .movie-card strong {
-
-    font-size: 12px;
-
-  }
-
-  .movie-card small {
-
-    font-size: 9px;
-
+    font-size: 19px;
   }
 
 }
