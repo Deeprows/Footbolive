@@ -42,6 +42,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const tvButton =
     document.getElementById("tvButton");
 
+  const movieButton =
+    document.getElementById("movieButton");
+
 
   /* =========================================================
      CONTENT SECTIONS
@@ -56,6 +59,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const tvContent =
     document.getElementById("tvContent");
 
+  const movieContent =
+    document.getElementById("movieContent");
+
 
   /* =========================================================
      NAVIGATION
@@ -69,6 +75,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const navTV =
     document.getElementById("navTV");
+
+  const navMovies =
+    document.getElementById("navMovies");
 
 
   /* =========================================================
@@ -96,6 +105,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     MOVIES
+     ========================================================= */
+
+  const movieCards =
+    document.querySelectorAll(".movie-card");
+
+
+  /* =========================================================
      UPDATE ACTIVE APP BUTTON
      ========================================================= */
 
@@ -104,7 +121,8 @@ document.addEventListener("DOMContentLoaded", function () {
     [
       footballButton,
       highlightsButton,
-      tvButton
+      tvButton,
+      movieButton
     ].forEach(function (item) {
 
       if (item) {
@@ -138,7 +156,8 @@ document.addEventListener("DOMContentLoaded", function () {
     [
       navFootball,
       navHighlights,
-      navTV
+      navTV,
+      navMovies
     ].forEach(function (item) {
 
       if (item) {
@@ -189,6 +208,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
       tvContent.hidden =
         section !== "tv";
+
+    }
+
+
+    if (movieContent) {
+
+      movieContent.hidden =
+        section !== "movies";
 
     }
 
@@ -253,6 +280,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     OPEN MOVIES
+     ========================================================= */
+
+  function openMovies() {
+
+    showContent("movies");
+
+    setActiveButton(
+      movieButton
+    );
+
+    setActiveNav(
+      navMovies
+    );
+
+  }
+
+
+  /* =========================================================
      FOOTBALL BUTTON
      ========================================================= */
 
@@ -299,6 +345,24 @@ document.addEventListener("DOMContentLoaded", function () {
       function () {
 
         openTV();
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     MOVIES BUTTON
+     ========================================================= */
+
+  if (movieButton) {
+
+    movieButton.addEventListener(
+      "click",
+      function () {
+
+        openMovies();
 
       }
     );
@@ -367,6 +431,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     NAV MOVIES
+     ========================================================= */
+
+  if (navMovies) {
+
+    navMovies.addEventListener(
+      "click",
+      function (event) {
+
+        event.preventDefault();
+
+        openMovies();
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
      LOAD SCREEN
      ========================================================= */
 
@@ -394,14 +478,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       nowShowing.textContent =
         name;
-
-    }
-
-
-    if (screenStatus) {
-
-      screenStatus.textContent =
-        "LIVE";
 
     }
 
@@ -455,8 +531,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Update status based on
-     * content type.
+     * Update screen status.
      */
 
     if (screenStatus) {
@@ -470,6 +545,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         screenStatus.textContent =
           "HIGHLIGHT";
+
+      } else if (type === "movie") {
+
+        screenStatus.textContent =
+          "MOVIE";
 
       } else {
 
@@ -604,7 +684,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           /*
            * Load channel into
-           * the main Screen.
+           * the main screen.
            */
 
           loadScreen(
@@ -619,6 +699,74 @@ document.addEventListener("DOMContentLoaded", function () {
            */
 
           openTV();
+
+        }
+      );
+
+    }
+  );
+
+
+  /* =========================================================
+     MOVIE CLICK
+     ========================================================= */
+
+  movieCards.forEach(
+    function (movie) {
+
+      movie.addEventListener(
+        "click",
+        function () {
+
+          const url =
+            this.dataset.url;
+
+          const name =
+            this.dataset.name;
+
+
+          /*
+           * Remove active state
+           * from all movies.
+           */
+
+          movieCards.forEach(
+            function (item) {
+
+              item.classList.remove(
+                "active"
+              );
+
+            }
+          );
+
+
+          /*
+           * Mark selected movie.
+           */
+
+          this.classList.add(
+            "active"
+          );
+
+
+          /*
+           * Load movie into
+           * the main screen.
+           */
+
+          loadScreen(
+            url,
+            name,
+            "movie"
+          );
+
+
+          /*
+           * Keep Movies section visible.
+           */
+
+          openMovies();
 
         }
       );
