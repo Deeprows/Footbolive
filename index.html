@@ -292,8 +292,8 @@
 
           <button
             type="button"
-            class="app-button movies-button"
-            id="moviesButton"
+            class="app-button movie-button"
+            id="movieButton"
           >
 
             <span class="app-button-icon">
@@ -568,7 +568,7 @@
 
 
         <!-- ===================================================
-             MOVIES
+             MOVIES / TV CHANNEL
              =================================================== -->
 
         <div
@@ -755,6 +755,84 @@
           hidden
         >
           No TV channels available.
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         MOVIES
+         ======================================================= -->
+
+    <section
+      class="content-section movies-content"
+      id="movieContent"
+      hidden
+    >
+
+      <div class="container">
+
+
+        <div class="content-heading">
+
+          <h1>
+            Movies
+          </h1>
+
+          <span
+            class="content-count"
+            id="movieCount"
+          >
+            0
+          </span>
+
+        </div>
+
+
+        <div
+          class="movie-grid"
+          id="movieList"
+        >
+
+          <!--
+            Add movie cards here.
+
+            Example:
+
+            <button
+              type="button"
+              class="movie-card"
+              data-name="Movie Name"
+              data-url="YOUR_MOVIE_URL"
+            >
+
+              <div class="movie-thumbnail">
+                <span>▶</span>
+              </div>
+
+              <strong>
+                Movie Name
+              </strong>
+
+              <small>
+                Movie
+              </small>
+
+            </button>
+          -->
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          id="movieEmpty"
+        >
+          No movies available.
         </div>
 
 
