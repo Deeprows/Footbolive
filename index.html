@@ -12,7 +12,7 @@
 
   <meta
     name="description"
-    content="Deeprowss Football Live and Highlights."
+    content="Deeprowss Football Live, Highlights and TV Channels."
   >
 
   <meta
@@ -20,7 +20,7 @@
     content="#07090d"
   >
 
-  <title>Deeprowss Football</title>
+  <title>Deeprowss</title>
 
   <link
     rel="stylesheet"
@@ -91,6 +91,13 @@
           Highlights
         </a>
 
+        <a
+          href="#"
+          id="navTV"
+        >
+          TV Channels
+        </a>
+
       </nav>
 
     </div>
@@ -141,7 +148,7 @@
           <iframe
             id="screenFrame"
             src="about:blank"
-            title="Deeprowss Football Screen"
+            title="Deeprowss Screen"
             allow="autoplay; fullscreen; picture-in-picture"
             allowfullscreen
             referrerpolicy="no-referrer"
@@ -204,7 +211,7 @@
 
 
     <!-- =======================================================
-         MAIN TWO BUTTONS
+         MAIN APP BUTTONS
          ======================================================= -->
 
     <section
@@ -250,6 +257,25 @@
 
             <span>
               Highlights
+            </span>
+
+          </button>
+
+
+          <!-- TV CHANNELS -->
+
+          <button
+            type="button"
+            class="app-button tv-button"
+            id="tvButton"
+          >
+
+            <span class="app-button-icon">
+              📺
+            </span>
+
+            <span>
+              TV Channels
             </span>
 
           </button>
@@ -423,6 +449,294 @@
     </section>
 
 
+
+    <!-- =======================================================
+         TV CHANNELS
+         ======================================================= -->
+
+    <section
+      class="content-section tv-content"
+      id="tvContent"
+      hidden
+    >
+
+      <div class="container">
+
+
+        <div class="content-heading">
+
+          <h1>
+            TV Channels
+          </h1>
+
+          <span
+            class="content-count"
+            id="tvCount"
+          >
+            4
+          </span>
+
+        </div>
+
+
+
+        <!-- ===================================================
+             SPORTS
+             =================================================== -->
+
+        <div
+          class="tv-category"
+          data-tv-category
+        >
+
+          <div class="tv-category-heading">
+
+            <h2>
+              ⚽ Sports
+            </h2>
+
+            <span>
+              Live Sports
+            </span>
+
+          </div>
+
+
+          <div class="tv-channel-grid">
+
+
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="beIN Sports Extra"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://bein-xtra-bein.amagi.tv/playlist.m3u8"
+            >
+
+              <span class="tv-channel-icon">
+                ⚽
+              </span>
+
+              <span class="tv-channel-info">
+
+                <strong>
+                  beIN Sports Extra
+                </strong>
+
+                <small>
+                  Sports
+                </small>
+
+              </span>
+
+              <span class="tv-channel-status">
+                LIVE
+              </span>
+
+            </button>
+
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===================================================
+             MOVIES
+             =================================================== -->
+
+        <div
+          class="tv-category"
+          data-tv-category
+        >
+
+          <div class="tv-category-heading">
+
+            <h2>
+              🎬 Movies
+            </h2>
+
+            <span>
+              Movie Channels
+            </span>
+
+          </div>
+
+
+          <div class="tv-channel-grid">
+
+
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="FilmBox"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://iptv.prosto.tv/ch63/tracks-v1a1/mono.m3u8"
+            >
+
+              <span class="tv-channel-icon">
+                🎬
+              </span>
+
+              <span class="tv-channel-info">
+
+                <strong>
+                  FilmBox
+                </strong>
+
+                <small>
+                  Movies
+                </small>
+
+              </span>
+
+              <span class="tv-channel-status">
+                LIVE
+              </span>
+
+            </button>
+
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===================================================
+             MUSIC
+             =================================================== -->
+
+        <div
+          class="tv-category"
+          data-tv-category
+        >
+
+          <div class="tv-category-heading">
+
+            <h2>
+              🎵 Music
+            </h2>
+
+            <span>
+              Music Channels
+            </span>
+
+          </div>
+
+
+          <div class="tv-channel-grid">
+
+
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="Afrobeat TV"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://stream.ecable.tv/afrobeats/index.m3u8"
+            >
+
+              <span class="tv-channel-icon">
+                🎵
+              </span>
+
+              <span class="tv-channel-info">
+
+                <strong>
+                  Afrobeat TV
+                </strong>
+
+                <small>
+                  African Music
+                </small>
+
+              </span>
+
+              <span class="tv-channel-status">
+                LIVE
+              </span>
+
+            </button>
+
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===================================================
+             NEWS
+             =================================================== -->
+
+        <div
+          class="tv-category"
+          data-tv-category
+        >
+
+          <div class="tv-category-heading">
+
+            <h2>
+              📰 News
+            </h2>
+
+            <span>
+              News Channels
+            </span>
+
+          </div>
+
+
+          <div class="tv-channel-grid">
+
+
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="ABC News"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://abcnews-streams.akamaized.net/hls/live/2023560-b/abcnewshudson1/master_400.m3u8"
+            >
+
+              <span class="tv-channel-icon">
+                📰
+              </span>
+
+              <span class="tv-channel-info">
+
+                <strong>
+                  ABC News
+                </strong>
+
+                <small>
+                  World News
+                </small>
+
+              </span>
+
+              <span class="tv-channel-status">
+                LIVE
+              </span>
+
+            </button>
+
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          id="tvEmpty"
+          hidden
+        >
+          No TV channels available.
+        </div>
+
+
+      </div>
+
+    </section>
+
+
   </main>
 
 
@@ -440,7 +754,7 @@
       </strong>
 
       <span>
-        Football • Highlights
+        Football • Highlights • TV
       </span>
 
     </div>
