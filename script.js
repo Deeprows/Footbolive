@@ -9,27 +9,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
     {
       id: "chelsea-juventus",
+      homeTeam: "Chelsea",
+      awayTeam: "Juventus",
       title: "Chelsea vs Juventus",
+
       status: "LIVE",
       type: "live",
+
+      time: "LIVE",
+
+      homeLogo: "icons/chelsea.png",
+      awayLogo: "icons/juventus.png",
+
       playerType: "iframe",
       playerUrl: ""
     },
+
 
     {
       id: "arsenal-barcelona",
+      homeTeam: "Arsenal",
+      awayTeam: "Barcelona",
       title: "Arsenal vs Barcelona",
+
       status: "UPCOMING",
       type: "upcoming",
+
+      time: "17:00",
+
+      homeLogo: "icons/arsenal.png",
+      awayLogo: "icons/barcelona.png",
+
       playerType: "iframe",
       playerUrl: ""
     },
 
+
     {
       id: "real-madrid-bayern",
+      homeTeam: "Real Madrid",
+      awayTeam: "Bayern",
       title: "Real Madrid vs Bayern",
+
       status: "UPCOMING",
       type: "upcoming",
+
+      time: "20:00",
+
+      homeLogo: "icons/real-madrid.png",
+      awayLogo: "icons/bayern.png",
+
       playerType: "iframe",
       playerUrl: ""
     }
@@ -45,24 +74,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
     {
       id: "chelsea-juventus-highlight",
+
       title: "Chelsea vs Juventus",
+
       status: "Highlight",
+
+      homeTeam: "Chelsea",
+      awayTeam: "Juventus",
+
+      thumbnail:
+        "icons/chelsea-juventus.jpg",
+
       playerType: "iframe",
       playerUrl: ""
     },
+
 
     {
       id: "arsenal-barcelona-highlight",
+
       title: "Arsenal vs Barcelona",
+
       status: "Highlight",
+
+      homeTeam: "Arsenal",
+      awayTeam: "Barcelona",
+
+      thumbnail:
+        "icons/arsenal-barcelona.jpg",
+
       playerType: "iframe",
       playerUrl: ""
     },
 
+
     {
       id: "real-madrid-bayern-highlight",
+
       title: "Real Madrid vs Bayern",
+
       status: "Highlight",
+
+      homeTeam: "Real Madrid",
+      awayTeam: "Bayern",
+
+      thumbnail:
+        "icons/real-madrid-bayern.jpg",
+
       playerType: "iframe",
       playerUrl: ""
     }
@@ -71,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     PAGE ELEMENTS
+     ELEMENTS
   ========================= */
 
   const homePage =
@@ -118,6 +176,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
+     SAFE IMAGE LOADER
+  ========================= */
+
+  function createTeamLogo(
+    src,
+    teamName
+  ) {
+
+    const wrapper =
+      document.createElement("div");
+
+    wrapper.className =
+      "team-logo";
+
+
+    if (!src) {
+
+      wrapper.textContent =
+        "⚽";
+
+      return wrapper;
+
+    }
+
+
+    const image =
+      document.createElement("img");
+
+
+    image.src = src;
+
+    image.alt =
+      teamName;
+
+
+    image.loading =
+      "lazy";
+
+
+    image.onerror =
+      function () {
+
+        wrapper.innerHTML =
+          "⚽";
+
+      };
+
+
+    wrapper.appendChild(image);
+
+
+    return wrapper;
+
+  }
+
+
+  /* =========================
      RENDER LIVE MATCHES
   ========================= */
 
@@ -136,178 +251,288 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    liveMatches.forEach(function (match) {
+    liveMatches.forEach(
+      function (match) {
 
-      const card =
-        document.createElement("button");
+        const card =
+          document.createElement("button");
 
 
-      card.type = "button";
+        card.type =
+          "button";
 
-      card.className =
-        "content-card";
 
+        card.className =
+          "content-card";
 
-      /*
-       * Add special class
-       * for LIVE / UPCOMING.
-       */
 
-      if (match.status === "LIVE") {
+        if (
+          match.status === "LIVE"
+        ) {
 
-        card.classList.add("live-match-card");
+          card.classList.add(
+            "live-match-card"
+          );
 
-      } else {
+        } else {
 
-        card.classList.add("upcoming-match-card");
-
-      }
-
-
-      /* =========================
-         CARD CONTENT
-      ========================= */
-
-      const cardTop =
-        document.createElement("div");
-
-      cardTop.className =
-        "card-top";
-
-
-      const status =
-        document.createElement("span");
-
-
-      if (match.status === "LIVE") {
-
-        status.className =
-          "live-status";
-
-        status.textContent =
-          "LIVE";
-
-      } else {
-
-        status.className =
-          "upcoming-status";
-
-        status.textContent =
-          "UPCOMING";
-
-      }
-
-
-      cardTop.appendChild(status);
-
-
-      /* =========================
-         MATCH AREA
-      ========================= */
-
-      const matchArea =
-        document.createElement("div");
-
-      matchArea.className =
-        "match-area";
-
-
-      const teams =
-        document.createElement("div");
-
-      teams.className =
-        "match-teams";
-
-
-      const titleParts =
-        match.title.split(" vs ");
-
-
-      const homeTeam =
-        document.createElement("span");
-
-      homeTeam.className =
-        "team-name";
-
-      homeTeam.textContent =
-        titleParts[0] || match.title;
-
-
-      const versus =
-        document.createElement("span");
-
-      versus.className =
-        "versus";
-
-      versus.textContent =
-        "⚽";
-
-
-      const awayTeam =
-        document.createElement("span");
-
-      awayTeam.className =
-        "team-name";
-
-      awayTeam.textContent =
-        titleParts[1] || "";
-
-
-      teams.appendChild(homeTeam);
-
-      teams.appendChild(versus);
-
-      teams.appendChild(awayTeam);
-
-
-      matchArea.appendChild(teams);
-
-
-      /* =========================
-         WATCH AREA
-      ========================= */
-
-      const watch =
-        document.createElement("span");
-
-      watch.className =
-        "card-watch";
-
-
-      watch.textContent =
-        match.status === "LIVE"
-          ? "▶ WATCH"
-          : "→";
-
-
-      /* =========================
-         PUT EVERYTHING TOGETHER
-      ========================= */
-
-      card.appendChild(cardTop);
-
-      card.appendChild(matchArea);
-
-      card.appendChild(watch);
-
-
-      /* =========================
-         CARD CLICK
-      ========================= */
-
-      card.addEventListener(
-        "click",
-        function () {
-
-          openMatchOnScreen(match);
+          card.classList.add(
+            "upcoming-match-card"
+          );
 
         }
-      );
 
 
-      liveMatchesContainer.appendChild(card);
+        /* =========================
+           CARD TOP
+        ========================= */
 
-    });
+        const cardTop =
+          document.createElement("div");
+
+
+        cardTop.className =
+          "card-top";
+
+
+        const status =
+          document.createElement("span");
+
+
+        if (
+          match.status === "LIVE"
+        ) {
+
+          status.className =
+            "live-status";
+
+          status.textContent =
+            "LIVE";
+
+        } else {
+
+          status.className =
+            "upcoming-status";
+
+          status.textContent =
+            "UPCOMING";
+
+        }
+
+
+        cardTop.appendChild(
+          status
+        );
+
+
+        /* =========================
+           MATCH TIME
+        ========================= */
+
+        const matchTime =
+          document.createElement("span");
+
+
+        matchTime.className =
+          "match-time";
+
+
+        matchTime.textContent =
+          match.time || "";
+
+
+        cardTop.appendChild(
+          matchTime
+        );
+
+
+        /* =========================
+           MATCH AREA
+        ========================= */
+
+        const matchArea =
+          document.createElement("div");
+
+
+        matchArea.className =
+          "match-area";
+
+
+        const home =
+          document.createElement("div");
+
+
+        home.className =
+          "team";
+
+
+        const homeLogo =
+          createTeamLogo(
+            match.homeLogo,
+            match.homeTeam
+          );
+
+
+        const homeName =
+          document.createElement("span");
+
+
+        homeName.className =
+          "team-name";
+
+
+        homeName.textContent =
+          match.homeTeam;
+
+
+        home.appendChild(
+          homeLogo
+        );
+
+        home.appendChild(
+          homeName
+        );
+
+
+        const center =
+          document.createElement("div");
+
+
+        center.className =
+          "match-center";
+
+
+        const versus =
+          document.createElement("span");
+
+
+        versus.className =
+          "versus";
+
+        versus.textContent =
+          "VS";
+
+
+        center.appendChild(
+          versus
+        );
+
+
+        const away =
+          document.createElement("div");
+
+
+        away.className =
+          "team";
+
+
+        const awayLogo =
+          createTeamLogo(
+            match.awayLogo,
+            match.awayTeam
+          );
+
+
+        const awayName =
+          document.createElement("span");
+
+
+        awayName.className =
+          "team-name";
+
+
+        awayName.textContent =
+          match.awayTeam;
+
+
+        away.appendChild(
+          awayLogo
+        );
+
+        away.appendChild(
+          awayName
+        );
+
+
+        matchArea.appendChild(
+          home
+        );
+
+        matchArea.appendChild(
+          center
+        );
+
+        matchArea.appendChild(
+          away
+        );
+
+
+        /* =========================
+           WATCH BUTTON
+        ========================= */
+
+        const watch =
+          document.createElement("span");
+
+
+        watch.className =
+          "card-watch";
+
+
+        if (
+          match.status === "LIVE"
+        ) {
+
+          watch.textContent =
+            "▶ WATCH";
+
+        } else {
+
+          watch.textContent =
+            "VIEW";
+
+        }
+
+
+        /* =========================
+           BUILD CARD
+        ========================= */
+
+        card.appendChild(
+          cardTop
+        );
+
+        card.appendChild(
+          matchArea
+        );
+
+        card.appendChild(
+          watch
+        );
+
+
+        /* =========================
+           CLICK
+        ========================= */
+
+        card.addEventListener(
+          "click",
+          function () {
+
+            openMatchOnScreen(
+              match
+            );
+
+          }
+        );
+
+
+        liveMatchesContainer.appendChild(
+          card
+        );
+
+      }
+    );
 
   }
 
@@ -331,140 +556,210 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    highlights.forEach(function (highlight) {
+    highlights.forEach(
+      function (highlight) {
 
-      const card =
-        document.createElement("button");
-
-
-      card.type = "button";
-
-      card.className =
-        "content-card highlight-card";
+        const card =
+          document.createElement("button");
 
 
-      /* =========================
-         THUMBNAIL AREA
-      ========================= */
-
-      const thumbnail =
-        document.createElement("div");
-
-      thumbnail.className =
-        "highlight-thumbnail";
+        card.type =
+          "button";
 
 
-      const thumbnailIcon =
-        document.createElement("span");
-
-      thumbnailIcon.className =
-        "highlight-icon";
-
-      thumbnailIcon.textContent =
-        "🎬";
+        card.className =
+          "content-card highlight-card";
 
 
-      const playIcon =
-        document.createElement("span");
+        /* =========================
+           THUMBNAIL
+        ========================= */
 
-      playIcon.className =
-        "highlight-play";
-
-      playIcon.textContent =
-        "▶";
+        const thumbnail =
+          document.createElement("div");
 
 
-      thumbnail.appendChild(
-        thumbnailIcon
-      );
-
-      thumbnail.appendChild(
-        playIcon
-      );
+        thumbnail.className =
+          "highlight-thumbnail";
 
 
-      /* =========================
-         HIGHLIGHT INFORMATION
-      ========================= */
+        if (
+          highlight.thumbnail
+        ) {
 
-      const info =
-        document.createElement("div");
-
-      info.className =
-        "highlight-info";
+          const image =
+            document.createElement("img");
 
 
-      const title =
-        document.createElement("div");
-
-      title.className =
-        "card-title";
-
-      title.textContent =
-        highlight.title;
+          image.src =
+            highlight.thumbnail;
 
 
-      const status =
-        document.createElement("div");
-
-      status.className =
-        "card-status";
-
-      status.textContent =
-        "HIGHLIGHT";
+          image.alt =
+            highlight.title;
 
 
-      info.appendChild(title);
-
-      info.appendChild(status);
-
-
-      /* =========================
-         ARROW
-      ========================= */
-
-      const arrow =
-        document.createElement("div");
-
-      arrow.className =
-        "card-arrow";
-
-      arrow.textContent =
-        "→";
+          image.loading =
+            "lazy";
 
 
-      /* =========================
-         BUILD CARD
-      ========================= */
+          image.onerror =
+            function () {
 
-      card.appendChild(thumbnail);
+              image.remove();
 
-      card.appendChild(info);
-
-      card.appendChild(arrow);
+            };
 
 
-      /* =========================
-         CARD CLICK
-      ========================= */
-
-      card.addEventListener(
-        "click",
-        function () {
-
-          openHighlightOnScreen(
-            highlight
+          thumbnail.appendChild(
+            image
           );
 
         }
-      );
 
 
-      highlightsContainer.appendChild(
-        card
-      );
+        /* =========================
+           FALLBACK ICON
+        ========================= */
 
-    });
+        const highlightIcon =
+          document.createElement("span");
+
+
+        highlightIcon.className =
+          "highlight-icon";
+
+
+        highlightIcon.textContent =
+          "🎬";
+
+
+        thumbnail.appendChild(
+          highlightIcon
+        );
+
+
+        /* =========================
+           PLAY BUTTON
+        ========================= */
+
+        const play =
+          document.createElement("span");
+
+
+        play.className =
+          "highlight-play";
+
+
+        play.textContent =
+          "▶";
+
+
+        thumbnail.appendChild(
+          play
+        );
+
+
+        /* =========================
+           INFORMATION
+        ========================= */
+
+        const info =
+          document.createElement("div");
+
+
+        info.className =
+          "highlight-info";
+
+
+        const title =
+          document.createElement("div");
+
+
+        title.className =
+          "card-title";
+
+
+        title.textContent =
+          highlight.title;
+
+
+        const status =
+          document.createElement("div");
+
+
+        status.className =
+          "card-status";
+
+
+        status.textContent =
+          "HIGHLIGHT";
+
+
+        info.appendChild(
+          title
+        );
+
+        info.appendChild(
+          status
+        );
+
+
+        /* =========================
+           ARROW
+        ========================= */
+
+        const arrow =
+          document.createElement("div");
+
+
+        arrow.className =
+          "card-arrow";
+
+
+        arrow.textContent =
+          "→";
+
+
+        /* =========================
+           BUILD CARD
+        ========================= */
+
+        card.appendChild(
+          thumbnail
+        );
+
+        card.appendChild(
+          info
+        );
+
+        card.appendChild(
+          arrow
+        );
+
+
+        /* =========================
+           CLICK
+        ========================= */
+
+        card.addEventListener(
+          "click",
+          function () {
+
+            openHighlightOnScreen(
+              highlight
+            );
+
+          }
+        );
+
+
+        highlightsContainer.appendChild(
+          card
+        );
+
+      }
+    );
 
   }
 
@@ -475,14 +770,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showPage(page) {
 
-    homePage.classList.remove("active");
+    homePage.classList.remove(
+      "active"
+    );
 
-    footballPage.classList.remove("active");
+    footballPage.classList.remove(
+      "active"
+    );
 
-    screenPage.classList.remove("active");
+    screenPage.classList.remove(
+      "active"
+    );
 
 
-    page.classList.add("active");
+    page.classList.add(
+      "active"
+    );
 
 
     window.scrollTo({
@@ -497,116 +800,170 @@ document.addEventListener("DOMContentLoaded", function () {
      OPEN SCREEN
   ========================= */
 
-  window.openScreen = function () {
+  window.openScreen =
+    function () {
 
-    previousPage = "home";
+      previousPage =
+        "home";
 
-    showPage(screenPage);
 
-  };
+      showPage(
+        screenPage
+      );
+
+    };
 
 
   /* =========================
      OPEN FOOTBALL
   ========================= */
 
-  window.openFootball = function () {
+  window.openFootball =
+    function () {
 
-    previousPage = "home";
-
-    showPage(footballPage);
-
-    showLive();
-
-  };
+      previousPage =
+        "home";
 
 
-  /* =========================
-     GO HOME
-  ========================= */
+      showPage(
+        footballPage
+      );
 
-  window.goHome = function () {
 
-    stopCurrentPlayer();
+      showLive();
 
-    showPage(homePage);
-
-  };
+    };
 
 
   /* =========================
-     SCREEN BACK BUTTON
+     HOME
   ========================= */
 
-  window.goBackFromScreen = function () {
+  window.goHome =
+    function () {
 
-    stopCurrentPlayer();
+      stopCurrentPlayer();
 
 
-    if (previousPage === "football") {
+      showPage(
+        homePage
+      );
 
-      showPage(footballPage);
+    };
 
-    } else {
 
-      showPage(homePage);
+  /* =========================
+     SCREEN BACK
+  ========================= */
 
-    }
+  window.goBackFromScreen =
+    function () {
 
-  };
+      stopCurrentPlayer();
+
+
+      if (
+        previousPage ===
+        "football"
+      ) {
+
+        showPage(
+          footballPage
+        );
+
+      } else {
+
+        showPage(
+          homePage
+        );
+
+      }
+
+    };
 
 
   /* =========================
      LIVE TAB
   ========================= */
 
-  window.showLive = function () {
+  window.showLive =
+    function () {
 
-    liveSection.classList.add("active");
+      liveSection.classList.add(
+        "active"
+      );
 
-    highlightSection.classList.remove("active");
+
+      highlightSection.classList.remove(
+        "active"
+      );
 
 
-    liveTab.classList.add("active");
+      liveTab.classList.add(
+        "active"
+      );
 
-    highlightTab.classList.remove("active");
 
-  };
+      highlightTab.classList.remove(
+        "active"
+      );
+
+    };
 
 
   /* =========================
      HIGHLIGHTS TAB
   ========================= */
 
-  window.showHighlights = function () {
+  window.showHighlights =
+    function () {
 
-    highlightSection.classList.add("active");
+      highlightSection.classList.add(
+        "active"
+      );
 
-    liveSection.classList.remove("active");
+
+      liveSection.classList.remove(
+        "active"
+      );
 
 
-    highlightTab.classList.add("active");
+      highlightTab.classList.add(
+        "active"
+      );
 
-    liveTab.classList.remove("active");
 
-  };
+      liveTab.classList.remove(
+        "active"
+      );
+
+    };
 
 
   /* =========================
-     OPEN LIVE MATCH
+     OPEN MATCH
   ========================= */
 
-  function openMatchOnScreen(match) {
+  function openMatchOnScreen(
+    match
+  ) {
 
-    currentItem = match;
-
-    previousPage = "football";
-
-
-    showPage(screenPage);
+    currentItem =
+      match;
 
 
-    updateScreen(match);
+    previousPage =
+      "football";
+
+
+    showPage(
+      screenPage
+    );
+
+
+    updateScreen(
+      match
+    );
 
   }
 
@@ -619,15 +976,22 @@ document.addEventListener("DOMContentLoaded", function () {
     highlight
   ) {
 
-    currentItem = highlight;
-
-    previousPage = "football";
-
-
-    showPage(screenPage);
+    currentItem =
+      highlight;
 
 
-    updateScreen(highlight);
+    previousPage =
+      "football";
+
+
+    showPage(
+      screenPage
+    );
+
+
+    updateScreen(
+      highlight
+    );
 
   }
 
@@ -636,17 +1000,20 @@ document.addEventListener("DOMContentLoaded", function () {
      UPDATE SCREEN
   ========================= */
 
-  function updateScreen(item) {
+  function updateScreen(
+    item
+  ) {
 
     nowShowing.textContent =
       item.title;
 
 
-    screenPlayer.innerHTML = "";
+    screenPlayer.innerHTML =
+      "";
 
 
     /* =========================
-       NO PLAYER URL
+       NO PLAYER
     ========================= */
 
     if (
@@ -655,41 +1022,62 @@ document.addEventListener("DOMContentLoaded", function () {
     ) {
 
       const placeholder =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       placeholder.className =
         "screen-placeholder";
 
 
       const icon =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       icon.className =
         "screen-icon";
+
 
       icon.textContent =
         "📺";
 
 
       const title =
-        document.createElement("p");
+        document.createElement(
+          "p"
+        );
+
 
       title.textContent =
         item.title;
 
 
       const small =
-        document.createElement("small");
+        document.createElement(
+          "small"
+        );
+
 
       small.textContent =
         "Player ready";
 
 
-      placeholder.appendChild(icon);
+      placeholder.appendChild(
+        icon
+      );
 
-      placeholder.appendChild(title);
 
-      placeholder.appendChild(small);
+      placeholder.appendChild(
+        title
+      );
+
+
+      placeholder.appendChild(
+        small
+      );
 
 
       screenPlayer.appendChild(
@@ -706,15 +1094,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       IFRAME PLAYER
+       IFRAME
     ========================= */
 
     if (
-      item.playerType === "iframe"
+      item.playerType ===
+      "iframe"
     ) {
 
       const iframe =
-        document.createElement("iframe");
+        document.createElement(
+          "iframe"
+        );
 
 
       iframe.src =
@@ -753,15 +1144,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       VIDEO PLAYER
+       VIDEO
     ========================= */
 
     if (
-      item.playerType === "video"
+      item.playerType ===
+      "video"
     ) {
 
       const video =
-        document.createElement("video");
+        document.createElement(
+          "video"
+        );
 
 
       video.src =
@@ -818,7 +1212,9 @@ document.addEventListener("DOMContentLoaded", function () {
   function addFullscreenButton() {
 
     const fullscreenButton =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
 
     fullscreenButton.type =
@@ -850,6 +1246,7 @@ document.addEventListener("DOMContentLoaded", function () {
       function (event) {
 
         event.stopPropagation();
+
 
         enterFullscreen(
           screenPlayer
@@ -896,24 +1293,21 @@ document.addEventListener("DOMContentLoaded", function () {
     ) {
 
       element.requestFullscreen()
-        .catch(function (error) {
+        .catch(
+          function (error) {
 
-          console.log(
-            "Fullscreen request failed:",
-            error
-          );
+            console.log(
+              "Fullscreen request failed:",
+              error
+            );
 
-        });
+          }
+        );
 
       return;
 
     }
 
-
-    /*
-     * WebKit fallback
-     * for supported browsers.
-     */
 
     if (
       element.webkitRequestFullscreen
@@ -952,10 +1346,12 @@ document.addEventListener("DOMContentLoaded", function () {
         button.textContent =
           "✕";
 
+
         button.setAttribute(
           "aria-label",
           "Exit fullscreen"
         );
+
 
         button.setAttribute(
           "title",
@@ -967,10 +1363,12 @@ document.addEventListener("DOMContentLoaded", function () {
         button.textContent =
           "⛶";
 
+
         button.setAttribute(
           "aria-label",
           "Fullscreen"
         );
+
 
         button.setAttribute(
           "title",
@@ -994,29 +1392,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /*
-     * Exit fullscreen first.
-     */
-
     if (
       document.fullscreenElement &&
       document.exitFullscreen
     ) {
 
       document.exitFullscreen()
-        .catch(function () {});
+        .catch(
+          function () {}
+        );
 
     }
 
 
-    screenPlayer.innerHTML = "";
+    screenPlayer.innerHTML =
+      "";
 
 
     nowShowing.textContent =
       "Select a match";
 
 
-    currentItem = null;
+    currentItem =
+      null;
 
   }
 
