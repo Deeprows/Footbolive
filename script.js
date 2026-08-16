@@ -6,21 +6,12 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================= */
 
   const liveMatches = [
+
     {
       id: "chelsea-juventus",
       title: "Chelsea vs Juventus",
       status: "LIVE",
       type: "live",
-
-      /*
-       * Add your video/stream URL here.
-       * For an iframe:
-       * playerType: "iframe"
-       *
-       * For a video file:
-       * playerType: "video"
-       */
-
       playerType: "iframe",
       playerUrl: ""
     },
@@ -32,15 +23,26 @@ document.addEventListener("DOMContentLoaded", function () {
       type: "upcoming",
       playerType: "iframe",
       playerUrl: ""
+    },
+
+    {
+      id: "real-madrid-bayern",
+      title: "Real Madrid vs Bayern",
+      status: "UPCOMING",
+      type: "upcoming",
+      playerType: "iframe",
+      playerUrl: ""
     }
+
   ];
 
 
   /* =========================
-     HIGHLIGHT DATA
+     HIGHLIGHTS
   ========================= */
 
   const highlights = [
+
     {
       id: "chelsea-juventus-highlight",
       title: "Chelsea vs Juventus",
@@ -55,12 +57,21 @@ document.addEventListener("DOMContentLoaded", function () {
       status: "Highlight",
       playerType: "iframe",
       playerUrl: ""
+    },
+
+    {
+      id: "real-madrid-bayern-highlight",
+      title: "Real Madrid vs Bayern",
+      status: "Highlight",
+      playerType: "iframe",
+      playerUrl: ""
     }
+
   ];
 
 
   /* =========================
-     PAGE ELEMENTS
+     ELEMENTS
   ========================= */
 
   const homePage =
@@ -97,13 +108,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("screenPlayer");
 
 
-  /* =========================
-     CURRENT SCREEN ITEM
-  ========================= */
+  let previousPage = "home";
 
   let currentItem = null;
-
-  let previousPage = "home";
 
 
   /* =========================
@@ -121,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
         '<div class="empty-message">No matches available</div>';
 
       return;
+
     }
 
 
@@ -192,6 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
         '<div class="empty-message">No highlights available</div>';
 
       return;
+
     }
 
 
@@ -243,16 +252,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     SHOW PAGE
+     PAGE NAVIGATION
   ========================= */
 
   function showPage(page) {
 
     homePage.classList.remove("active");
+
     footballPage.classList.remove("active");
+
     screenPage.classList.remove("active");
 
+
     page.classList.add("active");
+
 
     window.scrollTo({
       top: 0,
@@ -291,10 +304,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     GO HOME
+     HOME
   ========================= */
 
   window.goHome = function () {
+
+    stopCurrentPlayer();
 
     showPage(homePage);
 
@@ -302,10 +317,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     SCREEN BACK BUTTON
+     SCREEN BACK
   ========================= */
 
   window.goBackFromScreen = function () {
+
+    stopCurrentPlayer();
+
 
     if (previousPage === "football") {
 
@@ -321,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     SHOW LIVE
+     LIVE TAB
   ========================= */
 
   window.showLive = function () {
@@ -329,6 +347,7 @@ document.addEventListener("DOMContentLoaded", function () {
     liveSection.classList.add("active");
 
     highlightSection.classList.remove("active");
+
 
     liveTab.classList.add("active");
 
@@ -338,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     SHOW HIGHLIGHTS
+     HIGHLIGHTS TAB
   ========================= */
 
   window.showHighlights = function () {
@@ -346,6 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
     highlightSection.classList.add("active");
 
     liveSection.classList.remove("active");
+
 
     highlightTab.classList.add("active");
 
@@ -355,7 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     OPEN LIVE MATCH
+     OPEN MATCH
   ========================= */
 
   function openMatchOnScreen(match) {
@@ -364,7 +384,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     previousPage = "football";
 
+
     showPage(screenPage);
+
 
     updateScreen(match);
 
@@ -381,7 +403,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     previousPage = "football";
 
+
     showPage(screenPage);
+
 
     updateScreen(highlight);
 
@@ -401,9 +425,9 @@ document.addEventListener("DOMContentLoaded", function () {
     screenPlayer.innerHTML = "";
 
 
-    /*
-     * No player URL yet
-     */
+    /* =========================
+       EMPTY PLAYER
+    ========================= */
 
     if (
       !item.playerUrl ||
@@ -422,9 +446,16 @@ document.addEventListener("DOMContentLoaded", function () {
             ${item.title}
           </p>
 
+          <small>
+            Player ready
+          </small>
+
         </div>
 
       `;
+
+
+      addFullscreenButton();
 
       return;
 
@@ -432,7 +463,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       IFRAME PLAYER
+       IFRAME
     ========================= */
 
     if (item.playerType === "iframe") {
@@ -440,17 +471,29 @@ document.addEventListener("DOMContentLoaded", function () {
       const iframe =
         document.createElement("iframe");
 
+
       iframe.src =
         item.playerUrl;
+
 
       iframe.allow =
         "autoplay; fullscreen; picture-in-picture";
 
-      iframe.allowFullscreen = true;
 
-      iframe.loading = "lazy";
+      iframe.setAttribute(
+        "allowfullscreen",
+        ""
+      );
+
+
+      iframe.loading = "eager";
+
 
       screenPlayer.appendChild(iframe);
+
+
+      addFullscreenButton();
+
 
       return;
 
@@ -458,7 +501,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       VIDEO PLAYER
+       VIDEO
     ========================= */
 
     if (item.playerType === "video") {
@@ -466,8 +509,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const video =
         document.createElement("video");
 
+
       video.src =
         item.playerUrl;
+
 
       video.controls = true;
 
@@ -475,11 +520,116 @@ document.addEventListener("DOMContentLoaded", function () {
 
       video.playsInline = true;
 
+
       screenPlayer.appendChild(video);
+
+
+      addFullscreenButton();
+
 
       return;
 
     }
+
+  }
+
+
+  /* =========================
+     FULLSCREEN BUTTON
+  ========================= */
+
+  function addFullscreenButton() {
+
+    const fullscreenButton =
+      document.createElement("button");
+
+
+    fullscreenButton.className =
+      "fullscreen-button";
+
+
+    fullscreenButton.innerHTML =
+      "⛶";
+
+
+    fullscreenButton.setAttribute(
+      "aria-label",
+      "Fullscreen"
+    );
+
+
+    fullscreenButton.addEventListener(
+      "click",
+      function () {
+
+        enterFullscreen(screenPlayer);
+
+      }
+    );
+
+
+    screenPlayer.appendChild(
+      fullscreenButton
+    );
+
+  }
+
+
+  /* =========================
+     FULLSCREEN
+  ========================= */
+
+  function enterFullscreen(element) {
+
+    if (
+      document.fullscreenElement
+    ) {
+
+      document.exitFullscreen();
+
+      return;
+
+    }
+
+
+    if (
+      element.requestFullscreen
+    ) {
+
+      element.requestFullscreen();
+
+    }
+
+    else if (
+      element.webkitRequestFullscreen
+    ) {
+
+      element.webkitRequestFullscreen();
+
+    }
+
+  }
+
+
+  /* =========================
+     STOP PLAYER
+  ========================= */
+
+  function stopCurrentPlayer() {
+
+    if (!screenPlayer) {
+      return;
+    }
+
+
+    screenPlayer.innerHTML = "";
+
+
+    nowShowing.textContent =
+      "Select a match";
+
+
+    currentItem = null;
 
   }
 
