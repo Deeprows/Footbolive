@@ -10,14 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
      ZOOM / GESTURE PROTECTION
      ========================================================= */
 
-  /*
-   * Discourage browser pinch/double-tap zoom gestures.
-   *
-   * CSS touch-action: manipulation handles most modern
-   * mobile browsers. These events provide additional
-   * protection for browsers that expose gesture events.
-   */
-
   document.addEventListener(
     "gesturestart",
     function (event) {
@@ -59,8 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /*
    * Prevent Ctrl + mouse-wheel browser zoom.
-   *
-   * Normal mouse-wheel scrolling remains available.
    */
   document.addEventListener(
     "wheel",
@@ -80,14 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /*
-   * Prevent common keyboard browser-zoom shortcuts:
-   *
-   * Ctrl + +
-   * Ctrl + -
-   * Ctrl + =
-   * Ctrl + 0
-   *
-   * Normal keyboard usage remains unaffected.
+   * Prevent keyboard browser zoom.
    */
   document.addEventListener(
     "keydown",
@@ -98,7 +81,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
 
-      const key = event.key;
+      const key =
+        event.key;
 
 
       if (
@@ -119,6 +103,12 @@ document.addEventListener("DOMContentLoaded", function () {
   /* =========================================================
      ELEMENTS
      ========================================================= */
+
+  const siteHeader =
+    document.querySelector(".site-header");
+
+  const screenSection =
+    document.querySelector(".screen-section");
 
   const screenFrame =
     document.getElementById("screenFrame");
@@ -223,7 +213,118 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     UPDATE ACTIVE APP BUTTON
+     MOBILE MENU
+     ========================================================= */
+
+  const menuToggle =
+    document.getElementById("menuToggle");
+
+  const mainNav =
+    document.getElementById("mainNav");
+
+
+  /* =========================================================
+     STICKY LAYOUT CALCULATION
+     ========================================================= */
+
+  /*
+   * The screen and app navigation are both sticky.
+   *
+   * Because the player height changes between desktop,
+   * tablet and mobile, calculate the real height instead
+   * of relying on a hard-coded value.
+   */
+
+  function updateStickyPositions() {
+
+    if (!screenSection) {
+      return;
+    }
+
+
+    const root =
+      document.documentElement;
+
+
+    const headerHeight =
+      siteHeader
+        ? siteHeader.getBoundingClientRect().height
+        : 66;
+
+
+    const screenHeight =
+      screenSection.getBoundingClientRect().height;
+
+
+    root.style.setProperty(
+      "--header-height",
+      headerHeight + "px"
+    );
+
+
+    root.style.setProperty(
+      "--screen-stack-height",
+      screenHeight + "px"
+    );
+
+
+    root.style.setProperty(
+      "--app-menu-top",
+      (
+        headerHeight +
+        screenHeight
+      ) + "px"
+    );
+
+  }
+
+
+  /*
+   * Initial calculation.
+   */
+
+  updateStickyPositions();
+
+
+  /*
+   * Recalculate when the browser changes size.
+   */
+
+  window.addEventListener(
+    "resize",
+    updateStickyPositions
+  );
+
+
+  /*
+   * ResizeObserver gives more accurate updates when
+   * the iframe/player dimensions change.
+   */
+
+  if (
+    "ResizeObserver" in window &&
+    screenSection
+  ) {
+
+    const stickyObserver =
+      new ResizeObserver(
+        function () {
+
+          updateStickyPositions();
+
+        }
+      );
+
+
+    stickyObserver.observe(
+      screenSection
+    );
+
+  }
+
+
+  /* =========================================================
+     ACTIVE APP BUTTON
      ========================================================= */
 
   function setActiveButton(button) {
@@ -258,7 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     UPDATE ACTIVE NAV
+     ACTIVE NAV
      ========================================================= */
 
   function setActiveNav(link) {
@@ -329,11 +430,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
+    /*
+     * Recalculate sticky layout because hidden
+     * sections can change page dimensions.
+     */
+
+    requestAnimationFrame(
+      updateStickyPositions
+    );
+
   }
 
 
   /* =========================================================
-     OPEN FOOTBALL LIVE
+     OPEN FOOTBALL
      ========================================================= */
 
   function openFootball() {
@@ -371,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     OPEN TV CHANNELS
+     OPEN TV
      ========================================================= */
 
   function openTV() {
@@ -409,79 +520,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     FOOTBALL BUTTON
+     APP BUTTON EVENTS
      ========================================================= */
 
   if (footballButton) {
 
     footballButton.addEventListener(
       "click",
-      function () {
-
-        openFootball();
-
-      }
+      openFootball
     );
 
   }
 
-
-  /* =========================================================
-     HIGHLIGHTS BUTTON
-     ========================================================= */
 
   if (highlightsButton) {
 
     highlightsButton.addEventListener(
       "click",
-      function () {
-
-        openHighlights();
-
-      }
+      openHighlights
     );
 
   }
 
-
-  /* =========================================================
-     TV BUTTON
-     ========================================================= */
 
   if (tvButton) {
 
     tvButton.addEventListener(
       "click",
-      function () {
-
-        openTV();
-
-      }
+      openTV
     );
 
   }
 
-
-  /* =========================================================
-     MOVIES BUTTON
-     ========================================================= */
 
   if (moviesButton) {
 
     moviesButton.addEventListener(
       "click",
-      function () {
-
-        openMovies();
-
-      }
+      openMovies
     );
 
   }
 
 
   /* =========================================================
-     NAV FOOTBALL
+     NAVIGATION EVENTS
      ========================================================= */
 
   if (navFootball) {
@@ -500,10 +583,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  /* =========================================================
-     NAV HIGHLIGHTS
-     ========================================================= */
-
   if (navHighlights) {
 
     navHighlights.addEventListener(
@@ -520,10 +599,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  /* =========================================================
-     NAV TV
-     ========================================================= */
-
   if (navTV) {
 
     navTV.addEventListener(
@@ -539,10 +614,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
-
-  /* =========================================================
-     NAV MOVIES
-     ========================================================= */
 
   if (navMovies) {
 
@@ -581,13 +652,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Update screen information.
+     * Update current title.
      */
 
     if (nowShowing) {
 
       nowShowing.textContent =
-        name;
+        name || "Now Playing";
 
     }
 
@@ -606,8 +677,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Dim screen while changing
-     * content.
+     * Dim iframe while changing content.
      */
 
     screenFrame.style.opacity =
@@ -635,14 +705,24 @@ document.addEventListener("DOMContentLoaded", function () {
         screenFrame.style.opacity =
           "1";
 
+
+        /*
+         * Recalculate sticky position
+         * after iframe begins loading.
+         */
+
+        requestAnimationFrame(
+          updateStickyPositions
+        );
+
       },
       150
     );
 
 
-    /*
-     * Update status.
-     */
+    /* =======================================================
+       SCREEN STATUS
+       ======================================================= */
 
     if (screenStatus) {
 
@@ -672,15 +752,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Bring screen into view.
+     * Keep player visible.
+     *
+     * The sticky player remains in position while
+     * the user browses the page.
      */
 
     if (screenPlayer) {
 
-      screenPlayer.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+      const rect =
+        screenPlayer.getBoundingClientRect();
+
+
+      const headerHeight =
+        siteHeader
+          ? siteHeader.getBoundingClientRect().height
+          : 66;
+
+
+      if (
+        rect.top <
+        headerHeight
+      ) {
+
+        window.scrollBy(
+          {
+            top:
+              rect.top -
+              headerHeight -
+              10,
+
+            behavior:
+              "smooth"
+          }
+        );
+
+      }
 
     }
 
@@ -702,7 +809,11 @@ document.addEventListener("DOMContentLoaded", function () {
             this.dataset.url;
 
           const name =
-            this.dataset.name;
+            this.dataset.name ||
+            this.querySelector(
+              ".match-teams"
+            )?.textContent?.trim() ||
+            "Football Match";
 
 
           loadScreen(
@@ -733,7 +844,31 @@ document.addEventListener("DOMContentLoaded", function () {
             this.dataset.url;
 
           const name =
-            this.dataset.name;
+            this.dataset.name ||
+            this.querySelector(
+              "strong"
+            )?.textContent?.trim() ||
+            "Football Highlight";
+
+
+          /*
+           * Active highlight.
+           */
+
+          highlightCards.forEach(
+            function (item) {
+
+              item.classList.remove(
+                "active"
+              );
+
+            }
+          );
+
+
+          this.classList.add(
+            "active"
+          );
 
 
           loadScreen(
@@ -741,6 +876,9 @@ document.addEventListener("DOMContentLoaded", function () {
             name,
             "highlight"
           );
+
+
+          openHighlights();
 
         }
       );
@@ -764,7 +902,11 @@ document.addEventListener("DOMContentLoaded", function () {
             this.dataset.url;
 
           const name =
-            this.dataset.name;
+            this.dataset.name ||
+            this.querySelector(
+              ".tv-channel-info strong"
+            )?.textContent?.trim() ||
+            "TV Channel";
 
 
           /*
@@ -793,8 +935,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
           /*
-           * Load channel into
-           * the main Screen.
+           * Load channel.
            */
 
           loadScreen(
@@ -805,7 +946,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
           /*
-           * Keep TV section visible.
+           * Keep TV section active.
            */
 
           openTV();
@@ -832,12 +973,16 @@ document.addEventListener("DOMContentLoaded", function () {
             this.dataset.url;
 
           const name =
-            this.dataset.name;
+            this.dataset.name ||
+            this.querySelector(
+              ".movie-title"
+            )?.textContent?.trim() ||
+            "Movie";
 
 
           /*
            * Remove active state
-           * from all movie cards.
+           * from all movies.
            */
 
           movieCards.forEach(
@@ -861,8 +1006,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
           /*
-           * Load movie into
-           * the main Screen.
+           * Load movie.
            */
 
           loadScreen(
@@ -873,7 +1017,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
           /*
-           * Keep Movies section visible.
+           * Keep Movies section active.
            */
 
           openMovies();
@@ -895,16 +1039,30 @@ document.addEventListener("DOMContentLoaded", function () {
       "click",
       function () {
 
+        /*
+         * Exit fullscreen if already fullscreen.
+         */
+
         if (
           document.fullscreenElement
         ) {
 
-          document.exitFullscreen();
+          if (
+            document.exitFullscreen
+          ) {
+
+            document.exitFullscreen();
+
+          }
 
           return;
 
         }
 
+
+        /*
+         * Enter fullscreen.
+         */
 
         if (
           screenPlayer &&
@@ -922,19 +1080,49 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     MOBILE MENU
+     FULLSCREEN CHANGE
      ========================================================= */
 
-  const menuToggle =
-    document.getElementById(
-      "menuToggle"
-    );
+  document.addEventListener(
+    "fullscreenchange",
+    function () {
 
-  const mainNav =
-    document.getElementById(
-      "mainNav"
-    );
+      if (!fullscreenButton) {
+        return;
+      }
 
+
+      if (
+        document.fullscreenElement
+      ) {
+
+        fullscreenButton.textContent =
+          "⛶";
+
+        fullscreenButton.setAttribute(
+          "aria-label",
+          "Exit fullscreen"
+        );
+
+      } else {
+
+        fullscreenButton.textContent =
+          "⛶";
+
+        fullscreenButton.setAttribute(
+          "aria-label",
+          "Enter fullscreen"
+        );
+
+      }
+
+    }
+  );
+
+
+  /* =========================================================
+     MOBILE MENU
+     ========================================================= */
 
   if (
     menuToggle &&
@@ -990,10 +1178,497 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     MATCH TIME / TIMEZONE SYSTEM
+     ========================================================= */
+
+  /*
+   * This system supports match cards that contain:
+   *
+   * data-start="2026-08-17T19:00:00"
+   *
+   * OR
+   *
+   * data-start="2026-08-17T19:00:00+01:00"
+   *
+   * OR
+   *
+   * data-start="2026-08-17T19:00:00Z"
+   *
+   * The browser's local timezone is used automatically.
+   *
+   * If the HTML does not contain data-start,
+   * the existing card content is left untouched.
+   */
+
+
+  const userTimeZone =
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+
+  function getMatchStart(card) {
+
+    if (!card) {
+      return null;
+    }
+
+
+    const raw =
+      card.dataset.start ||
+      card.dataset.datetime ||
+      card.dataset.dateTime;
+
+
+    if (!raw) {
+      return null;
+    }
+
+
+    const date =
+      new Date(raw);
+
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+
+      return null;
+
+    }
+
+
+    return date;
+
+  }
+
+
+  function formatLocalDate(date) {
+
+    return new Intl.DateTimeFormat(
+      undefined,
+      {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        timeZone: userTimeZone
+      }
+    ).format(date);
+
+  }
+
+
+  function formatLocalTime(date) {
+
+    return new Intl.DateTimeFormat(
+      undefined,
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: userTimeZone
+      }
+    ).format(date);
+
+  }
+
+
+  function formatDuration(milliseconds) {
+
+    let totalSeconds =
+      Math.max(
+        0,
+        Math.floor(
+          milliseconds / 1000
+        )
+      );
+
+
+    const days =
+      Math.floor(
+        totalSeconds / 86400
+      );
+
+
+    totalSeconds %=
+      86400;
+
+
+    const hours =
+      Math.floor(
+        totalSeconds / 3600
+      );
+
+
+    totalSeconds %=
+      3600;
+
+
+    const minutes =
+      Math.floor(
+        totalSeconds / 60
+      );
+
+
+    const seconds =
+      totalSeconds % 60;
+
+
+    if (days > 0) {
+
+      return (
+        days +
+        "d " +
+        String(hours).padStart(2, "0") +
+        "h"
+      );
+
+    }
+
+
+    if (hours > 0) {
+
+      return (
+        hours +
+        "h " +
+        String(minutes).padStart(2, "0") +
+        "m"
+      );
+
+    }
+
+
+    if (minutes > 0) {
+
+      return (
+        minutes +
+        "m " +
+        String(seconds).padStart(2, "0") +
+        "s"
+      );
+
+    }
+
+
+    return (
+      seconds +
+      "s"
+    );
+
+  }
+
+
+  function updateMatchCard(card) {
+
+    const start =
+      getMatchStart(card);
+
+
+    /*
+     * No timing data means do nothing.
+     */
+
+    if (!start) {
+      return;
+    }
+
+
+    const now =
+      new Date();
+
+
+    const difference =
+      start.getTime() -
+      now.getTime();
+
+
+    const statusElement =
+      card.querySelector(
+        ".match-status"
+      );
+
+
+    const countdownElement =
+      card.querySelector(
+        ".match-countdown"
+      );
+
+
+    const dateElement =
+      card.querySelector(
+        ".match-date"
+      );
+
+
+    const timeElement =
+      card.querySelector(
+        ".match-time"
+      );
+
+
+    /*
+     * Always update date/time using
+     * the visitor's local timezone.
+     */
+
+    if (dateElement) {
+
+      dateElement.textContent =
+        formatLocalDate(start);
+
+    }
+
+
+    if (timeElement) {
+
+      timeElement.textContent =
+        formatLocalTime(start);
+
+    }
+
+
+    /*
+     * UPCOMING
+     */
+
+    if (difference > 0) {
+
+      card.classList.remove(
+        "is-live",
+        "is-ended"
+      );
+
+      card.classList.add(
+        "is-upcoming"
+      );
+
+
+      if (statusElement) {
+
+        statusElement.classList.remove(
+          "live",
+          "ended"
+        );
+
+        statusElement.classList.add(
+          "upcoming"
+        );
+
+        statusElement.textContent =
+          "UPCOMING";
+
+      }
+
+
+      if (countdownElement) {
+
+        countdownElement.textContent =
+          "Starts in " +
+          formatDuration(
+            difference
+          );
+
+      }
+
+
+      return;
+
+    }
+
+
+    /*
+     * LIVE
+     *
+     * Without a match duration/end time,
+     * the card switches to LIVE after kickoff.
+     */
+
+    const endRaw =
+      card.dataset.end ||
+      card.dataset.endTime;
+
+
+    if (endRaw) {
+
+      const end =
+        new Date(endRaw);
+
+
+      if (
+        !Number.isNaN(
+          end.getTime()
+        ) &&
+        now.getTime() >= end.getTime()
+      ) {
+
+        setEndedState(
+          card,
+          statusElement,
+          countdownElement
+        );
+
+        return;
+
+      }
+
+    }
+
+
+    setLiveState(
+      card,
+      statusElement,
+      countdownElement,
+      difference
+    );
+
+  }
+
+
+  function setLiveState(
+    card,
+    statusElement,
+    countdownElement,
+    difference
+  ) {
+
+    card.classList.remove(
+      "is-upcoming",
+      "is-ended"
+    );
+
+    card.classList.add(
+      "is-live"
+    );
+
+
+    if (statusElement) {
+
+      statusElement.classList.remove(
+        "upcoming",
+        "ended"
+      );
+
+      statusElement.classList.add(
+        "live"
+      );
+
+      statusElement.textContent =
+        "LIVE";
+
+    }
+
+
+    if (countdownElement) {
+
+      const elapsed =
+        Math.abs(difference);
+
+
+      countdownElement.textContent =
+        "Live • " +
+        formatDuration(
+          elapsed
+        );
+
+    }
+
+  }
+
+
+  function setEndedState(
+    card,
+    statusElement,
+    countdownElement
+  ) {
+
+    card.classList.remove(
+      "is-upcoming",
+      "is-live"
+    );
+
+    card.classList.add(
+      "is-ended"
+    );
+
+
+    if (statusElement) {
+
+      statusElement.classList.remove(
+        "upcoming",
+        "live"
+      );
+
+      statusElement.classList.add(
+        "ended"
+      );
+
+      statusElement.textContent =
+        "ENDED";
+
+    }
+
+
+    if (countdownElement) {
+
+      countdownElement.textContent =
+        "Match ended";
+
+    }
+
+  }
+
+
+  function updateAllMatches() {
+
+    matchCards.forEach(
+      function (card) {
+
+        updateMatchCard(card);
+
+      }
+    );
+
+  }
+
+
+  /*
+   * Run immediately.
+   */
+
+  updateAllMatches();
+
+
+  /*
+   * Keep countdowns accurate.
+   */
+
+  setInterval(
+    updateAllMatches,
+    1000
+  );
+
+
+  /* =========================================================
      INITIAL STATE
      ========================================================= */
 
   openFootball();
+
+
+  /*
+   * Final sticky calculation after everything
+   * has finished rendering.
+   */
+
+  requestAnimationFrame(
+    function () {
+
+      updateStickyPositions();
+
+      updateAllMatches();
+
+    }
+  );
 
 
 });
