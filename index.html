@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Football Live and Highlights"
+  >
+
+  <meta
+    name="theme-color"
+    content="#07090d"
+  >
+
+  <title>Football Live</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+
+<body>
+
+
+  <!-- =========================
+       APP
+  ========================== -->
+
+  <div class="app">
+
+
+    <!-- =========================
+         HOME
+    ========================== -->
+
+    <main
+      id="homePage"
+      class="page active"
+    >
+
+      <div class="home-container">
+
+        <div class="app-logo">
+          ⚽
+        </div>
+
+        <h1>
+          Football
+        </h1>
+
+        <div class="home-buttons">
+
+          <button
+            class="main-button screen-button"
+            onclick="openScreen()"
+          >
+            <span class="button-icon">📺</span>
+
+            <span>
+              Screen
+            </span>
+          </button>
+
+
+          <button
+            class="main-button football-button"
+            onclick="openFootball()"
+          >
+            <span class="button-icon">⚽</span>
+
+            <span>
+              Football Live | Highlights
+            </span>
+          </button>
+
+        </div>
+
+      </div>
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTBALL PAGE
+    ========================== -->
+
+    <main
+      id="footballPage"
+      class="page"
+    >
+
+      <header class="page-header">
+
+        <button
+          class="back-button"
+          onclick="goHome()"
+          aria-label="Back"
+        >
+          ←
+        </button>
+
+        <h2>
+          Football
+        </h2>
+
+      </header>
+
+
+      <div class="football-tabs">
+
+        <button
+          id="liveTab"
+          class="football-tab active"
+          onclick="showLive()"
+        >
+          🔴 Football Live
+        </button>
+
+
+        <button
+          id="highlightTab"
+          class="football-tab"
+          onclick="showHighlights()"
+        >
+          🎬 Highlights
+        </button>
+
+      </div>
+
+
+
+      <!-- =========================
+           LIVE MATCHES
+      ========================== -->
+
+      <section
+        id="liveSection"
+        class="content-section active"
+      >
+
+        <div class="section-title">
+
+          <span>
+            Upcoming & Live Matches
+          </span>
+
+        </div>
+
+
+        <div
+          id="liveMatches"
+          class="content-list"
+        >
+
+          <!-- Matches will be added by script.js -->
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =========================
+           HIGHLIGHTS
+      ========================== -->
+
+      <section
+        id="highlightSection"
+        class="content-section"
+      >
+
+        <div class="section-title">
+
+          <span>
+            Highlights
+          </span>
+
+        </div>
+
+
+        <div
+          id="highlights"
+          class="content-list"
+        >
+
+          <!-- Highlights will be added by script.js -->
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         SCREEN PAGE
+    ========================== -->
+
+    <main
+      id="screenPage"
+      class="page"
+    >
+
+      <header class="page-header">
+
+        <button
+          class="back-button"
+          onclick="goBackFromScreen()"
+          aria-label="Back"
+        >
+          ←
+        </button>
+
+        <h2>
+          Screen
+        </h2>
+
+      </header>
+
+
+      <section class="screen-container">
+
+
+        <!-- =========================
+             NOW SHOWING
+        ========================== -->
+
+        <div class="now-showing">
+
+          <span class="live-indicator">
+            ●
+          </span>
+
+          <span>
+            NOW SHOWING:
+          </span>
+
+          <strong id="nowShowing">
+            Select a match
+          </strong>
+
+        </div>
+
+
+
+        <!-- =========================
+             PLAYER
+        ========================== -->
+
+        <div
+          id="screenPlayer"
+          class="screen-player"
+        >
+
+          <div class="screen-placeholder">
+
+            <div class="screen-icon">
+              📺
+            </div>
+
+            <p>
+              Select a match to watch
+            </p>
+
+          </div>
+
+        </div>
+
+
+      </section>
+
+    </main>
+
+
+  </div>
+
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
