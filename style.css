@@ -24,7 +24,6 @@
 
   --green: #20e070;
 
-
 }
 
 
@@ -66,21 +65,16 @@ body {
 
 button,
 input {
-
   font: inherit;
 }
 
 button {
-
   border: 0;
-
   outline: 0;
 }
 
 a {
-
   color: inherit;
-
   text-decoration: none;
 }
 
@@ -150,7 +144,6 @@ a {
 }
 
 .brand > span:last-child span {
-
   color: var(--accent);
 }
 
@@ -561,7 +554,7 @@ a {
   display: grid;
 
   grid-template-columns:
-    repeat(3, minmax(0,1fr));
+    repeat(4, minmax(0,1fr));
 
   gap: 10px;
 }
@@ -579,7 +572,7 @@ a {
   gap: 8px;
 
   padding:
-    10px 14px;
+    10px 12px;
 
   border:
     1px solid
@@ -1495,21 +1488,18 @@ a {
 
     grid-template-columns:
       repeat(2, minmax(0,1fr));
-
   }
 
   .highlight-grid {
 
     grid-template-columns:
       repeat(2, minmax(0,1fr));
-
   }
 
   .tv-channel-grid {
 
     grid-template-columns:
       repeat(2, minmax(0,1fr));
-
   }
 
 }
@@ -1602,6 +1592,9 @@ a {
 
   .app-buttons {
 
+    grid-template-columns:
+      repeat(4, minmax(0,1fr));
+
     gap: 7px;
   }
 
@@ -1610,14 +1603,16 @@ a {
     min-height: 50px;
 
     padding:
-      8px 7px;
+      8px 5px;
 
-    font-size: 11px;
+    font-size: 10px;
+
+    gap: 5px;
   }
 
   .app-button-icon {
 
-    font-size: 16px;
+    font-size: 15px;
   }
 
 }
@@ -1687,8 +1682,40 @@ a {
 
     grid-template-columns:
       1fr;
-
   }
+
+
+  /* =======================================================
+     APP BUTTONS — 4 COLUMNS
+     ======================================================= */
+
+  .app-buttons {
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 6px;
+  }
+
+  .app-button {
+
+    min-height: 48px;
+
+    padding:
+      7px 3px;
+
+    border-radius: 10px;
+
+    font-size: 9px;
+
+    gap: 3px;
+  }
+
+  .app-button-icon {
+
+    font-size: 14px;
+  }
+
 
   /* =======================================================
      HIGHLIGHTS — 2 COLUMNS
@@ -1899,16 +1926,26 @@ a {
 
 @media (max-width: 360px) {
 
-  .app-button {
-
-    font-size: 10px;
+  .app-buttons {
 
     gap: 5px;
   }
 
+  .app-button {
+
+    min-height: 46px;
+
+    padding:
+      6px 2px;
+
+    font-size: 8px;
+
+    gap: 2px;
+  }
+
   .app-button-icon {
 
-    font-size: 14px;
+    font-size: 13px;
   }
 
 
