@@ -42,8 +42,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const tvButton =
     document.getElementById("tvButton");
 
-  const movieButton =
-    document.getElementById("movieButton");
+  const moviesButton =
+    document.getElementById("moviesButton");
 
 
   /* =========================================================
@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const tvContent =
     document.getElementById("tvContent");
 
-  const movieContent =
-    document.getElementById("movieContent");
+  const moviesContent =
+    document.getElementById("moviesContent");
 
 
   /* =========================================================
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
       footballButton,
       highlightsButton,
       tvButton,
-      movieButton
+      moviesButton
     ].forEach(function (item) {
 
       if (item) {
@@ -212,9 +212,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    if (movieContent) {
+    if (moviesContent) {
 
-      movieContent.hidden =
+      moviesContent.hidden =
         section !== "movies";
 
     }
@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showContent("movies");
 
     setActiveButton(
-      movieButton
+      moviesButton
     );
 
     setActiveNav(
@@ -356,9 +356,9 @@ document.addEventListener("DOMContentLoaded", function () {
      MOVIES BUTTON
      ========================================================= */
 
-  if (movieButton) {
+  if (moviesButton) {
 
-    movieButton.addEventListener(
+    moviesButton.addEventListener(
       "click",
       function () {
 
@@ -531,7 +531,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Update screen status.
+     * Update status.
      */
 
     if (screenStatus) {
@@ -684,7 +684,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           /*
            * Load channel into
-           * the main screen.
+           * the main Screen.
            */
 
           loadScreen(
@@ -727,7 +727,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           /*
            * Remove active state
-           * from all movies.
+           * from all movie cards.
            */
 
           movieCards.forEach(
@@ -752,7 +752,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           /*
            * Load movie into
-           * the main screen.
+           * the main Screen.
            */
 
           loadScreen(
