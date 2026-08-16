@@ -12,7 +12,23 @@
 
   <meta
     name="description"
-    content="Deeprowss Football Live and Highlights."
+    content="Deeprowss - football live, football highlights, TV channels and entertainment."
+  >
+
+  <title>
+    Deeprowss — Football Live, Highlights, TV & Movies
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <!-- Deeprowss PWA -->
+
+  <link
+    rel="manifest"
+    href="manifest.json"
   >
 
   <meta
@@ -20,12 +36,299 @@
     content="#07090d"
   >
 
-  <title>Deeprowss Football</title>
+  <meta
+    name="mobile-web-app-capable"
+    content="yes"
+  >
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  >
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black"
+  >
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Deeprowss"
+  >
 
   <link
-    rel="stylesheet"
-    href="style.css"
+    rel="icon"
+    type="image/png"
+    sizes="192x192"
+    href="icons/icon-192.png"
   >
+
+  <link
+    rel="apple-touch-icon"
+    href="icons/icon-192.png"
+  >
+
+
+  <!-- =========================================================
+       TV CHANNEL HOMEPAGE STYLES
+       ========================================================= -->
+
+  <style>
+
+    /* =====================================================
+       TV CHANNELS HOME SECTION
+       ===================================================== */
+
+    .home-tv-section {
+      padding: 10px 0 20px;
+    }
+
+
+    .home-tv-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+      gap: 14px;
+    }
+
+
+    .home-tv-card {
+      position: relative;
+
+      display: flex;
+
+      flex-direction: column;
+
+      min-width: 0;
+
+      padding: 18px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius: 15px;
+
+      background:
+        linear-gradient(
+          145deg,
+          var(--surface),
+          #0c1016
+        );
+
+      color: #fff;
+
+      text-decoration: none;
+
+      overflow: hidden;
+
+      transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+    }
+
+
+    .home-tv-card::after {
+      content: "";
+
+      position: absolute;
+
+      top: -55px;
+      right: -55px;
+
+      width: 120px;
+      height: 120px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(255,23,68,.08);
+
+      pointer-events: none;
+    }
+
+
+    .home-tv-card:hover {
+      transform:
+        translateY(-3px);
+
+      border-color:
+        rgba(255,23,68,.45);
+
+      box-shadow:
+        0 12px 28px
+        rgba(0,0,0,.25);
+    }
+
+
+    .home-tv-card-top {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 10px;
+
+      margin-bottom: 18px;
+    }
+
+
+    .home-tv-icon {
+      width: 46px;
+      height: 46px;
+
+      display: grid;
+
+      place-items: center;
+
+      flex-shrink: 0;
+
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #252b36,
+          #151922
+        );
+
+      border:
+        1px solid
+        rgba(255,255,255,.08);
+
+      font-size: 21px;
+    }
+
+
+    .home-tv-live {
+      padding: 5px 8px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(255,23,68,.10);
+
+      color:
+        #ff637d;
+
+      font-size: 8px;
+
+      font-weight: 900;
+
+      letter-spacing: 1px;
+
+      text-transform: uppercase;
+    }
+
+
+    .home-tv-card strong {
+      display: block;
+
+      margin-bottom: 5px;
+
+      font-size: 15px;
+
+      font-weight: 900;
+    }
+
+
+    .home-tv-category {
+      display: block;
+
+      margin-bottom: 16px;
+
+      color:
+        var(--muted);
+
+      font-size: 11px;
+    }
+
+
+    .home-tv-watch {
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      margin-top: auto;
+
+      padding: 9px 12px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.08);
+
+      border-radius: 9px;
+
+      background:
+        #171b23;
+
+      color: #fff;
+
+      font-size: 11px;
+
+      font-weight: 800;
+    }
+
+
+    .home-tv-card:hover .home-tv-watch {
+      background:
+        var(--accent);
+    }
+
+
+    @media (max-width: 900px) {
+
+      .home-tv-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+    }
+
+
+    @media (max-width: 500px) {
+
+      .home-tv-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+      }
+
+
+      .home-tv-card {
+        padding: 14px;
+      }
+
+
+      .home-tv-icon {
+        width: 39px;
+        height: 39px;
+
+        font-size: 18px;
+      }
+
+
+      .home-tv-card strong {
+        font-size: 13px;
+      }
+
+
+      .home-tv-watch {
+        padding: 8px 9px;
+
+        font-size: 10px;
+      }
+
+    }
+
+  </style>
 
 </head>
 
@@ -41,10 +344,13 @@
 
     <div class="container nav-wrap">
 
+
+      <!-- LOGO -->
+
       <a
         class="brand"
         href="index.html"
-        aria-label="Deeprowss Home"
+        aria-label="Deeprowss home"
       >
 
         <span class="brand-mark">
@@ -58,17 +364,23 @@
       </a>
 
 
+      <!-- MOBILE MENU -->
+
       <button
         type="button"
         class="menu-toggle"
         id="menuToggle"
-        aria-label="Open navigation"
+        aria-label="Open menu"
         aria-expanded="false"
         aria-controls="mainNav"
       >
+
         ☰
+
       </button>
 
+
+      <!-- NAVIGATION -->
 
       <nav
         class="main-nav"
@@ -76,355 +388,604 @@
         aria-label="Main navigation"
       >
 
-        <a
-          href="#"
-          id="navFootball"
-          class="active"
-        >
+        <a href="index.html">
+          Home
+        </a>
+
+
+        <a href="football.html">
           Football Live
         </a>
 
-        <a
-          href="#"
-          id="navHighlights"
-        >
+
+        <a href="highlights.html">
           Highlights
         </a>
 
+
+        <a href="movies.html">
+          Movies
+        </a>
+
+
+        <!-- NEW TV CHANNELS BUTTON -->
+
+        <a href="tv.html">
+          TV Channels
+        </a>
+
       </nav>
+
+
+      <!-- SEARCH -->
+
+      <div class="nav-search">
+
+        <label
+          class="sr-only"
+          for="siteSearch"
+        >
+
+          Search Deeprowss
+
+        </label>
+
+
+        <input
+          id="siteSearch"
+          type="search"
+          placeholder="Search..."
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Search Deeprowss"
+        >
+
+
+        <span aria-hidden="true">
+          ⌕
+        </span>
+
+      </div>
+
 
     </div>
 
   </header>
 
 
-
   <!-- =========================================================
-       MAIN APP
+       MAIN
        ========================================================= -->
 
-  <main class="football-app">
+  <main id="home">
 
 
     <!-- =======================================================
-         SCREEN
+         HERO
          ======================================================= -->
 
-    <section
-      class="screen-section"
-      id="screenSection"
-    >
+    <section class="hero">
 
-      <div class="container">
-
-        <div
-          class="screen-player"
-          id="screenPlayer"
-        >
+      <div class="hero-overlay"></div>
 
 
-          <!-- SCREEN STATUS -->
-
-          <div class="screen-status">
-
-            <span class="screen-live-dot"></span>
-
-            <span id="screenStatus">
-              READY
-            </span>
-
-          </div>
+      <div class="container hero-content">
 
 
-          <!-- VIDEO / STREAM SCREEN -->
-
-          <iframe
-            id="screenFrame"
-            src="about:blank"
-            title="Deeprowss Football Screen"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowfullscreen
-            referrerpolicy="no-referrer"
-          ></iframe>
+        <p class="eyebrow">
+          WELCOME TO DEEPROWSS
+        </p>
 
 
-          <!-- SCREEN PLACEHOLDER -->
+        <h1>
 
-          <div
-            class="screen-placeholder"
-            id="screenPlaceholder"
+          Football. Highlights.<br>
+
+          <span>
+            Entertainment.
+          </span>
+
+        </h1>
+
+
+        <p class="hero-copy">
+
+          Follow live football, catch the latest
+          highlights and discover entertainment
+          in one place.
+
+        </p>
+
+
+        <div class="hero-actions">
+
+
+          <a
+            class="btn btn-primary"
+            href="football.html"
           >
 
-            <div class="screen-placeholder-icon">
-              ⚽
-            </div>
+            Explore Football
 
-            <strong>
-              Select a match
-            </strong>
-
-          </div>
+          </a>
 
 
-          <!-- SCREEN INFORMATION -->
+          <a
+            class="btn btn-ghost"
+            href="movies.html"
+          >
 
-          <div class="screen-bottom">
+            Browse Movies
 
-            <div class="now-showing">
-
-              <span>
-                NOW SHOWING
-              </span>
-
-              <strong id="nowShowing">
-                Select a match
-              </strong>
-
-            </div>
-
-
-            <button
-              type="button"
-              class="fullscreen-button"
-              id="fullscreenButton"
-              aria-label="Fullscreen"
-            >
-              ⛶
-            </button>
-
-          </div>
+          </a>
 
 
         </div>
+
 
       </div>
 
     </section>
 
 
-
     <!-- =======================================================
-         MAIN TWO BUTTONS
+         SEARCH STATUS
          ======================================================= -->
 
     <section
-      class="app-menu"
-      id="appMenu"
+      class="search-section"
+      aria-live="polite"
     >
 
       <div class="container">
 
-        <div class="app-buttons">
+        <div id="searchStatus"></div>
+
+      </div>
+
+    </section>
 
 
-          <!-- FOOTBALL LIVE -->
+    <div class="container">
 
-          <button
-            type="button"
-            class="app-button football-button active"
-            id="footballButton"
-          >
 
-            <span class="app-button-icon">
-              ⚽
-            </span>
+      <!-- =====================================================
+           FOOTBALL LIVE
+           ===================================================== -->
 
-            <span>
+      <section
+        class="section"
+        id="live"
+      >
+
+
+        <div class="section-heading">
+
+
+          <div>
+
+            <p class="eyebrow">
+              FOOTBALL
+            </p>
+
+
+            <h2>
               Football Live
-            </span>
+            </h2>
 
-          </button>
+          </div>
 
 
-          <!-- HIGHLIGHTS -->
-
-          <button
-            type="button"
-            class="app-button highlights-button"
-            id="highlightsButton"
+          <a
+            class="section-link"
+            href="football.html"
           >
 
-            <span class="app-button-icon">
-              🎬
-            </span>
+            View all →
 
-            <span>
-              Highlights
-            </span>
+          </a>
 
-          </button>
-
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-
-    <!-- =======================================================
-         FOOTBALL LIVE
-         ======================================================= -->
-
-    <section
-      class="content-section"
-      id="footballContent"
-    >
-
-      <div class="container">
-
-
-        <div class="content-heading">
-
-          <h1>
-            Upcoming &amp; Live Matches
-          </h1>
-
-          <span
-            class="content-count"
-            id="matchCount"
-          >
-            1
-          </span>
 
         </div>
 
 
         <div
-          class="match-grid"
-          id="matchList"
+          class="horizontal-posts"
+          id="livePosts"
         >
+
+          <div class="loading">
+
+            Loading football...
+
+          </div>
+
+        </div>
+
+
+      </section>
+
+
+      <!-- =====================================================
+           LATEST HIGHLIGHTS
+           ===================================================== -->
+
+      <section
+        class="section"
+        id="highlights"
+      >
+
+
+        <div class="section-heading">
+
+
+          <div>
+
+            <p class="eyebrow">
+              FOOTBALL
+            </p>
+
+
+            <h2>
+              Latest Highlights
+            </h2>
+
+          </div>
+
+
+          <a
+            class="section-link"
+            href="highlights.html"
+          >
+
+            More highlights →
+
+          </a>
+
+
+        </div>
+
+
+        <div
+          class="horizontal-posts"
+          id="highlightPosts"
+        >
+
+          <div class="loading">
+
+            Loading highlights...
+
+          </div>
+
+        </div>
+
+
+      </section>
+
+
+      <!-- =====================================================
+           MOVIES
+           ===================================================== -->
+
+      <section
+        class="section"
+        id="movies"
+      >
+
+
+        <div class="section-heading">
+
+
+          <div>
+
+            <p class="eyebrow">
+              ENTERTAINMENT
+            </p>
+
+
+            <h2>
+              Movies
+            </h2>
+
+          </div>
+
+
+          <a
+            class="section-link"
+            href="movies.html"
+          >
+
+            Browse all →
+
+          </a>
+
+
+        </div>
+
+
+        <div
+          class="horizontal-posts"
+          id="moviePosts"
+        >
+
+          <div class="loading">
+
+            Loading movies...
+
+          </div>
+
+        </div>
+
+
+      </section>
+
+
+      <!-- =====================================================
+           TV CHANNELS
+           ONE CHANNEL FROM EACH CATEGORY
+           ===================================================== -->
+
+      <section
+        class="section home-tv-section"
+        id="tv"
+      >
+
+
+        <div class="section-heading">
+
+
+          <div>
+
+            <p class="eyebrow">
+              DEEPROWSS LIVE TV
+            </p>
+
+
+            <h2>
+              TV Channels
+            </h2>
+
+          </div>
+
+
+          <a
+            class="section-link"
+            href="tv.html"
+          >
+
+            View all →
+
+          </a>
+
+
+        </div>
+
+
+        <div class="home-tv-grid">
 
 
           <!-- =================================================
-               CHELSEA VS JUVENTUS
+               SPORTS
                ================================================= -->
 
-          <button
-            type="button"
-            class="match-card"
-            data-name="Chelsea vs Juventus"
-            data-url="https://filemoon.org/en/E1x3AqDe3yk6/embed"
+          <a
+            class="home-tv-card"
+            href="https://bharadwajpro.github.io/m3u8-player/player/#https://bein-xtra-bein.amagi.tv/playlist.m3u8"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Watch beIN Sports Extra"
           >
 
-            <span class="match-status live">
-              LIVE
-            </span>
+            <div class="home-tv-card-top">
 
-            <span class="match-teams">
-              Chelsea vs Juventus
-            </span>
-
-            <span class="match-time">
-              Live
-            </span>
-
-          </button>
+              <span class="home-tv-icon">
+                ⚽
+              </span>
 
 
-        </div>
-
-
-        <div
-          class="empty-state"
-          id="footballEmpty"
-          hidden
-        >
-          No matches available.
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-
-    <!-- =======================================================
-         HIGHLIGHTS
-         ======================================================= -->
-
-    <section
-      class="content-section highlights-content"
-      id="highlightsContent"
-      hidden
-    >
-
-      <div class="container">
-
-
-        <div class="content-heading">
-
-          <h1>
-            Football Highlights
-          </h1>
-
-          <span
-            class="content-count"
-            id="highlightCount"
-          >
-            1
-          </span>
-
-        </div>
-
-
-        <div
-          class="highlight-grid"
-          id="highlightList"
-        >
-
-
-          <!-- =================================================
-               CHELSEA VS JUVENTUS HIGHLIGHT
-               ================================================= -->
-
-          <button
-            type="button"
-            class="highlight-card"
-            data-name="Chelsea vs Juventus Highlights"
-            data-url="https://filemoon.org/en/LJlGnPwv315w/embed"
-          >
-
-            <div class="highlight-thumbnail">
-
-              <span>
-                ▶
+              <span class="home-tv-live">
+                LIVE
               </span>
 
             </div>
 
+
             <strong>
-              Chelsea vs Juventus
+              beIN Sports Extra
             </strong>
 
-            <small>
-              Highlights
-            </small>
 
-          </button>
+            <span class="home-tv-category">
+              Sports
+            </span>
+
+
+            <span class="home-tv-watch">
+              ▶ Watch Channel
+            </span>
+
+          </a>
+
+
+          <!-- =================================================
+               MOVIES
+               ================================================= -->
+
+          <a
+            class="home-tv-card"
+            href="https://bharadwajpro.github.io/m3u8-player/player/#https://iptv.prosto.tv/ch63/tracks-v1a1/mono.m3u8"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Watch FilmBox"
+          >
+
+            <div class="home-tv-card-top">
+
+              <span class="home-tv-icon">
+                🎬
+              </span>
+
+
+              <span class="home-tv-live">
+                LIVE
+              </span>
+
+            </div>
+
+
+            <strong>
+              FilmBox
+            </strong>
+
+
+            <span class="home-tv-category">
+              Movies
+            </span>
+
+
+            <span class="home-tv-watch">
+              ▶ Watch Channel
+            </span>
+
+          </a>
+
+
+          <!-- =================================================
+               MUSIC
+               ================================================= -->
+
+          <a
+            class="home-tv-card"
+            href="https://bharadwajpro.github.io/m3u8-player/player/#https://stream.ecable.tv/afrobeats/index.m3u8"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Watch Afrobeat TV"
+          >
+
+            <div class="home-tv-card-top">
+
+              <span class="home-tv-icon">
+                🎵
+              </span>
+
+
+              <span class="home-tv-live">
+                LIVE
+              </span>
+
+            </div>
+
+
+            <strong>
+              Afrobeat TV
+            </strong>
+
+
+            <span class="home-tv-category">
+              African Music
+            </span>
+
+
+            <span class="home-tv-watch">
+              ▶ Watch Channel
+            </span>
+
+          </a>
+
+
+          <!-- =================================================
+               NEWS
+               ================================================= -->
+
+          <a
+            class="home-tv-card"
+            href="https://bharadwajpro.github.io/m3u8-player/player/#https://abcnews-streams.akamaized.net/hls/live/2023560-b/abcnewshudson1/master_400.m3u8"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Watch ABC News"
+          >
+
+            <div class="home-tv-card-top">
+
+              <span class="home-tv-icon">
+                📰
+              </span>
+
+
+              <span class="home-tv-live">
+                LIVE
+              </span>
+
+            </div>
+
+
+            <strong>
+              ABC News
+            </strong>
+
+
+            <span class="home-tv-category">
+              World News
+            </span>
+
+
+            <span class="home-tv-watch">
+              ▶ Watch Channel
+            </span>
+
+          </a>
 
 
         </div>
 
 
-        <div
-          class="empty-state"
-          id="highlightEmpty"
-          hidden
-        >
-          No highlights available.
+      </section>
+
+
+      <!-- =====================================================
+           ABOUT
+           ===================================================== -->
+
+      <section class="section about">
+
+
+        <div>
+
+          <p class="eyebrow">
+            ABOUT DEEPROWSS
+          </p>
+
+
+          <h2>
+
+            Your daily destination
+            for football & entertainment.
+
+          </h2>
+
         </div>
 
 
-      </div>
+        <p>
 
-    </section>
+          Deeprowss brings football coverage,
+          highlights, TV channels and entertainment
+          together in a fast, mobile-friendly
+          experience.
+
+          Video content is loaded from external
+          sources.
+
+        </p>
+
+
+      </section>
+
+
+    </div>
 
 
   </main>
-
 
 
   <!-- =========================================================
@@ -433,20 +994,170 @@
 
   <footer class="footer">
 
+
     <div class="container footer-wrap">
 
-      <strong>
-        DEE<span>PROWSS</span>
-      </strong>
 
-      <span>
-        Football • Highlights
-      </span>
+      <div>
+
+
+        <strong>
+          DEE<span>PROWSS</span>
+        </strong>
+
+
+        <p>
+          Football • Highlights • TV • Entertainment
+        </p>
+
+
+      </div>
+
+
+      <div class="footer-links">
+
+
+        <a href="index.html">
+          Home
+        </a>
+
+
+        <a href="football.html">
+          Football Live
+        </a>
+
+
+        <a href="highlights.html">
+          Highlights
+        </a>
+
+
+        <a href="movies.html">
+          Movies
+        </a>
+
+
+        <!-- NEW TV CHANNELS LINK -->
+
+        <a href="tv.html">
+          TV Channels
+        </a>
+
+
+      </div>
+
+
+      <p class="copyright">
+
+        ©
+
+        <span id="year"></span>
+
+        Deeprowss.
+
+        All rights reserved.
+
+      </p>
+
 
     </div>
 
+
   </footer>
 
+
+  <!-- =========================================================
+       VIDEO MODAL
+       ========================================================= -->
+
+  <div
+    class="modal"
+    id="embedModal"
+    aria-hidden="true"
+  >
+
+
+    <div
+      class="modal-backdrop"
+      onclick="closeEmbed()"
+    ></div>
+
+
+    <div
+      class="modal-box"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+    >
+
+
+      <button
+        type="button"
+        class="modal-close"
+        onclick="closeEmbed()"
+        aria-label="Close video"
+      >
+
+        ×
+
+      </button>
+
+
+      <h2 id="modalTitle">
+        Video
+      </h2>
+
+
+      <div
+        class="embed-area"
+        id="embedArea"
+      >
+
+        <div class="embed-placeholder">
+
+
+          <strong>
+            Select a video
+          </strong>
+
+
+          <span class="embed-note">
+            The video player will appear here.
+          </span>
+
+
+        </div>
+
+      </div>
+
+
+      <p class="embed-note">
+
+        Video content is loaded from an
+        external source.
+
+      </p>
+
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       NO RESULTS
+       ========================================================= -->
+
+  <div
+    class="no-results"
+    id="noResults"
+    role="status"
+    aria-live="polite"
+  >
+
+    No matching content found.
+
+  </div>
 
 
   <!-- =========================================================
