@@ -274,7 +274,7 @@ a {
  
   position: sticky; 
  
-  top: 66px; 
+  top: 67px; 
  
   z-index: 90; 
  
@@ -1281,9 +1281,9 @@ a {
  
   .screen-player { 
  
-    border-radius: 12px; 
+    top: 61px; 
  
-    top: 60px; 
+    border-radius: 12px; 
   } 
  
   .screen-player iframe { 
@@ -1377,6 +1377,7 @@ a {
   .highlight-thumbnail { 
  
     height: 175px; 
+ 
   } 
  
   .tv-category { 
