@@ -36,7 +36,20 @@
 }
 
 html {
+
   scroll-behavior: smooth;
+
+  /*
+   * Discourage unwanted touch gestures such as
+   * double-tap zoom while preserving normal scrolling.
+   */
+  touch-action: manipulation;
+
+  /*
+   * Prevent accidental text/image selection while
+   * performing app-like touch interactions.
+   */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -61,6 +74,18 @@ body {
     sans-serif;
 
   -webkit-font-smoothing: antialiased;
+
+  /*
+   * Keep normal vertical/horizontal scrolling available
+   * while discouraging browser gesture zoom.
+   */
+  touch-action: manipulation;
+
+  /*
+   * Prevent browser overscroll effects from accidentally
+   * triggering unwanted navigation/gesture behavior.
+   */
+  overscroll-behavior-x: none;
 }
 
 button,
@@ -289,6 +314,11 @@ a {
   box-shadow:
     0 20px 60px
     rgba(0,0,0,.35);
+
+  /*
+   * Treat the player as an app-like touch surface.
+   */
+  touch-action: manipulation;
 }
 
 
@@ -362,6 +392,12 @@ a {
 
   transition:
     opacity .25s ease;
+
+  /*
+   * Do not allow the parent page to interpret
+   * normal player interaction as a page gesture.
+   */
+  touch-action: manipulation;
 }
 
 
@@ -523,6 +559,8 @@ a {
   transition:
     background .2s ease,
     transform .2s ease;
+
+  touch-action: manipulation;
 }
 
 .fullscreen-button:hover {
@@ -558,6 +596,11 @@ a {
   scrollbar-width: none;
 
   -webkit-overflow-scrolling: touch;
+
+  /*
+   * Allow horizontal scrolling of the menu.
+   */
+  touch-action: pan-x;
 }
 
 .app-buttons::-webkit-scrollbar {
@@ -611,6 +654,8 @@ a {
     background .2s ease,
     border-color .2s ease,
     color .2s ease;
+
+  touch-action: manipulation;
 }
 
 .app-button:hover {
@@ -764,6 +809,8 @@ a {
     transform .2s ease,
     border-color .2s ease,
     box-shadow .2s ease;
+
+  touch-action: manipulation;
 }
 
 .match-card:hover {
@@ -883,6 +930,8 @@ a {
     border-color .2s ease,
     background .2s ease,
     box-shadow .2s ease;
+
+  touch-action: manipulation;
 }
 
 .highlight-card::before {
@@ -1158,6 +1207,8 @@ a {
     border-color .2s ease,
     background .2s ease,
     box-shadow .2s ease;
+
+  touch-action: manipulation;
 }
 
 .tv-channel::before {
@@ -1438,6 +1489,8 @@ a {
     transform .2s ease,
     border-color .2s ease,
     box-shadow .2s ease;
+
+  touch-action: manipulation;
 }
 
 .movie-card::before {
@@ -1748,6 +1801,8 @@ a {
     gap: 8px;
 
     padding-bottom: 2px;
+
+    touch-action: pan-x;
   }
 
   .app-button {
