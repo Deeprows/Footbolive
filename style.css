@@ -966,20 +966,24 @@ a {
 }
 
 
-/* TV GRID */
+/* =========================================================
+   TV CHANNEL GRID
+   ========================================================= */
 
 .tv-channel-grid {
 
   display: grid;
 
   grid-template-columns:
-    repeat(4, minmax(0,1fr));
+    repeat(2, minmax(0, 1fr));
 
-  gap: 10px;
+  gap: 12px;
 }
 
 
-/* TV CARD */
+/* =========================================================
+   TV CHANNEL CARD
+   ========================================================= */
 
 .tv-channel {
 
@@ -987,27 +991,29 @@ a {
 
   min-width: 0;
 
+  min-height: 155px;
+
   display: flex;
 
-  align-items: center;
+  flex-direction: column;
 
-  gap: 11px;
+  align-items: flex-start;
 
-  min-height: 72px;
+  justify-content: space-between;
 
-  padding: 12px;
+  padding: 16px;
 
   border:
     1px solid
-    var(--line);
+    rgba(255,255,255,.09);
 
-  border-radius: 12px;
+  border-radius: 18px;
 
   background:
     linear-gradient(
       145deg,
-      var(--surface),
-      #0c1016
+      #11151c,
+      #0b0e14
     );
 
   color: #fff;
@@ -1018,6 +1024,8 @@ a {
 
   overflow: hidden;
 
+  isolation: isolate;
+
   transition:
     transform .2s ease,
     border-color .2s ease,
@@ -1025,40 +1033,96 @@ a {
     box-shadow .2s ease;
 }
 
+
+/* DECORATIVE RED SHAPE */
+
+.tv-channel::before {
+
+  content: "";
+
+  position: absolute;
+
+  width: 125px;
+  height: 125px;
+
+  top: -70px;
+  right: -5px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.09);
+
+  z-index: -1;
+}
+
+.tv-channel::after {
+
+  content: "";
+
+  position: absolute;
+
+  width: 95px;
+  height: 95px;
+
+  top: -53px;
+  right: 25px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.035);
+
+  z-index: -1;
+}
+
+
+/* HOVER */
+
 .tv-channel:hover {
 
   transform:
-    translateY(-2px);
+    translateY(-3px);
 
   border-color:
     rgba(255,23,68,.4);
 
   box-shadow:
-    0 8px 20px
-    rgba(0,0,0,.2);
+    0 10px 25px
+    rgba(0,0,0,.28);
 }
+
+
+/* ACTIVE */
 
 .tv-channel.active {
 
   border-color:
-    var(--accent);
+    rgba(255,23,68,.65);
 
   background:
     linear-gradient(
       145deg,
-      rgba(255,23,68,.16),
+      rgba(255,23,68,.13),
       #10141b
     );
 
   box-shadow:
     0 0 0 1px
-    rgba(255,23,68,.12);
+    rgba(255,23,68,.08),
+    0 10px 25px
+    rgba(0,0,0,.22);
 }
+
+
+/* =========================================================
+   TV CHANNEL ICON
+   ========================================================= */
 
 .tv-channel-icon {
 
-  width: 40px;
-  height: 40px;
+  width: 58px;
+  height: 58px;
 
   display: grid;
 
@@ -1066,7 +1130,7 @@ a {
 
   flex-shrink: 0;
 
-  border-radius: 10px;
+  border-radius: 16px;
 
   background:
     linear-gradient(
@@ -1077,16 +1141,41 @@ a {
 
   border:
     1px solid
-    rgba(255,255,255,.08);
+    rgba(255,255,255,.09);
 
-  font-size: 19px;
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.05),
+    0 5px 15px
+    rgba(0,0,0,.2);
+
+  font-size: 27px;
+
+  line-height: 1;
+
+  position: relative;
+
+  z-index: 2;
 }
+
+
+/* =========================================================
+   TV CHANNEL INFO
+   ========================================================= */
 
 .tv-channel-info {
 
   min-width: 0;
 
-  flex: 1;
+  width: 100%;
+
+  padding-top: 13px;
+
+  padding-right: 5px;
+
+  position: relative;
+
+  z-index: 2;
 }
 
 .tv-channel-info strong {
@@ -1095,11 +1184,15 @@ a {
 
   overflow: hidden;
 
-  margin-bottom: 3px;
+  margin-bottom: 6px;
 
-  font-size: 13px;
+  color: #fff;
+
+  font-size: 15px;
 
   font-weight: 900;
+
+  line-height: 1.2;
 
   text-overflow: ellipsis;
 
@@ -1110,30 +1203,72 @@ a {
 
   display: block;
 
-  color: var(--muted);
+  color:
+    #9aa3b2;
 
-  font-size: 10px;
+  font-size: 11px;
+
+  line-height: 1.2;
 }
+
+
+/* =========================================================
+   LIVE STATUS
+   ========================================================= */
 
 .tv-channel-status {
 
-  flex-shrink: 0;
+  position: absolute;
 
-  padding: 4px 6px;
+  top: 16px;
+  right: 16px;
+
+  z-index: 3;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-width: 58px;
+
+  min-height: 36px;
+
+  padding:
+    7px 10px;
 
   border-radius: 999px;
 
   background:
-    rgba(255,23,68,.1);
+    rgba(255,23,68,.13);
 
   color:
-    #ff637d;
+    #ff5b78;
 
-  font-size: 7px;
+  font-size: 10px;
 
   font-weight: 950;
 
-  letter-spacing: .8px;
+  letter-spacing: 1px;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255,23,68,.05);
+}
+
+
+/* =========================================================
+   TV CHANNEL ACTIVE STATUS
+   ========================================================= */
+
+.tv-channel.active .tv-channel-status {
+
+  background:
+    rgba(255,23,68,.2);
+
+  color:
+    #ff6b86;
 }
 
 
@@ -1329,6 +1464,10 @@ a {
 }
 
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 550px) {
 
   .container {
@@ -1418,18 +1557,105 @@ a {
     font-size: 9px;
   }
 
+
+  /* =======================================================
+     TV CHANNELS — ALWAYS 2 COLUMNS ON MOBILE
+     ======================================================= */
+
   .tv-channel-grid {
 
     grid-template-columns:
-      1fr;
+      repeat(2, minmax(0, 1fr));
 
-    gap: 8px;
+    gap: 9px;
   }
+
+
+  /* MOBILE TV CARD */
 
   .tv-channel {
 
-    min-height: 67px;
+    min-height: 145px;
+
+    padding: 12px;
+
+    border-radius: 15px;
   }
+
+
+  /* MOBILE ICON */
+
+  .tv-channel-icon {
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 14px;
+
+    font-size: 23px;
+  }
+
+
+  /* MOBILE LIVE BADGE */
+
+  .tv-channel-status {
+
+    top: 12px;
+    right: 12px;
+
+    min-width: auto;
+
+    min-height: 31px;
+
+    padding:
+      6px 8px;
+
+    font-size: 8px;
+
+    letter-spacing: .8px;
+  }
+
+
+  /* MOBILE CHANNEL INFO */
+
+  .tv-channel-info {
+
+    padding-top: 9px;
+  }
+
+  .tv-channel-info strong {
+
+    margin-bottom: 5px;
+
+    font-size: 13px;
+  }
+
+  .tv-channel-info small {
+
+    font-size: 10px;
+  }
+
+
+  /* MOBILE DECORATION */
+
+  .tv-channel::before {
+
+    width: 105px;
+    height: 105px;
+
+    top: -57px;
+    right: -8px;
+  }
+
+  .tv-channel::after {
+
+    width: 80px;
+    height: 80px;
+
+    top: -44px;
+    right: 19px;
+  }
+
 
   .footer-wrap {
 
@@ -1440,6 +1666,10 @@ a {
 
 }
 
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
 
 @media (max-width: 360px) {
 
@@ -1453,6 +1683,52 @@ a {
   .app-button-icon {
 
     font-size: 14px;
+  }
+
+
+  .tv-channel-grid {
+
+    gap: 7px;
+  }
+
+  .tv-channel {
+
+    min-height: 138px;
+
+    padding: 10px;
+
+    border-radius: 14px;
+  }
+
+  .tv-channel-icon {
+
+    width: 44px;
+    height: 44px;
+
+    border-radius: 12px;
+
+    font-size: 21px;
+  }
+
+  .tv-channel-status {
+
+    top: 10px;
+    right: 10px;
+
+    padding:
+      5px 7px;
+
+    font-size: 7px;
+  }
+
+  .tv-channel-info strong {
+
+    font-size: 12px;
+  }
+
+  .tv-channel-info small {
+
+    font-size: 9px;
   }
 
 }
