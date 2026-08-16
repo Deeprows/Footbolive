@@ -1,122 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  /* =========================
-     MATCH DATA
-  ========================= */
-
-  const liveMatches = [
-
-    {
-      id: "chelsea-juventus",
-      homeTeam: "Chelsea",
-      awayTeam: "Juventus",
-      title: "Chelsea vs Juventus",
-
-      status: "LIVE",
-      type: "live",
-      time: "LIVE",
-
-      playerType: "iframe",
-      playerUrl: ""
-    },
-
-    {
-      id: "arsenal-barcelona",
-      homeTeam: "Arsenal",
-      awayTeam: "Barcelona",
-      title: "Arsenal vs Barcelona",
-
-      status: "UPCOMING",
-      type: "upcoming",
-      time: "17:00",
-
-      playerType: "iframe",
-      playerUrl: ""
-    },
-
-    {
-      id: "real-madrid-bayern",
-      homeTeam: "Real Madrid",
-      awayTeam: "Bayern",
-      title: "Real Madrid vs Bayern",
-
-      status: "UPCOMING",
-      type: "upcoming",
-      time: "20:00",
-
-      playerType: "iframe",
-      playerUrl: ""
-    }
-
-  ];
+  "use strict";
 
 
-  /* =========================
-     HIGHLIGHTS
-  ========================= */
+  /* =========================================================
+     DEEPROWSS FOOTBALL APP
+     ========================================================= */
 
-  const highlights = [
-
-    {
-      id: "chelsea-juventus-highlight",
-      title: "Chelsea vs Juventus",
-      status: "Highlight",
-
-      playerType: "iframe",
-      playerUrl: ""
-    },
-
-    {
-      id: "arsenal-barcelona-highlight",
-      title: "Arsenal vs Barcelona",
-      status: "Highlight",
-
-      playerType: "iframe",
-      playerUrl: ""
-    },
-
-    {
-      id: "real-madrid-bayern-highlight",
-      title: "Real Madrid vs Bayern",
-      status: "Highlight",
-
-      playerType: "iframe",
-      playerUrl: ""
-    }
-
-  ];
+  console.log("Deeprowss Football App loaded");
 
 
-  /* =========================
+  /* =========================================================
      ELEMENTS
-  ========================= */
+     ========================================================= */
 
-  const homePage =
-    document.getElementById("homePage");
+  const screenFrame =
+    document.getElementById("screenFrame");
 
-  const footballPage =
-    document.getElementById("footballPage");
+  const screenPlaceholder =
+    document.getElementById("screenPlaceholder");
 
-  const screenPage =
-    document.getElementById("screenPage");
-
-  const liveSection =
-    document.getElementById("liveSection");
-
-  const highlightSection =
-    document.getElementById("highlightSection");
-
-  const liveTab =
-    document.getElementById("liveTab");
-
-  const highlightTab =
-    document.getElementById("highlightTab");
-
-  const liveMatchesContainer =
-    document.getElementById("liveMatches");
-
-  const highlightsContainer =
-    document.getElementById("highlights");
+  const screenStatus =
+    document.getElementById("screenStatus");
 
   const nowShowing =
     document.getElementById("nowShowing");
@@ -124,1341 +29,103 @@ document.addEventListener("DOMContentLoaded", function () {
   const screenPlayer =
     document.getElementById("screenPlayer");
 
+  const fullscreenButton =
+    document.getElementById("fullscreenButton");
 
-  /* =========================
-     APP STATE
-  ========================= */
 
-  let previousPage = "home";
+  const footballButton =
+    document.getElementById("footballButton");
+
+  const highlightsButton =
+    document.getElementById("highlightsButton");
+
+
+  const footballContent =
+    document.getElementById("footballContent");
+
+  const highlightsContent =
+    document.getElementById("highlightsContent");
+
+
+  const matchList =
+    document.getElementById("matchList");
+
+  const highlightList =
+    document.getElementById("highlightList");
+
+
+  const matchCount =
+    document.getElementById("matchCount");
+
+  const highlightCount =
+    document.getElementById("highlightCount");
+
+
+  const footballEmpty =
+    document.getElementById("footballEmpty");
+
+  const highlightEmpty =
+    document.getElementById("highlightEmpty");
+
+
+  const navFootball =
+    document.getElementById("navFootball");
+
+  const navHighlights =
+    document.getElementById("navHighlights");
+
+
+  const menuToggle =
+    document.getElementById("menuToggle");
+
+  const mainNav =
+    document.getElementById("mainNav");
+
+
+  /* =========================================================
+     INITIAL STATE
+     ========================================================= */
+
+  let currentMode = "football";
 
   let currentItem = null;
 
-  let currentPlayer = null;
 
+  /* =========================================================
+     SCREEN
+     ========================================================= */
 
-  /* =========================
-     RENDER LIVE MATCHES
-  ========================= */
+  function resetScreen() {
 
-  function renderLiveMatches() {
-
-    if (!liveMatchesContainer) {
+    if (!screenFrame) {
       return;
     }
 
+    screenFrame.style.opacity = "0";
 
-    liveMatchesContainer.innerHTML = "";
+    screenFrame.src = "about:blank";
+
+    setTimeout(function () {
+
+      screenFrame.style.opacity = "1";
+
+    }, 150);
 
 
-    if (liveMatches.length === 0) {
+    if (screenPlaceholder) {
 
-      liveMatchesContainer.innerHTML =
-        '<div class="empty-message">No matches available</div>';
-
-      return;
+      screenPlaceholder.style.display =
+        "flex";
 
     }
 
 
-    liveMatches.forEach(function (match) {
+    if (screenStatus) {
 
-      const card =
-        document.createElement("button");
-
-
-      card.type = "button";
-
-      card.className =
-        "content-card";
-
-
-      if (match.status === "LIVE") {
-
-        card.classList.add(
-          "live-match-card"
-        );
-
-      } else {
-
-        card.classList.add(
-          "upcoming-match-card"
-        );
-
-      }
-
-
-      /* =========================
-         CARD TOP
-      ========================= */
-
-      const cardTop =
-        document.createElement("div");
-
-
-      cardTop.className =
-        "card-top";
-
-
-      const status =
-        document.createElement("span");
-
-
-      status.className =
-        match.status === "LIVE"
-          ? "live-status"
-          : "upcoming-status";
-
-
-      status.textContent =
-        match.status;
-
-
-      const matchTime =
-        document.createElement("span");
-
-
-      matchTime.className =
-        "match-time";
-
-
-      matchTime.textContent =
-        match.time || "";
-
-
-      cardTop.appendChild(status);
-
-      cardTop.appendChild(matchTime);
-
-
-      /* =========================
-         MATCH AREA
-      ========================= */
-
-      const matchArea =
-        document.createElement("div");
-
-
-      matchArea.className =
-        "match-area";
-
-
-      const home =
-        document.createElement("div");
-
-
-      home.className =
-        "team";
-
-
-      const homeLogo =
-        document.createElement("div");
-
-
-      homeLogo.className =
-        "team-logo";
-
-
-      homeLogo.textContent =
-        "⚽";
-
-
-      const homeName =
-        document.createElement("span");
-
-
-      homeName.className =
-        "team-name";
-
-
-      homeName.textContent =
-        match.homeTeam;
-
-
-      home.appendChild(homeLogo);
-
-      home.appendChild(homeName);
-
-
-      /* =========================
-         CENTER
-      ========================= */
-
-      const center =
-        document.createElement("div");
-
-
-      center.className =
-        "match-center";
-
-
-      const versus =
-        document.createElement("span");
-
-
-      versus.className =
-        "versus";
-
-
-      versus.textContent =
-        "VS";
-
-
-      center.appendChild(versus);
-
-
-      /* =========================
-         AWAY TEAM
-      ========================= */
-
-      const away =
-        document.createElement("div");
-
-
-      away.className =
-        "team";
-
-
-      const awayLogo =
-        document.createElement("div");
-
-
-      awayLogo.className =
-        "team-logo";
-
-
-      awayLogo.textContent =
-        "⚽";
-
-
-      const awayName =
-        document.createElement("span");
-
-
-      awayName.className =
-        "team-name";
-
-
-      awayName.textContent =
-        match.awayTeam;
-
-
-      away.appendChild(awayLogo);
-
-      away.appendChild(awayName);
-
-
-      matchArea.appendChild(home);
-
-      matchArea.appendChild(center);
-
-      matchArea.appendChild(away);
-
-
-      /* =========================
-         WATCH BUTTON
-      ========================= */
-
-      const watch =
-        document.createElement("span");
-
-
-      watch.className =
-        "card-watch";
-
-
-      watch.textContent =
-        match.status === "LIVE"
-          ? "▶ WATCH"
-          : "VIEW";
-
-
-      /* =========================
-         BUILD CARD
-      ========================= */
-
-      card.appendChild(cardTop);
-
-      card.appendChild(matchArea);
-
-      card.appendChild(watch);
-
-
-      /* =========================
-         CLICK
-      ========================= */
-
-      card.addEventListener(
-        "click",
-        function () {
-
-          openMatchOnScreen(match);
-
-        }
-      );
-
-
-      liveMatchesContainer.appendChild(card);
-
-    });
-
-  }
-
-
-  /* =========================
-     RENDER HIGHLIGHTS
-  ========================= */
-
-  function renderHighlights() {
-
-    if (!highlightsContainer) {
-      return;
-    }
-
-
-    highlightsContainer.innerHTML = "";
-
-
-    if (highlights.length === 0) {
-
-      highlightsContainer.innerHTML =
-        '<div class="empty-message">No highlights available</div>';
-
-      return;
+      screenStatus.textContent =
+        "READY";
 
     }
-
-
-    highlights.forEach(function (highlight) {
-
-      const card =
-        document.createElement("button");
-
-
-      card.type =
-        "button";
-
-
-      card.className =
-        "content-card highlight-card";
-
-
-      /* =========================
-         THUMBNAIL
-      ========================= */
-
-      const thumbnail =
-        document.createElement("div");
-
-
-      thumbnail.className =
-        "highlight-thumbnail";
-
-
-      const icon =
-        document.createElement("span");
-
-
-      icon.className =
-        "highlight-icon";
-
-
-      icon.textContent =
-        "🎬";
-
-
-      thumbnail.appendChild(icon);
-
-
-      /* =========================
-         PLAY
-      ========================= */
-
-      const play =
-        document.createElement("span");
-
-
-      play.className =
-        "highlight-play";
-
-
-      play.textContent =
-        "▶";
-
-
-      thumbnail.appendChild(play);
-
-
-      /* =========================
-         INFO
-      ========================= */
-
-      const info =
-        document.createElement("div");
-
-
-      info.className =
-        "highlight-info";
-
-
-      const title =
-        document.createElement("div");
-
-
-      title.className =
-        "card-title";
-
-
-      title.textContent =
-        highlight.title;
-
-
-      const status =
-        document.createElement("div");
-
-
-      status.className =
-        "card-status";
-
-
-      status.textContent =
-        "HIGHLIGHT";
-
-
-      info.appendChild(title);
-
-      info.appendChild(status);
-
-
-      /* =========================
-         ARROW
-      ========================= */
-
-      const arrow =
-        document.createElement("div");
-
-
-      arrow.className =
-        "card-arrow";
-
-
-      arrow.textContent =
-        "→";
-
-
-      /* =========================
-         BUILD CARD
-      ========================= */
-
-      card.appendChild(thumbnail);
-
-      card.appendChild(info);
-
-      card.appendChild(arrow);
-
-
-      /* =========================
-         CLICK
-      ========================= */
-
-      card.addEventListener(
-        "click",
-        function () {
-
-          openHighlightOnScreen(
-            highlight
-          );
-
-        }
-      );
-
-
-      highlightsContainer.appendChild(card);
-
-    });
-
-  }
-
-
-  /* =========================
-     PAGE NAVIGATION
-  ========================= */
-
-  function showPage(page) {
-
-    if (!page) {
-      return;
-    }
-
-
-    homePage.classList.remove("active");
-
-    footballPage.classList.remove("active");
-
-    screenPage.classList.remove("active");
-
-
-    page.classList.add("active");
-
-
-    window.scrollTo({
-      top: 0,
-      behavior: "instant"
-    });
-
-  }
-
-
-  /* =========================
-     OPEN SCREEN
-  ========================= */
-
-  window.openScreen =
-    function () {
-
-      previousPage = "home";
-
-      showPage(screenPage);
-
-    };
-
-
-  /* =========================
-     OPEN FOOTBALL
-  ========================= */
-
-  window.openFootball =
-    function () {
-
-      previousPage = "home";
-
-      showPage(footballPage);
-
-      showLive();
-
-    };
-
-
-  /* =========================
-     HOME
-  ========================= */
-
-  window.goHome =
-    function () {
-
-      stopCurrentPlayer();
-
-      showPage(homePage);
-
-    };
-
-
-  /* =========================
-     BACK FROM SCREEN
-  ========================= */
-
-  window.goBackFromScreen =
-    function () {
-
-      stopCurrentPlayer();
-
-
-      if (
-        previousPage === "football"
-      ) {
-
-        showPage(
-          footballPage
-        );
-
-      } else {
-
-        showPage(
-          homePage
-        );
-
-      }
-
-    };
-
-
-  /* =========================
-     LIVE TAB
-  ========================= */
-
-  window.showLive =
-    function () {
-
-      if (
-        !liveSection ||
-        !highlightSection
-      ) {
-        return;
-      }
-
-
-      liveSection.classList.add(
-        "active"
-      );
-
-
-      highlightSection.classList.remove(
-        "active"
-      );
-
-
-      liveTab.classList.add(
-        "active"
-      );
-
-
-      highlightTab.classList.remove(
-        "active"
-      );
-
-    };
-
-
-  /* =========================
-     HIGHLIGHTS TAB
-  ========================= */
-
-  window.showHighlights =
-    function () {
-
-      highlightSection.classList.add(
-        "active"
-      );
-
-
-      liveSection.classList.remove(
-        "active"
-      );
-
-
-      highlightTab.classList.add(
-        "active"
-      );
-
-
-      liveTab.classList.remove(
-        "active"
-      );
-
-    };
-
-
-  /* =========================
-     OPEN MATCH
-  ========================= */
-
-  function openMatchOnScreen(match) {
-
-    previousPage =
-      "football";
-
-
-    currentItem =
-      match;
-
-
-    showPage(
-      screenPage
-    );
-
-
-    updateScreen(
-      match
-    );
-
-  }
-
-
-  /* =========================
-     OPEN HIGHLIGHT
-  ========================= */
-
-  function openHighlightOnScreen(
-    highlight
-  ) {
-
-    previousPage =
-      "football";
-
-
-    currentItem =
-      highlight;
-
-
-    showPage(
-      screenPage
-    );
-
-
-    updateScreen(
-      highlight
-    );
-
-  }
-
-
-  /* =========================
-     CLEAR PLAYER
-  ========================= */
-
-  function clearPlayer() {
-
-    if (!screenPlayer) {
-      return;
-    }
-
-
-    /* Stop HTML5 video */
-
-    if (
-      currentPlayer &&
-      currentPlayer.tagName === "VIDEO"
-    ) {
-
-      try {
-
-        currentPlayer.pause();
-
-        currentPlayer.removeAttribute(
-          "src"
-        );
-
-        currentPlayer.load();
-
-      } catch (error) {
-
-        console.log(
-          "Video cleanup error:",
-          error
-        );
-
-      }
-
-    }
-
-
-    currentPlayer =
-      null;
-
-
-    screenPlayer.innerHTML =
-      "";
-
-  }
-
-
-  /* =========================
-     UPDATE SCREEN
-  ========================= */
-
-  function updateScreen(item) {
-
-    if (
-      !item ||
-      !screenPlayer
-    ) {
-      return;
-    }
-
-
-    clearPlayer();
-
-
-    /* =========================
-       NOW SHOWING
-    ========================= */
-
-    if (nowShowing) {
-
-      nowShowing.textContent =
-        item.title;
-
-    }
-
-
-    /* =========================
-       NO PLAYER URL
-    ========================= */
-
-    if (
-      !item.playerUrl ||
-      item.playerUrl.trim() === ""
-    ) {
-
-      createPlaceholder(
-        item
-      );
-
-
-      addFullscreenButton();
-
-
-      return;
-
-    }
-
-
-    /* =========================
-       IFRAME PLAYER
-    ========================= */
-
-    if (
-      item.playerType === "iframe"
-    ) {
-
-      createIframePlayer(
-        item
-      );
-
-
-      addFullscreenButton();
-
-
-      return;
-
-    }
-
-
-    /* =========================
-       VIDEO PLAYER
-    ========================= */
-
-    if (
-      item.playerType === "video"
-    ) {
-
-      createVideoPlayer(
-        item
-      );
-
-
-      addFullscreenButton();
-
-
-      return;
-
-    }
-
-
-    /* =========================
-       UNKNOWN PLAYER
-    ========================= */
-
-    createPlaceholder(
-      item
-    );
-
-
-    addFullscreenButton();
-
-  }
-
-
-  /* =========================
-     CREATE PLACEHOLDER
-  ========================= */
-
-  function createPlaceholder(item) {
-
-    const placeholder =
-      document.createElement("div");
-
-
-    placeholder.className =
-      "screen-placeholder";
-
-
-    const icon =
-      document.createElement("div");
-
-
-    icon.className =
-      "screen-icon";
-
-
-    icon.textContent =
-      "📺";
-
-
-    const title =
-      document.createElement("p");
-
-
-    title.textContent =
-      item.title;
-
-
-    const small =
-      document.createElement("small");
-
-
-    small.textContent =
-      "Player ready";
-
-
-    placeholder.appendChild(
-      icon
-    );
-
-
-    placeholder.appendChild(
-      title
-    );
-
-
-    placeholder.appendChild(
-      small
-    );
-
-
-    screenPlayer.appendChild(
-      placeholder
-    );
-
-  }
-
-
-  /* =========================
-     CREATE IFRAME
-  ========================= */
-
-  function createIframePlayer(item) {
-
-    const iframe =
-      document.createElement("iframe");
-
-
-    iframe.src =
-      item.playerUrl;
-
-
-    iframe.title =
-      item.title;
-
-
-    iframe.allow =
-      "autoplay; fullscreen; picture-in-picture";
-
-
-    iframe.setAttribute(
-      "allowfullscreen",
-      ""
-    );
-
-
-    iframe.setAttribute(
-      "webkitallowfullscreen",
-      ""
-    );
-
-
-    iframe.setAttribute(
-      "mozallowfullscreen",
-      ""
-    );
-
-
-    iframe.loading =
-      "eager";
-
-
-    iframe.referrerPolicy =
-      "strict-origin-when-cross-origin";
-
-
-    screenPlayer.appendChild(
-      iframe
-    );
-
-
-    currentPlayer =
-      iframe;
-
-  }
-
-
-  /* =========================
-     CREATE VIDEO
-  ========================= */
-
-  function createVideoPlayer(item) {
-
-    const video =
-      document.createElement("video");
-
-
-    video.src =
-      item.playerUrl;
-
-
-    video.controls =
-      true;
-
-
-    video.autoplay =
-      true;
-
-
-    video.muted =
-      false;
-
-
-    video.playsInline =
-      true;
-
-
-    video.setAttribute(
-      "playsinline",
-      ""
-    );
-
-
-    video.setAttribute(
-      "webkit-playsinline",
-      ""
-    );
-
-
-    video.preload =
-      "auto";
-
-
-    video.controlsList =
-      "nodownload";
-
-
-    screenPlayer.appendChild(
-      video
-    );
-
-
-    currentPlayer =
-      video;
-
-
-    /* =========================
-       AUTOPLAY FALLBACK
-    ========================= */
-
-    const playPromise =
-      video.play();
-
-
-    if (
-      playPromise &&
-      typeof playPromise.catch ===
-      "function"
-    ) {
-
-      playPromise.catch(
-        function () {
-
-          /*
-             Some browsers block
-             autoplay with sound.
-
-             The native video controls
-             remain available.
-          */
-
-          console.log(
-            "Autoplay was blocked."
-          );
-
-        }
-      );
-
-    }
-
-  }
-
-
-  /* =========================
-     FULLSCREEN BUTTON
-  ========================= */
-
-  function addFullscreenButton() {
-
-    if (!screenPlayer) {
-      return;
-    }
-
-
-    const button =
-      document.createElement("button");
-
-
-    button.type =
-      "button";
-
-
-    button.className =
-      "fullscreen-button";
-
-
-    button.textContent =
-      "⛶";
-
-
-    button.setAttribute(
-      "aria-label",
-      "Fullscreen"
-    );
-
-
-    button.setAttribute(
-      "title",
-      "Fullscreen"
-    );
-
-
-    button.addEventListener(
-      "click",
-      function (event) {
-
-        event.preventDefault();
-
-        event.stopPropagation();
-
-
-        toggleFullscreen();
-
-      }
-    );
-
-
-    screenPlayer.appendChild(
-      button
-    );
-
-
-    updateFullscreenButton();
-
-  }
-
-
-  /* =========================
-     TOGGLE FULLSCREEN
-  ========================= */
-
-  function toggleFullscreen() {
-
-    if (
-      document.fullscreenElement
-    ) {
-
-      exitFullscreen();
-
-      return;
-
-    }
-
-
-    enterFullscreen();
-
-  }
-
-
-  /* =========================
-     ENTER FULLSCREEN
-  ========================= */
-
-  function enterFullscreen() {
-
-    if (!screenPlayer) {
-      return;
-    }
-
-
-    if (
-      screenPlayer.requestFullscreen
-    ) {
-
-      screenPlayer
-        .requestFullscreen()
-        .catch(
-          function (error) {
-
-            console.log(
-              "Fullscreen request failed:",
-              error
-            );
-
-          }
-        );
-
-      return;
-
-    }
-
-
-    if (
-      screenPlayer.webkitRequestFullscreen
-    ) {
-
-      screenPlayer.webkitRequestFullscreen();
-
-      return;
-
-    }
-
-
-    if (
-      screenPlayer.msRequestFullscreen
-    ) {
-
-      screenPlayer.msRequestFullscreen();
-
-    }
-
-  }
-
-
-  /* =========================
-     EXIT FULLSCREEN
-  ========================= */
-
-  function exitFullscreen() {
-
-    if (
-      document.exitFullscreen
-    ) {
-
-      document.exitFullscreen()
-        .catch(
-          function () {}
-        );
-
-      return;
-
-    }
-
-
-    if (
-      document.webkitExitFullscreen
-    ) {
-
-      document.webkitExitFullscreen();
-
-    }
-
-  }
-
-
-  /* =========================
-     UPDATE FULLSCREEN BUTTON
-  ========================= */
-
-  function updateFullscreenButton() {
-
-    if (!screenPlayer) {
-      return;
-    }
-
-
-    const button =
-      screenPlayer.querySelector(
-        ".fullscreen-button"
-      );
-
-
-    if (!button) {
-      return;
-    }
-
-
-    if (
-      document.fullscreenElement
-    ) {
-
-      button.textContent =
-        "✕";
-
-
-      button.setAttribute(
-        "aria-label",
-        "Exit fullscreen"
-      );
-
-
-      button.setAttribute(
-        "title",
-        "Exit fullscreen"
-      );
-
-    } else {
-
-      button.textContent =
-        "⛶";
-
-
-      button.setAttribute(
-        "aria-label",
-        "Fullscreen"
-      );
-
-
-      button.setAttribute(
-        "title",
-        "Fullscreen"
-      );
-
-    }
-
-  }
-
-
-  /* =========================
-     FULLSCREEN EVENTS
-  ========================= */
-
-  document.addEventListener(
-    "fullscreenchange",
-    function () {
-
-      updateFullscreenButton();
-
-    }
-  );
-
-
-  document.addEventListener(
-    "webkitfullscreenchange",
-    function () {
-
-      updateFullscreenButton();
-
-    }
-  );
-
-
-  /* =========================
-     STOP PLAYER
-  ========================= */
-
-  function stopCurrentPlayer() {
-
-    if (!screenPlayer) {
-      return;
-    }
-
-
-    /* Exit fullscreen */
-
-    if (
-      document.fullscreenElement
-    ) {
-
-      exitFullscreen();
-
-    }
-
-
-    clearPlayer();
 
 
     if (nowShowing) {
@@ -1468,27 +135,571 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+  }
 
-    currentItem =
-      null;
+
+  function loadItem(button, type) {
+
+    if (!button) {
+      return;
+    }
+
+
+    const name =
+      button.dataset.name || "Selected content";
+
+
+    const url =
+      button.dataset.url || "";
+
+
+    currentItem = {
+      name: name,
+      url: url,
+      type: type
+    };
+
+
+    /*
+     * Remove active state from all
+     * football and highlight buttons.
+     */
+
+    document
+      .querySelectorAll(
+        ".match-card, .highlight-card"
+      )
+      .forEach(function (item) {
+
+        item.classList.remove("active");
+
+      });
+
+
+    button.classList.add("active");
+
+
+    /*
+     * Update screen title.
+     */
+
+    if (nowShowing) {
+
+      nowShowing.textContent =
+        name;
+
+    }
+
+
+    /*
+     * Update screen status.
+     */
+
+    if (screenStatus) {
+
+      screenStatus.textContent =
+        type === "match"
+          ? "LIVE"
+          : "HIGHLIGHT";
+
+    }
+
+
+    /*
+     * If no URL has been added yet,
+     * keep the player blank.
+     */
+
+    if (!url) {
+
+      if (screenFrame) {
+
+        screenFrame.src =
+          "about:blank";
+
+      }
+
+
+      if (screenPlaceholder) {
+
+        screenPlaceholder.style.display =
+          "flex";
+
+      }
+
+
+      return;
+
+    }
+
+
+    /*
+     * Hide placeholder.
+     */
+
+    if (screenPlaceholder) {
+
+      screenPlaceholder.style.display =
+        "none";
+
+    }
+
+
+    /*
+     * Fade screen while changing
+     * content.
+     */
+
+    if (screenFrame) {
+
+      screenFrame.style.opacity =
+        "0.25";
+
+      screenFrame.src =
+        "about:blank";
+
+
+      setTimeout(function () {
+
+        screenFrame.src =
+          url;
+
+        screenFrame.style.opacity =
+          "1";
+
+      }, 150);
+
+    }
+
+
+    /*
+     * Bring the screen into view.
+     */
+
+    if (screenPlayer) {
+
+      screenPlayer.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    }
 
   }
 
 
-  /* =========================
-     KEYBOARD ESCAPE
-  ========================= */
+  /* =========================================================
+     FOOTBALL MATCH CLICKING
+     ========================================================= */
+
+  function attachMatchEvents() {
+
+    if (!matchList) {
+      return;
+    }
+
+
+    matchList
+      .querySelectorAll(".match-card")
+      .forEach(function (button) {
+
+        button.addEventListener(
+          "click",
+          function () {
+
+            loadItem(
+              this,
+              "match"
+            );
+
+          }
+        );
+
+      });
+
+  }
+
+
+  /* =========================================================
+     HIGHLIGHT CLICKING
+     ========================================================= */
+
+  function attachHighlightEvents() {
+
+    if (!highlightList) {
+      return;
+    }
+
+
+    highlightList
+      .querySelectorAll(".highlight-card")
+      .forEach(function (button) {
+
+        button.addEventListener(
+          "click",
+          function () {
+
+            loadItem(
+              this,
+              "highlight"
+            );
+
+          }
+        );
+
+      });
+
+  }
+
+
+  /* =========================================================
+     SHOW FOOTBALL
+     ========================================================= */
+
+  function showFootball() {
+
+    currentMode =
+      "football";
+
+
+    if (footballContent) {
+
+      footballContent.hidden =
+        false;
+
+    }
+
+
+    if (highlightsContent) {
+
+      highlightsContent.hidden =
+        true;
+
+    }
+
+
+    if (footballButton) {
+
+      footballButton.classList.add(
+        "active"
+      );
+
+    }
+
+
+    if (highlightsButton) {
+
+      highlightsButton.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    if (navFootball) {
+
+      navFootball.classList.add(
+        "active"
+      );
+
+    }
+
+
+    if (navHighlights) {
+
+      navHighlights.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    updateCounts();
+
+
+    closeMobileMenu();
+
+  }
+
+
+  /* =========================================================
+     SHOW HIGHLIGHTS
+     ========================================================= */
+
+  function showHighlights() {
+
+    currentMode =
+      "highlights";
+
+
+    if (footballContent) {
+
+      footballContent.hidden =
+        true;
+
+    }
+
+
+    if (highlightsContent) {
+
+      highlightsContent.hidden =
+        false;
+
+    }
+
+
+    if (footballButton) {
+
+      footballButton.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    if (highlightsButton) {
+
+      highlightsButton.classList.add(
+        "active"
+      );
+
+    }
+
+
+    if (navFootball) {
+
+      navFootball.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    if (navHighlights) {
+
+      navHighlights.classList.add(
+        "active"
+      );
+
+    }
+
+
+    updateCounts();
+
+
+    closeMobileMenu();
+
+  }
+
+
+  /* =========================================================
+     APP BUTTONS
+     ========================================================= */
+
+  if (footballButton) {
+
+    footballButton.addEventListener(
+      "click",
+      function () {
+
+        showFootball();
+
+        if (footballContent) {
+
+          footballContent.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+
+        }
+
+      }
+    );
+
+  }
+
+
+  if (highlightsButton) {
+
+    highlightsButton.addEventListener(
+      "click",
+      function () {
+
+        showHighlights();
+
+        if (highlightsContent) {
+
+          highlightsContent.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     NAVIGATION
+     ========================================================= */
+
+  if (navFootball) {
+
+    navFootball.addEventListener(
+      "click",
+      function (event) {
+
+        event.preventDefault();
+
+        showFootball();
+
+      }
+    );
+
+  }
+
+
+  if (navHighlights) {
+
+    navHighlights.addEventListener(
+      "click",
+      function (event) {
+
+        event.preventDefault();
+
+        showHighlights();
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     UPDATE COUNTS
+     ========================================================= */
+
+  function updateCounts() {
+
+    const matches =
+      matchList
+        ? matchList.querySelectorAll(
+            ".match-card"
+          ).length
+        : 0;
+
+
+    const highlights =
+      highlightList
+        ? highlightList.querySelectorAll(
+            ".highlight-card"
+          ).length
+        : 0;
+
+
+    if (matchCount) {
+
+      matchCount.textContent =
+        matches;
+
+    }
+
+
+    if (highlightCount) {
+
+      highlightCount.textContent =
+        highlights;
+
+    }
+
+
+    if (footballEmpty) {
+
+      footballEmpty.hidden =
+        matches !== 0;
+
+    }
+
+
+    if (highlightEmpty) {
+
+      highlightEmpty.hidden =
+        highlights !== 0;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     FULLSCREEN
+     ========================================================= */
+
+  if (fullscreenButton) {
+
+    fullscreenButton.addEventListener(
+      "click",
+      function () {
+
+        if (!screenPlayer) {
+          return;
+        }
+
+
+        if (document.fullscreenElement) {
+
+          if (
+            document.exitFullscreen
+          ) {
+
+            document.exitFullscreen();
+
+          }
+
+          return;
+
+        }
+
+
+        if (
+          screenPlayer.requestFullscreen
+        ) {
+
+          screenPlayer.requestFullscreen();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     FULLSCREEN BUTTON ICON
+     ========================================================= */
 
   document.addEventListener(
-    "keydown",
-    function (event) {
+    "fullscreenchange",
+    function () {
 
-      if (
-        event.key === "Escape" &&
-        document.fullscreenElement
-      ) {
+      if (!fullscreenButton) {
+        return;
+      }
 
-        exitFullscreen();
+
+      if (document.fullscreenElement) {
+
+        fullscreenButton.textContent =
+          "⛶";
+
+      } else {
+
+        fullscreenButton.textContent =
+          "⛶";
 
       }
 
@@ -1496,12 +707,188 @@ document.addEventListener("DOMContentLoaded", function () {
   );
 
 
-  /* =========================
-     INITIAL LOAD
-  ========================= */
+  /* =========================================================
+     MOBILE MENU
+     ========================================================= */
 
-  renderLiveMatches();
+  function closeMobileMenu() {
 
-  renderHighlights();
+    if (!mainNav) {
+      return;
+    }
+
+
+    mainNav.classList.remove(
+      "open"
+    );
+
+
+    if (menuToggle) {
+
+      menuToggle.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+  }
+
+
+  if (
+    menuToggle &&
+    mainNav
+  ) {
+
+    menuToggle.addEventListener(
+      "click",
+      function () {
+
+        const open =
+          mainNav.classList.toggle(
+            "open"
+          );
+
+
+        menuToggle.setAttribute(
+          "aria-expanded",
+          open
+            ? "true"
+            : "false"
+        );
+
+      }
+    );
+
+
+    mainNav
+      .querySelectorAll("a")
+      .forEach(function (link) {
+
+        link.addEventListener(
+          "click",
+          function () {
+
+            closeMobileMenu();
+
+          }
+        );
+
+      });
+
+  }
+
+
+  /* =========================================================
+     CLOSE MOBILE MENU WHEN CLICKING
+     OUTSIDE
+     ========================================================= */
+
+  document.addEventListener(
+    "click",
+    function (event) {
+
+      if (
+        !mainNav ||
+        !menuToggle
+      ) {
+        return;
+      }
+
+
+      if (
+        mainNav.contains(event.target) ||
+        menuToggle.contains(event.target)
+      ) {
+
+        return;
+
+      }
+
+
+      closeMobileMenu();
+
+    }
+  );
+
+
+  /* =========================================================
+     ESCAPE KEY
+     ========================================================= */
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (event.key === "Escape") {
+
+        closeMobileMenu();
+
+      }
+
+    }
+  );
+
+
+  /* =========================================================
+     PREVENT EMPTY LINKS FROM JUMPING
+     ========================================================= */
+
+  document
+    .querySelectorAll(
+      'a[href="#"]'
+    )
+    .forEach(function (link) {
+
+      link.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+        }
+      );
+
+    });
+
+
+  /* =========================================================
+     INITIALIZE
+     ========================================================= */
+
+  attachMatchEvents();
+
+  attachHighlightEvents();
+
+  updateCounts();
+
+  resetScreen();
+
+  showFootball();
+
+
+  /* =========================================================
+     EXPOSE OPTIONAL APP FUNCTIONS
+     ========================================================= */
+
+  window.DeeprowssFootball = {
+
+    showFootball:
+      showFootball,
+
+    showHighlights:
+      showHighlights,
+
+    loadItem:
+      loadItem,
+
+    resetScreen:
+      resetScreen,
+
+    updateCounts:
+      updateCounts
+
+  };
+
 
 });
