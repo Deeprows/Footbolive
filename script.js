@@ -7,6 +7,116 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     ZOOM / GESTURE PROTECTION
+     ========================================================= */
+
+  /*
+   * Discourage browser pinch/double-tap zoom gestures.
+   *
+   * CSS touch-action: manipulation handles most modern
+   * mobile browsers. These events provide additional
+   * protection for browsers that expose gesture events.
+   */
+
+  document.addEventListener(
+    "gesturestart",
+    function (event) {
+
+      event.preventDefault();
+
+    },
+    {
+      passive: false
+    }
+  );
+
+
+  document.addEventListener(
+    "gesturechange",
+    function (event) {
+
+      event.preventDefault();
+
+    },
+    {
+      passive: false
+    }
+  );
+
+
+  document.addEventListener(
+    "gestureend",
+    function (event) {
+
+      event.preventDefault();
+
+    },
+    {
+      passive: false
+    }
+  );
+
+
+  /*
+   * Prevent Ctrl + mouse-wheel browser zoom.
+   *
+   * Normal mouse-wheel scrolling remains available.
+   */
+  document.addEventListener(
+    "wheel",
+    function (event) {
+
+      if (event.ctrlKey) {
+
+        event.preventDefault();
+
+      }
+
+    },
+    {
+      passive: false
+    }
+  );
+
+
+  /*
+   * Prevent common keyboard browser-zoom shortcuts:
+   *
+   * Ctrl + +
+   * Ctrl + -
+   * Ctrl + =
+   * Ctrl + 0
+   *
+   * Normal keyboard usage remains unaffected.
+   */
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (!event.ctrlKey) {
+        return;
+      }
+
+
+      const key = event.key;
+
+
+      if (
+        key === "+" ||
+        key === "=" ||
+        key === "-" ||
+        key === "0"
+      ) {
+
+        event.preventDefault();
+
+      }
+
+    }
+  );
+
+
+  /* =========================================================
      ELEMENTS
      ========================================================= */
 
