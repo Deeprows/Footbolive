@@ -1037,21 +1037,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fullscreenButton.addEventListener(
       "click",
-      function () {
+      async function () {
 
         /*
          * Exit fullscreen if already fullscreen.
          */
 
-        if (
-          document.fullscreenElement
-        ) {
+        if (document.fullscreenElement) {
+
+          /*
+           * Unlock orientation before exiting.
+           */
 
           if (
-            document.exitFullscreen
+            screen.orientation &&
+            screen.orientation.unlock
           ) {
 
-            document.exitFullscreen();
+            try {
+
+              screen.orientation.unlock();
+
+            } catch (error) {
+
+              console.log(
+                "Orientation unlock unavailable:",
+                error
+              );
+
+            }
+
+          }
+
+
+          /*
+           * Exit fullscreen.
+           */
+
+          if (document.exitFullscreen) {
+
+            try {
+
+              await document.exitFullscreen();
+
+            } catch (error) {
+
+              console.log(
+                "Fullscreen exit failed:",
+                error
+              );
+
+            }
 
           }
 
@@ -1069,7 +1105,49 @@ document.addEventListener("DOMContentLoaded", function () {
           screenPlayer.requestFullscreen
         ) {
 
-          screenPlayer.requestFullscreen();
+          try {
+
+            await screenPlayer.requestFullscreen(
+              {
+                navigationUI: "hide"
+              }
+            );
+
+
+            /*
+             * Request landscape orientation.
+             */
+
+            if (
+              screen.orientation &&
+              screen.orientation.lock
+            ) {
+
+              try {
+
+                await screen.orientation.lock(
+                  "landscape"
+                );
+
+              } catch (orientationError) {
+
+                console.log(
+                  "Landscape orientation lock unavailable:",
+                  orientationError
+                );
+
+              }
+
+            }
+
+          } catch (fullscreenError) {
+
+            console.log(
+              "Fullscreen request failed:",
+              fullscreenError
+            );
+
+          }
 
         }
 
@@ -1085,26 +1163,78 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.addEventListener(
     "fullscreenchange",
-    function () {
+    async function () {
 
       if (!fullscreenButton) {
         return;
       }
 
 
+      /*
+       * FULLSCREEN ACTIVE
+       */
+
       if (
         document.fullscreenElement
       ) {
 
+        /*
+         * Change fullscreen button to X.
+         */
+
         fullscreenButton.textContent =
-          "⛶";
+          "×";
 
         fullscreenButton.setAttribute(
           "aria-label",
           "Exit fullscreen"
         );
 
-      } else {
+        fullscreenButton.setAttribute(
+          "title",
+          "Exit fullscreen"
+        );
+
+
+        /*
+         * Request landscape after fullscreen
+         * has actually started.
+         */
+
+        if (
+          screen.orientation &&
+          screen.orientation.lock
+        ) {
+
+          try {
+
+            await screen.orientation.lock(
+              "landscape"
+            );
+
+          } catch (error) {
+
+            console.log(
+              "Landscape lock unavailable:",
+              error
+            );
+
+          }
+
+        }
+
+      }
+
+
+      /*
+       * FULLSCREEN EXITED
+       */
+
+      else {
+
+        /*
+         * Restore fullscreen icon.
+         */
 
         fullscreenButton.textContent =
           "⛶";
@@ -1114,7 +1244,46 @@ document.addEventListener("DOMContentLoaded", function () {
           "Enter fullscreen"
         );
 
+        fullscreenButton.setAttribute(
+          "title",
+          "Enter fullscreen"
+        );
+
+
+        /*
+         * Unlock screen orientation.
+         */
+
+        if (
+          screen.orientation &&
+          screen.orientation.unlock
+        ) {
+
+          try {
+
+            screen.orientation.unlock();
+
+          } catch (error) {
+
+            console.log(
+              "Orientation unlock unavailable:",
+              error
+            );
+
+          }
+
+        }
+
       }
+
+
+      /*
+       * Recalculate sticky layout.
+       */
+
+      requestAnimationFrame(
+        updateStickyPositions
+      );
 
     }
   );
