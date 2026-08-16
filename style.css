@@ -24,6 +24,7 @@
 
   --green: #20e070;
 
+
 }
 
 
@@ -822,25 +823,50 @@ a {
   display: grid;
 
   grid-template-columns:
-    repeat(3, minmax(0,1fr));
+    repeat(2, minmax(0,1fr));
 
-  gap: 12px;
+  gap: 10px;
 }
+
+
+/* =========================================================
+   HIGHLIGHT CARD
+   ========================================================= */
 
 .highlight-card {
 
+  position: relative;
+
+  min-width: 0;
+
+  min-height: 135px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  padding: 13px;
+
   overflow: hidden;
 
-  padding: 0;
+  isolation: isolate;
 
   border:
     1px solid
-    var(--line);
+    rgba(255,255,255,.09);
 
-  border-radius: 14px;
+  border-radius: 16px;
 
   background:
-    var(--surface);
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
 
   color: #fff;
 
@@ -850,8 +876,60 @@ a {
 
   transition:
     transform .2s ease,
-    border-color .2s ease;
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
 }
+
+
+/* =========================================================
+   HIGHLIGHT CARD DECORATION
+   ========================================================= */
+
+.highlight-card::before {
+
+  content: "";
+
+  position: absolute;
+
+  width: 115px;
+  height: 115px;
+
+  top: -62px;
+  right: -6px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.09);
+
+  z-index: -1;
+}
+
+.highlight-card::after {
+
+  content: "";
+
+  position: absolute;
+
+  width: 88px;
+  height: 88px;
+
+  top: -48px;
+  right: 23px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.035);
+
+  z-index: -1;
+}
+
+
+/* =========================================================
+   HIGHLIGHT CARD HOVER
+   ========================================================= */
 
 .highlight-card:hover {
 
@@ -859,64 +937,131 @@ a {
     translateY(-3px);
 
   border-color:
-    rgba(255,23,68,.45);
+    rgba(255,23,68,.4);
+
+  box-shadow:
+    0 10px 25px
+    rgba(0,0,0,.28);
 }
+
+
+/* =========================================================
+   HIGHLIGHT THUMBNAIL
+   ========================================================= */
 
 .highlight-thumbnail {
 
-  height: 155px;
+  width: 50px;
+  height: 50px;
 
   display: grid;
 
   place-items: center;
 
+  flex-shrink: 0;
+
+  border-radius: 14px;
+
   background:
-    radial-gradient(
-      circle,
-      #222936,
-      #090b0f
+    linear-gradient(
+      145deg,
+      #252b36,
+      #151922
     );
+
+  border:
+    1px solid
+    rgba(255,255,255,.09);
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.05),
+    0 5px 15px
+    rgba(0,0,0,.2);
+
+  font-size: 24px;
+
+  line-height: 1;
+
+  position: relative;
+
+  z-index: 2;
 }
 
 .highlight-thumbnail span {
 
-  width: 48px;
-  height: 48px;
+  width: auto;
+  height: auto;
 
-  display: grid;
+  display: block;
 
-  place-items: center;
+  padding: 0;
 
-  padding-left: 2px;
+  border-radius: 0;
 
-  border-radius: 50%;
+  background: transparent;
 
-  background:
-    var(--accent);
+  color: #fff;
 
-  font-size: 18px;
+  font-size: 22px;
+
+  line-height: 1;
 }
+
+
+/* =========================================================
+   HIGHLIGHT INFO
+   ========================================================= */
 
 .highlight-card strong {
 
   display: block;
 
+  width: 100%;
+
+  min-width: 0;
+
+  overflow: hidden;
+
   padding:
-    12px 13px 4px;
+    9px 5px 0 0;
+
+  color: #fff;
 
   font-size: 14px;
+
+  font-weight: 900;
+
+  line-height: 1.2;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  position: relative;
+
+  z-index: 2;
 }
 
 .highlight-card small {
 
   display: block;
 
+  width: 100%;
+
   padding:
-    0 13px 13px;
+    5px 5px 0 0;
 
-  color: var(--muted);
+  color:
+    #9aa3b2;
 
-  font-size: 11px;
+  font-size: 10px;
+
+  line-height: 1.2;
+
+  position: relative;
+
+  z-index: 2;
 }
 
 
@@ -1346,7 +1491,13 @@ a {
 
 @media (max-width: 900px) {
 
-  .match-grid,
+  .match-grid {
+
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+
+  }
+
   .highlight-grid {
 
     grid-template-columns:
@@ -1532,22 +1683,87 @@ a {
     font-size: 19px;
   }
 
-  .match-grid,
-  .highlight-grid {
+  .match-grid {
 
     grid-template-columns:
       1fr;
 
   }
 
-  .match-card {
+  /* =======================================================
+     HIGHLIGHTS — 2 COLUMNS
+     ======================================================= */
 
-    min-height: 105px;
+  .highlight-grid {
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+  }
+
+  .highlight-card {
+
+    min-height: 128px;
+
+    padding: 11px;
+
+    border-radius: 14px;
   }
 
   .highlight-thumbnail {
 
-    height: 175px;
+    width: 45px;
+    height: 45px;
+
+    border-radius: 13px;
+
+    font-size: 22px;
+  }
+
+  .highlight-thumbnail span {
+
+    font-size: 21px;
+  }
+
+  .highlight-card strong {
+
+    padding:
+      7px 4px 0 0;
+
+    font-size: 12px;
+  }
+
+  .highlight-card small {
+
+    padding:
+      4px 4px 0 0;
+
+    font-size: 9px;
+  }
+
+  .highlight-card::before {
+
+    width: 100px;
+    height: 100px;
+
+    top: -54px;
+    right: -8px;
+  }
+
+  .highlight-card::after {
+
+    width: 76px;
+    height: 76px;
+
+    top: -42px;
+    right: 18px;
+  }
+
+
+  .match-card {
+
+    min-height: 105px;
   }
 
   .tv-category {
@@ -1693,6 +1909,50 @@ a {
   .app-button-icon {
 
     font-size: 14px;
+  }
+
+
+  /* =======================================================
+     HIGHLIGHTS
+     ======================================================= */
+
+  .highlight-grid {
+
+    gap: 7px;
+  }
+
+  .highlight-card {
+
+    min-height: 122px;
+
+    padding: 10px;
+
+    border-radius: 13px;
+  }
+
+  .highlight-thumbnail {
+
+    width: 43px;
+    height: 43px;
+
+    border-radius: 12px;
+
+    font-size: 21px;
+  }
+
+  .highlight-thumbnail span {
+
+    font-size: 20px;
+  }
+
+  .highlight-card strong {
+
+    font-size: 12px;
+  }
+
+  .highlight-card small {
+
+    font-size: 9px;
   }
 
 
