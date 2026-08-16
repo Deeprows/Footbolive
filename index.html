@@ -1,1 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <meta
+    name="description"
+    content="Deeprowss Football Live, Highlights, TV Channels and Movies."
+  >
+
+  <meta
+    name="theme-color"
+    content="#07090d"
+  >
+
+  <title>Deeprowss</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+
+<body>
+
+
+  <!-- =========================================================
+       HEADER
+       ========================================================= -->
+
+  <header class="site-header">
+
+    <div class="container nav-wrap">
+
+      <a
+        class="brand"
+        href="index.html"
+        aria-label="Deeprowss Home"
+      >
+
+        <span class="brand-mark">
+          D
+        </span>
+
+        <span>
+          DEE<span>PROWSS</span>
+        </span>
+
+      </a>
+
+
+      <button
+        type="button"
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Open navigation"
+        aria-expanded="false"
+        aria-controls="mainNav"
+      >
+        ☰
+      </button>
+
+
+      <nav
+        class="main-nav"
+        id="mainNav"
+        aria-label="Main navigation"
+      >
+
+        <a
+          href="#"
+          id="navFootball"
+          class="active"
+        >
+          Football Live
+        </a>
+
+        <a
+          href="#"
+          id="navHighlights"
+        >
+          Highlights
+        </a>
+
+        <a
+          href="#"
+          id="navTV"
+        >
+          TV Channels
+        </a>
+
+        <a
+          href="#"
+          id="navMovies"
+        >
+          Movies
+        </a>
+
+      </nav>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =========================================================
+       MAIN APP
+       ========================================================= -->
+
+  <main class="football-app">
+
+
+    <!-- =======================================================
+         SCREEN
+         ======================================================= -->
+
+    <section
+      class="screen-section"
+      id="screenSection"
+    >
+
+      <div class="container">
+
+        <div
+          class="screen-player"
+          id="screenPlayer"
+        >
+
+
+          <!-- SCREEN STATUS -->
+
+          <div class="screen-status">
+
+            <span class="screen-live-dot"></span>
+
+            <span id="screenStatus">
+              READY
+            </span>
+
+          </div>
+
+
+          <!-- VIDEO / STREAM SCREEN -->
+
+          <iframe
+            id="screenFrame"
+            src="about:blank"
+            title="Deeprowss Screen"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+            referrerpolicy="no-referrer"
+          ></iframe>
+
+
+          <!-- SCREEN PLACEHOLDER -->
+
+          <div
+            class="screen-placeholder"
+            id="screenPlaceholder"
+          >
+
+            <div class="screen-placeholder-icon">
+              ⚽
+            </div>
+
+            <strong>
+              Select a match
+            </strong>
+
+          </div>
+
+
+          <!-- SCREEN INFORMATION -->
+
+          <div class="screen-bottom">
+
+            <div class="now-showing">
+
+              <span>
+                NOW SHOWING
+              </span>
+
+              <strong id="nowShowing">
+                Select a match
+              </strong>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="fullscreen-button"
+              id="fullscreenButton"
+              aria-label="Fullscreen"
+            >
+              ⛶
+            </button>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         MAIN APP BUTTONS
+         ======================================================= -->
+
+    <section
+      class="app-menu"
+      id="appMenu"
+    >
+
+      <div class="container">
+
+        <div class="app-buttons">
+
+
+          <!-- FOOTBALL LIVE -->
+
+          <button
+            type="button"
+            class="app-button football-button active"
+            id="footballButton"
+          >
+
+            <span class="app-button-icon">
+              ⚽
+            </span>
+
+            <span>
+              Football Live
+            </span>
+
+          </button>
+
+
+          <!-- HIGHLIGHTS -->
+
+          <button
+            type="button"
+            class="app-button highlights-button"
+            id="highlightsButton"
+          >
+
+            <span class="app-button-icon">
+              🎬
+            </span>
+
+            <span>
+              Highlights
+            </span>
+
+          </button>
+
+
+          <!-- TV CHANNELS -->
+
+          <button
+            type="button"
+            class="app-button tv-button"
+            id="tvButton"
+          >
+
+            <span class="app-button-icon">
+              📺
+            </span>
+
+            <span>
+              TV Channels
+            </span>
+
+          </button>
+
+
+          <!-- MOVIES -->
+
+          <button
+            type="button"
+            class="app-button movies-button"
+            id="moviesButton"
+          >
+
+            <span class="app-button-icon">
+              🍿
+            </span>
+
+            <span>
+              Movies
+            </span>
+
+          </button>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         FOOTBALL LIVE
+         ======================================================= -->
+
+    <section
+      class="content-section"
+      id="footballContent"
+    >
+
+      <div class="container">
+
+
+        <div class="content-heading">
+
+          <h1>
+            Upcoming &amp; Live Matches
+          </h1>
+
+          <span
+            class="content-count"
+            id="matchCount"
+          >
+            1
+          </span>
+
+        </div>
+
+
+        <div
+          class="match-grid"
+          id="matchList"
+        >
+
+
+          <!-- =================================================
+               CHELSEA VS JUVENTUS
+
+               IMPORTANT:
+               data-kickoff uses NIGERIA TIME.
+
+               Format:
+               YYYY-MM-DDTHH:MM:SS+01:00
+
+               Example:
+               2026-08-17T20:00:00+01:00
+
+               Change ONLY this value when you want to
+               schedule the match.
+               ================================================= -->
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Chelsea vs Juventus"
+            data-url="https://filemoon.org/en/E1x3AqDe3yk6/embed"
+            data-kickoff="2026-08-17T20:00:00+01:00"
+            data-duration="96"
+          >
+
+            <!-- MATCH STATUS -->
+
+            <span
+              class="match-status"
+              data-match-status
+            >
+              UPCOMING
+            </span>
+
+
+            <!-- MATCH TEAMS -->
+
+            <span class="match-teams">
+              Chelsea vs Juventus
+            </span>
+
+
+            <!-- MATCH DATE -->
+
+            <span
+              class="match-date"
+              data-match-date
+            >
+              Date
+            </span>
+
+
+            <!-- MATCH LOCAL TIME -->
+
+            <span
+              class="match-time"
+              data-match-time
+            >
+              Time
+            </span>
+
+
+            <!-- COUNTDOWN -->
+
+            <span
+              class="match-countdown"
+              data-match-countdown
+            >
+              Starting soon
+            </span>
+
+          </button>
+
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          id="footballEmpty"
+          hidden
+        >
+          No matches available.
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         HIGHLIGHTS
+         ======================================================= -->
+
+    <section
+      class="content-section highlights-content"
+      id="highlightsContent"
+      hidden
+    >
+
+      <div class="container">
+
+
+        <div class="content-heading">
+
+          <h1>
+            Football Highlights
+          </h1>
+
+          <span
+            class="content-count"
+            id="highlightCount"
+          >
+            1
+          </span>
+
+        </div>
+
+
+        <div
+          class="highlight-grid"
+          id="highlightList"
+        >
+
+
+          <!-- CHELSEA VS JUVENTUS HIGHLIGHT -->
+
+          <button
+            type="button"
+            class="highlight-card"
+            data-name="Chelsea vs Juventus Highlights"
+            data-url="https://filemoon.org/en/LJlGnPwv315w/embed"
+          >
+
+            <div class="highlight-thumbnail">
+
+              <span>
+                ▶
+              </span>
+
+            </div>
+
+            <strong>
+              Chelsea vs Juventus
+            </strong>
+
+            <small>
+              Highlights
+            </small>
+
+          </button>
+
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          id="highlightEmpty"
+          hidden
+        >
+          No highlights available.
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         TV CHANNELS
+         ======================================================= -->
+
+    <section
+      class="content-section tv-content"
+      id="tvContent"
+      hidden
+    >
+
+      <div class="container">
+
+
+        <div class="content-heading">
+
+          <h1>
+            TV Channels
+          </h1>
+
+          <span
+            class="content-count"
+            id="tvCount"
+          >
+            4
+          </span>
+
+        </div>
+
+
+
+        <!-- SPORTS -->
+
+        <div
+          class="tv-category"
+          data-tv-category
+        >
+
+          <div class="tv-category-heading">
+
+            <h2>
+              ⚽ Sports
+            </h2>
+
+            <span>
+              Live Sports
+            </span>
+
+          </div>
+
+
+          <div class="tv-channel-grid">
+
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="beIN Sports Extra"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://bein-xtra-bein.amagi.tv/playlist.m3u8"
+            >
+
+              <span class="tv-channel-icon">
+                ⚽
+              </span>
+
+              <span class="tv-channel-info">
+
+                <strong>
+                  beIN Sports Extra
+                </strong>
+
+                <small>
+                  Sports
+                </small>
+
+              </span>
+
+              <span class="tv-channel-status">
+                LIVE
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- MOVIES / FILM CHANNEL -->
+
+        <div
+          class="tv-category"
+          data-tv-category
+        >
+
+          <div class="tv-category-heading">
+
+            <h2>
+              🎬 Movies
+            </h2>
+
+            <span>
+              Movie Channels
+            </span>
+
+          </div>
+
+
+          <div class="tv-channel-grid">
+
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="FilmBox"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://iptv.prosto.tv/ch63/tracks-v1a1/mono.m3u8"
+            >
+
+              <span class="tv-channel-icon">
+                🎬
+              </span>
+
+              <span class="tv-channel-info">
+
+                <strong>
+                  FilmBox
+                </strong>
+
+                <small>
+                  Movies
+                </small>
+
+              </span>
+
+              <span class="tv-channel-status">
+                LIVE
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- MUSIC -->
+
+        <div
+          class="tv-category"
+          data-tv-category
+        >
+
+          <div class="tv-category-heading">
+
+            <h2>
+              🎵 Music
+            </h2>
+
+            <span>
+              Music Channels
+            </span>
+
+          </div>
+
+
+          <div class="tv-channel-grid">
+
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="Afrobeat TV"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://stream.ecable.tv/afrobeats/index.m3u8"
+            >
+
+              <span class="tv-channel-icon">
+                🎵
+              </span>
+
+              <span class="tv-channel-info">
+
+                <strong>
+                  Afrobeat TV
+                </strong>
+
+                <small>
+                  African Music
+                </small>
+
+              </span>
+
+              <span class="tv-channel-status">
+                LIVE
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- NEWS -->
+
+        <div
+          class="tv-category"
+          data-tv-category
+        >
+
+          <div class="tv-category-heading">
+
+            <h2>
+              📰 News
+            </h2>
+
+            <span>
+              News Channels
+            </span>
+
+          </div>
+
+
+          <div class="tv-channel-grid">
+
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="ABC News"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://abcnews-streams.akamaized.net/hls/live/2023560-b/abcnewshudson1/master_400.m3u8"
+            >
+
+              <span class="tv-channel-icon">
+                📰
+              </span>
+
+              <span class="tv-channel-info">
+
+                <strong>
+                  ABC News
+                </strong>
+
+                <small>
+                  World News
+                </small>
+
+              </span>
+
+              <span class="tv-channel-status">
+                LIVE
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          id="tvEmpty"
+          hidden
+        >
+          No TV channels available.
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         MOVIES
+         ======================================================= -->
+
+    <section
+      class="content-section movies-content"
+      id="moviesContent"
+      hidden
+    >
+
+      <div class="container">
+
+
+        <div class="content-heading">
+
+          <h1>
+            Movies
+          </h1>
+
+          <span
+            class="content-count"
+            id="movieCount"
+          >
+            1
+          </span>
+
+        </div>
+
+
+        <div
+          class="movie-grid"
+          id="movieList"
+        >
+
+
+          <!-- HOUSEMAID (2026) -->
+
+          <button
+            type="button"
+            class="movie-card"
+            data-name="Housemaid (2026)"
+            data-url="https://vsembed.su/embed/movie/tt39319989"
+          >
+
+            <span class="movie-status">
+              MOVIE
+            </span>
+
+            <span class="movie-icon">
+              🎬
+            </span>
+
+            <span class="movie-title">
+              Housemaid (2026)
+            </span>
+
+            <span class="movie-rating">
+              IMDb 5.1/10
+            </span>
+
+          </button>
+
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          id="movieEmpty"
+          hidden
+        >
+          No movies available.
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+
+  <footer class="footer">
+
+    <div class="container footer-wrap">
+
+      <strong>
+        DEE<span>PROWSS</span>
+      </strong>
+
+      <span>
+        Football • Highlights • TV • Movies
+      </span>
+
+    </div>
+
+  </footer>
+
+
+
+  <!-- =========================================================
+       JAVASCRIPT
+       ========================================================= -->
+
+  <script src="script.js"></script>
+
+
+  <!-- =========================================================
+       FOOTBALL MATCH DATE / TIME SYSTEM
+       ========================================================= -->
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const matchCards = document.querySelectorAll(
+        ".match-card[data-kickoff]"
+      );
+
+
+      /*
+       * Football match duration.
+       *
+       * The match is considered finished after 96 minutes.
+       */
+
+      const DEFAULT_MATCH_DURATION = 96;
+
+
+      /*
+       * Format the date using the visitor's own
+       * browser timezone and language.
+       */
+
+      function formatLocalDate(date) {
+
+        return new Intl.DateTimeFormat(
+          undefined,
+          {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+          }
+        ).format(date);
+
+      }
+
+
+      /*
+       * Format the kickoff time using the visitor's
+       * own timezone.
+       */
+
+      function formatLocalTime(date) {
+
+        return new Intl.DateTimeFormat(
+          undefined,
+          {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            timeZoneName: "short"
+          }
+        ).format(date);
+
+      }
+
+
+      /*
+       * Convert milliseconds into:
+       *
+       * Days
+       * Hours
+       * Minutes
+       * Seconds
+       */
+
+      function formatCountdown(milliseconds) {
+
+        if (milliseconds <= 0) {
+          return "00:00:00";
+        }
+
+
+        let totalSeconds = Math.floor(
+          milliseconds / 1000
+        );
+
+
+        const days = Math.floor(
+          totalSeconds / 86400
+        );
+
+        totalSeconds %= 86400;
+
+
+        const hours = Math.floor(
+          totalSeconds / 3600
+        );
+
+        totalSeconds %= 3600;
+
+
+        const minutes = Math.floor(
+          totalSeconds / 60
+        );
+
+        const seconds = totalSeconds % 60;
+
+
+        const hh = String(hours).padStart(2, "0");
+
+        const mm = String(minutes).padStart(2, "0");
+
+        const ss = String(seconds).padStart(2, "0");
+
+
+        if (days > 0) {
+
+          return (
+            days +
+            "d " +
+            hh +
+            ":" +
+            mm +
+            ":" +
+            ss
+          );
+
+        }
+
+
+        return (
+          hh +
+          ":" +
+          mm +
+          ":" +
+          ss
+        );
+
+      }
+
+
+      /*
+       * Update one match card.
+       */
+
+      function updateMatch(card) {
+
+        const kickoffString =
+          card.dataset.kickoff;
+
+
+        if (!kickoffString) {
+          return;
+        }
+
+
+        const kickoff =
+          new Date(kickoffString);
+
+
+        if (Number.isNaN(kickoff.getTime())) {
+          return;
+        }
+
+
+        const duration =
+          Number(
+            card.dataset.duration
+          ) ||
+          DEFAULT_MATCH_DURATION;
+
+
+        const endTime =
+          new Date(
+            kickoff.getTime() +
+            duration * 60 * 1000
+          );
+
+
+        const now = new Date();
+
+
+        const status =
+          card.querySelector(
+            "[data-match-status]"
+          );
+
+
+        const dateElement =
+          card.querySelector(
+            "[data-match-date]"
+          );
+
+
+        const timeElement =
+          card.querySelector(
+            "[data-match-time]"
+          );
+
+
+        const countdownElement =
+          card.querySelector(
+            "[data-match-countdown]"
+          );
+
+
+        /*
+         * Always display the kickoff date
+         * and time in the visitor's timezone.
+         */
+
+        if (dateElement) {
+
+          dateElement.textContent =
+            formatLocalDate(kickoff);
+
+        }
+
+
+        if (timeElement) {
+
+          timeElement.textContent =
+            formatLocalTime(kickoff);
+
+        }
+
+
+        /*
+         * UPCOMING
+         */
+
+        if (now < kickoff) {
+
+          card.classList.remove(
+            "is-live",
+            "is-ended"
+          );
+
+          card.classList.add(
+            "is-upcoming"
+          );
+
+
+          if (status) {
+
+            status.textContent =
+              "UPCOMING";
+
+            status.className =
+              "match-status upcoming";
+
+          }
+
+
+          if (countdownElement) {
+
+            countdownElement.textContent =
+              "Starts in " +
+              formatCountdown(
+                kickoff.getTime() -
+                now.getTime()
+              );
+
+          }
+
+
+          return;
+        }
+
+
+        /*
+         * LIVE
+         *
+         * From kickoff until 96 minutes
+         * after kickoff.
+         */
+
+        if (
+          now >= kickoff &&
+          now < endTime
+        ) {
+
+          card.classList.remove(
+            "is-upcoming",
+            "is-ended"
+          );
+
+          card.classList.add(
+            "is-live"
+          );
+
+
+          if (status) {
+
+            status.textContent =
+              "● LIVE";
+
+            status.className =
+              "match-status live";
+
+          }
+
+
+          if (countdownElement) {
+
+            countdownElement.textContent =
+              "LIVE NOW";
+
+          }
+
+
+          return;
+        }
+
+
+        /*
+         * ENDED
+         *
+         * After 96 minutes.
+         */
+
+        card.classList.remove(
+          "is-upcoming",
+          "is-live"
+        );
+
+        card.classList.add(
+          "is-ended"
+        );
+
+
+        if (status) {
+
+          status.textContent =
+            "ENDED";
+
+          status.className =
+            "match-status ended";
+
+        }
+
+
+        if (countdownElement) {
+
+          countdownElement.textContent =
+            "Match ended";
+
+        }
+
+      }
+
+
+      /*
+       * Initial update.
+       */
+
+      matchCards.forEach(
+        updateMatch
+      );
+
+
+      /*
+       * Update every second so the
+       * countdown changes in real time.
+       */
+
+      setInterval(
+        function () {
+
+          matchCards.forEach(
+            updateMatch
+          );
+
+        },
+        1000
+      );
+
+    });
+
+  </script>
+
+
+</body>
+
+</html>
+```
 
