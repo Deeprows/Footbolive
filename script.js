@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-
   /* =========================
      MATCH DATA
   ========================= */
@@ -15,16 +14,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       status: "LIVE",
       type: "live",
-
       time: "LIVE",
-
-      homeLogo: "icons/chelsea.png",
-      awayLogo: "icons/juventus.png",
 
       playerType: "iframe",
       playerUrl: ""
     },
-
 
     {
       id: "arsenal-barcelona",
@@ -34,16 +28,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       status: "UPCOMING",
       type: "upcoming",
-
       time: "17:00",
-
-      homeLogo: "icons/arsenal.png",
-      awayLogo: "icons/barcelona.png",
 
       playerType: "iframe",
       playerUrl: ""
     },
-
 
     {
       id: "real-madrid-bayern",
@@ -53,11 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       status: "UPCOMING",
       type: "upcoming",
-
       time: "20:00",
-
-      homeLogo: "icons/real-madrid.png",
-      awayLogo: "icons/bayern.png",
 
       playerType: "iframe",
       playerUrl: ""
@@ -67,59 +52,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     HIGHLIGHTS DATA
+     HIGHLIGHTS
   ========================= */
 
   const highlights = [
 
     {
       id: "chelsea-juventus-highlight",
-
       title: "Chelsea vs Juventus",
-
       status: "Highlight",
-
-      homeTeam: "Chelsea",
-      awayTeam: "Juventus",
-
-      thumbnail:
-        "icons/chelsea-juventus.jpg",
 
       playerType: "iframe",
       playerUrl: ""
     },
-
 
     {
       id: "arsenal-barcelona-highlight",
-
       title: "Arsenal vs Barcelona",
-
       status: "Highlight",
-
-      homeTeam: "Arsenal",
-      awayTeam: "Barcelona",
-
-      thumbnail:
-        "icons/arsenal-barcelona.jpg",
 
       playerType: "iframe",
       playerUrl: ""
     },
 
-
     {
       id: "real-madrid-bayern-highlight",
-
       title: "Real Madrid vs Bayern",
-
       status: "Highlight",
-
-      homeTeam: "Real Madrid",
-      awayTeam: "Bayern",
-
-      thumbnail:
-        "icons/real-madrid-bayern.jpg",
 
       playerType: "iframe",
       playerUrl: ""
@@ -174,62 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentItem = null;
 
-
-  /* =========================
-     SAFE IMAGE LOADER
-  ========================= */
-
-  function createTeamLogo(
-    src,
-    teamName
-  ) {
-
-    const wrapper =
-      document.createElement("div");
-
-    wrapper.className =
-      "team-logo";
-
-
-    if (!src) {
-
-      wrapper.textContent =
-        "⚽";
-
-      return wrapper;
-
-    }
-
-
-    const image =
-      document.createElement("img");
-
-
-    image.src = src;
-
-    image.alt =
-      teamName;
-
-
-    image.loading =
-      "lazy";
-
-
-    image.onerror =
-      function () {
-
-        wrapper.innerHTML =
-          "⚽";
-
-      };
-
-
-    wrapper.appendChild(image);
-
-
-    return wrapper;
-
-  }
+  let currentPlayer = null;
 
 
   /* =========================
@@ -237,6 +141,11 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================= */
 
   function renderLiveMatches() {
+
+    if (!liveMatchesContainer) {
+      return;
+    }
+
 
     liveMatchesContainer.innerHTML = "";
 
@@ -251,288 +160,246 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    liveMatches.forEach(
-      function (match) {
+    liveMatches.forEach(function (match) {
 
-        const card =
-          document.createElement("button");
-
-
-        card.type =
-          "button";
+      const card =
+        document.createElement("button");
 
 
-        card.className =
-          "content-card";
+      card.type = "button";
+
+      card.className =
+        "content-card";
 
 
-        if (
-          match.status === "LIVE"
-        ) {
+      if (match.status === "LIVE") {
 
-          card.classList.add(
-            "live-match-card"
-          );
-
-        } else {
-
-          card.classList.add(
-            "upcoming-match-card"
-          );
-
-        }
-
-
-        /* =========================
-           CARD TOP
-        ========================= */
-
-        const cardTop =
-          document.createElement("div");
-
-
-        cardTop.className =
-          "card-top";
-
-
-        const status =
-          document.createElement("span");
-
-
-        if (
-          match.status === "LIVE"
-        ) {
-
-          status.className =
-            "live-status";
-
-          status.textContent =
-            "LIVE";
-
-        } else {
-
-          status.className =
-            "upcoming-status";
-
-          status.textContent =
-            "UPCOMING";
-
-        }
-
-
-        cardTop.appendChild(
-          status
+        card.classList.add(
+          "live-match-card"
         );
 
+      } else {
 
-        /* =========================
-           MATCH TIME
-        ========================= */
-
-        const matchTime =
-          document.createElement("span");
-
-
-        matchTime.className =
-          "match-time";
-
-
-        matchTime.textContent =
-          match.time || "";
-
-
-        cardTop.appendChild(
-          matchTime
-        );
-
-
-        /* =========================
-           MATCH AREA
-        ========================= */
-
-        const matchArea =
-          document.createElement("div");
-
-
-        matchArea.className =
-          "match-area";
-
-
-        const home =
-          document.createElement("div");
-
-
-        home.className =
-          "team";
-
-
-        const homeLogo =
-          createTeamLogo(
-            match.homeLogo,
-            match.homeTeam
-          );
-
-
-        const homeName =
-          document.createElement("span");
-
-
-        homeName.className =
-          "team-name";
-
-
-        homeName.textContent =
-          match.homeTeam;
-
-
-        home.appendChild(
-          homeLogo
-        );
-
-        home.appendChild(
-          homeName
-        );
-
-
-        const center =
-          document.createElement("div");
-
-
-        center.className =
-          "match-center";
-
-
-        const versus =
-          document.createElement("span");
-
-
-        versus.className =
-          "versus";
-
-        versus.textContent =
-          "VS";
-
-
-        center.appendChild(
-          versus
-        );
-
-
-        const away =
-          document.createElement("div");
-
-
-        away.className =
-          "team";
-
-
-        const awayLogo =
-          createTeamLogo(
-            match.awayLogo,
-            match.awayTeam
-          );
-
-
-        const awayName =
-          document.createElement("span");
-
-
-        awayName.className =
-          "team-name";
-
-
-        awayName.textContent =
-          match.awayTeam;
-
-
-        away.appendChild(
-          awayLogo
-        );
-
-        away.appendChild(
-          awayName
-        );
-
-
-        matchArea.appendChild(
-          home
-        );
-
-        matchArea.appendChild(
-          center
-        );
-
-        matchArea.appendChild(
-          away
-        );
-
-
-        /* =========================
-           WATCH BUTTON
-        ========================= */
-
-        const watch =
-          document.createElement("span");
-
-
-        watch.className =
-          "card-watch";
-
-
-        if (
-          match.status === "LIVE"
-        ) {
-
-          watch.textContent =
-            "▶ WATCH";
-
-        } else {
-
-          watch.textContent =
-            "VIEW";
-
-        }
-
-
-        /* =========================
-           BUILD CARD
-        ========================= */
-
-        card.appendChild(
-          cardTop
-        );
-
-        card.appendChild(
-          matchArea
-        );
-
-        card.appendChild(
-          watch
-        );
-
-
-        /* =========================
-           CLICK
-        ========================= */
-
-        card.addEventListener(
-          "click",
-          function () {
-
-            openMatchOnScreen(
-              match
-            );
-
-          }
-        );
-
-
-        liveMatchesContainer.appendChild(
-          card
+        card.classList.add(
+          "upcoming-match-card"
         );
 
       }
-    );
+
+
+      /* =========================
+         CARD TOP
+      ========================= */
+
+      const cardTop =
+        document.createElement("div");
+
+
+      cardTop.className =
+        "card-top";
+
+
+      const status =
+        document.createElement("span");
+
+
+      status.className =
+        match.status === "LIVE"
+          ? "live-status"
+          : "upcoming-status";
+
+
+      status.textContent =
+        match.status;
+
+
+      const matchTime =
+        document.createElement("span");
+
+
+      matchTime.className =
+        "match-time";
+
+
+      matchTime.textContent =
+        match.time || "";
+
+
+      cardTop.appendChild(status);
+
+      cardTop.appendChild(matchTime);
+
+
+      /* =========================
+         MATCH AREA
+      ========================= */
+
+      const matchArea =
+        document.createElement("div");
+
+
+      matchArea.className =
+        "match-area";
+
+
+      const home =
+        document.createElement("div");
+
+
+      home.className =
+        "team";
+
+
+      const homeLogo =
+        document.createElement("div");
+
+
+      homeLogo.className =
+        "team-logo";
+
+
+      homeLogo.textContent =
+        "⚽";
+
+
+      const homeName =
+        document.createElement("span");
+
+
+      homeName.className =
+        "team-name";
+
+
+      homeName.textContent =
+        match.homeTeam;
+
+
+      home.appendChild(homeLogo);
+
+      home.appendChild(homeName);
+
+
+      /* =========================
+         CENTER
+      ========================= */
+
+      const center =
+        document.createElement("div");
+
+
+      center.className =
+        "match-center";
+
+
+      const versus =
+        document.createElement("span");
+
+
+      versus.className =
+        "versus";
+
+
+      versus.textContent =
+        "VS";
+
+
+      center.appendChild(versus);
+
+
+      /* =========================
+         AWAY TEAM
+      ========================= */
+
+      const away =
+        document.createElement("div");
+
+
+      away.className =
+        "team";
+
+
+      const awayLogo =
+        document.createElement("div");
+
+
+      awayLogo.className =
+        "team-logo";
+
+
+      awayLogo.textContent =
+        "⚽";
+
+
+      const awayName =
+        document.createElement("span");
+
+
+      awayName.className =
+        "team-name";
+
+
+      awayName.textContent =
+        match.awayTeam;
+
+
+      away.appendChild(awayLogo);
+
+      away.appendChild(awayName);
+
+
+      matchArea.appendChild(home);
+
+      matchArea.appendChild(center);
+
+      matchArea.appendChild(away);
+
+
+      /* =========================
+         WATCH BUTTON
+      ========================= */
+
+      const watch =
+        document.createElement("span");
+
+
+      watch.className =
+        "card-watch";
+
+
+      watch.textContent =
+        match.status === "LIVE"
+          ? "▶ WATCH"
+          : "VIEW";
+
+
+      /* =========================
+         BUILD CARD
+      ========================= */
+
+      card.appendChild(cardTop);
+
+      card.appendChild(matchArea);
+
+      card.appendChild(watch);
+
+
+      /* =========================
+         CLICK
+      ========================= */
+
+      card.addEventListener(
+        "click",
+        function () {
+
+          openMatchOnScreen(match);
+
+        }
+      );
+
+
+      liveMatchesContainer.appendChild(card);
+
+    });
 
   }
 
@@ -542,6 +409,11 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================= */
 
   function renderHighlights() {
+
+    if (!highlightsContainer) {
+      return;
+    }
+
 
     highlightsContainer.innerHTML = "";
 
@@ -556,210 +428,153 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    highlights.forEach(
-      function (highlight) {
+    highlights.forEach(function (highlight) {
 
-        const card =
-          document.createElement("button");
-
-
-        card.type =
-          "button";
+      const card =
+        document.createElement("button");
 
 
-        card.className =
-          "content-card highlight-card";
+      card.type =
+        "button";
 
 
-        /* =========================
-           THUMBNAIL
-        ========================= */
-
-        const thumbnail =
-          document.createElement("div");
+      card.className =
+        "content-card highlight-card";
 
 
-        thumbnail.className =
-          "highlight-thumbnail";
+      /* =========================
+         THUMBNAIL
+      ========================= */
+
+      const thumbnail =
+        document.createElement("div");
 
 
-        if (
-          highlight.thumbnail
-        ) {
-
-          const image =
-            document.createElement("img");
+      thumbnail.className =
+        "highlight-thumbnail";
 
 
-          image.src =
-            highlight.thumbnail;
+      const icon =
+        document.createElement("span");
 
 
-          image.alt =
-            highlight.title;
+      icon.className =
+        "highlight-icon";
 
 
-          image.loading =
-            "lazy";
+      icon.textContent =
+        "🎬";
 
 
-          image.onerror =
-            function () {
-
-              image.remove();
-
-            };
+      thumbnail.appendChild(icon);
 
 
-          thumbnail.appendChild(
-            image
+      /* =========================
+         PLAY
+      ========================= */
+
+      const play =
+        document.createElement("span");
+
+
+      play.className =
+        "highlight-play";
+
+
+      play.textContent =
+        "▶";
+
+
+      thumbnail.appendChild(play);
+
+
+      /* =========================
+         INFO
+      ========================= */
+
+      const info =
+        document.createElement("div");
+
+
+      info.className =
+        "highlight-info";
+
+
+      const title =
+        document.createElement("div");
+
+
+      title.className =
+        "card-title";
+
+
+      title.textContent =
+        highlight.title;
+
+
+      const status =
+        document.createElement("div");
+
+
+      status.className =
+        "card-status";
+
+
+      status.textContent =
+        "HIGHLIGHT";
+
+
+      info.appendChild(title);
+
+      info.appendChild(status);
+
+
+      /* =========================
+         ARROW
+      ========================= */
+
+      const arrow =
+        document.createElement("div");
+
+
+      arrow.className =
+        "card-arrow";
+
+
+      arrow.textContent =
+        "→";
+
+
+      /* =========================
+         BUILD CARD
+      ========================= */
+
+      card.appendChild(thumbnail);
+
+      card.appendChild(info);
+
+      card.appendChild(arrow);
+
+
+      /* =========================
+         CLICK
+      ========================= */
+
+      card.addEventListener(
+        "click",
+        function () {
+
+          openHighlightOnScreen(
+            highlight
           );
 
         }
+      );
 
 
-        /* =========================
-           FALLBACK ICON
-        ========================= */
+      highlightsContainer.appendChild(card);
 
-        const highlightIcon =
-          document.createElement("span");
-
-
-        highlightIcon.className =
-          "highlight-icon";
-
-
-        highlightIcon.textContent =
-          "🎬";
-
-
-        thumbnail.appendChild(
-          highlightIcon
-        );
-
-
-        /* =========================
-           PLAY BUTTON
-        ========================= */
-
-        const play =
-          document.createElement("span");
-
-
-        play.className =
-          "highlight-play";
-
-
-        play.textContent =
-          "▶";
-
-
-        thumbnail.appendChild(
-          play
-        );
-
-
-        /* =========================
-           INFORMATION
-        ========================= */
-
-        const info =
-          document.createElement("div");
-
-
-        info.className =
-          "highlight-info";
-
-
-        const title =
-          document.createElement("div");
-
-
-        title.className =
-          "card-title";
-
-
-        title.textContent =
-          highlight.title;
-
-
-        const status =
-          document.createElement("div");
-
-
-        status.className =
-          "card-status";
-
-
-        status.textContent =
-          "HIGHLIGHT";
-
-
-        info.appendChild(
-          title
-        );
-
-        info.appendChild(
-          status
-        );
-
-
-        /* =========================
-           ARROW
-        ========================= */
-
-        const arrow =
-          document.createElement("div");
-
-
-        arrow.className =
-          "card-arrow";
-
-
-        arrow.textContent =
-          "→";
-
-
-        /* =========================
-           BUILD CARD
-        ========================= */
-
-        card.appendChild(
-          thumbnail
-        );
-
-        card.appendChild(
-          info
-        );
-
-        card.appendChild(
-          arrow
-        );
-
-
-        /* =========================
-           CLICK
-        ========================= */
-
-        card.addEventListener(
-          "click",
-          function () {
-
-            openHighlightOnScreen(
-              highlight
-            );
-
-          }
-        );
-
-
-        highlightsContainer.appendChild(
-          card
-        );
-
-      }
-    );
+    });
 
   }
 
@@ -770,22 +585,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showPage(page) {
 
-    homePage.classList.remove(
-      "active"
-    );
-
-    footballPage.classList.remove(
-      "active"
-    );
-
-    screenPage.classList.remove(
-      "active"
-    );
+    if (!page) {
+      return;
+    }
 
 
-    page.classList.add(
-      "active"
-    );
+    homePage.classList.remove("active");
+
+    footballPage.classList.remove("active");
+
+    screenPage.classList.remove("active");
+
+
+    page.classList.add("active");
 
 
     window.scrollTo({
@@ -803,13 +615,9 @@ document.addEventListener("DOMContentLoaded", function () {
   window.openScreen =
     function () {
 
-      previousPage =
-        "home";
+      previousPage = "home";
 
-
-      showPage(
-        screenPage
-      );
+      showPage(screenPage);
 
     };
 
@@ -821,14 +629,9 @@ document.addEventListener("DOMContentLoaded", function () {
   window.openFootball =
     function () {
 
-      previousPage =
-        "home";
+      previousPage = "home";
 
-
-      showPage(
-        footballPage
-      );
-
+      showPage(footballPage);
 
       showLive();
 
@@ -844,16 +647,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
       stopCurrentPlayer();
 
-
-      showPage(
-        homePage
-      );
+      showPage(homePage);
 
     };
 
 
   /* =========================
-     SCREEN BACK
+     BACK FROM SCREEN
   ========================= */
 
   window.goBackFromScreen =
@@ -863,8 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
       if (
-        previousPage ===
-        "football"
+        previousPage === "football"
       ) {
 
         showPage(
@@ -888,6 +687,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.showLive =
     function () {
+
+      if (
+        !liveSection ||
+        !highlightSection
+      ) {
+        return;
+      }
+
 
       liveSection.classList.add(
         "active"
@@ -944,16 +751,14 @@ document.addEventListener("DOMContentLoaded", function () {
      OPEN MATCH
   ========================= */
 
-  function openMatchOnScreen(
-    match
-  ) {
-
-    currentItem =
-      match;
-
+  function openMatchOnScreen(match) {
 
     previousPage =
       "football";
+
+
+    currentItem =
+      match;
 
 
     showPage(
@@ -976,12 +781,12 @@ document.addEventListener("DOMContentLoaded", function () {
     highlight
   ) {
 
-    currentItem =
-      highlight;
-
-
     previousPage =
       "football";
+
+
+    currentItem =
+      highlight;
 
 
     showPage(
@@ -997,23 +802,86 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     UPDATE SCREEN
+     CLEAR PLAYER
   ========================= */
 
-  function updateScreen(
-    item
-  ) {
+  function clearPlayer() {
 
-    nowShowing.textContent =
-      item.title;
+    if (!screenPlayer) {
+      return;
+    }
+
+
+    /* Stop HTML5 video */
+
+    if (
+      currentPlayer &&
+      currentPlayer.tagName === "VIDEO"
+    ) {
+
+      try {
+
+        currentPlayer.pause();
+
+        currentPlayer.removeAttribute(
+          "src"
+        );
+
+        currentPlayer.load();
+
+      } catch (error) {
+
+        console.log(
+          "Video cleanup error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    currentPlayer =
+      null;
 
 
     screenPlayer.innerHTML =
       "";
 
+  }
+
+
+  /* =========================
+     UPDATE SCREEN
+  ========================= */
+
+  function updateScreen(item) {
+
+    if (
+      !item ||
+      !screenPlayer
+    ) {
+      return;
+    }
+
+
+    clearPlayer();
+
 
     /* =========================
-       NO PLAYER
+       NOW SHOWING
+    ========================= */
+
+    if (nowShowing) {
+
+      nowShowing.textContent =
+        item.title;
+
+    }
+
+
+    /* =========================
+       NO PLAYER URL
     ========================= */
 
     if (
@@ -1021,67 +889,8 @@ document.addEventListener("DOMContentLoaded", function () {
       item.playerUrl.trim() === ""
     ) {
 
-      const placeholder =
-        document.createElement(
-          "div"
-        );
-
-
-      placeholder.className =
-        "screen-placeholder";
-
-
-      const icon =
-        document.createElement(
-          "div"
-        );
-
-
-      icon.className =
-        "screen-icon";
-
-
-      icon.textContent =
-        "📺";
-
-
-      const title =
-        document.createElement(
-          "p"
-        );
-
-
-      title.textContent =
-        item.title;
-
-
-      const small =
-        document.createElement(
-          "small"
-        );
-
-
-      small.textContent =
-        "Player ready";
-
-
-      placeholder.appendChild(
-        icon
-      );
-
-
-      placeholder.appendChild(
-        title
-      );
-
-
-      placeholder.appendChild(
-        small
-      );
-
-
-      screenPlayer.appendChild(
-        placeholder
+      createPlaceholder(
+        item
       );
 
 
@@ -1094,44 +903,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       IFRAME
+       IFRAME PLAYER
     ========================= */
 
     if (
-      item.playerType ===
-      "iframe"
+      item.playerType === "iframe"
     ) {
 
-      const iframe =
-        document.createElement(
-          "iframe"
-        );
-
-
-      iframe.src =
-        item.playerUrl;
-
-
-      iframe.allow =
-        "autoplay; fullscreen; picture-in-picture";
-
-
-      iframe.setAttribute(
-        "allowfullscreen",
-        ""
-      );
-
-
-      iframe.loading =
-        "eager";
-
-
-      iframe.title =
-        item.title;
-
-
-      screenPlayer.appendChild(
-        iframe
+      createIframePlayer(
+        item
       );
 
 
@@ -1144,54 +924,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       VIDEO
+       VIDEO PLAYER
     ========================= */
 
     if (
-      item.playerType ===
-      "video"
+      item.playerType === "video"
     ) {
 
-      const video =
-        document.createElement(
-          "video"
-        );
-
-
-      video.src =
-        item.playerUrl;
-
-
-      video.controls =
-        true;
-
-
-      video.autoplay =
-        true;
-
-
-      video.playsInline =
-        true;
-
-
-      video.setAttribute(
-        "playsinline",
-        ""
-      );
-
-
-      video.setAttribute(
-        "webkit-playsinline",
-        ""
-      );
-
-
-      video.title =
-        item.title;
-
-
-      screenPlayer.appendChild(
-        video
+      createVideoPlayer(
+        item
       );
 
 
@@ -1199,6 +940,237 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
       return;
+
+    }
+
+
+    /* =========================
+       UNKNOWN PLAYER
+    ========================= */
+
+    createPlaceholder(
+      item
+    );
+
+
+    addFullscreenButton();
+
+  }
+
+
+  /* =========================
+     CREATE PLACEHOLDER
+  ========================= */
+
+  function createPlaceholder(item) {
+
+    const placeholder =
+      document.createElement("div");
+
+
+    placeholder.className =
+      "screen-placeholder";
+
+
+    const icon =
+      document.createElement("div");
+
+
+    icon.className =
+      "screen-icon";
+
+
+    icon.textContent =
+      "📺";
+
+
+    const title =
+      document.createElement("p");
+
+
+    title.textContent =
+      item.title;
+
+
+    const small =
+      document.createElement("small");
+
+
+    small.textContent =
+      "Player ready";
+
+
+    placeholder.appendChild(
+      icon
+    );
+
+
+    placeholder.appendChild(
+      title
+    );
+
+
+    placeholder.appendChild(
+      small
+    );
+
+
+    screenPlayer.appendChild(
+      placeholder
+    );
+
+  }
+
+
+  /* =========================
+     CREATE IFRAME
+  ========================= */
+
+  function createIframePlayer(item) {
+
+    const iframe =
+      document.createElement("iframe");
+
+
+    iframe.src =
+      item.playerUrl;
+
+
+    iframe.title =
+      item.title;
+
+
+    iframe.allow =
+      "autoplay; fullscreen; picture-in-picture";
+
+
+    iframe.setAttribute(
+      "allowfullscreen",
+      ""
+    );
+
+
+    iframe.setAttribute(
+      "webkitallowfullscreen",
+      ""
+    );
+
+
+    iframe.setAttribute(
+      "mozallowfullscreen",
+      ""
+    );
+
+
+    iframe.loading =
+      "eager";
+
+
+    iframe.referrerPolicy =
+      "strict-origin-when-cross-origin";
+
+
+    screenPlayer.appendChild(
+      iframe
+    );
+
+
+    currentPlayer =
+      iframe;
+
+  }
+
+
+  /* =========================
+     CREATE VIDEO
+  ========================= */
+
+  function createVideoPlayer(item) {
+
+    const video =
+      document.createElement("video");
+
+
+    video.src =
+      item.playerUrl;
+
+
+    video.controls =
+      true;
+
+
+    video.autoplay =
+      true;
+
+
+    video.muted =
+      false;
+
+
+    video.playsInline =
+      true;
+
+
+    video.setAttribute(
+      "playsinline",
+      ""
+    );
+
+
+    video.setAttribute(
+      "webkit-playsinline",
+      ""
+    );
+
+
+    video.preload =
+      "auto";
+
+
+    video.controlsList =
+      "nodownload";
+
+
+    screenPlayer.appendChild(
+      video
+    );
+
+
+    currentPlayer =
+      video;
+
+
+    /* =========================
+       AUTOPLAY FALLBACK
+    ========================= */
+
+    const playPromise =
+      video.play();
+
+
+    if (
+      playPromise &&
+      typeof playPromise.catch ===
+      "function"
+    ) {
+
+      playPromise.catch(
+        function () {
+
+          /*
+             Some browsers block
+             autoplay with sound.
+
+             The native video controls
+             remain available.
+          */
+
+          console.log(
+            "Autoplay was blocked."
+          );
+
+        }
+      );
 
     }
 
@@ -1211,88 +1183,103 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function addFullscreenButton() {
 
-    const fullscreenButton =
-      document.createElement(
-        "button"
-      );
+    if (!screenPlayer) {
+      return;
+    }
 
 
-    fullscreenButton.type =
+    const button =
+      document.createElement("button");
+
+
+    button.type =
       "button";
 
 
-    fullscreenButton.className =
+    button.className =
       "fullscreen-button";
 
 
-    fullscreenButton.textContent =
+    button.textContent =
       "⛶";
 
 
-    fullscreenButton.setAttribute(
+    button.setAttribute(
       "aria-label",
       "Fullscreen"
     );
 
 
-    fullscreenButton.setAttribute(
+    button.setAttribute(
       "title",
       "Fullscreen"
     );
 
 
-    fullscreenButton.addEventListener(
+    button.addEventListener(
       "click",
       function (event) {
+
+        event.preventDefault();
 
         event.stopPropagation();
 
 
-        enterFullscreen(
-          screenPlayer
-        );
+        toggleFullscreen();
 
       }
     );
 
 
     screenPlayer.appendChild(
-      fullscreenButton
+      button
     );
+
+
+    updateFullscreenButton();
 
   }
 
 
   /* =========================
-     FULLSCREEN
+     TOGGLE FULLSCREEN
   ========================= */
 
-  function enterFullscreen(
-    element
-  ) {
+  function toggleFullscreen() {
 
     if (
       document.fullscreenElement
     ) {
 
-      if (
-        document.exitFullscreen
-      ) {
-
-        document.exitFullscreen();
-
-      }
+      exitFullscreen();
 
       return;
 
     }
 
 
+    enterFullscreen();
+
+  }
+
+
+  /* =========================
+     ENTER FULLSCREEN
+  ========================= */
+
+  function enterFullscreen() {
+
+    if (!screenPlayer) {
+      return;
+    }
+
+
     if (
-      element.requestFullscreen
+      screenPlayer.requestFullscreen
     ) {
 
-      element.requestFullscreen()
+      screenPlayer
+        .requestFullscreen()
         .catch(
           function (error) {
 
@@ -1310,10 +1297,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     if (
-      element.webkitRequestFullscreen
+      screenPlayer.webkitRequestFullscreen
     ) {
 
-      element.webkitRequestFullscreen();
+      screenPlayer.webkitRequestFullscreen();
+
+      return;
+
+    }
+
+
+    if (
+      screenPlayer.msRequestFullscreen
+    ) {
+
+      screenPlayer.msRequestFullscreen();
 
     }
 
@@ -1321,61 +1319,118 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     FULLSCREEN CHANGE
+     EXIT FULLSCREEN
+  ========================= */
+
+  function exitFullscreen() {
+
+    if (
+      document.exitFullscreen
+    ) {
+
+      document.exitFullscreen()
+        .catch(
+          function () {}
+        );
+
+      return;
+
+    }
+
+
+    if (
+      document.webkitExitFullscreen
+    ) {
+
+      document.webkitExitFullscreen();
+
+    }
+
+  }
+
+
+  /* =========================
+     UPDATE FULLSCREEN BUTTON
+  ========================= */
+
+  function updateFullscreenButton() {
+
+    if (!screenPlayer) {
+      return;
+    }
+
+
+    const button =
+      screenPlayer.querySelector(
+        ".fullscreen-button"
+      );
+
+
+    if (!button) {
+      return;
+    }
+
+
+    if (
+      document.fullscreenElement
+    ) {
+
+      button.textContent =
+        "✕";
+
+
+      button.setAttribute(
+        "aria-label",
+        "Exit fullscreen"
+      );
+
+
+      button.setAttribute(
+        "title",
+        "Exit fullscreen"
+      );
+
+    } else {
+
+      button.textContent =
+        "⛶";
+
+
+      button.setAttribute(
+        "aria-label",
+        "Fullscreen"
+      );
+
+
+      button.setAttribute(
+        "title",
+        "Fullscreen"
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     FULLSCREEN EVENTS
   ========================= */
 
   document.addEventListener(
     "fullscreenchange",
     function () {
 
-      const button =
-        screenPlayer.querySelector(
-          ".fullscreen-button"
-        );
+      updateFullscreenButton();
+
+    }
+  );
 
 
-      if (!button) {
-        return;
-      }
+  document.addEventListener(
+    "webkitfullscreenchange",
+    function () {
 
-
-      if (
-        document.fullscreenElement
-      ) {
-
-        button.textContent =
-          "✕";
-
-
-        button.setAttribute(
-          "aria-label",
-          "Exit fullscreen"
-        );
-
-
-        button.setAttribute(
-          "title",
-          "Exit fullscreen"
-        );
-
-      } else {
-
-        button.textContent =
-          "⛶";
-
-
-        button.setAttribute(
-          "aria-label",
-          "Fullscreen"
-        );
-
-
-        button.setAttribute(
-          "title",
-          "Fullscreen"
-        );
-
-      }
+      updateFullscreenButton();
 
     }
   );
@@ -1392,31 +1447,53 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    /* Exit fullscreen */
+
     if (
-      document.fullscreenElement &&
-      document.exitFullscreen
+      document.fullscreenElement
     ) {
 
-      document.exitFullscreen()
-        .catch(
-          function () {}
-        );
+      exitFullscreen();
 
     }
 
 
-    screenPlayer.innerHTML =
-      "";
+    clearPlayer();
 
 
-    nowShowing.textContent =
-      "Select a match";
+    if (nowShowing) {
+
+      nowShowing.textContent =
+        "Select a match";
+
+    }
 
 
     currentItem =
       null;
 
   }
+
+
+  /* =========================
+     KEYBOARD ESCAPE
+  ========================= */
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (
+        event.key === "Escape" &&
+        document.fullscreenElement
+      ) {
+
+        exitFullscreen();
+
+      }
+
+    }
+  );
 
 
   /* =========================
