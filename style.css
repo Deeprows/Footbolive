@@ -605,7 +605,7 @@ a {
 
 
 /* =========================================================
-   FULLSCREEN
+   FULLSCREEN BUTTON
    ========================================================= */
 
 .fullscreen-button {
@@ -615,6 +615,12 @@ a {
   width: 40px;
 
   height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
 
   border:
     1px solid
@@ -629,11 +635,14 @@ a {
 
   font-size: 18px;
 
+  line-height: 1;
+
   cursor: pointer;
 
   transition:
     background .2s ease,
-    transform .2s ease;
+    transform .2s ease,
+    color .2s ease;
 
   touch-action: manipulation;
 }
@@ -645,6 +654,465 @@ a {
 
   transform:
     translateY(-1px);
+}
+
+
+/* =========================================================
+   FULLSCREEN PLAYER
+   ========================================================= */
+
+/*
+ * When the player enters fullscreen, remove all normal
+ * page constraints so the iframe can occupy the entire
+ * device display.
+ */
+
+.screen-player:fullscreen {
+
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+
+  height: 100vh;
+
+  max-width: none;
+
+  max-height: none;
+
+  margin: 0;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: #000;
+
+  box-shadow: none;
+
+  overflow: hidden;
+
+  z-index: 999999;
+}
+
+
+/*
+ * WebKit fullscreen support.
+ */
+
+.screen-player:-webkit-full-screen {
+
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+
+  height: 100vh;
+
+  max-width: none;
+
+  max-height: none;
+
+  margin: 0;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: #000;
+
+  box-shadow: none;
+
+  overflow: hidden;
+
+  z-index: 999999;
+}
+
+
+/*
+ * Fullscreen iframe.
+ */
+
+.screen-player:fullscreen iframe {
+
+  width: 100vw;
+
+  height: 100vh;
+
+  min-width: 100vw;
+
+  min-height: 100vh;
+
+  display: block;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: #000;
+
+  opacity: 1;
+}
+
+
+.screen-player:-webkit-full-screen iframe {
+
+  width: 100vw;
+
+  height: 100vh;
+
+  min-width: 100vw;
+
+  min-height: 100vh;
+
+  display: block;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: #000;
+
+  opacity: 1;
+}
+
+
+/*
+ * Keep the screen status visible above the iframe.
+ */
+
+.screen-player:fullscreen .screen-status {
+
+  position: absolute;
+
+  top: 20px;
+
+  left: 20px;
+
+  z-index: 99999;
+}
+
+
+.screen-player:-webkit-full-screen .screen-status {
+
+  position: absolute;
+
+  top: 20px;
+
+  left: 20px;
+
+  z-index: 99999;
+}
+
+
+/*
+ * Turn the normal bottom information bar into an
+ * invisible fullscreen control layer.
+ *
+ * The Now Showing information is hidden while the
+ * fullscreen button remains available.
+ */
+
+.screen-player:fullscreen .screen-bottom {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 99998;
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  padding: 0;
+
+  background: transparent;
+
+  border: 0;
+
+  pointer-events: none;
+}
+
+
+.screen-player:-webkit-full-screen .screen-bottom {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 99998;
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  padding: 0;
+
+  background: transparent;
+
+  border: 0;
+
+  pointer-events: none;
+}
+
+
+/*
+ * Hide Now Showing in fullscreen.
+ */
+
+.screen-player:fullscreen .now-showing {
+
+  display: none;
+}
+
+
+.screen-player:-webkit-full-screen .now-showing {
+
+  display: none;
+}
+
+
+/*
+ * Move the fullscreen button to the top-right
+ * and turn it into the X exit button.
+ */
+
+.screen-player:fullscreen .fullscreen-button {
+
+  position: absolute;
+
+  top: 20px;
+
+  right: 20px;
+
+  z-index: 100000;
+
+  width: 52px;
+
+  height: 52px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(255,255,255,.18);
+
+  border-radius: 50%;
+
+  background:
+    rgba(0,0,0,.68);
+
+  color: #fff;
+
+  font-size: 34px;
+
+  font-weight: 300;
+
+  line-height: 1;
+
+  text-align: center;
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0 6px 25px
+    rgba(0,0,0,.35);
+
+  pointer-events: auto;
+
+  transform: none;
+}
+
+
+.screen-player:-webkit-full-screen .fullscreen-button {
+
+  position: absolute;
+
+  top: 20px;
+
+  right: 20px;
+
+  z-index: 100000;
+
+  width: 52px;
+
+  height: 52px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(255,255,255,.18);
+
+  border-radius: 50%;
+
+  background:
+    rgba(0,0,0,.68);
+
+  color: #fff;
+
+  font-size: 34px;
+
+  font-weight: 300;
+
+  line-height: 1;
+
+  text-align: center;
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0 6px 25px
+    rgba(0,0,0,.35);
+
+  pointer-events: auto;
+
+  transform: none;
+}
+
+
+/*
+ * Fullscreen X hover/touch state.
+ */
+
+.screen-player:fullscreen .fullscreen-button:hover {
+
+  background:
+    var(--accent);
+
+  transform: scale(1.05);
+}
+
+
+.screen-player:-webkit-full-screen .fullscreen-button:hover {
+
+  background:
+    var(--accent);
+
+  transform: scale(1.05);
+}
+
+
+/*
+ * Landscape fullscreen.
+ */
+
+@media (orientation: landscape) {
+
+  .screen-player:fullscreen {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-width: 100vw;
+
+    min-height: 100vh;
+  }
+
+  .screen-player:fullscreen iframe {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-width: 100vw;
+
+    min-height: 100vh;
+  }
+
+  .screen-player:-webkit-full-screen {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-width: 100vw;
+
+    min-height: 100vh;
+  }
+
+  .screen-player:-webkit-full-screen iframe {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-width: 100vw;
+
+    min-height: 100vh;
+  }
+
+}
+
+
+/*
+ * Smaller fullscreen exit button on narrow screens.
+ */
+
+@media (max-width: 550px) {
+
+  .screen-player:fullscreen .fullscreen-button {
+
+    top: 14px;
+
+    right: 14px;
+
+    width: 48px;
+
+    height: 48px;
+
+    font-size: 31px;
+  }
+
+  .screen-player:-webkit-full-screen .fullscreen-button {
+
+    top: 14px;
+
+    right: 14px;
+
+    width: 48px;
+
+    height: 48px;
+
+    font-size: 31px;
+  }
+
 }
 
 
