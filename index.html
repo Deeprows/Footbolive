@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,12 +8,12 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    content="width=device-width, initial-scale=1.0"
   >
 
   <meta
     name="description"
-    content="Football live matches, highlights and streaming screen."
+    content="Deeprowss Football Live and Highlights."
   >
 
   <meta
@@ -20,7 +21,7 @@
     content="#07090d"
   >
 
-  <title>Football App</title>
+  <title>Football — Deeprowss</title>
 
   <link
     rel="stylesheet"
@@ -33,315 +34,214 @@
 <body>
 
 
-  <!-- =========================
-       APP
-  ========================== -->
+  <!-- =========================================================
+       HEADER
+       ========================================================= -->
 
-  <div
-    class="app"
-    id="app"
-  >
+  <header class="site-header">
 
+    <div class="container nav-wrap">
 
-    <!-- =========================
-         HOME PAGE
-    ========================== -->
-
-    <main
-      class="page active"
-      id="homePage"
-    >
-
-      <div class="home-container">
-
-
-        <!-- APP LOGO -->
-
-        <div class="app-logo">
-          ⚽
-        </div>
-
-
-        <h1>
-          Football
-        </h1>
-
-
-        <!-- MAIN BUTTONS -->
-
-        <div class="home-buttons">
-
-
-          <!-- SCREEN -->
-
-          <button
-            type="button"
-            class="main-button"
-            onclick="openScreen()"
-          >
-
-            <span class="button-icon">
-              📺
-            </span>
-
-            <span>
-              Screen
-            </span>
-
-          </button>
-
-
-          <!-- FOOTBALL -->
-
-          <button
-            type="button"
-            class="main-button"
-            onclick="openFootball()"
-          >
-
-            <span class="button-icon">
-              ⚽
-            </span>
-
-            <span>
-              Football Live | Highlights
-            </span>
-
-          </button>
-
-
-        </div>
-
-      </div>
-
-    </main>
-
-
-
-    <!-- =========================
-         FOOTBALL PAGE
-    ========================== -->
-
-    <main
-      class="page"
-      id="footballPage"
-    >
-
-
-      <!-- HEADER -->
-
-      <header class="page-header">
-
-
-        <button
-          type="button"
-          class="back-button"
-          onclick="goHome()"
-          aria-label="Back"
-          title="Back"
-        >
-          ‹
-        </button>
-
-
-        <h2>
-          Football
-        </h2>
-
-
-      </header>
-
-
-
-      <!-- TABS -->
-
-      <nav
-        class="football-tabs"
-        aria-label="Football sections"
+      <a
+        class="brand"
+        href="index.html"
+        aria-label="Deeprowss Home"
       >
 
+        <span class="brand-mark">
+          D
+        </span>
 
-        <!-- LIVE -->
+        <span>
+          DEE<span>PROWSS</span>
+        </span>
 
-        <button
-          type="button"
-          id="liveTab"
-          class="football-tab active"
-          onclick="showLive()"
+      </a>
+
+
+      <button
+        type="button"
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Open navigation"
+        aria-expanded="false"
+        aria-controls="mainNav"
+      >
+        ☰
+      </button>
+
+
+      <nav
+        class="main-nav"
+        id="mainNav"
+        aria-label="Main navigation"
+      >
+
+        <a
+          href="#"
+          id="navFootball"
+          class="active"
         >
+          Football Live
+        </a>
 
-          ⚽ Live
-
-        </button>
-
-
-        <!-- HIGHLIGHTS -->
-
-        <button
-          type="button"
-          id="highlightTab"
-          class="football-tab"
-          onclick="showHighlights()"
+        <a
+          href="#"
+          id="navHighlights"
         >
-
-          🎬 Highlights
-
-        </button>
-
+          Highlights
+        </a>
 
       </nav>
 
+    </div>
 
-
-      <!-- =========================
-           LIVE SECTION
-      ========================== -->
-
-      <section
-        class="content-section active"
-        id="liveSection"
-      >
-
-
-        <div class="section-title">
-          Upcoming &amp; Live Matches
-        </div>
-
-
-        <div
-          class="content-list"
-          id="liveMatches"
-        >
-          <!-- JavaScript loads matches here -->
-        </div>
-
-
-      </section>
+  </header>
 
 
 
-      <!-- =========================
-           HIGHLIGHTS SECTION
-      ========================== -->
+  <!-- =========================================================
+       MAIN APP
+       ========================================================= -->
 
-      <section
-        class="content-section"
-        id="highlightSection"
-      >
+  <main class="football-app">
 
 
-        <div class="section-title">
-          Highlights
-        </div>
+    <!-- =======================================================
+         MAIN SCREEN
+         ======================================================= -->
 
-
-        <div
-          class="content-list"
-          id="highlights"
-        >
-          <!-- JavaScript loads highlights here -->
-        </div>
-
-
-      </section>
-
-
-    </main>
-
-
-
-    <!-- =========================
-         SCREEN PAGE
-    ========================== -->
-
-    <main
-      class="page"
-      id="screenPage"
+    <section
+      class="screen-section"
+      id="screenSection"
     >
 
+      <div class="container">
 
-      <!-- HEADER -->
-
-      <header class="page-header">
-
-
-        <button
-          type="button"
-          class="back-button"
-          onclick="goBackFromScreen()"
-          aria-label="Back"
-          title="Back"
-        >
-          ‹
-        </button>
-
-
-        <h2>
-          Screen
-        </h2>
-
-
-      </header>
-
-
-
-      <!-- SCREEN CONTAINER -->
-
-      <div class="screen-container">
-
-
-        <!-- =========================
-             NOW SHOWING
-        ========================== -->
-
-        <div
-          class="now-showing"
-          aria-live="polite"
-        >
-
-          <span>
-            Now showing:
-          </span>
-
-          <strong id="nowShowing">
-            Select a match
-          </strong>
-
-        </div>
-
-
-
-        <!-- =========================
-             PLAYER
-        ========================== -->
 
         <div
           class="screen-player"
           id="screenPlayer"
         >
 
+          <div class="screen-status">
 
-          <!-- DEFAULT PLAYER PLACEHOLDER -->
+            <span class="screen-live-dot"></span>
 
-          <div class="screen-placeholder">
+            <span id="screenStatus">
+              READY
+            </span>
+
+          </div>
 
 
-            <div class="screen-icon">
-              📺
+          <iframe
+            id="screenFrame"
+            src="about:blank"
+            title="Deeprowss Football Screen"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+
+
+          <div
+            class="screen-placeholder"
+            id="screenPlaceholder"
+          >
+
+            <div class="screen-placeholder-icon">
+              ⚽
+            </div>
+
+            <strong>
+              Select a match
+            </strong>
+
+          </div>
+
+
+          <div class="screen-bottom">
+
+            <div class="now-showing">
+
+              <span>
+                NOW SHOWING
+              </span>
+
+              <strong id="nowShowing">
+                Select a match
+              </strong>
+
             </div>
 
 
-            <p>
-              Select a match
-            </p>
-
-
-            <small>
-              Player ready
-            </small>
-
+            <button
+              type="button"
+              class="fullscreen-button"
+              id="fullscreenButton"
+              aria-label="Fullscreen"
+            >
+              ⛶
+            </button>
 
           </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         HOME BUTTONS
+         ======================================================= -->
+
+    <section
+      class="app-menu"
+      id="appMenu"
+    >
+
+      <div class="container">
+
+
+        <div class="app-buttons">
+
+
+          <button
+            type="button"
+            class="app-button football-button active"
+            id="footballButton"
+          >
+
+            <span class="app-button-icon">
+              ⚽
+            </span>
+
+            <span>
+              Football Live
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="app-button highlights-button"
+            id="highlightsButton"
+          >
+
+            <span class="app-button-icon">
+              🎬
+            </span>
+
+            <span>
+              Highlights
+            </span>
+
+          </button>
 
 
         </div>
@@ -349,24 +249,350 @@
 
       </div>
 
-
-    </main>
-
-
-  </div>
+    </section>
 
 
 
-  <!-- =========================
+    <!-- =======================================================
+         FOOTBALL LIVE CONTENT
+         ======================================================= -->
+
+    <section
+      class="content-section"
+      id="footballContent"
+    >
+
+      <div class="container">
+
+
+        <div class="content-heading">
+
+          <h1>
+            Upcoming &amp; Live Matches
+          </h1>
+
+          <span
+            class="content-count"
+            id="matchCount"
+          >
+            0
+          </span>
+
+        </div>
+
+
+        <div
+          class="match-grid"
+          id="matchList"
+        >
+
+
+          <!-- MATCHES WILL BE ADDED HERE -->
+
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Chelsea vs Juventus"
+            data-url=""
+          >
+
+            <span class="match-status live">
+              LIVE
+            </span>
+
+            <span class="match-teams">
+              Chelsea vs Juventus
+            </span>
+
+            <span class="match-time">
+              Live
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Barcelona vs PSG"
+            data-url=""
+          >
+
+            <span class="match-status upcoming">
+              UPCOMING
+            </span>
+
+            <span class="match-teams">
+              Barcelona vs PSG
+            </span>
+
+            <span class="match-time">
+              Coming Soon
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Arsenal vs Liverpool"
+            data-url=""
+          >
+
+            <span class="match-status upcoming">
+              UPCOMING
+            </span>
+
+            <span class="match-teams">
+              Arsenal vs Liverpool
+            </span>
+
+            <span class="match-time">
+              Coming Soon
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Real Madrid vs Manchester City"
+            data-url=""
+          >
+
+            <span class="match-status upcoming">
+              UPCOMING
+            </span>
+
+            <span class="match-teams">
+              Real Madrid vs Manchester City
+            </span>
+
+            <span class="match-time">
+              Coming Soon
+            </span>
+
+          </button>
+
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          id="footballEmpty"
+          hidden
+        >
+
+          No matches available.
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         HIGHLIGHTS CONTENT
+         ======================================================= -->
+
+    <section
+      class="content-section highlights-content"
+      id="highlightsContent"
+      hidden
+    >
+
+      <div class="container">
+
+
+        <div class="content-heading">
+
+          <h1>
+            Football Highlights
+          </h1>
+
+          <span
+            class="content-count"
+            id="highlightCount"
+          >
+            0
+          </span>
+
+        </div>
+
+
+        <div
+          class="highlight-grid"
+          id="highlightList"
+        >
+
+
+          <!-- HIGHLIGHTS WILL BE ADDED HERE -->
+
+
+          <button
+            type="button"
+            class="highlight-card"
+            data-name="Chelsea vs Juventus Highlights"
+            data-url=""
+          >
+
+            <div class="highlight-thumbnail">
+
+              <span>
+                ▶
+              </span>
+
+            </div>
+
+            <strong>
+              Chelsea vs Juventus
+            </strong>
+
+            <small>
+              Highlights
+            </small>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="highlight-card"
+            data-name="Barcelona vs PSG Highlights"
+            data-url=""
+          >
+
+            <div class="highlight-thumbnail">
+
+              <span>
+                ▶
+              </span>
+
+            </div>
+
+            <strong>
+              Barcelona vs PSG
+            </strong>
+
+            <small>
+              Highlights
+            </small>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="highlight-card"
+            data-name="Arsenal vs Liverpool Highlights"
+            data-url=""
+          >
+
+            <div class="highlight-thumbnail">
+
+              <span>
+                ▶
+              </span>
+
+            </div>
+
+            <strong>
+              Arsenal vs Liverpool
+            </strong>
+
+            <small>
+              Highlights
+            </small>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="highlight-card"
+            data-name="Real Madrid vs Manchester City Highlights"
+            data-url=""
+          >
+
+            <div class="highlight-thumbnail">
+
+              <span>
+                ▶
+              </span>
+
+            </div>
+
+            <strong>
+              Real Madrid vs Manchester City
+            </strong>
+
+            <small>
+              Highlights
+            </small>
+
+          </button>
+
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          id="highlightEmpty"
+          hidden
+        >
+
+          No highlights available.
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+
+  <footer class="footer">
+
+    <div class="container footer-wrap">
+
+      <strong>
+        DEE<span>PROWSS</span>
+      </strong>
+
+      <span>
+        Football • Highlights
+      </span>
+
+    </div>
+
+  </footer>
+
+
+
+  <!-- =========================================================
        JAVASCRIPT
-  ========================== -->
+       ========================================================= -->
 
-  <script
-    src="script.js"
-    defer
-  ></script>
+  <script src="script.js"></script>
 
 
 </body>
 
 </html>
+```
