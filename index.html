@@ -7,12 +7,12 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
   <meta
     name="description"
-    content="Football Live, upcoming matches and football highlights."
+    content="Football live matches, highlights and streaming screen."
   >
 
   <meta
@@ -20,7 +20,7 @@
     content="#07090d"
   >
 
-  <title>Football Live</title>
+  <title>Football App</title>
 
   <link
     rel="stylesheet"
@@ -37,7 +37,10 @@
        APP
   ========================== -->
 
-  <div class="app">
+  <div
+    class="app"
+    id="app"
+  >
 
 
     <!-- =========================
@@ -45,8 +48,8 @@
     ========================== -->
 
     <main
-      id="homePage"
       class="page active"
+      id="homePage"
     >
 
       <div class="home-container">
@@ -72,9 +75,9 @@
           <!-- SCREEN -->
 
           <button
-            class="main-button screen-button"
-            onclick="openScreen()"
             type="button"
+            class="main-button"
+            onclick="openScreen()"
           >
 
             <span class="button-icon">
@@ -91,9 +94,9 @@
           <!-- FOOTBALL -->
 
           <button
-            class="main-button football-button"
-            onclick="openFootball()"
             type="button"
+            class="main-button"
+            onclick="openFootball()"
           >
 
             <span class="button-icon">
@@ -120,23 +123,24 @@
     ========================== -->
 
     <main
-      id="footballPage"
       class="page"
+      id="footballPage"
     >
 
 
-      <!-- PAGE HEADER -->
+      <!-- HEADER -->
 
       <header class="page-header">
 
 
         <button
+          type="button"
           class="back-button"
           onclick="goHome()"
-          type="button"
           aria-label="Back"
+          title="Back"
         >
-          ←
+          ‹
         </button>
 
 
@@ -149,9 +153,7 @@
 
 
 
-      <!-- =========================
-           FOOTBALL TABS
-      ========================== -->
+      <!-- TABS -->
 
       <nav
         class="football-tabs"
@@ -162,13 +164,13 @@
         <!-- LIVE -->
 
         <button
+          type="button"
           id="liveTab"
           class="football-tab active"
           onclick="showLive()"
-          type="button"
         >
 
-          🔴 Football Live
+          ⚽ Live
 
         </button>
 
@@ -176,10 +178,10 @@
         <!-- HIGHLIGHTS -->
 
         <button
+          type="button"
           id="highlightTab"
           class="football-tab"
           onclick="showHighlights()"
-          type="button"
         >
 
           🎬 Highlights
@@ -196,28 +198,21 @@
       ========================== -->
 
       <section
-        id="liveSection"
         class="content-section active"
+        id="liveSection"
       >
 
 
         <div class="section-title">
-
-          Upcoming & Live Matches
-
+          Upcoming &amp; Live Matches
         </div>
 
 
-        <!--
-          JavaScript inserts
-          football match cards here.
-        -->
-
         <div
+          class="content-list"
           id="liveMatches"
-          class="content-list live-match-list"
         >
-
+          <!-- JavaScript loads matches here -->
         </div>
 
 
@@ -230,28 +225,21 @@
       ========================== -->
 
       <section
-        id="highlightSection"
         class="content-section"
+        id="highlightSection"
       >
 
 
         <div class="section-title">
-
           Highlights
-
         </div>
 
 
-        <!--
-          JavaScript inserts
-          highlight cards here.
-        -->
-
         <div
+          class="content-list"
           id="highlights"
-          class="content-list highlight-list"
         >
-
+          <!-- JavaScript loads highlights here -->
         </div>
 
 
@@ -267,23 +255,24 @@
     ========================== -->
 
     <main
-      id="screenPage"
       class="page"
+      id="screenPage"
     >
 
 
-      <!-- SCREEN HEADER -->
+      <!-- HEADER -->
 
       <header class="page-header">
 
 
         <button
+          type="button"
           class="back-button"
           onclick="goBackFromScreen()"
-          type="button"
           aria-label="Back"
+          title="Back"
         >
-          ←
+          ‹
         </button>
 
 
@@ -296,11 +285,9 @@
 
 
 
-      <!-- =========================
-           SCREEN CONTAINER
-      ========================== -->
+      <!-- SCREEN CONTAINER -->
 
-      <section class="screen-container">
+      <div class="screen-container">
 
 
         <!-- =========================
@@ -312,24 +299,13 @@
           aria-live="polite"
         >
 
-
-          <span
-            class="live-indicator"
-            aria-hidden="true"
-          >
-            ●
-          </span>
-
-
           <span>
-            NOW SHOWING:
+            Now showing:
           </span>
-
 
           <strong id="nowShowing">
             Select a match
           </strong>
-
 
         </div>
 
@@ -340,25 +316,29 @@
         ========================== -->
 
         <div
-          id="screenPlayer"
           class="screen-player"
+          id="screenPlayer"
         >
 
+
+          <!-- DEFAULT PLAYER PLACEHOLDER -->
 
           <div class="screen-placeholder">
 
 
-            <div
-              class="screen-icon"
-              aria-hidden="true"
-            >
+            <div class="screen-icon">
               📺
             </div>
 
 
             <p>
-              Select a match to watch
+              Select a match
             </p>
+
+
+            <small>
+              Player ready
+            </small>
 
 
           </div>
@@ -367,7 +347,7 @@
         </div>
 
 
-      </section>
+      </div>
 
 
     </main>
@@ -381,7 +361,10 @@
        JAVASCRIPT
   ========================== -->
 
-  <script src="script.js"></script>
+  <script
+    src="script.js"
+    defer
+  ></script>
 
 
 </body>
