@@ -977,7 +977,7 @@ a {
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  gap: 12px;
+  gap: 10px;
 }
 
 
@@ -991,7 +991,7 @@ a {
 
   min-width: 0;
 
-  min-height: 155px;
+  min-height: 135px;
 
   display: flex;
 
@@ -1001,13 +1001,13 @@ a {
 
   justify-content: space-between;
 
-  padding: 16px;
+  padding: 13px;
 
   border:
     1px solid
     rgba(255,255,255,.09);
 
-  border-radius: 18px;
+  border-radius: 16px;
 
   background:
     linear-gradient(
@@ -1034,7 +1034,9 @@ a {
 }
 
 
-/* DECORATIVE RED SHAPE */
+/* =========================================================
+   TV CHANNEL DECORATION
+   ========================================================= */
 
 .tv-channel::before {
 
@@ -1042,11 +1044,11 @@ a {
 
   position: absolute;
 
-  width: 125px;
-  height: 125px;
+  width: 115px;
+  height: 115px;
 
-  top: -70px;
-  right: -5px;
+  top: -62px;
+  right: -6px;
 
   border-radius: 50%;
 
@@ -1062,11 +1064,11 @@ a {
 
   position: absolute;
 
-  width: 95px;
-  height: 95px;
+  width: 88px;
+  height: 88px;
 
-  top: -53px;
-  right: 25px;
+  top: -48px;
+  right: 23px;
 
   border-radius: 50%;
 
@@ -1077,7 +1079,9 @@ a {
 }
 
 
-/* HOVER */
+/* =========================================================
+   TV CHANNEL HOVER
+   ========================================================= */
 
 .tv-channel:hover {
 
@@ -1093,7 +1097,9 @@ a {
 }
 
 
-/* ACTIVE */
+/* =========================================================
+   TV CHANNEL ACTIVE
+   ========================================================= */
 
 .tv-channel.active {
 
@@ -1121,8 +1127,8 @@ a {
 
 .tv-channel-icon {
 
-  width: 58px;
-  height: 58px;
+  width: 50px;
+  height: 50px;
 
   display: grid;
 
@@ -1130,7 +1136,7 @@ a {
 
   flex-shrink: 0;
 
-  border-radius: 16px;
+  border-radius: 14px;
 
   background:
     linear-gradient(
@@ -1149,7 +1155,7 @@ a {
     0 5px 15px
     rgba(0,0,0,.2);
 
-  font-size: 27px;
+  font-size: 24px;
 
   line-height: 1;
 
@@ -1169,7 +1175,7 @@ a {
 
   width: 100%;
 
-  padding-top: 13px;
+  padding-top: 9px;
 
   padding-right: 5px;
 
@@ -1184,11 +1190,11 @@ a {
 
   overflow: hidden;
 
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 
   color: #fff;
 
-  font-size: 15px;
+  font-size: 14px;
 
   font-weight: 900;
 
@@ -1206,22 +1212,22 @@ a {
   color:
     #9aa3b2;
 
-  font-size: 11px;
+  font-size: 10px;
 
   line-height: 1.2;
 }
 
 
 /* =========================================================
-   LIVE STATUS
+   TV CHANNEL LIVE STATUS
    ========================================================= */
 
 .tv-channel-status {
 
   position: absolute;
 
-  top: 16px;
-  right: 16px;
+  top: 13px;
+  right: 13px;
 
   z-index: 3;
 
@@ -1231,12 +1237,12 @@ a {
 
   justify-content: center;
 
-  min-width: 58px;
+  min-width: auto;
 
-  min-height: 36px;
+  min-height: 32px;
 
   padding:
-    7px 10px;
+    6px 9px;
 
   border-radius: 999px;
 
@@ -1246,7 +1252,7 @@ a {
   color:
     #ff5b78;
 
-  font-size: 10px;
+  font-size: 9px;
 
   font-weight: 950;
 
@@ -1258,9 +1264,7 @@ a {
 }
 
 
-/* =========================================================
-   TV CHANNEL ACTIVE STATUS
-   ========================================================= */
+/* ACTIVE LIVE STATUS */
 
 .tv-channel.active .tv-channel-status {
 
@@ -1359,6 +1363,10 @@ a {
 
 }
 
+
+/* =========================================================
+   TABLET / MOBILE NAV
+   ========================================================= */
 
 @media (max-width: 700px) {
 
@@ -1559,7 +1567,7 @@ a {
 
 
   /* =======================================================
-     TV CHANNELS — ALWAYS 2 COLUMNS ON MOBILE
+     TV CHANNELS — 2 COLUMNS
      ======================================================= */
 
   .tv-channel-grid {
@@ -1567,19 +1575,21 @@ a {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
 
-    gap: 9px;
+    gap: 8px;
   }
 
 
-  /* MOBILE TV CARD */
+  /* =======================================================
+     SMALLER MOBILE TV CARDS
+     ======================================================= */
 
   .tv-channel {
 
-    min-height: 145px;
+    min-height: 128px;
 
-    padding: 12px;
+    padding: 11px;
 
-    border-radius: 15px;
+    border-radius: 14px;
   }
 
 
@@ -1587,12 +1597,12 @@ a {
 
   .tv-channel-icon {
 
-    width: 48px;
-    height: 48px;
+    width: 45px;
+    height: 45px;
 
-    border-radius: 14px;
+    border-radius: 13px;
 
-    font-size: 23px;
+    font-size: 22px;
   }
 
 
@@ -1600,15 +1610,13 @@ a {
 
   .tv-channel-status {
 
-    top: 12px;
-    right: 12px;
+    top: 11px;
+    right: 11px;
 
-    min-width: auto;
-
-    min-height: 31px;
+    min-height: 29px;
 
     padding:
-      6px 8px;
+      5px 8px;
 
     font-size: 8px;
 
@@ -1620,19 +1628,19 @@ a {
 
   .tv-channel-info {
 
-    padding-top: 9px;
+    padding-top: 7px;
   }
 
   .tv-channel-info strong {
 
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .tv-channel-info small {
 
-    font-size: 10px;
+    font-size: 9px;
   }
 
 
@@ -1640,22 +1648,24 @@ a {
 
   .tv-channel::before {
 
-    width: 105px;
-    height: 105px;
+    width: 100px;
+    height: 100px;
 
-    top: -57px;
+    top: -54px;
     right: -8px;
   }
 
   .tv-channel::after {
 
-    width: 80px;
-    height: 80px;
+    width: 76px;
+    height: 76px;
 
-    top: -44px;
-    right: 19px;
+    top: -42px;
+    right: 18px;
   }
 
+
+  /* FOOTER */
 
   .footer-wrap {
 
@@ -1686,29 +1696,40 @@ a {
   }
 
 
+  /* TV GRID */
+
   .tv-channel-grid {
 
     gap: 7px;
   }
 
+
+  /* TV CARD */
+
   .tv-channel {
 
-    min-height: 138px;
+    min-height: 122px;
 
     padding: 10px;
 
-    border-radius: 14px;
+    border-radius: 13px;
   }
+
+
+  /* TV ICON */
 
   .tv-channel-icon {
 
-    width: 44px;
-    height: 44px;
+    width: 43px;
+    height: 43px;
 
     border-radius: 12px;
 
     font-size: 21px;
   }
+
+
+  /* LIVE */
 
   .tv-channel-status {
 
@@ -1720,6 +1741,9 @@ a {
 
     font-size: 7px;
   }
+
+
+  /* INFO */
 
   .tv-channel-info strong {
 
