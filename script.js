@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     HIGHLIGHTS
+     HIGHLIGHTS DATA
   ========================= */
 
   const highlights = [
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     ELEMENTS
+     PAGE ELEMENTS
   ========================= */
 
   const homePage =
@@ -108,6 +108,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("screenPlayer");
 
 
+  /* =========================
+     APP STATE
+  ========================= */
+
   let previousPage = "home";
 
   let currentItem = null;
@@ -137,36 +141,159 @@ document.addEventListener("DOMContentLoaded", function () {
       const card =
         document.createElement("button");
 
+
+      card.type = "button";
+
       card.className =
         "content-card";
 
 
-      const statusClass =
+      /*
+       * Add special class
+       * for LIVE / UPCOMING.
+       */
+
+      if (match.status === "LIVE") {
+
+        card.classList.add("live-match-card");
+
+      } else {
+
+        card.classList.add("upcoming-match-card");
+
+      }
+
+
+      /* =========================
+         CARD CONTENT
+      ========================= */
+
+      const cardTop =
+        document.createElement("div");
+
+      cardTop.className =
+        "card-top";
+
+
+      const status =
+        document.createElement("span");
+
+
+      if (match.status === "LIVE") {
+
+        status.className =
+          "live-status";
+
+        status.textContent =
+          "LIVE";
+
+      } else {
+
+        status.className =
+          "upcoming-status";
+
+        status.textContent =
+          "UPCOMING";
+
+      }
+
+
+      cardTop.appendChild(status);
+
+
+      /* =========================
+         MATCH AREA
+      ========================= */
+
+      const matchArea =
+        document.createElement("div");
+
+      matchArea.className =
+        "match-area";
+
+
+      const teams =
+        document.createElement("div");
+
+      teams.className =
+        "match-teams";
+
+
+      const titleParts =
+        match.title.split(" vs ");
+
+
+      const homeTeam =
+        document.createElement("span");
+
+      homeTeam.className =
+        "team-name";
+
+      homeTeam.textContent =
+        titleParts[0] || match.title;
+
+
+      const versus =
+        document.createElement("span");
+
+      versus.className =
+        "versus";
+
+      versus.textContent =
+        "⚽";
+
+
+      const awayTeam =
+        document.createElement("span");
+
+      awayTeam.className =
+        "team-name";
+
+      awayTeam.textContent =
+        titleParts[1] || "";
+
+
+      teams.appendChild(homeTeam);
+
+      teams.appendChild(versus);
+
+      teams.appendChild(awayTeam);
+
+
+      matchArea.appendChild(teams);
+
+
+      /* =========================
+         WATCH AREA
+      ========================= */
+
+      const watch =
+        document.createElement("span");
+
+      watch.className =
+        "card-watch";
+
+
+      watch.textContent =
         match.status === "LIVE"
-          ? "live-status"
-          : "upcoming-status";
+          ? "▶ WATCH"
+          : "→";
 
 
-      card.innerHTML = `
+      /* =========================
+         PUT EVERYTHING TOGETHER
+      ========================= */
 
-        <div class="card-info">
+      card.appendChild(cardTop);
 
-          <div class="card-title">
-            ${match.title}
-          </div>
+      card.appendChild(matchArea);
 
-          <div class="${statusClass}">
-            ${match.status}
-          </div>
+      card.appendChild(watch);
 
-        </div>
 
-        <div class="card-arrow">
-          →
-        </div>
-
-      `;
-
+      /* =========================
+         CARD CLICK
+      ========================= */
 
       card.addEventListener(
         "click",
@@ -209,42 +336,133 @@ document.addEventListener("DOMContentLoaded", function () {
       const card =
         document.createElement("button");
 
+
+      card.type = "button";
+
       card.className =
-        "content-card";
+        "content-card highlight-card";
 
 
-      card.innerHTML = `
+      /* =========================
+         THUMBNAIL AREA
+      ========================= */
 
-        <div class="card-info">
+      const thumbnail =
+        document.createElement("div");
 
-          <div class="card-title">
-            ${highlight.title}
-          </div>
+      thumbnail.className =
+        "highlight-thumbnail";
 
-          <div class="card-status">
-            ${highlight.status}
-          </div>
 
-        </div>
+      const thumbnailIcon =
+        document.createElement("span");
 
-        <div class="card-arrow">
-          →
-        </div>
+      thumbnailIcon.className =
+        "highlight-icon";
 
-      `;
+      thumbnailIcon.textContent =
+        "🎬";
 
+
+      const playIcon =
+        document.createElement("span");
+
+      playIcon.className =
+        "highlight-play";
+
+      playIcon.textContent =
+        "▶";
+
+
+      thumbnail.appendChild(
+        thumbnailIcon
+      );
+
+      thumbnail.appendChild(
+        playIcon
+      );
+
+
+      /* =========================
+         HIGHLIGHT INFORMATION
+      ========================= */
+
+      const info =
+        document.createElement("div");
+
+      info.className =
+        "highlight-info";
+
+
+      const title =
+        document.createElement("div");
+
+      title.className =
+        "card-title";
+
+      title.textContent =
+        highlight.title;
+
+
+      const status =
+        document.createElement("div");
+
+      status.className =
+        "card-status";
+
+      status.textContent =
+        "HIGHLIGHT";
+
+
+      info.appendChild(title);
+
+      info.appendChild(status);
+
+
+      /* =========================
+         ARROW
+      ========================= */
+
+      const arrow =
+        document.createElement("div");
+
+      arrow.className =
+        "card-arrow";
+
+      arrow.textContent =
+        "→";
+
+
+      /* =========================
+         BUILD CARD
+      ========================= */
+
+      card.appendChild(thumbnail);
+
+      card.appendChild(info);
+
+      card.appendChild(arrow);
+
+
+      /* =========================
+         CARD CLICK
+      ========================= */
 
       card.addEventListener(
         "click",
         function () {
 
-          openHighlightOnScreen(highlight);
+          openHighlightOnScreen(
+            highlight
+          );
 
         }
       );
 
 
-      highlightsContainer.appendChild(card);
+      highlightsContainer.appendChild(
+        card
+      );
 
     });
 
@@ -304,7 +522,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     HOME
+     GO HOME
   ========================= */
 
   window.goHome = function () {
@@ -317,7 +535,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     SCREEN BACK
+     SCREEN BACK BUTTON
   ========================= */
 
   window.goBackFromScreen = function () {
@@ -375,7 +593,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
-     OPEN MATCH
+     OPEN LIVE MATCH
   ========================= */
 
   function openMatchOnScreen(match) {
@@ -397,7 +615,9 @@ document.addEventListener("DOMContentLoaded", function () {
      OPEN HIGHLIGHT
   ========================= */
 
-  function openHighlightOnScreen(highlight) {
+  function openHighlightOnScreen(
+    highlight
+  ) {
 
     currentItem = highlight;
 
@@ -426,7 +646,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       EMPTY PLAYER
+       NO PLAYER URL
     ========================= */
 
     if (
@@ -434,28 +654,51 @@ document.addEventListener("DOMContentLoaded", function () {
       item.playerUrl.trim() === ""
     ) {
 
-      screenPlayer.innerHTML = `
+      const placeholder =
+        document.createElement("div");
 
-        <div class="screen-placeholder">
+      placeholder.className =
+        "screen-placeholder";
 
-          <div class="screen-icon">
-            📺
-          </div>
 
-          <p>
-            ${item.title}
-          </p>
+      const icon =
+        document.createElement("div");
 
-          <small>
-            Player ready
-          </small>
+      icon.className =
+        "screen-icon";
 
-        </div>
+      icon.textContent =
+        "📺";
 
-      `;
+
+      const title =
+        document.createElement("p");
+
+      title.textContent =
+        item.title;
+
+
+      const small =
+        document.createElement("small");
+
+      small.textContent =
+        "Player ready";
+
+
+      placeholder.appendChild(icon);
+
+      placeholder.appendChild(title);
+
+      placeholder.appendChild(small);
+
+
+      screenPlayer.appendChild(
+        placeholder
+      );
 
 
       addFullscreenButton();
+
 
       return;
 
@@ -463,10 +706,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       IFRAME
+       IFRAME PLAYER
     ========================= */
 
-    if (item.playerType === "iframe") {
+    if (
+      item.playerType === "iframe"
+    ) {
 
       const iframe =
         document.createElement("iframe");
@@ -486,10 +731,17 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
 
-      iframe.loading = "eager";
+      iframe.loading =
+        "eager";
 
 
-      screenPlayer.appendChild(iframe);
+      iframe.title =
+        item.title;
+
+
+      screenPlayer.appendChild(
+        iframe
+      );
 
 
       addFullscreenButton();
@@ -501,10 +753,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       VIDEO
+       VIDEO PLAYER
     ========================= */
 
-    if (item.playerType === "video") {
+    if (
+      item.playerType === "video"
+    ) {
 
       const video =
         document.createElement("video");
@@ -514,14 +768,37 @@ document.addEventListener("DOMContentLoaded", function () {
         item.playerUrl;
 
 
-      video.controls = true;
-
-      video.autoplay = true;
-
-      video.playsInline = true;
+      video.controls =
+        true;
 
 
-      screenPlayer.appendChild(video);
+      video.autoplay =
+        true;
+
+
+      video.playsInline =
+        true;
+
+
+      video.setAttribute(
+        "playsinline",
+        ""
+      );
+
+
+      video.setAttribute(
+        "webkit-playsinline",
+        ""
+      );
+
+
+      video.title =
+        item.title;
+
+
+      screenPlayer.appendChild(
+        video
+      );
 
 
       addFullscreenButton();
@@ -544,11 +821,15 @@ document.addEventListener("DOMContentLoaded", function () {
       document.createElement("button");
 
 
+    fullscreenButton.type =
+      "button";
+
+
     fullscreenButton.className =
       "fullscreen-button";
 
 
-    fullscreenButton.innerHTML =
+    fullscreenButton.textContent =
       "⛶";
 
 
@@ -558,11 +839,21 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 
+    fullscreenButton.setAttribute(
+      "title",
+      "Fullscreen"
+    );
+
+
     fullscreenButton.addEventListener(
       "click",
-      function () {
+      function (event) {
 
-        enterFullscreen(screenPlayer);
+        event.stopPropagation();
+
+        enterFullscreen(
+          screenPlayer
+        );
 
       }
     );
@@ -579,13 +870,21 @@ document.addEventListener("DOMContentLoaded", function () {
      FULLSCREEN
   ========================= */
 
-  function enterFullscreen(element) {
+  function enterFullscreen(
+    element
+  ) {
 
     if (
       document.fullscreenElement
     ) {
 
-      document.exitFullscreen();
+      if (
+        document.exitFullscreen
+      ) {
+
+        document.exitFullscreen();
+
+      }
 
       return;
 
@@ -596,11 +895,27 @@ document.addEventListener("DOMContentLoaded", function () {
       element.requestFullscreen
     ) {
 
-      element.requestFullscreen();
+      element.requestFullscreen()
+        .catch(function (error) {
+
+          console.log(
+            "Fullscreen request failed:",
+            error
+          );
+
+        });
+
+      return;
 
     }
 
-    else if (
+
+    /*
+     * WebKit fallback
+     * for supported browsers.
+     */
+
+    if (
       element.webkitRequestFullscreen
     ) {
 
@@ -612,6 +927,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================
+     FULLSCREEN CHANGE
+  ========================= */
+
+  document.addEventListener(
+    "fullscreenchange",
+    function () {
+
+      const button =
+        screenPlayer.querySelector(
+          ".fullscreen-button"
+        );
+
+
+      if (!button) {
+        return;
+      }
+
+
+      if (
+        document.fullscreenElement
+      ) {
+
+        button.textContent =
+          "✕";
+
+        button.setAttribute(
+          "aria-label",
+          "Exit fullscreen"
+        );
+
+        button.setAttribute(
+          "title",
+          "Exit fullscreen"
+        );
+
+      } else {
+
+        button.textContent =
+          "⛶";
+
+        button.setAttribute(
+          "aria-label",
+          "Fullscreen"
+        );
+
+        button.setAttribute(
+          "title",
+          "Fullscreen"
+        );
+
+      }
+
+    }
+  );
+
+
+  /* =========================
      STOP PLAYER
   ========================= */
 
@@ -619,6 +991,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!screenPlayer) {
       return;
+    }
+
+
+    /*
+     * Exit fullscreen first.
+     */
+
+    if (
+      document.fullscreenElement &&
+      document.exitFullscreen
+    ) {
+
+      document.exitFullscreen()
+        .catch(function () {});
+
     }
 
 
