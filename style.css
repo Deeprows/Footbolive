@@ -29,16 +29,24 @@
 }
 
 
-html,
-body {
+html {
   width: 100%;
   min-height: 100%;
 
   background: var(--bg);
+
+  scroll-behavior: smooth;
 }
 
 
 body {
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+
+  background: var(--bg);
+
   color: var(--text);
 
   font-family:
@@ -122,7 +130,7 @@ body {
 
   border-radius: 22px;
 
-  background: var(--surface-2);
+  background: var(--surface);
 
   border: 1px solid var(--border);
 
@@ -135,6 +143,8 @@ body {
 
 .home-container h1 {
   margin-bottom: 30px;
+
+  color: var(--text);
 
   font-size: 30px;
   font-weight: 800;
@@ -249,6 +259,10 @@ body {
 
 
 .page-header h2 {
+  margin: 0;
+
+  color: var(--text);
+
   font-size: 20px;
 
   font-weight: 800;
@@ -354,7 +368,8 @@ body {
     transform 0.2s ease,
     background 0.2s ease,
     color 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 
@@ -389,8 +404,7 @@ body {
   display: none;
 
   width: 100%;
-
-  max-width: 760px;
+  max-width: 780px;
 
   margin: 0 auto;
 
@@ -493,8 +507,16 @@ body {
 }
 
 
+.content-card:focus-visible {
+  outline:
+    2px solid var(--accent);
+
+  outline-offset: 2px;
+}
+
+
 /* =========================
-   LIVE CARD
+   LIVE MATCH CARD
 ========================= */
 
 .live-match-card {
@@ -513,8 +535,8 @@ body {
   top: 0;
   right: 0;
 
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
 
   background:
     radial-gradient(
@@ -528,7 +550,7 @@ body {
 
 
 /* =========================
-   UPCOMING CARD
+   UPCOMING MATCH CARD
 ========================= */
 
 .upcoming-match-card {
@@ -544,8 +566,8 @@ body {
   top: 0;
   right: 0;
 
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
 
   background:
     radial-gradient(
@@ -571,7 +593,9 @@ body {
 
   align-items: center;
 
-  justify-content: flex-start;
+  justify-content: space-between;
+
+  gap: 10px;
 
   position: relative;
 
@@ -608,6 +632,8 @@ body {
   width: 7px;
   height: 7px;
 
+  flex-shrink: 0;
+
   border-radius: 50%;
 
   background: var(--danger);
@@ -624,19 +650,16 @@ body {
 
   0% {
     opacity: 1;
-
     transform: scale(1);
   }
 
   50% {
     opacity: 0.35;
-
     transform: scale(0.8);
   }
 
   100% {
     opacity: 1;
-
     transform: scale(1);
   }
 
@@ -665,13 +688,72 @@ body {
 
 
 /* =========================
+   MATCH TIME
+========================= */
+
+.match-time {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 25px;
+
+  padding: 5px 9px;
+
+  border-radius: 8px;
+
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.06);
+
+  color: var(--text);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  letter-spacing: 0.4px;
+}
+
+
+.live-match-card .match-time {
+  color: #ffffff;
+
+  background:
+    rgba(255, 23, 68, 0.10);
+
+  border-color:
+    rgba(255, 23, 68, 0.16);
+}
+
+
+/* =========================
    MATCH AREA
 ========================= */
 
 .match-area {
   width: 100%;
 
-  padding: 13px 0 12px;
+  min-height: 104px;
+
+  padding: 14px 0 12px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    58px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 8px;
 
   position: relative;
 
@@ -679,19 +761,80 @@ body {
 }
 
 
-.match-teams {
-  width: 100%;
+/* =========================
+   TEAM
+========================= */
 
-  display: grid;
+.team {
+  min-width: 0;
 
-  grid-template-columns:
-    minmax(0, 1fr)
-    42px
-    minmax(0, 1fr);
+  display: flex;
+
+  flex-direction: column;
 
   align-items: center;
 
+  justify-content: center;
+
   gap: 8px;
+
+  text-align: center;
+}
+
+
+.team:first-child {
+  justify-self: center;
+}
+
+
+.team:last-child {
+  justify-self: center;
+}
+
+
+/* =========================
+   TEAM LOGO
+========================= */
+
+.team-logo {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.08);
+
+  overflow: hidden;
+
+  font-size: 25px;
+
+  line-height: 1;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.18);
+}
+
+
+.team-logo img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: contain;
+
+  padding: 6px;
 }
 
 
@@ -700,11 +843,13 @@ body {
 ========================= */
 
 .team-name {
+  width: 100%;
+
   min-width: 0;
 
   color: var(--text);
 
-  font-size: 16px;
+  font-size: 14px;
 
   font-weight: 750;
 
@@ -718,52 +863,69 @@ body {
 }
 
 
-.team-name:first-child {
-  text-align: left;
-}
+/* =========================
+   MATCH CENTER
+========================= */
 
+.match-center {
+  width: 58px;
 
-.team-name:last-child {
-  text-align: right;
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
 }
 
 
 /* =========================
-   VERSUS ICON
+   VS
 ========================= */
 
 .versus {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
 
   border-radius: 50%;
-
-  background:
-    rgba(255, 255, 255, 0.05);
-
-  border:
-    1px solid rgba(255, 255, 255, 0.07);
 
   display: flex;
 
   align-items: center;
   justify-content: center;
 
-  font-size: 18px;
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.08);
+
+  color: var(--muted);
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.5px;
 
   box-shadow:
     inset 0 0 15px rgba(255, 255, 255, 0.02);
 }
 
 
+.live-match-card .versus {
+  border-color:
+    rgba(255, 23, 68, 0.14);
+}
+
+
 /* =========================
-   WATCH AREA
+   WATCH BUTTON
 ========================= */
 
 .card-watch {
   min-height: 34px;
 
-  padding: 8px 11px;
+  padding: 8px 12px;
 
   display: inline-flex;
 
@@ -778,13 +940,16 @@ body {
   background:
     rgba(255, 255, 255, 0.05);
 
+  border:
+    1px solid rgba(255, 255, 255, 0.06);
+
   color: var(--muted);
 
-  font-size: 11px;
+  font-size: 10px;
 
   font-weight: 800;
 
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
 
   position: relative;
 
@@ -799,12 +964,12 @@ body {
 
 .live-match-card .card-watch {
   background:
-    rgba(255, 23, 68, 0.1);
+    rgba(255, 23, 68, 0.10);
+
+  border-color:
+    rgba(255, 23, 68, 0.18);
 
   color: #ffffff;
-
-  border:
-    1px solid rgba(255, 23, 68, 0.18);
 }
 
 
@@ -829,22 +994,15 @@ body {
 ========================= */
 
 .highlight-card {
-  min-height: 92px;
+  min-height: 96px;
+
+  padding: 10px;
 
   display: flex;
 
   align-items: center;
 
   gap: 12px;
-
-  padding: 10px;
-
-  background:
-    linear-gradient(
-      135deg,
-      var(--surface),
-      #0d1117
-    );
 }
 
 
@@ -853,8 +1011,8 @@ body {
 ========================= */
 
 .highlight-thumbnail {
-  width: 105px;
-  height: 70px;
+  width: 120px;
+  height: 76px;
 
   flex-shrink: 0;
 
@@ -881,7 +1039,21 @@ body {
 }
 
 
-.highlight-thumbnail::before {
+.highlight-thumbnail img {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+
+.highlight-thumbnail::after {
   content: "";
 
   position: absolute;
@@ -889,22 +1061,39 @@ body {
   inset: 0;
 
   background:
-    radial-gradient(
-      circle at center,
-      rgba(255, 255, 255, 0.07),
-      transparent 65%
+    linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.12),
+      rgba(0, 0, 0, 0.35)
     );
+
+  pointer-events: none;
 }
 
+
+/* =========================
+   HIGHLIGHT ICON
+========================= */
 
 .highlight-icon {
   position: relative;
 
+  z-index: 2;
+
   font-size: 28px;
 
-  z-index: 1;
+  line-height: 1;
+
+  opacity: 0.9;
+
+  text-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.6);
 }
 
+
+/* =========================
+   HIGHLIGHT PLAY
+========================= */
 
 .highlight-play {
   position: absolute;
@@ -912,27 +1101,30 @@ body {
   right: 6px;
   bottom: 6px;
 
-  width: 27px;
-  height: 27px;
+  width: 28px;
+  height: 28px;
 
   border-radius: 50%;
 
   background:
-    rgba(0, 0, 0, 0.8);
+    rgba(0, 0, 0, 0.82);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.14);
 
   color: #ffffff;
 
-  font-size: 11px;
+  font-size: 10px;
 
   display: flex;
 
   align-items: center;
   justify-content: center;
 
-  z-index: 2;
+  z-index: 4;
 
-  border:
-    1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.4);
 }
 
 
@@ -1027,7 +1219,7 @@ body {
 
 
 /* =========================
-   SCREEN
+   SCREEN PAGE
 ========================= */
 
 .screen-container {
@@ -1081,35 +1273,6 @@ body {
   overflow: hidden;
 
   text-overflow: ellipsis;
-}
-
-
-.live-indicator {
-  flex-shrink: 0;
-
-  color: var(--danger);
-
-  font-size: 10px;
-
-  animation:
-    pulse 1.4s infinite;
-}
-
-
-@keyframes pulse {
-
-  0% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.35;
-  }
-
-  100% {
-    opacity: 1;
-  }
-
 }
 
 
@@ -1357,7 +1520,6 @@ button:focus-visible {
 
 @media (max-width: 600px) {
 
-
   .home-container {
     padding: 24px 16px;
   }
@@ -1413,26 +1575,56 @@ button:focus-visible {
   }
 
 
-  .match-teams {
+  .match-area {
+    min-height: 98px;
+
     grid-template-columns:
       minmax(0, 1fr)
-      38px
+      48px
       minmax(0, 1fr);
 
-    gap: 6px;
+    gap: 5px;
+  }
+
+
+  .team-logo {
+    width: 43px;
+    height: 43px;
+
+    font-size: 22px;
+  }
+
+
+  .team-logo img {
+    padding: 5px;
   }
 
 
   .team-name {
-    font-size: 15px;
+    font-size: 13px;
+  }
+
+
+  .match-center {
+    width: 48px;
   }
 
 
   .versus {
-    width: 35px;
-    height: 35px;
+    width: 38px;
+    height: 38px;
 
-    font-size: 16px;
+    font-size: 9px;
+  }
+
+
+  .match-time {
+    min-height: 23px;
+
+    padding:
+      4px 8px;
+
+    font-size: 9px;
   }
 
 
@@ -1456,7 +1648,7 @@ button:focus-visible {
 
 
   .highlight-thumbnail {
-    width: 92px;
+    width: 94px;
     height: 64px;
 
     border-radius: 11px;
@@ -1511,7 +1703,6 @@ button:focus-visible {
 
 @media (max-width: 380px) {
 
-
   .home-container {
     padding-left: 12px;
     padding-right: 12px;
@@ -1550,16 +1741,39 @@ button:focus-visible {
   }
 
 
+  .match-area {
+    grid-template-columns:
+      minmax(0, 1fr)
+      42px
+      minmax(0, 1fr);
+
+    min-height: 92px;
+  }
+
+
+  .match-center {
+    width: 42px;
+  }
+
+
+  .team-logo {
+    width: 39px;
+    height: 39px;
+
+    font-size: 20px;
+  }
+
+
   .team-name {
-    font-size: 14px;
+    font-size: 12px;
   }
 
 
   .versus {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
 
-    font-size: 15px;
+    font-size: 8px;
   }
 
 
@@ -1593,7 +1807,7 @@ button:focus-visible {
 
 
 /* =========================
-   LANDSCAPE MOBILE
+   MOBILE LANDSCAPE
 ========================= */
 
 @media (
@@ -1601,7 +1815,6 @@ button:focus-visible {
 ) and (
   orientation: landscape
 ) {
-
 
   .screen-player {
     width: 100vw;
@@ -1635,7 +1848,6 @@ button:focus-visible {
 
 @media (min-width: 601px) {
 
-
   .content-section {
     padding-left: 20px;
     padding-right: 20px;
@@ -1649,14 +1861,27 @@ button:focus-visible {
   }
 
 
+  .match-area {
+    min-height: 115px;
+  }
+
+
+  .team-logo {
+    width: 52px;
+    height: 52px;
+
+    font-size: 27px;
+  }
+
+
   .team-name {
-    font-size: 17px;
+    font-size: 15px;
   }
 
 
   .highlight-thumbnail {
-    width: 120px;
-    height: 78px;
+    width: 125px;
+    height: 80px;
   }
 
 }
@@ -1667,7 +1892,6 @@ button:focus-visible {
 ========================= */
 
 @media (min-width: 900px) {
-
 
   .home-container {
     max-width: 560px;
@@ -1687,7 +1911,29 @@ button:focus-visible {
 
 
   .content-section {
-    max-width: 780px;
+    max-width: 800px;
+  }
+
+
+  .match-area {
+    min-height: 120px;
+  }
+
+
+  .team-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+
+  .team-name {
+    font-size: 16px;
+  }
+
+
+  .highlight-thumbnail {
+    width: 135px;
+    height: 84px;
   }
 
 }
