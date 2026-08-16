@@ -1,6 +1,3 @@
-# Updated `style.css`
-
-```css
 /* =========================================================
    DEEPROWSS FOOTBALL APP
    ========================================================= */
@@ -34,6 +31,15 @@
 
   --match-ended: #858c98;
 
+  /*
+   * These values are updated automatically by JS
+   * according to the real height of the sticky screen.
+   */
+  --header-height: 66px;
+
+  --screen-stack-height: 0px;
+
+  --app-menu-top: 66px;
 }
 
 
@@ -55,11 +61,14 @@ html {
    */
   touch-action: manipulation;
 
-  /*
-   * Prevent accidental text/image selection while
-   * performing app-like touch interactions.
-   */
   -webkit-tap-highlight-color: transparent;
+
+  /*
+   * Prevent accidental browser text selection
+   * during app-like touch interaction.
+   */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 body {
@@ -85,18 +94,27 @@ body {
 
   -webkit-font-smoothing: antialiased;
 
-  /*
-   * Keep normal vertical/horizontal scrolling available
-   * while discouraging browser gesture zoom.
-   */
   touch-action: manipulation;
 
-  /*
-   * Prevent browser overscroll effects from accidentally
-   * triggering unwanted navigation/gesture behavior.
-   */
   overscroll-behavior-x: none;
+
+  /*
+   * Prevent accidental horizontal overflow.
+   */
+  overflow-x: hidden;
 }
+
+
+/*
+ * Allow normal text selection inside form controls.
+ */
+input,
+textarea,
+select {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 
 button,
 input {
@@ -112,6 +130,11 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
 
 .container {
 
@@ -134,10 +157,10 @@ a {
 
   top: 0;
 
-  z-index: 100;
+  z-index: 1000;
 
   background:
-    rgba(7,9,13,.92);
+    rgba(7,9,13,.94);
 
   border-bottom:
     1px solid
@@ -145,7 +168,11 @@ a {
 
   backdrop-filter:
     blur(15px);
+
+  -webkit-backdrop-filter:
+    blur(15px);
 }
+
 
 .nav-wrap {
 
@@ -159,7 +186,9 @@ a {
 }
 
 
-/* BRAND */
+/* =========================================================
+   BRAND
+   ========================================================= */
 
 .brand {
 
@@ -185,6 +214,7 @@ a {
 .brand-mark {
 
   width: 34px;
+
   height: 34px;
 
   display: grid;
@@ -210,7 +240,9 @@ a {
 }
 
 
-/* NAV */
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
 
 .main-nav {
 
@@ -257,13 +289,16 @@ a {
 }
 
 
-/* MENU BUTTON */
+/* =========================================================
+   MENU BUTTON
+   ========================================================= */
 
 .menu-toggle {
 
   display: none;
 
   width: 40px;
+
   height: 40px;
 
   border-radius: 9px;
@@ -276,6 +311,8 @@ a {
   font-size: 20px;
 
   cursor: pointer;
+
+  touch-action: manipulation;
 }
 
 
@@ -284,21 +321,27 @@ a {
    ========================================================= */
 
 .football-app {
+
   padding-bottom: 50px;
+
+  /*
+   * Prevent sticky children from being clipped.
+   */
+  overflow: visible;
 }
 
 
 /* =========================================================
-   SCREEN
+   SCREEN SECTION
    ========================================================= */
 
 .screen-section {
 
   position: sticky;
 
-  top: 66px;
+  top: var(--header-height);
 
-  z-index: 90;
+  z-index: 900;
 
   padding:
     20px 0 0;
@@ -306,6 +349,11 @@ a {
   background:
     var(--bg);
 }
+
+
+/* =========================================================
+   SCREEN PLAYER
+   ========================================================= */
 
 .screen-player {
 
@@ -329,13 +377,16 @@ a {
 }
 
 
-/* SCREEN STATUS */
+/* =========================================================
+   SCREEN STATUS
+   ========================================================= */
 
 .screen-status {
 
   position: absolute;
 
   top: 13px;
+
   left: 13px;
 
   z-index: 10;
@@ -346,7 +397,8 @@ a {
 
   gap: 7px;
 
-  padding: 6px 10px;
+  padding:
+    6px 10px;
 
   border-radius: 999px;
 
@@ -354,6 +406,9 @@ a {
     rgba(0,0,0,.72);
 
   backdrop-filter:
+    blur(8px);
+
+  -webkit-backdrop-filter:
     blur(8px);
 
   color: #fff;
@@ -365,10 +420,14 @@ a {
   letter-spacing: 1.2px;
 }
 
+
 .screen-live-dot {
 
   width: 7px;
+
   height: 7px;
+
+  flex-shrink: 0;
 
   border-radius: 50%;
 
@@ -381,7 +440,9 @@ a {
 }
 
 
-/* SCREEN */
+/* =========================================================
+   SCREEN IFRAME
+   ========================================================= */
 
 .screen-player iframe {
 
@@ -404,7 +465,9 @@ a {
 }
 
 
-/* PLACEHOLDER */
+/* =========================================================
+   SCREEN PLACEHOLDER
+   ========================================================= */
 
 .screen-placeholder {
 
@@ -451,6 +514,7 @@ a {
 .screen-placeholder-icon {
 
   width: 58px;
+
   height: 58px;
 
   display: grid;
@@ -466,12 +530,16 @@ a {
 }
 
 .screen-placeholder strong {
+
   font-size: 14px;
+
   color: #dce1e8;
 }
 
 
-/* SCREEN BOTTOM */
+/* =========================================================
+   SCREEN BOTTOM
+   ========================================================= */
 
 .screen-bottom {
 
@@ -499,6 +567,7 @@ a {
 }
 
 .now-showing {
+
   min-width: 0;
 }
 
@@ -535,13 +604,16 @@ a {
 }
 
 
-/* FULLSCREEN */
+/* =========================================================
+   FULLSCREEN
+   ========================================================= */
 
 .fullscreen-button {
 
   flex-shrink: 0;
 
   width: 40px;
+
   height: 36px;
 
   border:
@@ -577,12 +649,39 @@ a {
 
 
 /* =========================================================
-   APP BUTTONS
+   APP MENU
    ========================================================= */
 
 .app-menu {
-  padding: 17px 0 8px;
+
+  /*
+   * Sticky navigation under the sticky player.
+   *
+   * JS calculates the exact top position according
+   * to the current player height.
+   */
+  position: sticky;
+
+  top: var(--app-menu-top);
+
+  z-index: 850;
+
+  padding:
+    17px 0 8px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      var(--bg) 0%,
+      var(--bg) 88%,
+      rgba(7,9,13,0) 100%
+    );
 }
+
+
+/* =========================================================
+   APP BUTTONS
+   ========================================================= */
 
 .app-buttons {
 
@@ -609,7 +708,8 @@ a {
 
 .app-button {
 
-  flex: 0 0 auto;
+  flex:
+    0 0 auto;
 
   min-width: 150px;
 
@@ -824,7 +924,7 @@ a {
 
 
 /* =========================================================
-   UPCOMING MATCH
+   UPCOMING
    ========================================================= */
 
 .match-card.is-upcoming {
@@ -839,9 +939,6 @@ a {
       #0c1016
     );
 }
-
-
-/* Upcoming hover */
 
 .match-card.is-upcoming:hover {
 
@@ -858,7 +955,7 @@ a {
 
 
 /* =========================================================
-   LIVE MATCH
+   LIVE
    ========================================================= */
 
 .match-card.is-live {
@@ -884,9 +981,6 @@ a {
     liveCardPulse 2s ease-in-out infinite;
 }
 
-
-/* Live hover */
-
 .match-card.is-live:hover {
 
   transform:
@@ -905,7 +999,7 @@ a {
 
 
 /* =========================================================
-   ENDED MATCH
+   ENDED
    ========================================================= */
 
 .match-card.is-ended {
@@ -927,9 +1021,6 @@ a {
   cursor: pointer;
 }
 
-
-/* Ended hover */
-
 .match-card.is-ended:hover {
 
   transform: none;
@@ -942,7 +1033,7 @@ a {
 
 
 /* =========================================================
-   MATCH STATUS BADGE
+   MATCH STATUS
    ========================================================= */
 
 .match-status {
@@ -977,9 +1068,7 @@ a {
 }
 
 
-/* =========================================================
-   UPCOMING STATUS
-   ========================================================= */
+/* UPCOMING */
 
 .match-status.upcoming {
 
@@ -995,9 +1084,7 @@ a {
 }
 
 
-/* =========================================================
-   LIVE STATUS
-   ========================================================= */
+/* LIVE */
 
 .match-status.live {
 
@@ -1017,14 +1104,12 @@ a {
     rgba(255,23,68,.25);
 }
 
-
-/* Pulsing dot inside LIVE badge */
-
 .match-status.live::before {
 
   content: "";
 
   width: 7px;
+
   height: 7px;
 
   margin-right: 6px;
@@ -1042,9 +1127,7 @@ a {
 }
 
 
-/* =========================================================
-   ENDED STATUS
-   ========================================================= */
+/* ENDED */
 
 .match-status.ended {
 
@@ -1077,13 +1160,7 @@ a {
   font-weight: 900;
 
   line-height: 1.25;
-
-  transition:
-    color .3s ease;
 }
-
-
-/* Ended teams */
 
 .match-card.is-ended .match-teams {
 
@@ -1150,13 +1227,7 @@ a {
   line-height: 1.2;
 
   letter-spacing: .2px;
-
-  transition:
-    color .3s ease;
 }
-
-
-/* Live countdown/status */
 
 .match-card.is-live .match-countdown {
 
@@ -1165,9 +1236,6 @@ a {
 
   font-weight: 950;
 }
-
-
-/* Ended countdown */
 
 .match-card.is-ended .match-countdown {
 
@@ -1186,15 +1254,20 @@ a {
 
   0%,
   100% {
+
     opacity: 1;
-    transform: scale(1);
+
+    transform:
+      scale(1);
   }
 
   50% {
-    opacity: .35;
-    transform: scale(.75);
-  }
 
+    opacity: .35;
+
+    transform:
+      scale(.75);
+  }
 }
 
 
@@ -1220,7 +1293,6 @@ a {
       0 0 28px
       rgba(255,23,68,.17);
   }
-
 }
 
 
@@ -1300,9 +1372,11 @@ a {
   position: absolute;
 
   width: 115px;
+
   height: 115px;
 
   top: -62px;
+
   right: -6px;
 
   border-radius: 50%;
@@ -1320,9 +1394,11 @@ a {
   position: absolute;
 
   width: 88px;
+
   height: 88px;
 
   top: -48px;
+
   right: 23px;
 
   border-radius: 50%;
@@ -1346,9 +1422,28 @@ a {
     rgba(0,0,0,.28);
 }
 
+.highlight-card.active {
+
+  border-color:
+    rgba(255,23,68,.65);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.13),
+      #10141b
+    );
+}
+
+
+/* =========================================================
+   HIGHLIGHT THUMBNAIL
+   ========================================================= */
+
 .highlight-thumbnail {
 
   width: 50px;
+
   height: 50px;
 
   display: grid;
@@ -1389,6 +1484,7 @@ a {
 .highlight-thumbnail span {
 
   width: auto;
+
   height: auto;
 
   display: block;
@@ -1463,10 +1559,12 @@ a {
    ========================================================= */
 
 .tv-content {
+
   padding-top: 20px;
 }
 
 .tv-category {
+
   padding-top: 22px;
 }
 
@@ -1511,7 +1609,7 @@ a {
   display: grid;
 
   grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+    repeat(2, minmax(0,1fr));
 
   gap: 10px;
 }
@@ -1578,9 +1676,11 @@ a {
   position: absolute;
 
   width: 115px;
+
   height: 115px;
 
   top: -62px;
+
   right: -6px;
 
   border-radius: 50%;
@@ -1598,9 +1698,11 @@ a {
   position: absolute;
 
   width: 88px;
+
   height: 88px;
 
   top: -48px;
+
   right: 23px;
 
   border-radius: 50%;
@@ -1644,9 +1746,15 @@ a {
     rgba(0,0,0,.22);
 }
 
+
+/* =========================================================
+   TV ICON
+   ========================================================= */
+
 .tv-channel-icon {
 
   width: 50px;
+
   height: 50px;
 
   display: grid;
@@ -1683,6 +1791,11 @@ a {
 
   z-index: 2;
 }
+
+
+/* =========================================================
+   TV INFO
+   ========================================================= */
 
 .tv-channel-info {
 
@@ -1732,11 +1845,17 @@ a {
   line-height: 1.2;
 }
 
+
+/* =========================================================
+   TV STATUS
+   ========================================================= */
+
 .tv-channel-status {
 
   position: absolute;
 
   top: 13px;
+
   right: 13px;
 
   z-index: 3;
@@ -1782,6 +1901,7 @@ a {
    ========================================================= */
 
 .movies-content {
+
   padding-top: 25px;
 }
 
@@ -1811,7 +1931,7 @@ a {
 
   min-width: 0;
 
-  min-height: 125px;
+  min-height: 150px;
 
   display: flex;
 
@@ -1821,7 +1941,7 @@ a {
 
   justify-content: center;
 
-  gap: 9px;
+  gap: 7px;
 
   padding: 17px;
 
@@ -1861,9 +1981,11 @@ a {
   position: absolute;
 
   width: 110px;
+
   height: 110px;
 
   top: -58px;
+
   right: -8px;
 
   border-radius: 50%;
@@ -1887,11 +2009,34 @@ a {
     rgba(0,0,0,.22);
 }
 
+.movie-card.active {
+
+  border-color:
+    rgba(255,23,68,.65);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.13),
+      #10141b
+    );
+
+  box-shadow:
+    0 0 0 1px
+    rgba(255,23,68,.08);
+}
+
+
+/* =========================================================
+   MOVIE STATUS
+   ========================================================= */
+
 .movie-status {
 
   display: inline-flex;
 
-  padding: 4px 7px;
+  padding:
+    4px 7px;
 
   border-radius: 999px;
 
@@ -1912,14 +2057,21 @@ a {
   z-index: 2;
 }
 
+
+/* =========================================================
+   MOVIE ICON
+   ========================================================= */
+
 .movie-icon {
 
   position: absolute;
 
   top: 15px;
+
   right: 15px;
 
   width: 42px;
+
   height: 42px;
 
   display: grid;
@@ -1943,6 +2095,11 @@ a {
 
   z-index: 2;
 }
+
+
+/* =========================================================
+   MOVIE TITLE
+   ========================================================= */
 
 .movie-title {
 
@@ -2072,7 +2229,6 @@ a {
     grid-template-columns:
       repeat(2, minmax(0,1fr));
   }
-
 }
 
 
@@ -2082,12 +2238,19 @@ a {
 
 @media (max-width: 700px) {
 
+  :root {
+
+    --header-height: 60px;
+  }
+
+
   .nav-wrap {
 
     position: relative;
 
     min-height: 60px;
   }
+
 
   .menu-toggle {
 
@@ -2098,13 +2261,16 @@ a {
     margin-left: auto;
   }
 
+
   .main-nav {
 
     position: absolute;
 
-    top: calc(100% + 1px);
+    top:
+      calc(100% + 1px);
 
     left: 0;
+
     right: 0;
 
     display: none;
@@ -2137,25 +2303,25 @@ a {
     padding: 12px;
   }
 
+
   .screen-section {
 
-    position: sticky;
-
-    top: 60px;
-
-    z-index: 90;
-
-    background:
-      var(--bg);
+    top:
+      var(--header-height);
   }
 
+
   .screen-player {
+
     border-radius: 12px;
   }
 
+
   .screen-player iframe {
+
     height: 400px;
   }
+
 
   .app-buttons {
 
@@ -2165,6 +2331,7 @@ a {
 
     touch-action: pan-x;
   }
+
 
   .app-button {
 
@@ -2178,10 +2345,10 @@ a {
     font-size: 11px;
   }
 
+
   .app-button-icon {
     font-size: 16px;
   }
-
 }
 
 
@@ -2197,23 +2364,21 @@ a {
       calc(100% - 20px);
   }
 
+
   .screen-section {
 
-    position: sticky;
-
-    top: 60px;
-
-    z-index: 90;
+    top:
+      var(--header-height);
 
     padding-top: 10px;
-
-    background:
-      var(--bg);
   }
+
 
   .screen-player iframe {
+
     height: 235px;
   }
+
 
   .screen-bottom {
 
@@ -2221,25 +2386,34 @@ a {
       11px 12px;
   }
 
+
   #nowShowing {
+
     font-size: 13px;
   }
+
 
   .fullscreen-button {
 
     width: 36px;
+
     height: 34px;
 
     font-size: 16px;
   }
 
+
   .content-section {
     padding-top: 18px;
   }
 
+
   .content-heading h1 {
     font-size: 19px;
   }
+
+
+  /* FOOTBALL */
 
   .match-grid {
 
@@ -2247,10 +2421,6 @@ a {
       1fr;
   }
 
-
-  /* =======================================================
-     FOOTBALL MATCH CARD
-     ======================================================= */
 
   .match-card {
 
@@ -2260,6 +2430,7 @@ a {
 
     gap: 6px;
   }
+
 
   .match-status {
 
@@ -2271,30 +2442,28 @@ a {
     font-size: 8px;
   }
 
-  .match-teams {
 
+  .match-teams {
     font-size: 15px;
   }
 
-  .match-date {
 
+  .match-date {
     font-size: 10px;
   }
 
-  .match-time {
 
+  .match-time {
     font-size: 12px;
   }
 
-  .match-countdown {
 
+  .match-countdown {
     font-size: 10px;
   }
 
 
-  /* =======================================================
-     HIGHLIGHTS — 2 COLUMNS
-     ======================================================= */
+  /* HIGHLIGHTS */
 
   .highlight-grid {
 
@@ -2303,6 +2472,7 @@ a {
 
     gap: 8px;
   }
+
 
   .highlight-card {
 
@@ -2313,9 +2483,11 @@ a {
     border-radius: 14px;
   }
 
+
   .highlight-thumbnail {
 
     width: 45px;
+
     height: 45px;
 
     border-radius: 13px;
@@ -2323,9 +2495,11 @@ a {
     font-size: 22px;
   }
 
+
   .highlight-thumbnail span {
     font-size: 21px;
   }
+
 
   .highlight-card strong {
 
@@ -2335,6 +2509,7 @@ a {
     font-size: 12px;
   }
 
+
   .highlight-card small {
 
     padding:
@@ -2343,40 +2518,47 @@ a {
     font-size: 9px;
   }
 
+
   .highlight-card::before {
 
     width: 100px;
+
     height: 100px;
 
     top: -54px;
+
     right: -8px;
   }
+
 
   .highlight-card::after {
 
     width: 76px;
+
     height: 76px;
 
     top: -42px;
+
     right: 18px;
   }
 
 
-  /* =======================================================
-     TV
-     ======================================================= */
+  /* TV */
 
   .tv-category {
     padding-top: 18px;
   }
 
+
   .tv-category-heading h2 {
     font-size: 16px;
   }
 
+
   .tv-category-heading span {
     font-size: 9px;
   }
+
 
   .tv-channel-grid {
 
@@ -2385,6 +2567,7 @@ a {
 
     gap: 8px;
   }
+
 
   .tv-channel {
 
@@ -2395,9 +2578,11 @@ a {
     border-radius: 14px;
   }
 
+
   .tv-channel-icon {
 
     width: 45px;
+
     height: 45px;
 
     border-radius: 13px;
@@ -2405,9 +2590,11 @@ a {
     font-size: 22px;
   }
 
+
   .tv-channel-status {
 
     top: 11px;
+
     right: 11px;
 
     min-height: 29px;
@@ -2420,9 +2607,11 @@ a {
     letter-spacing: .8px;
   }
 
+
   .tv-channel-info {
     padding-top: 7px;
   }
+
 
   .tv-channel-info strong {
 
@@ -2431,32 +2620,37 @@ a {
     font-size: 12px;
   }
 
+
   .tv-channel-info small {
     font-size: 9px;
   }
 
+
   .tv-channel::before {
 
     width: 100px;
+
     height: 100px;
 
     top: -54px;
+
     right: -8px;
   }
+
 
   .tv-channel::after {
 
     width: 76px;
+
     height: 76px;
 
     top: -42px;
+
     right: 18px;
   }
 
 
-  /* =======================================================
-     MOVIES — FOOTBALL CARD SIZE
-     ======================================================= */
+  /* MOVIES */
 
   .movie-grid {
 
@@ -2465,6 +2659,7 @@ a {
 
     gap: 10px;
   }
+
 
   .movie-card {
 
@@ -2475,12 +2670,15 @@ a {
     border-radius: 14px;
   }
 
+
   .movie-status {
 
     font-size: 8px;
 
-    padding: 4px 7px;
+    padding:
+      4px 7px;
   }
+
 
   .movie-title {
 
@@ -2489,17 +2687,20 @@ a {
     max-width: 72%;
   }
 
-  .movie-rating {
 
+  .movie-rating {
     font-size: 10px;
   }
+
 
   .movie-icon {
 
     width: 43px;
+
     height: 43px;
 
     top: 13px;
+
     right: 13px;
 
     border-radius: 12px;
@@ -2508,9 +2709,7 @@ a {
   }
 
 
-  /* =======================================================
-     FOOTER
-     ======================================================= */
+  /* FOOTER */
 
   .footer-wrap {
 
@@ -2518,7 +2717,6 @@ a {
 
     align-items: flex-start;
   }
-
 }
 
 
@@ -2537,6 +2735,7 @@ a {
     gap: 5px;
   }
 
+
   .app-button-icon {
     font-size: 14px;
   }
@@ -2551,17 +2750,21 @@ a {
     padding: 14px;
   }
 
+
   .match-teams {
     font-size: 14px;
   }
+
 
   .match-date {
     font-size: 10px;
   }
 
+
   .match-time {
     font-size: 11px;
   }
+
 
   .match-countdown {
     font-size: 10px;
@@ -2574,6 +2777,7 @@ a {
     gap: 7px;
   }
 
+
   .highlight-card {
 
     min-height: 122px;
@@ -2583,9 +2787,11 @@ a {
     border-radius: 13px;
   }
 
+
   .highlight-thumbnail {
 
     width: 43px;
+
     height: 43px;
 
     border-radius: 12px;
@@ -2593,24 +2799,28 @@ a {
     font-size: 21px;
   }
 
+
   .highlight-thumbnail span {
     font-size: 20px;
   }
 
+
   .highlight-card strong {
     font-size: 12px;
   }
+
 
   .highlight-card small {
     font-size: 9px;
   }
 
 
-  /* TV GRID */
+  /* TV */
 
   .tv-channel-grid {
     gap: 7px;
   }
+
 
   .tv-channel {
 
@@ -2621,9 +2831,11 @@ a {
     border-radius: 13px;
   }
 
+
   .tv-channel-icon {
 
     width: 43px;
+
     height: 43px;
 
     border-radius: 12px;
@@ -2631,9 +2843,11 @@ a {
     font-size: 21px;
   }
 
+
   .tv-channel-status {
 
     top: 10px;
+
     right: 10px;
 
     padding:
@@ -2642,9 +2856,11 @@ a {
     font-size: 7px;
   }
 
+
   .tv-channel-info strong {
     font-size: 12px;
   }
+
 
   .tv-channel-info small {
     font-size: 9px;
@@ -2660,20 +2876,43 @@ a {
     padding: 14px;
   }
 
+
   .movie-title {
     font-size: 14px;
   }
 
+
   .movie-icon {
 
     width: 40px;
+
     height: 40px;
 
     top: 12px;
+
     right: 12px;
 
     font-size: 19px;
   }
-
 }
-```
+
+
+/* =========================================================
+   REDUCE MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+
+    scroll-behavior: auto !important;
+
+    animation-duration: .01ms !important;
+
+    animation-iteration-count: 1 !important;
+
+    transition-duration: .01ms !important;
+  }
+}
