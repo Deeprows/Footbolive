@@ -12,7 +12,7 @@
 
   <meta
     name="description"
-    content="Football Live and Highlights"
+    content="Football Live, upcoming matches and football highlights."
   >
 
   <meta
@@ -41,7 +41,7 @@
 
 
     <!-- =========================
-         HOME
+         HOME PAGE
     ========================== -->
 
     <main
@@ -51,38 +51,61 @@
 
       <div class="home-container">
 
+
+        <!-- APP LOGO -->
+
         <div class="app-logo">
           ⚽
         </div>
+
 
         <h1>
           Football
         </h1>
 
+
+        <!-- MAIN BUTTONS -->
+
         <div class="home-buttons">
+
+
+          <!-- SCREEN -->
 
           <button
             class="main-button screen-button"
             onclick="openScreen()"
+            type="button"
           >
-            <span class="button-icon">📺</span>
+
+            <span class="button-icon">
+              📺
+            </span>
 
             <span>
               Screen
             </span>
+
           </button>
 
+
+          <!-- FOOTBALL -->
 
           <button
             class="main-button football-button"
             onclick="openFootball()"
+            type="button"
           >
-            <span class="button-icon">⚽</span>
+
+            <span class="button-icon">
+              ⚽
+            </span>
 
             <span>
               Football Live | Highlights
             </span>
+
           </button>
+
 
         </div>
 
@@ -101,48 +124,75 @@
       class="page"
     >
 
+
+      <!-- PAGE HEADER -->
+
       <header class="page-header">
+
 
         <button
           class="back-button"
           onclick="goHome()"
+          type="button"
           aria-label="Back"
         >
           ←
         </button>
 
+
         <h2>
           Football
         </h2>
 
+
       </header>
 
 
-      <div class="football-tabs">
+
+      <!-- =========================
+           FOOTBALL TABS
+      ========================== -->
+
+      <nav
+        class="football-tabs"
+        aria-label="Football sections"
+      >
+
+
+        <!-- LIVE -->
 
         <button
           id="liveTab"
           class="football-tab active"
           onclick="showLive()"
+          type="button"
         >
+
           🔴 Football Live
+
         </button>
 
+
+        <!-- HIGHLIGHTS -->
 
         <button
           id="highlightTab"
           class="football-tab"
           onclick="showHighlights()"
+          type="button"
         >
+
           🎬 Highlights
+
         </button>
 
-      </div>
+
+      </nav>
 
 
 
       <!-- =========================
-           LIVE MATCHES
+           LIVE SECTION
       ========================== -->
 
       <section
@@ -150,30 +200,33 @@
         class="content-section active"
       >
 
+
         <div class="section-title">
 
-          <span>
-            Upcoming & Live Matches
-          </span>
+          Upcoming & Live Matches
 
         </div>
 
+
+        <!--
+          JavaScript inserts
+          football match cards here.
+        -->
 
         <div
           id="liveMatches"
-          class="content-list"
+          class="content-list live-match-list"
         >
 
-          <!-- Matches will be added by script.js -->
-
         </div>
+
 
       </section>
 
 
 
       <!-- =========================
-           HIGHLIGHTS
+           HIGHLIGHTS SECTION
       ========================== -->
 
       <section
@@ -181,25 +234,29 @@
         class="content-section"
       >
 
+
         <div class="section-title">
 
-          <span>
-            Highlights
-          </span>
+          Highlights
 
         </div>
 
+
+        <!--
+          JavaScript inserts
+          highlight cards here.
+        -->
 
         <div
           id="highlights"
-          class="content-list"
+          class="content-list highlight-list"
         >
-
-          <!-- Highlights will be added by script.js -->
 
         </div>
 
+
       </section>
+
 
     </main>
 
@@ -214,22 +271,34 @@
       class="page"
     >
 
+
+      <!-- SCREEN HEADER -->
+
       <header class="page-header">
+
 
         <button
           class="back-button"
           onclick="goBackFromScreen()"
+          type="button"
           aria-label="Back"
         >
           ←
         </button>
 
+
         <h2>
           Screen
         </h2>
 
+
       </header>
 
+
+
+      <!-- =========================
+           SCREEN CONTAINER
+      ========================== -->
 
       <section class="screen-container">
 
@@ -238,19 +307,29 @@
              NOW SHOWING
         ========================== -->
 
-        <div class="now-showing">
+        <div
+          class="now-showing"
+          aria-live="polite"
+        >
 
-          <span class="live-indicator">
+
+          <span
+            class="live-indicator"
+            aria-hidden="true"
+          >
             ●
           </span>
+
 
           <span>
             NOW SHOWING:
           </span>
 
+
           <strong id="nowShowing">
             Select a match
           </strong>
+
 
         </div>
 
@@ -265,22 +344,31 @@
           class="screen-player"
         >
 
+
           <div class="screen-placeholder">
 
-            <div class="screen-icon">
+
+            <div
+              class="screen-icon"
+              aria-hidden="true"
+            >
               📺
             </div>
+
 
             <p>
               Select a match to watch
             </p>
 
+
           </div>
+
 
         </div>
 
 
       </section>
+
 
     </main>
 
@@ -294,6 +382,7 @@
   ========================== -->
 
   <script src="script.js"></script>
+
 
 </body>
 
