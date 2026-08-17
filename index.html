@@ -487,6 +487,7 @@
             class="highlight-card"
             data-name="Chelsea vs Juventus Highlights"
             data-url="https://filemoon.org/en/LJlGnPwv315w/embed"
+            data-date="2026-08-17"
           >
 
             <div class="highlight-thumbnail">
@@ -840,6 +841,7 @@
             class="movie-card"
             data-name="Housemaid (2026)"
             data-url="https://vsembed.su/embed/movie/tt39319989"
+            data-date="2026-08-17"
           >
 
             <span class="movie-status">
@@ -919,9 +921,24 @@
 
     document.addEventListener("DOMContentLoaded", function () {
 
-      const matchCards = document.querySelectorAll(
-        ".match-card[data-kickoff]"
-      );
+      const matchList =
+        document.getElementById("matchList");
+
+      const highlightList =
+        document.getElementById("highlightList");
+
+      const movieList =
+        document.getElementById("movieList");
+
+
+      const matchCards =
+        matchList
+          ? Array.from(
+              matchList.querySelectorAll(
+                ".match-card[data-kickoff]"
+              )
+            )
+          : [];
 
 
       /*
@@ -1044,6 +1061,254 @@
           ":" +
           ss
         );
+
+      }
+
+
+      /*
+       * Get the current status of a match.
+       *
+       * Returns:
+       *
+       * upcoming
+       * live
+       * ended
+       */
+
+      function getMatchStatus(card, now) {
+
+        const kickoffString =
+          card.dataset.kickoff;
+
+
+        if (!kickoffString) {
+          return null;
+        }
+
+
+        const kickoff =
+          new Date(kickoffString);
+
+
+        if (Number.isNaN(kickoff.getTime())) {
+          return null;
+        }
+
+
+        const duration =
+          Number(
+            card.dataset.duration
+          ) ||
+          DEFAULT_MATCH_DURATION;
+
+
+        const endTime =
+          new Date(
+            kickoff.getTime() +
+            duration * 60 * 1000
+          );
+
+
+        if (now < kickoff) {
+
+          return {
+            status: "upcoming",
+            kickoff: kickoff,
+            endTime: endTime
+          };
+
+        }
+
+
+        if (
+          now >= kickoff &&
+          now < endTime
+        ) {
+
+          return {
+            status: "live",
+            kickoff: kickoff,
+            endTime: endTime
+          };
+
+        }
+
+
+        return {
+          status: "ended",
+          kickoff: kickoff,
+          endTime: endTime
+        };
+
+      }
+
+
+      /*
+       * Sort football matches.
+       *
+       * Priority:
+       *
+       * 1. LIVE matches
+       * 2. UPCOMING matches by nearest kickoff
+       * 3. ENDED matches
+       *
+       * This function runs every second so a match
+       * automatically moves from upcoming to live
+       * and eventually to the bottom when it ends.
+       */
+
+      function sortFootballMatches(now) {
+
+        if (!matchList) {
+          return;
+        }
+
+
+        const cards =
+          Array.from(
+            matchList.querySelectorAll(
+              ".match-card[data-kickoff]"
+            )
+          );
+
+
+        cards.sort(function (a, b) {
+
+          const aData =
+            getMatchStatus(a, now);
+
+          const bData =
+            getMatchStatus(b, now);
+
+
+          if (!aData && !bData) {
+            return 0;
+          }
+
+
+          if (!aData) {
+            return 1;
+          }
+
+
+          if (!bData) {
+            return -1;
+          }
+
+
+          /*
+           * LIVE matches always come first.
+           */
+
+          if (
+            aData.status === "live" &&
+            bData.status !== "live"
+          ) {
+
+            return -1;
+
+          }
+
+
+          if (
+            aData.status !== "live" &&
+            bData.status === "live"
+          ) {
+
+            return 1;
+
+          }
+
+
+          /*
+           * If both are live, sort by kickoff time.
+           */
+
+          if (
+            aData.status === "live" &&
+            bData.status === "live"
+          ) {
+
+            return (
+              aData.kickoff.getTime() -
+              bData.kickoff.getTime()
+            );
+
+          }
+
+
+          /*
+           * Upcoming matches come before ended matches.
+           */
+
+          if (
+            aData.status === "upcoming" &&
+            bData.status === "ended"
+          ) {
+
+            return -1;
+
+          }
+
+
+          if (
+            aData.status === "ended" &&
+            bData.status === "upcoming"
+          ) {
+
+            return 1;
+
+          }
+
+
+          /*
+           * Upcoming matches:
+           * closest kickoff first.
+           */
+
+          if (
+            aData.status === "upcoming" &&
+            bData.status === "upcoming"
+          ) {
+
+            return (
+              aData.kickoff.getTime() -
+              bData.kickoff.getTime()
+            );
+
+          }
+
+
+          /*
+           * Ended matches stay at the bottom.
+           *
+           * Most recently ended match appears first
+           * among ended matches.
+           */
+
+          if (
+            aData.status === "ended" &&
+            bData.status === "ended"
+          ) {
+
+            return (
+              bData.kickoff.getTime() -
+              aData.kickoff.getTime()
+            );
+
+          }
+
+
+          return 0;
+
+        });
+
+
+        cards.forEach(function (card) {
+
+          matchList.appendChild(card);
+
+        });
 
       }
 
@@ -1260,24 +1525,150 @@
 
 
       /*
+       * Sort Highlights from newest to oldest.
+       *
+       * Add data-date="YYYY-MM-DD" to every
+       * highlight card when adding new content.
+       */
+
+      function sortHighlights() {
+
+        if (!highlightList) {
+          return;
+        }
+
+
+        const cards =
+          Array.from(
+            highlightList.querySelectorAll(
+              ".highlight-card[data-date]"
+            )
+          );
+
+
+        cards.sort(function (a, b) {
+
+          const dateA =
+            new Date(
+              a.dataset.date + "T00:00:00"
+            ).getTime();
+
+
+          const dateB =
+            new Date(
+              b.dataset.date + "T00:00:00"
+            ).getTime();
+
+
+          return dateB - dateA;
+
+        });
+
+
+        cards.forEach(function (card) {
+
+          highlightList.appendChild(card);
+
+        });
+
+      }
+
+
+      /*
+       * Sort Movies from newest to oldest.
+       *
+       * Add data-date="YYYY-MM-DD" to every
+       * movie card when adding new content.
+       */
+
+      function sortMovies() {
+
+        if (!movieList) {
+          return;
+        }
+
+
+        const cards =
+          Array.from(
+            movieList.querySelectorAll(
+              ".movie-card[data-date]"
+            )
+          );
+
+
+        cards.sort(function (a, b) {
+
+          const dateA =
+            new Date(
+              a.dataset.date + "T00:00:00"
+            ).getTime();
+
+
+          const dateB =
+            new Date(
+              b.dataset.date + "T00:00:00"
+            ).getTime();
+
+
+          return dateB - dateA;
+
+        });
+
+
+        cards.forEach(function (card) {
+
+          movieList.appendChild(card);
+
+        });
+
+      }
+
+
+      /*
        * Initial update.
        */
+
+      const initialNow = new Date();
+
 
       matchCards.forEach(
         updateMatch
       );
 
 
+      sortFootballMatches(
+        initialNow
+      );
+
+
+      sortHighlights();
+
+
+      sortMovies();
+
+
       /*
-       * Update every second so the
-       * countdown changes in real time.
+       * Update every second so:
+       *
+       * - Football countdown changes
+       * - Match status changes
+       * - Matches automatically move position
        */
 
       setInterval(
         function () {
 
+          const now =
+            new Date();
+
+
           matchCards.forEach(
             updateMatch
+          );
+
+
+          sortFootballMatches(
+            now
           );
 
         },
