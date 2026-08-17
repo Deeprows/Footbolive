@@ -25,7 +25,7 @@
   --green: #20e070;
 
   /* Match status colors */
-  --match-upcoming: #f5c542;
+  --match-upcoming: #ff1744;
 
   --match-live: #ff1744;
 
@@ -55,18 +55,10 @@ html {
 
   scroll-behavior: smooth;
 
-  /*
-   * Discourage unwanted touch gestures such as
-   * double-tap zoom while preserving normal scrolling.
-   */
   touch-action: manipulation;
 
   -webkit-tap-highlight-color: transparent;
 
-  /*
-   * Prevent accidental browser text selection
-   * during app-like touch interaction.
-   */
   -webkit-user-select: none;
   user-select: none;
 }
@@ -98,9 +90,6 @@ body {
 
   overscroll-behavior-x: none;
 
-  /*
-   * Prevent accidental horizontal overflow.
-   */
   overflow-x: hidden;
 }
 
@@ -108,6 +97,7 @@ body {
 /*
  * Allow normal text selection inside form controls.
  */
+
 input,
 textarea,
 select {
@@ -324,9 +314,6 @@ a {
 
   padding-bottom: 50px;
 
-  /*
-   * Prevent sticky children from being clipped.
-   */
   overflow: visible;
 }
 
@@ -661,12 +648,6 @@ a {
    FULLSCREEN PLAYER
    ========================================================= */
 
-/*
- * When the player enters fullscreen, remove all normal
- * page constraints so the iframe can occupy the entire
- * device display.
- */
-
 .screen-player:fullscreen {
 
   position: fixed;
@@ -699,10 +680,6 @@ a {
 }
 
 
-/*
- * WebKit fullscreen support.
- */
-
 .screen-player:-webkit-full-screen {
 
   position: fixed;
@@ -734,10 +711,6 @@ a {
   z-index: 999999;
 }
 
-
-/*
- * Fullscreen iframe.
- */
 
 .screen-player:fullscreen iframe {
 
@@ -783,10 +756,6 @@ a {
 }
 
 
-/*
- * Keep the screen status visible above the iframe.
- */
-
 .screen-player:fullscreen .screen-status {
 
   position: absolute;
@@ -810,14 +779,6 @@ a {
   z-index: 99999;
 }
 
-
-/*
- * Turn the normal bottom information bar into an
- * invisible fullscreen control layer.
- *
- * The Now Showing information is hidden while the
- * fullscreen button remains available.
- */
 
 .screen-player:fullscreen .screen-bottom {
 
@@ -867,10 +828,6 @@ a {
 }
 
 
-/*
- * Hide Now Showing in fullscreen.
- */
-
 .screen-player:fullscreen .now-showing {
 
   display: none;
@@ -882,11 +839,6 @@ a {
   display: none;
 }
 
-
-/*
- * Move the fullscreen button to the top-right
- * and turn it into the X exit button.
- */
 
 .screen-player:fullscreen .fullscreen-button {
 
@@ -1006,10 +958,6 @@ a {
 }
 
 
-/*
- * Fullscreen X hover/touch state.
- */
-
 .screen-player:fullscreen .fullscreen-button:hover {
 
   background:
@@ -1027,10 +975,6 @@ a {
   transform: scale(1.05);
 }
 
-
-/*
- * Landscape fullscreen.
- */
 
 @media (orientation: landscape) {
 
@@ -1077,13 +1021,8 @@ a {
 
     min-height: 100vh;
   }
-
 }
 
-
-/*
- * Smaller fullscreen exit button on narrow screens.
- */
 
 @media (max-width: 550px) {
 
@@ -1112,7 +1051,6 @@ a {
 
     font-size: 31px;
   }
-
 }
 
 
@@ -1121,13 +1059,6 @@ a {
    ========================================================= */
 
 .app-menu {
-
-  /*
-   * Sticky navigation under the sticky player.
-   *
-   * JS calculates the exact top position according
-   * to the current player height.
-   */
 
   position: sticky;
 
@@ -1346,11 +1277,7 @@ a {
 
   position: relative;
 
-  width: 100%;
-
-  height: 176px;
-
-  min-height: 176px;
+  min-height: 112px;
 
   display: flex;
 
@@ -1358,23 +1285,26 @@ a {
 
   align-items: center;
 
-  justify-content: flex-start;
+  justify-content: center;
 
-  gap: 0;
+  gap: 5px;
 
-  padding:
-    10px 14px 11px;
+  padding: 12px 14px;
 
   overflow: hidden;
 
   border:
-    2px solid
-    #38c7f4;
+    1px solid
+    rgba(255,23,68,.20);
 
-  border-radius: 17px;
+  border-radius: 14px;
 
   background:
-    #181818;
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
 
   color: #fff;
 
@@ -1400,10 +1330,14 @@ a {
 .match-card.is-upcoming {
 
   border-color:
-    #38c7f4;
+    rgba(255,23,68,.28);
 
   background:
-    #181818;
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
 }
 
 .match-card.is-upcoming:hover {
@@ -1412,11 +1346,11 @@ a {
     translateY(-2px);
 
   border-color:
-    #38c7f4;
+    rgba(255,23,68,.60);
 
   box-shadow:
-    0 8px 20px
-    rgba(56,199,244,.10);
+    0 8px 24px
+    rgba(255,23,68,.10);
 }
 
 
@@ -1427,17 +1361,24 @@ a {
 .match-card.is-live {
 
   border-color:
-    #38c7f4;
+    rgba(255,23,68,.65);
 
   background:
-    #181818;
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.12),
+      #0c1016
+    );
 
   box-shadow:
     0 0 0 1px
-    rgba(56,199,244,.08);
+    rgba(255,23,68,.10),
+
+    0 0 22px
+    rgba(255,23,68,.12);
 
   animation:
-    none;
+    liveCardPulse 2s ease-in-out infinite;
 }
 
 .match-card.is-live:hover {
@@ -1446,14 +1387,14 @@ a {
     translateY(-2px);
 
   border-color:
-    #38c7f4;
+    rgba(255,23,68,.85);
 
   box-shadow:
     0 0 0 1px
-    rgba(56,199,244,.12),
+    rgba(255,23,68,.16),
 
-    0 8px 22px
-    rgba(56,199,244,.10);
+    0 0 30px
+    rgba(255,23,68,.20);
 }
 
 
@@ -1466,10 +1407,14 @@ a {
   opacity: .58;
 
   border-color:
-    #38c7f4;
+    rgba(255,255,255,.05);
 
   background:
-    #181818;
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.008)
+    );
 
   box-shadow: none;
 
@@ -1481,7 +1426,7 @@ a {
   transform: none;
 
   border-color:
-    #38c7f4;
+    rgba(255,255,255,.08);
 
   box-shadow: none;
 }
@@ -1501,21 +1446,20 @@ a {
 
   width: fit-content;
 
-  min-height: 27px;
-
-  margin:
-    -1px auto 6px;
+  min-height: 23px;
 
   padding:
-    5px 11px;
+    4px 10px;
+
+  margin-bottom: 1px;
 
   border-radius: 999px;
 
-  font-size: 10px;
+  font-size: 8px;
 
   font-weight: 950;
 
-  letter-spacing: .8px;
+  letter-spacing: 1px;
 
   line-height: 1;
 
@@ -1531,14 +1475,14 @@ a {
 .match-status.upcoming {
 
   color:
-    #fff;
+    #ff637d;
 
   background:
-    #050505;
+    rgba(255,23,68,.10);
 
-  border: 0;
-
-  box-shadow: none;
+  border:
+    1px solid
+    rgba(255,23,68,.25);
 }
 
 
@@ -1549,22 +1493,26 @@ a {
   color: #fff;
 
   background:
-    #ff1744;
+    var(--match-live);
 
-  border: 0;
+  border:
+    1px solid
+    rgba(255,255,255,.12);
 
   font-weight: 950;
 
-  box-shadow: none;
+  box-shadow:
+    0 0 12px
+    rgba(255,23,68,.25);
 }
 
 .match-status.live::before {
 
   content: "";
 
-  width: 7px;
+  width: 6px;
 
-  height: 7px;
+  height: 6px;
 
   margin-right: 6px;
 
@@ -1586,12 +1534,14 @@ a {
 .match-status.ended {
 
   color:
-    #858c98;
+    var(--match-ended);
 
   background:
-    #050505;
+    rgba(133,140,152,.10);
 
-  border: 0;
+  border:
+    1px solid
+    rgba(133,140,152,.16);
 }
 
 
@@ -1605,25 +1555,19 @@ a {
 
   width: 100%;
 
-  min-height: 29px;
-
-  margin-top: 1px;
+  overflow: hidden;
 
   color: #fff;
 
-  font-size: 17px;
+  font-size: 16px;
 
   font-weight: 900;
 
   line-height: 1.2;
 
-  text-align: center;
+  text-overflow: ellipsis;
 
   white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
 }
 
 .match-card.is-ended .match-teams {
@@ -1639,22 +1583,18 @@ a {
 
 .match-date {
 
-  display: block;
-
-  width: 100%;
-
-  margin-top: 7px;
+  display: inline-block;
 
   color:
-    #38c7f4;
+    #aeb6c3;
 
-  font-size: 13px;
+  font-size: 10px;
 
-  font-weight: 800;
+  font-weight: 700;
 
   line-height: 1.2;
 
-  text-align: center;
+  margin-top: 1px;
 }
 
 
@@ -1664,22 +1604,26 @@ a {
 
 .match-time {
 
-  display: block;
-
-  width: 100%;
-
-  margin-top: 5px;
+  display: inline-block;
 
   color:
     #ffffff;
 
-  font-size: 17px;
+  font-size: 12px;
 
   font-weight: 900;
 
   line-height: 1.2;
+}
 
-  text-align: center;
+
+/*
+ * Keep date and time visually compact.
+ */
+
+.match-date + .match-time {
+
+  margin-top: -2px;
 }
 
 
@@ -1691,22 +1635,18 @@ a {
 
   display: block;
 
-  width: 100%;
-
-  margin-top: auto;
+  margin-top: 3px;
 
   color:
-    #ffffff;
+    #ff637d;
 
-  font-size: 12px;
+  font-size: 10px;
 
   font-weight: 800;
 
   line-height: 1.2;
 
   letter-spacing: .1px;
-
-  text-align: center;
 }
 
 .match-card.is-live .match-countdown {
@@ -2893,85 +2833,203 @@ a {
   }
 
 
-  /* FOOTBALL */
+  /* =======================================================
+     FOOTBALL FIXTURE CARDS
+     ======================================================= */
 
   .match-grid {
 
     grid-template-columns:
       1fr;
 
-    gap: 12px;
+    gap: 9px;
   }
 
 
   .match-card {
 
-    width: 100%;
+    min-height: 105px;
 
-    height: 176px;
-
-    min-height: 176px;
+    height: 105px;
 
     padding:
-      10px 14px 11px;
+      9px 14px;
 
-    border-radius: 17px;
+    gap: 3px;
+
+    border-radius: 14px;
+
+    border:
+      1px solid
+      rgba(255,23,68,.30);
+
+    justify-content: center;
+
+    text-align: center;
   }
 
+
+  .match-card.is-upcoming {
+
+    border-color:
+      rgba(255,23,68,.30);
+
+    background:
+      linear-gradient(
+        145deg,
+        #11151c,
+        #0b0e14
+      );
+  }
+
+
+  .match-card.is-upcoming:hover {
+
+    transform: none;
+
+    border-color:
+      rgba(255,23,68,.55);
+
+    box-shadow:
+      0 6px 18px
+      rgba(255,23,68,.08);
+  }
+
+
+  .match-card.is-live {
+
+    border-color:
+      rgba(255,23,68,.65);
+  }
+
+
+  .match-card.is-ended {
+
+    min-height: 105px;
+
+    height: 105px;
+  }
+
+
+  /* STATUS */
 
   .match-status {
 
-    min-height: 27px;
-
-    margin:
-      -1px auto 6px;
+    min-height: 21px;
 
     padding:
-      5px 11px;
+      4px 9px;
 
-    font-size: 10px;
+    margin: 0 0 2px;
+
+    font-size: 7px;
+
+    letter-spacing: .9px;
   }
 
+
+  /* TEAMS */
 
   .match-teams {
 
-    min-height: 29px;
+    width: 100%;
 
-    font-size: 17px;
+    font-size: 15px;
 
-    text-align: center;
+    font-weight: 900;
+
+    line-height: 1.15;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    overflow: hidden;
   }
 
+
+  /* DATE */
 
   .match-date {
 
-    margin-top: 7px;
+    display: inline-block;
 
-    font-size: 13px;
+    margin-top: 2px;
 
-    text-align: center;
+    color:
+      #9da6b4;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    line-height: 1.1;
   }
 
+
+  /* TIME */
 
   .match-time {
 
-    margin-top: 5px;
+    display: inline-block;
 
-    font-size: 17px;
+    color:
+      #ffffff;
 
-    text-align: center;
+    font-size: 11px;
+
+    font-weight: 900;
+
+    line-height: 1.1;
+
+    margin-left: 4px;
   }
 
+
+  /*
+   * Put date and time on the same visual row.
+   */
+
+  .match-date + .match-time {
+
+    margin-top: 0;
+  }
+
+
+  /* COUNTDOWN */
 
   .match-countdown {
 
-    font-size: 12px;
+    margin-top: 3px;
 
-    text-align: center;
+    color:
+      #ff637d;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    line-height: 1.1;
   }
 
 
-  /* HIGHLIGHTS */
+  .match-card.is-live .match-countdown {
+
+    color:
+      #ff637d;
+  }
+
+
+  .match-card.is-ended .match-countdown {
+
+    color:
+      #777e89;
+  }
+
+
+  /* =======================================================
+     HIGHLIGHTS
+     ======================================================= */
 
   .highlight-grid {
 
@@ -3051,7 +3109,9 @@ a {
   }
 
 
-  /* TV */
+  /* =======================================================
+     TV
+     ======================================================= */
 
   .tv-category {
     padding-top: 18px;
@@ -3158,7 +3218,9 @@ a {
   }
 
 
-  /* MOVIES */
+  /* =======================================================
+     MOVIES
+     ======================================================= */
 
   .movie-grid {
 
@@ -3217,7 +3279,9 @@ a {
   }
 
 
-  /* FOOTER */
+  /* =======================================================
+     FOOTER
+     ======================================================= */
 
   .footer-wrap {
 
@@ -3253,49 +3317,59 @@ a {
 
   .match-card {
 
-    width: 100%;
+    min-height: 100px;
 
-    height: 176px;
-
-    min-height: 176px;
+    height: 100px;
 
     padding:
-      10px 12px 11px;
+      8px 12px;
 
-    border-radius: 16px;
+    gap: 2px;
+  }
+
+
+  .match-card.is-ended {
+
+    min-height: 100px;
+
+    height: 100px;
   }
 
 
   .match-status {
 
-    font-size: 9px;
+    min-height: 20px;
 
     padding:
-      5px 10px;
+      4px 8px;
+
+    font-size: 7px;
   }
 
 
   .match-teams {
 
-    font-size: 16px;
+    font-size: 14px;
   }
 
 
   .match-date {
 
-    font-size: 12px;
+    font-size: 8px;
   }
 
 
   .match-time {
 
-    font-size: 16px;
+    font-size: 10px;
   }
 
 
   .match-countdown {
 
-    font-size: 11px;
+    font-size: 8px;
+
+    margin-top: 2px;
   }
 
 
