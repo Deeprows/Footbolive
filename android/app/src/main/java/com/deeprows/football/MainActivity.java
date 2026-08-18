@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
@@ -46,10 +48,6 @@ public class MainActivity extends Activity {
 
     private int popupBarHeight;
 
-    /*
-     * TRUE when the branded offline screen
-     * is currently being displayed.
-     */
     private boolean showingOfflinePage = false;
 
 
@@ -59,26 +57,53 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         /*
-         * Status bar hidden.
+         * =====================================================
+         * REMOVE WHITE WINDOW FLASH
+         * =====================================================
+         *
+         * Set the Android window background BEFORE the WebView
+         * is created. This prevents the white screen that can
+         * appear while Deeprowss is loading.
+         */
+
+        Window window = getWindow();
+
+        window.setBackgroundDrawable(
+                new ColorDrawable(
+                        Color.rgb(7, 9, 13)
+                )
+        );
+
+        window.setNavigationBarColor(
+                Color.rgb(7, 9, 13)
+        );
+
+        /*
+         * Hardware acceleration.
+         */
+        window.setFlags(
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+        );
+
+        /*
+         * Hide status bar.
          *
          * Navigation bar remains visible.
          */
         hideStatusBar();
 
-        /*
-         * Hardware acceleration.
-         */
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
-        );
-
-        popupBarHeight = dp(POPUP_BAR_HEIGHT_DP);
+        popupBarHeight =
+                dp(POPUP_BAR_HEIGHT_DP);
 
         /*
-         * Root.
+         * =====================================================
+         * ROOT
+         * =====================================================
          */
-        rootLayout = new FrameLayout(this);
+
+        rootLayout =
+                new FrameLayout(this);
 
         rootLayout.setBackgroundColor(
                 Color.rgb(7, 9, 13)
@@ -87,11 +112,27 @@ public class MainActivity extends Activity {
         setContentView(rootLayout);
 
         /*
-         * Main website.
+         * =====================================================
+         * MAIN WEBSITE
+         * =====================================================
          */
+
         createMainWebView();
 
-        mainWebView.loadUrl(WEBSITE_URL);
+        /*
+         * Make sure the WebView itself can never start
+         * with a white background.
+         */
+        if (mainWebView != null) {
+
+            mainWebView.setBackgroundColor(
+                    Color.rgb(7, 9, 13)
+            );
+        }
+
+        mainWebView.loadUrl(
+                WEBSITE_URL
+        );
     }
 
 
@@ -103,9 +144,21 @@ public class MainActivity extends Activity {
 
     private void createMainWebView() {
 
-        mainWebView = new WebView(this);
+        mainWebView =
+                new WebView(this);
 
-        configureWebView(mainWebView);
+        /*
+         * IMPORTANT:
+         * WebView background is explicitly dark.
+         */
+        mainWebView.setBackgroundColor(
+                Color.rgb(7, 9, 13)
+        );
+
+        configureWebView(
+                mainWebView
+        );
+
 
         /*
          * Main website navigation.
@@ -128,11 +181,6 @@ public class MainActivity extends Activity {
                         String url =
                                 request.getUrl().toString();
 
-                        /*
-                         * If the offline screen is showing
-                         * and TRY AGAIN was pressed,
-                         * return to the website.
-                         */
                         if (showingOfflinePage) {
 
                             showingOfflinePage = false;
@@ -159,10 +207,6 @@ public class MainActivity extends Activity {
                             return false;
                         }
 
-                        /*
-                         * If the offline screen is showing,
-                         * allow TRY AGAIN to reload the site.
-                         */
                         if (showingOfflinePage) {
 
                             showingOfflinePage = false;
@@ -179,6 +223,29 @@ public class MainActivity extends Activity {
 
 
                     @Override
+                    public void onPageStarted(
+                            WebView view,
+                            String url,
+                            android.graphics.Bitmap favicon
+                    ) {
+
+                        super.onPageStarted(
+                                view,
+                                url,
+                                favicon
+                        );
+
+                        /*
+                         * Keep the WebView dark while a new page
+                         * is being loaded.
+                         */
+                        view.setBackgroundColor(
+                                Color.rgb(7, 9, 13)
+                        );
+                    }
+
+
+                    @Override
                     public void onPageFinished(
                             WebView view,
                             String url
@@ -189,10 +256,6 @@ public class MainActivity extends Activity {
                                 url
                         );
 
-                        /*
-                         * A successful Deeprowss page load
-                         * means the connection is working.
-                         */
                         if (url != null &&
                                 url.startsWith(
                                         "https://deeprows.github.io/"
@@ -204,13 +267,8 @@ public class MainActivity extends Activity {
 
 
                     /*
-                     * IMPORTANT:
-                     *
-                     * Only show the offline page when the
-                     * MAIN document fails.
-                     *
-                     * A failed image, advert or script should
-                     * NOT replace the whole website.
+                     * Only show offline screen when the MAIN
+                     * document fails.
                      */
                     @Override
                     public void onReceivedError(
@@ -272,9 +330,17 @@ public class MainActivity extends Activity {
          * Pull-to-refresh.
          */
         refreshContainer =
-                new RefreshableWebViewContainer(this);
+                new RefreshableWebViewContainer(
+                        this
+                );
 
-        refreshContainer.setWebView(mainWebView);
+        refreshContainer.setBackgroundColor(
+                Color.rgb(7, 9, 13)
+        );
+
+        refreshContainer.setWebView(
+                mainWebView
+        );
 
         refreshContainer.setOnRefreshListener(
                 new RefreshableWebViewContainer.OnRefreshListener() {
@@ -284,10 +350,6 @@ public class MainActivity extends Activity {
 
                         if (mainWebView != null) {
 
-                            /*
-                             * If offline screen is showing,
-                             * try the real website again.
-                             */
                             if (showingOfflinePage) {
 
                                 showWebsiteAgain();
@@ -321,7 +383,7 @@ public class MainActivity extends Activity {
 
 
         /*
-         * Add website.
+         * Add WebView.
          */
         refreshContainer.addView(
                 mainWebView,
@@ -351,7 +413,9 @@ public class MainActivity extends Activity {
      * =========================================================
      */
 
-    private void configureWebView(WebView webView) {
+    private void configureWebView(
+            WebView webView
+    ) {
 
         WebSettings settings =
                 webView.getSettings();
@@ -362,26 +426,51 @@ public class MainActivity extends Activity {
 
         settings.setDatabaseEnabled(true);
 
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(
+                true
+        );
 
-        settings.setSupportMultipleWindows(true);
+        settings.setSupportMultipleWindows(
+                true
+        );
 
-        settings.setMediaPlaybackRequiresUserGesture(false);
+        settings.setMediaPlaybackRequiresUserGesture(
+                false
+        );
 
-        settings.setAllowFileAccess(true);
+        settings.setAllowFileAccess(
+                true
+        );
 
-        settings.setAllowContentAccess(true);
+        settings.setAllowContentAccess(
+                true
+        );
 
-        settings.setBuiltInZoomControls(false);
+        settings.setBuiltInZoomControls(
+                false
+        );
 
-        settings.setDisplayZoomControls(false);
+        settings.setDisplayZoomControls(
+                false
+        );
+
 
         /*
-         * Improve modern website rendering.
+         * IMPORTANT:
+         *
+         * Do NOT force WebView scaling.
+         *
+         * The website's CSS viewport should control
+         * the size of the website.
          */
-        settings.setLoadWithOverviewMode(false);
+        settings.setLoadWithOverviewMode(
+                false
+        );
 
-        settings.setUseWideViewPort(false);
+        settings.setUseWideViewPort(
+                false
+        );
+
 
         /*
          * Cookies.
@@ -389,7 +478,9 @@ public class MainActivity extends Activity {
         CookieManager cookieManager =
                 CookieManager.getInstance();
 
-        cookieManager.setAcceptCookie(true);
+        cookieManager.setAcceptCookie(
+                true
+        );
 
         cookieManager.setAcceptThirdPartyCookies(
                 webView,
@@ -400,7 +491,7 @@ public class MainActivity extends Activity {
 
     /*
      * =========================================================
-     * OFFLINE / NETWORK ERROR SCREEN
+     * OFFLINE PAGE
      * =========================================================
      */
 
@@ -411,15 +502,13 @@ public class MainActivity extends Activity {
             return;
         }
 
-        /*
-         * Prevent duplicate offline pages.
-         */
         if (showingOfflinePage) {
 
             return;
         }
 
         showingOfflinePage = true;
+
 
         String offlineHtml =
                 "<!DOCTYPE html>" +
@@ -547,12 +636,10 @@ public class MainActivity extends Activity {
                 "</html>";
 
 
-        /*
-         * Load the branded page locally.
-         *
-         * The actual GitHub URL is NOT displayed
-         * anywhere on the screen.
-         */
+        mainWebView.setBackgroundColor(
+                Color.rgb(7, 9, 13)
+        );
+
         mainWebView.loadDataWithBaseURL(
                 WEBSITE_URL,
                 offlineHtml,
@@ -564,13 +651,20 @@ public class MainActivity extends Activity {
 
 
     /*
-     * Try the real website again.
+     * =========================================================
+     * TRY WEBSITE AGAIN
+     * =========================================================
      */
+
     private void showWebsiteAgain() {
 
         showingOfflinePage = false;
 
         if (mainWebView != null) {
+
+            mainWebView.setBackgroundColor(
+                    Color.rgb(7, 9, 13)
+            );
 
             mainWebView.loadUrl(
                     WEBSITE_URL
@@ -585,7 +679,9 @@ public class MainActivity extends Activity {
      * =========================================================
      */
 
-    private void handleMainNavigation(String url) {
+    private void handleMainNavigation(
+            String url
+    ) {
 
         if (url == null ||
                 url.trim().isEmpty()) {
@@ -593,9 +689,9 @@ public class MainActivity extends Activity {
             return;
         }
 
+
         /*
-         * Keep Deeprowss pages inside
-         * the main website.
+         * Deeprowss pages remain inside main WebView.
          */
         if (url.startsWith(
                 "https://deeprows.github.io/"
@@ -611,8 +707,7 @@ public class MainActivity extends Activity {
 
 
         /*
-         * External links / on-click ads
-         * open inside the native popup.
+         * External pages open in native popup.
          */
         openPopup(url);
     }
@@ -628,10 +723,6 @@ public class MainActivity extends Activity {
 
         return new WebChromeClient() {
 
-            /*
-             * Handle window.open()
-             * and target="_blank".
-             */
             @Override
             public boolean onCreateWindow(
                     WebView view,
@@ -647,7 +738,9 @@ public class MainActivity extends Activity {
                         (WebView.WebViewTransport)
                                 resultMsg.obj;
 
-                transport.setWebView(popup);
+                transport.setWebView(
+                        popup
+                );
 
                 resultMsg.sendToTarget();
 
@@ -655,9 +748,6 @@ public class MainActivity extends Activity {
             }
 
 
-            /*
-             * Video fullscreen.
-             */
             @Override
             public void onShowCustomView(
                     View view,
@@ -671,9 +761,6 @@ public class MainActivity extends Activity {
             }
 
 
-            /*
-             * Exit video fullscreen.
-             */
             @Override
             public void onHideCustomView() {
 
@@ -706,9 +793,6 @@ public class MainActivity extends Activity {
         customViewCallback = callback;
 
 
-        /*
-         * Hide normal website.
-         */
         if (refreshContainer != null) {
 
             refreshContainer.setVisibility(
@@ -717,9 +801,6 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Hide popup if video is inside popup.
-         */
         if (popupContainer != null) {
 
             popupContainer.setVisibility(
@@ -728,9 +809,6 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Put video above everything.
-         */
         rootLayout.addView(
                 customVideoView,
                 new FrameLayout.LayoutParams(
@@ -740,18 +818,10 @@ public class MainActivity extends Activity {
         );
 
 
-        /*
-         * Landscape.
-         */
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         );
 
-
-        /*
-         * Status bar hidden.
-         * Navigation bar remains visible.
-         */
         hideStatusBar();
     }
 
@@ -764,9 +834,6 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Remove video.
-         */
         rootLayout.removeView(
                 customVideoView
         );
@@ -774,9 +841,6 @@ public class MainActivity extends Activity {
         customVideoView = null;
 
 
-        /*
-         * Notify player.
-         */
         if (customViewCallback != null) {
 
             customViewCallback.onCustomViewHidden();
@@ -785,17 +849,11 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Return portrait.
-         */
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         );
 
 
-        /*
-         * Restore correct screen.
-         */
         if (popupContainer != null) {
 
             popupContainer.setVisibility(
@@ -822,10 +880,6 @@ public class MainActivity extends Activity {
 
     private WebView createPopupWebView() {
 
-        /*
-         * If an old popup exists,
-         * remove it first.
-         */
         if (popupWebView != null) {
 
             try {
@@ -844,32 +898,25 @@ public class MainActivity extends Activity {
         popupWebView =
                 new WebView(this);
 
+        popupWebView.setBackgroundColor(
+                Color.BLACK
+        );
+
         configureWebView(
                 popupWebView
         );
 
 
-        /*
-         * Popup navigation stays inside
-         * the popup.
-         */
         popupWebView.setWebViewClient(
                 new WebViewClient()
         );
 
 
-        /*
-         * Popup has its own ChromeClient,
-         * including fullscreen video support.
-         */
         popupWebView.setWebChromeClient(
                 createChromeClient()
         );
 
 
-        /*
-         * Show popup before loading content.
-         */
         showPopupContainer();
 
 
@@ -877,7 +924,9 @@ public class MainActivity extends Activity {
     }
 
 
-    private void openPopup(String url) {
+    private void openPopup(
+            String url
+    ) {
 
         if (url == null ||
                 url.trim().isEmpty()) {
@@ -900,9 +949,6 @@ public class MainActivity extends Activity {
 
     private void showPopupContainer() {
 
-        /*
-         * Don't create a second container.
-         */
         if (popupContainer != null) {
 
             return;
@@ -918,16 +964,8 @@ public class MainActivity extends Activity {
 
 
         /*
-         * -----------------------------------------------------
          * TOP BAR
-         * -----------------------------------------------------
-         *
-         * This bar is ABOVE the popup WebView.
-         *
-         * Therefore the X can never be covered
-         * by the website/ad.
          */
-
         LinearLayout topBar =
                 new LinearLayout(this);
 
@@ -952,7 +990,7 @@ public class MainActivity extends Activity {
 
 
         /*
-         * BACK.
+         * BACK
          */
         ImageButton backButton =
                 new ImageButton(this);
@@ -994,7 +1032,7 @@ public class MainActivity extends Activity {
 
 
         /*
-         * TITLE.
+         * TITLE
          */
         TextView title =
                 new TextView(this);
@@ -1015,7 +1053,9 @@ public class MainActivity extends Activity {
                 Gravity.CENTER_VERTICAL
         );
 
-        title.setSingleLine(true);
+        title.setSingleLine(
+                true
+        );
 
         title.setPadding(
                 dp(8),
@@ -1026,7 +1066,7 @@ public class MainActivity extends Activity {
 
 
         /*
-         * X CLOSE BUTTON.
+         * CLOSE
          */
         ImageButton closeButton =
                 new ImageButton(this);
@@ -1059,9 +1099,6 @@ public class MainActivity extends Activity {
         );
 
 
-        /*
-         * Add BACK.
-         */
         topBar.addView(
                 backButton,
                 new LinearLayout.LayoutParams(
@@ -1071,9 +1108,6 @@ public class MainActivity extends Activity {
         );
 
 
-        /*
-         * Add TITLE.
-         */
         topBar.addView(
                 title,
                 new LinearLayout.LayoutParams(
@@ -1084,9 +1118,6 @@ public class MainActivity extends Activity {
         );
 
 
-        /*
-         * Add X.
-         */
         topBar.addView(
                 closeButton,
                 new LinearLayout.LayoutParams(
@@ -1096,9 +1127,6 @@ public class MainActivity extends Activity {
         );
 
 
-        /*
-         * Top bar always stays at top.
-         */
         FrameLayout.LayoutParams barParams =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
@@ -1113,14 +1141,7 @@ public class MainActivity extends Activity {
 
 
         /*
-         * -----------------------------------------------------
          * POPUP WEBVIEW
-         * -----------------------------------------------------
-         *
-         * It starts below the top bar.
-         *
-         * This prevents the website from covering
-         * the X button.
          */
         FrameLayout.LayoutParams webParams =
                 new FrameLayout.LayoutParams(
@@ -1141,14 +1162,12 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Put popup above the website.
-         */
         FrameLayout.LayoutParams popupParams =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT
                 );
+
 
         rootLayout.addView(
                 popupContainer,
@@ -1156,9 +1175,6 @@ public class MainActivity extends Activity {
         );
 
 
-        /*
-         * Hide website while popup is open.
-         */
         if (refreshContainer != null) {
 
             refreshContainer.setVisibility(
@@ -1167,9 +1183,6 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Make sure status bar stays hidden.
-         */
         hideStatusBar();
     }
 
@@ -1188,19 +1201,12 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * If popup video is fullscreen,
-         * exit it first.
-         */
         if (customVideoView != null) {
 
             exitVideoFullscreen();
         }
 
 
-        /*
-         * Stop and destroy popup WebView.
-         */
         if (popupWebView != null) {
 
             try {
@@ -1218,9 +1224,6 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Remove popup container.
-         */
         rootLayout.removeView(
                 popupContainer
         );
@@ -1228,9 +1231,6 @@ public class MainActivity extends Activity {
         popupContainer = null;
 
 
-        /*
-         * Restore main website.
-         */
         if (refreshContainer != null) {
 
             refreshContainer.setVisibility(
@@ -1239,17 +1239,11 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Portrait.
-         */
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         );
 
 
-        /*
-         * Status bar hidden.
-         */
         hideStatusBar();
     }
 
@@ -1258,12 +1252,6 @@ public class MainActivity extends Activity {
      * =========================================================
      * STATUS BAR
      * =========================================================
-     *
-     * Status bar:
-     * HIDDEN
-     *
-     * Navigation bar:
-     * VISIBLE
      */
 
     private void hideStatusBar() {
@@ -1274,20 +1262,19 @@ public class MainActivity extends Activity {
         );
 
 
-        /*
-         * Do NOT use:
-         *
-         * SYSTEM_UI_FLAG_HIDE_NAVIGATION
-         * SYSTEM_UI_FLAG_IMMERSIVE
-         * SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-         *
-         * Navigation bar therefore remains visible.
-         */
         getWindow()
                 .getDecorView()
                 .setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 );
+
+
+        /*
+         * Keep navigation bar dark.
+         */
+        getWindow().setNavigationBarColor(
+                Color.rgb(7, 9, 13)
+        );
     }
 
 
@@ -1300,9 +1287,6 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
 
-        /*
-         * 1. Video fullscreen.
-         */
         if (customVideoView != null) {
 
             exitVideoFullscreen();
@@ -1311,9 +1295,6 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * 2. Popup.
-         */
         if (popupContainer != null) {
 
             if (popupWebView != null &&
@@ -1330,9 +1311,6 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * 3. Main website history.
-         */
         if (mainWebView != null &&
                 mainWebView.canGoBack()) {
 
@@ -1347,7 +1325,7 @@ public class MainActivity extends Activity {
 
     /*
      * =========================================================
-     * ACTIVITY LIFECYCLE
+     * LIFECYCLE
      * =========================================================
      */
 
@@ -1445,7 +1423,7 @@ public class MainActivity extends Activity {
 
     /*
      * =========================================================
-     * DP HELPER
+     * DP
      * =========================================================
      */
 
@@ -1464,12 +1442,8 @@ public class MainActivity extends Activity {
 
     /*
      * =========================================================
-     * PULL DOWN TO REFRESH
+     * PULL TO REFRESH
      * =========================================================
-     *
-     * Native implementation.
-     *
-     * No AndroidX dependency.
      */
 
     private static class RefreshableWebViewContainer
@@ -1508,10 +1482,11 @@ public class MainActivity extends Activity {
 
             setClipChildren(false);
 
+            setBackgroundColor(
+                    Color.rgb(7, 9, 13)
+            );
 
-            /*
-             * Refresh indicator.
-             */
+
             progressBar =
                     new ProgressBar(context);
 
@@ -1613,10 +1588,6 @@ public class MainActivity extends Activity {
                             startY;
 
 
-                    /*
-                     * Only activate when
-                     * website is at the top.
-                     */
                     if (distance > 0 &&
                             webView.getScrollY() <= 0) {
 
@@ -1692,9 +1663,6 @@ public class MainActivity extends Activity {
 
                     if (distance > 0) {
 
-                        /*
-                         * Resistance.
-                         */
                         float offset =
                                 distance * 0.55f;
 
@@ -1703,9 +1671,6 @@ public class MainActivity extends Activity {
                         );
 
 
-                        /*
-                         * Show indicator.
-                         */
                         if (distance >=
                                 TRIGGER_DISTANCE * 0.55f) {
 
