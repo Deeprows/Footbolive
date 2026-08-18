@@ -428,26 +428,6 @@ a {
 
 
 /* =========================================================
-   SCREEN FRAME
-   TRUE 16:9 VIDEO AREA
-   ========================================================= */
-
-.screen-frame-wrap {
-
-  position: relative;
-
-  width: 100%;
-
-  aspect-ratio: 16 / 9;
-
-  overflow: hidden;
-
-  background: #000;
-
-}
-
-
-/* =========================================================
    SCREEN IFRAME
    ========================================================= */
 
@@ -457,15 +437,11 @@ a {
 
   width: 100%;
 
-  height: 100%;
-
-  min-width: 0;
-
-  min-height: 0;
-
-  margin: 0;
-
-  padding: 0;
+  height: clamp(
+    360px,
+    calc((100vw - 30px) * 0.5625),
+    540px
+  );
 
   border: 0;
 
@@ -477,179 +453,6 @@ a {
     opacity .25s ease;
 
   touch-action: manipulation;
-}
-
-
-/* =========================================================
-   NOW SHOWING
-   SEPARATE SPACE BELOW VIDEO
-   ========================================================= */
-
-.screen-bottom {
-
-  position: relative;
-
-  width: 100%;
-
-  min-height: 92px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 15px;
-
-  padding:
-    18px 20px;
-
-  box-sizing: border-box;
-
-  background:
-    linear-gradient(
-      145deg,
-      #11151d,
-      #0b0e14
-    );
-
-  border-top:
-    1px solid
-    var(--line);
-}
-
-
-.now-showing {
-
-  flex:
-    1 1 auto;
-
-  min-width: 0;
-
-}
-
-
-.now-showing span {
-
-  display: block;
-
-  margin-bottom: 5px;
-
-  color:
-    var(--muted);
-
-  font-size: 10px;
-
-  font-weight: 900;
-
-  letter-spacing: 1.6px;
-}
-
-
-#nowShowing {
-
-  display: block;
-
-  width: 100%;
-
-  overflow: hidden;
-
-  color: #fff;
-
-  font-size: 16px;
-
-  font-weight: 900;
-
-  line-height: 1.3;
-
-  text-overflow: ellipsis;
-
-  white-space: nowrap;
-}
-
-
-/* =========================================================
-   FULLSCREEN BUTTON
-   ========================================================= */
-
-.fullscreen-button {
-
-  flex:
-    0 0 auto;
-
-  width: 46px;
-
-  height: 46px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  border:
-    1px solid
-    rgba(255,255,255,.10);
-
-  border-radius: 11px;
-
-  background:
-    var(--surface-3);
-
-  color: #fff;
-
-  font-size: 20px;
-
-  line-height: 1;
-
-  cursor: pointer;
-
-  touch-action: manipulation;
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 550px) {
-
-  .screen-frame-wrap {
-
-    width: 100%;
-
-    aspect-ratio: 16 / 9;
-
-  }
-
-
-  .screen-bottom {
-
-    min-height: 88px;
-
-    padding:
-      16px 15px;
-
-  }
-
-
-  #nowShowing {
-
-    font-size: 15px;
-
-  }
-
-
-  .fullscreen-button {
-
-    width: 42px;
-
-    height: 42px;
-
-    font-size: 18px;
-
-  }
-
 }
 
 
@@ -3718,4 +3521,43 @@ a {
 
     transition-duration: .01ms !important;
   }
+}
+
+
+/* =========================================================
+   RESPONSIVE PLAYER — MOBILE / ANDROID WEBVIEW
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .screen-player {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .screen-player iframe {
+    width: 100%;
+    height: calc((100vw - 30px) * 0.5625);
+    min-height: 0;
+    max-height: none;
+    display: block;
+    border: 0;
+    background: #000;
+    vertical-align: top;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .screen-player iframe {
+    height: calc((100vw - 30px) * 0.5625);
+    min-height: 0;
+  }
+
 }
