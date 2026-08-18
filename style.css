@@ -346,8 +346,6 @@ a {
 
   position: relative;
 
-  width: 100%;
-
   overflow: hidden;
 
   background: #000;
@@ -363,64 +361,6 @@ a {
     rgba(0,0,0,.35);
 
   touch-action: manipulation;
-
-  /*
-   * Keeps the video area consistent across browsers
-   * and WebView.
-   */
-  isolation: isolate;
-}
-
-
-/* =========================================================
-   SCREEN MEDIA AREA
-   ========================================================= */
-
-.screen-player iframe {
-
-  display: block;
-
-  width: 100%;
-
-  /*
-   * Responsive 16:9 player.
-   * This prevents Android WebView from shrinking
-   * the iframe unexpectedly.
-   */
-  aspect-ratio: 16 / 9;
-
-  height: auto;
-
-  min-height: 0;
-
-  border: 0;
-
-  margin: 0;
-
-  padding: 0;
-
-  background: #000;
-
-  opacity: 1;
-
-  transition:
-    opacity .25s ease;
-
-  touch-action: manipulation;
-}
-
-
-/*
- * Prevent iframe from inheriting unexpected inline
- * spacing or browser rendering behaviour.
- */
-
-.screen-player iframe[width],
-.screen-player iframe[height] {
-
-  max-width: 100%;
-
-  border: 0;
 }
 
 
@@ -488,6 +428,31 @@ a {
 
 
 /* =========================================================
+   SCREEN IFRAME
+   ========================================================= */
+
+.screen-player iframe {
+
+  display: block;
+
+  width: 100%;
+
+  height: 540px;
+
+  border: 0;
+
+  background: #000;
+
+  opacity: 1;
+
+  transition:
+    opacity .25s ease;
+
+  touch-action: manipulation;
+}
+
+
+/* =========================================================
    SCREEN PLACEHOLDER
    ========================================================= */
 
@@ -509,16 +474,11 @@ a {
 
   gap: 10px;
 
-  /*
-   * Clean dark player background.
-   * No large circular video artwork.
-   */
   background:
     radial-gradient(
-      circle at center,
-      #171b23 0%,
-      #0a0c10 42%,
-      #000 100%
+      circle,
+      #151922 0%,
+      #050608 65%
     );
 
   color: #fff;
@@ -550,44 +510,17 @@ a {
 
   border-radius: 16px;
 
-  /*
-   * Small rectangular icon instead of
-   * an oversized circular player.
-   */
   background:
-    rgba(255,255,255,.055);
-
-  border:
-    1px solid
-    rgba(255,255,255,.07);
-
-  color: #dfe3e9;
+    rgba(255,255,255,.06);
 
   font-size: 27px;
-
-  box-shadow:
-    0 8px 25px
-    rgba(0,0,0,.25);
 }
 
 .screen-placeholder strong {
 
   font-size: 14px;
 
-  font-weight: 900;
-
   color: #dce1e8;
-}
-
-.screen-placeholder small {
-
-  max-width: 85%;
-
-  color: var(--muted);
-
-  font-size: 10px;
-
-  line-height: 1.4;
 }
 
 
@@ -596,10 +529,6 @@ a {
    ========================================================= */
 
 .screen-bottom {
-
-  position: relative;
-
-  z-index: 5;
 
   display: flex;
 
@@ -793,8 +722,6 @@ a {
 
   min-height: 100vh;
 
-  aspect-ratio: auto;
-
   display: block;
 
   border: 0;
@@ -816,8 +743,6 @@ a {
   min-width: 100vw;
 
   min-height: 100vh;
-
-  aspect-ratio: auto;
 
   display: block;
 
@@ -1073,8 +998,6 @@ a {
     min-width: 100vw;
 
     min-height: 100vh;
-
-    aspect-ratio: auto;
   }
 
   .screen-player:-webkit-full-screen {
@@ -1097,8 +1020,6 @@ a {
     min-width: 100vw;
 
     min-height: 100vh;
-
-    aspect-ratio: auto;
   }
 }
 
@@ -2813,24 +2734,12 @@ a {
   .screen-player {
 
     border-radius: 12px;
-
-    /*
-     * Important:
-     * do not force a fixed iframe height on mobile.
-     */
-    overflow: hidden;
   }
 
 
   .screen-player iframe {
 
-    width: 100%;
-
-    height: auto;
-
-    aspect-ratio: 16 / 9;
-
-    min-height: 0;
+    height: 400px;
   }
 
 
@@ -2885,66 +2794,9 @@ a {
   }
 
 
-  /*
-   * Main fix for Android WebView:
-   * 16:9 instead of the old fixed 235px.
-   */
   .screen-player iframe {
 
-    width: 100%;
-
-    height: auto;
-
-    aspect-ratio: 16 / 9;
-
-    min-height: 0;
-
-    display: block;
-  }
-
-
-  .screen-status {
-
-    top: 11px;
-
-    left: 11px;
-
-    padding:
-      6px 9px;
-
-    font-size: 8px;
-  }
-
-
-  .screen-live-dot {
-
-    width: 7px;
-
-    height: 7px;
-  }
-
-
-  .screen-placeholder-icon {
-
-    width: 50px;
-
-    height: 50px;
-
-    border-radius: 14px;
-
-    font-size: 23px;
-  }
-
-
-  .screen-placeholder strong {
-
-    font-size: 13px;
-  }
-
-
-  .screen-placeholder small {
-
-    font-size: 9px;
+    height: 235px;
   }
 
 
