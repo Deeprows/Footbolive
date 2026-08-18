@@ -79,7 +79,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function (event) {
 
       if (!event.ctrlKey) {
+
         return;
+
       }
 
 
@@ -109,23 +111,30 @@ document.addEventListener("DOMContentLoaded", function () {
   const siteHeader =
     document.querySelector(".site-header");
 
+
   const screenSection =
     document.querySelector(".screen-section");
+
 
   const screenFrame =
     document.getElementById("screenFrame");
 
+
   const screenPlaceholder =
     document.getElementById("screenPlaceholder");
+
 
   const screenStatus =
     document.getElementById("screenStatus");
 
+
   const nowShowing =
     document.getElementById("nowShowing");
 
+
   const fullscreenButton =
     document.getElementById("fullscreenButton");
+
 
   const screenPlayer =
     document.getElementById("screenPlayer");
@@ -138,11 +147,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const footballButton =
     document.getElementById("footballButton");
 
+
   const highlightsButton =
     document.getElementById("highlightsButton");
 
+
   const tvButton =
     document.getElementById("tvButton");
+
 
   const moviesButton =
     document.getElementById("moviesButton");
@@ -155,11 +167,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const footballContent =
     document.getElementById("footballContent");
 
+
   const highlightsContent =
     document.getElementById("highlightsContent");
 
+
   const tvContent =
     document.getElementById("tvContent");
+
 
   const moviesContent =
     document.getElementById("moviesContent");
@@ -172,11 +187,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const navFootball =
     document.getElementById("navFootball");
 
+
   const navHighlights =
     document.getElementById("navHighlights");
 
+
   const navTV =
     document.getElementById("navTV");
+
 
   const navMovies =
     document.getElementById("navMovies");
@@ -221,6 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const menuToggle =
     document.getElementById("menuToggle");
 
+
   const mainNav =
     document.getElementById("mainNav");
 
@@ -232,7 +251,9 @@ document.addEventListener("DOMContentLoaded", function () {
   function updateStickyPositions() {
 
     if (!screenSection) {
+
       return;
+
     }
 
 
@@ -315,17 +336,19 @@ document.addEventListener("DOMContentLoaded", function () {
       highlightsButton,
       tvButton,
       moviesButton
-    ].forEach(function (item) {
+    ].forEach(
+      function (item) {
 
-      if (item) {
+        if (item) {
 
-        item.classList.remove(
-          "active"
-        );
+          item.classList.remove(
+            "active"
+          );
+
+        }
 
       }
-
-    });
+    );
 
 
     if (button) {
@@ -350,17 +373,19 @@ document.addEventListener("DOMContentLoaded", function () {
       navHighlights,
       navTV,
       navMovies
-    ].forEach(function (item) {
+    ].forEach(
+      function (item) {
 
-      if (item) {
+        if (item) {
 
-        item.classList.remove(
-          "active"
-        );
+          item.classList.remove(
+            "active"
+          );
+
+        }
 
       }
-
-    });
+    );
 
 
     if (link) {
@@ -427,9 +452,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showContent("football");
 
+
     setActiveButton(
       footballButton
     );
+
 
     setActiveNav(
       navFootball
@@ -446,9 +473,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showContent("highlights");
 
+
     setActiveButton(
       highlightsButton
     );
+
 
     setActiveNav(
       navHighlights
@@ -465,9 +494,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showContent("tv");
 
+
     setActiveButton(
       tvButton
     );
+
 
     setActiveNav(
       navTV
@@ -484,9 +515,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showContent("movies");
 
+
     setActiveButton(
       moviesButton
     );
+
 
     setActiveNav(
       navMovies
@@ -618,12 +651,16 @@ document.addEventListener("DOMContentLoaded", function () {
   ) {
 
     if (!screenFrame) {
+
       return;
+
     }
 
 
     if (!url) {
+
       return;
+
     }
 
 
@@ -658,6 +695,7 @@ document.addEventListener("DOMContentLoaded", function () {
         screenFrame.src =
           url;
 
+
         screenFrame.style.opacity =
           "1";
 
@@ -682,17 +720,23 @@ document.addEventListener("DOMContentLoaded", function () {
         screenStatus.textContent =
           "LIVE TV";
 
-      } else if (type === "highlight") {
+      }
+
+      else if (type === "highlight") {
 
         screenStatus.textContent =
           "HIGHLIGHT";
 
-      } else if (type === "movie") {
+      }
+
+      else if (type === "movie") {
 
         screenStatus.textContent =
           "MOVIE";
 
-      } else {
+      }
+
+      else {
 
         screenStatus.textContent =
           "LIVE";
@@ -756,6 +800,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const url =
             this.dataset.url;
 
+
           const name =
             this.dataset.name ||
             this.querySelector(
@@ -790,6 +835,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const url =
             this.dataset.url;
+
 
           const name =
             this.dataset.name ||
@@ -845,6 +891,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const url =
             this.dataset.url;
 
+
           const name =
             this.dataset.name ||
             this.querySelector(
@@ -899,6 +946,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const url =
             this.dataset.url;
 
+
           const name =
             this.dataset.name ||
             this.querySelector(
@@ -943,103 +991,230 @@ document.addEventListener("DOMContentLoaded", function () {
      FULLSCREEN
      ========================================================= */
 
+  /*
+   * Fullscreen is applied to the SCREEN PLAYER container,
+   * NOT directly to the iframe.
+   *
+   * This is important because the iframe should remain a
+   * true 16:9 video area while the surrounding player handles
+   * the fullscreen viewport.
+   */
+
+  function enterScreenFullscreen() {
+
+    if (!screenPlayer) {
+
+      return;
+
+    }
+
+
+    screenPlayer.classList.add(
+      "fullscreen-active"
+    );
+
+
+    const requestFullscreen =
+      screenPlayer.requestFullscreen ||
+      screenPlayer.webkitRequestFullscreen ||
+      screenPlayer.mozRequestFullScreen ||
+      screenPlayer.msRequestFullscreen;
+
+
+    if (!requestFullscreen) {
+
+      screenPlayer.classList.remove(
+        "fullscreen-active"
+      );
+
+
+      console.log(
+        "Fullscreen API is not available."
+      );
+
+
+      return;
+
+    }
+
+
+    try {
+
+      const result =
+        requestFullscreen.call(
+          screenPlayer,
+          {
+            navigationUI: "hide"
+          }
+        );
+
+
+      /*
+       * Some Android WebViews and older browsers do not
+       * return a Promise from the fullscreen request.
+       */
+
+      if (
+        result &&
+        typeof result.then === "function"
+      ) {
+
+        result.catch(
+          function (error) {
+
+            console.log(
+              "Fullscreen request failed:",
+              error
+            );
+
+
+            screenPlayer.classList.remove(
+              "fullscreen-active"
+            );
+
+          }
+        );
+
+      }
+
+    }
+
+    catch (error) {
+
+      console.log(
+        "Fullscreen request failed:",
+        error
+      );
+
+
+      screenPlayer.classList.remove(
+        "fullscreen-active"
+      );
+
+    }
+
+  }
+
+
+  function exitScreenFullscreen() {
+
+    /*
+     * Unlock orientation first when possible.
+     */
+
+    if (
+      screen.orientation &&
+      screen.orientation.unlock
+    ) {
+
+      try {
+
+        screen.orientation.unlock();
+
+      }
+
+      catch (error) {
+
+        console.log(
+          "Orientation unlock unavailable:",
+          error
+        );
+
+      }
+
+    }
+
+
+    const exitFullscreen =
+      document.exitFullscreen ||
+      document.webkitExitFullscreen ||
+      document.mozCancelFullScreen ||
+      document.msExitFullscreen;
+
+
+    if (!exitFullscreen) {
+
+      if (screenPlayer) {
+
+        screenPlayer.classList.remove(
+          "fullscreen-active"
+        );
+
+      }
+
+
+      return;
+
+    }
+
+
+    try {
+
+      const result =
+        exitFullscreen.call(
+          document
+        );
+
+
+      if (
+        result &&
+        typeof result.then === "function"
+      ) {
+
+        result.catch(
+          function (error) {
+
+            console.log(
+              "Fullscreen exit failed:",
+              error
+            );
+
+          }
+        );
+
+      }
+
+    }
+
+    catch (error) {
+
+      console.log(
+        "Fullscreen exit failed:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /*
+   * FULLSCREEN BUTTON
+   */
+
   if (fullscreenButton) {
 
     fullscreenButton.addEventListener(
       "click",
-      async function () {
+      function () {
 
-        if (document.fullscreenElement) {
-
-          if (
-            screen.orientation &&
-            screen.orientation.unlock
-          ) {
-
-            try {
-
-              screen.orientation.unlock();
-
-            } catch (error) {
-
-              console.log(
-                "Orientation unlock unavailable:",
-                error
-              );
-
-            }
-
-          }
+        const activeFullscreen =
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement;
 
 
-          if (document.exitFullscreen) {
+        if (activeFullscreen) {
 
-            try {
-
-              await document.exitFullscreen();
-
-            } catch (error) {
-
-              console.log(
-                "Fullscreen exit failed:",
-                error
-              );
-
-            }
-
-          }
+          exitScreenFullscreen();
 
           return;
 
         }
 
 
-        if (
-          screenPlayer &&
-          screenPlayer.requestFullscreen
-        ) {
-
-          try {
-
-            await screenPlayer.requestFullscreen(
-              {
-                navigationUI: "hide"
-              }
-            );
-
-
-            if (
-              screen.orientation &&
-              screen.orientation.lock
-            ) {
-
-              try {
-
-                await screen.orientation.lock(
-                  "landscape"
-                );
-
-              } catch (orientationError) {
-
-                console.log(
-                  "Landscape orientation lock unavailable:",
-                  orientationError
-                );
-
-              }
-
-            }
-
-          } catch (fullscreenError) {
-
-            console.log(
-              "Fullscreen request failed:",
-              fullscreenError
-            );
-
-          }
-
-        }
+        enterScreenFullscreen();
 
       }
     );
@@ -1051,103 +1226,286 @@ document.addEventListener("DOMContentLoaded", function () {
      FULLSCREEN CHANGE
      ========================================================= */
 
-  document.addEventListener(
-    "fullscreenchange",
-    async function () {
+  function handleFullscreenChange() {
 
-      if (!fullscreenButton) {
-        return;
+    if (!fullscreenButton) {
+
+      return;
+
+    }
+
+
+    const activeFullscreen =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
+
+
+    if (activeFullscreen) {
+
+      if (screenPlayer) {
+
+        screenPlayer.classList.add(
+          "fullscreen-active"
+        );
+
       }
 
 
+      /*
+       * Change fullscreen button to X.
+       */
+
+      fullscreenButton.textContent =
+        "×";
+
+
+      fullscreenButton.setAttribute(
+        "aria-label",
+        "Exit fullscreen"
+      );
+
+
+      fullscreenButton.setAttribute(
+        "title",
+        "Exit fullscreen"
+      );
+
+
+      /*
+       * Lock landscape AFTER fullscreen has started.
+       *
+       * This prevents the video from becoming larger than
+       * the viewport during the orientation transition.
+       */
+
       if (
-        document.fullscreenElement
+        screen.orientation &&
+        screen.orientation.lock
       ) {
 
-        fullscreenButton.textContent =
-          "×";
+        try {
 
-        fullscreenButton.setAttribute(
-          "aria-label",
-          "Exit fullscreen"
-        );
-
-        fullscreenButton.setAttribute(
-          "title",
-          "Exit fullscreen"
-        );
-
-
-        if (
-          screen.orientation &&
-          screen.orientation.lock
-        ) {
-
-          try {
-
-            await screen.orientation.lock(
+          const lockResult =
+            screen.orientation.lock(
               "landscape"
             );
 
-          } catch (error) {
 
-            console.log(
-              "Landscape lock unavailable:",
-              error
+          if (
+            lockResult &&
+            typeof lockResult.catch === "function"
+          ) {
+
+            lockResult.catch(
+              function (error) {
+
+                console.log(
+                  "Landscape lock unavailable:",
+                  error
+                );
+
+              }
             );
 
           }
 
         }
 
-      }
+        catch (error) {
 
-
-      else {
-
-        fullscreenButton.textContent =
-          "⛶";
-
-        fullscreenButton.setAttribute(
-          "aria-label",
-          "Enter fullscreen"
-        );
-
-        fullscreenButton.setAttribute(
-          "title",
-          "Enter fullscreen"
-        );
-
-
-        if (
-          screen.orientation &&
-          screen.orientation.unlock
-        ) {
-
-          try {
-
-            screen.orientation.unlock();
-
-          } catch (error) {
-
-            console.log(
-              "Orientation unlock unavailable:",
-              error
-            );
-
-          }
+          console.log(
+            "Landscape lock unavailable:",
+            error
+          );
 
         }
 
       }
 
+    }
 
-      requestAnimationFrame(
-        updateStickyPositions
+
+    else {
+
+      /*
+       * Fullscreen has ended.
+       */
+
+      if (screenPlayer) {
+
+        screenPlayer.classList.remove(
+          "fullscreen-active"
+        );
+
+      }
+
+
+      fullscreenButton.textContent =
+        "⛶";
+
+
+      fullscreenButton.setAttribute(
+        "aria-label",
+        "Enter fullscreen"
+      );
+
+
+      fullscreenButton.setAttribute(
+        "title",
+        "Enter fullscreen"
+      );
+
+
+      /*
+       * Unlock orientation.
+       */
+
+      if (
+        screen.orientation &&
+        screen.orientation.unlock
+      ) {
+
+        try {
+
+          screen.orientation.unlock();
+
+        }
+
+        catch (error) {
+
+          console.log(
+            "Orientation unlock unavailable:",
+            error
+          );
+
+        }
+
+      }
+
+    }
+
+
+    /*
+     * Recalculate the layout after the browser has
+     * finished changing the fullscreen viewport.
+     */
+
+    requestAnimationFrame(
+      function () {
+
+        updateStickyPositions();
+
+      }
+    );
+
+  }
+
+
+  /*
+   * Standard fullscreen event.
+   */
+
+  document.addEventListener(
+    "fullscreenchange",
+    handleFullscreenChange
+  );
+
+
+  /*
+   * WebKit fullscreen event.
+   */
+
+  document.addEventListener(
+    "webkitfullscreenchange",
+    handleFullscreenChange
+  );
+
+
+  /*
+   * Firefox fullscreen event.
+   */
+
+  document.addEventListener(
+    "mozfullscreenchange",
+    handleFullscreenChange
+  );
+
+
+  /*
+   * Older Microsoft fullscreen event.
+   */
+
+  document.addEventListener(
+    "MSFullscreenChange",
+    handleFullscreenChange
+  );
+
+
+  /* =========================================================
+     FULLSCREEN / ORIENTATION RESIZE
+     ========================================================= */
+
+  let fullscreenResizeTimer =
+    null;
+
+
+  function handleFullscreenResize() {
+
+    if (fullscreenResizeTimer) {
+
+      clearTimeout(
+        fullscreenResizeTimer
       );
 
     }
+
+
+    fullscreenResizeTimer =
+      setTimeout(
+        function () {
+
+          requestAnimationFrame(
+            function () {
+
+              updateStickyPositions();
+
+            }
+          );
+
+        },
+        80
+      );
+
+  }
+
+
+  /*
+   * Recalculate after browser viewport changes.
+   */
+
+  window.addEventListener(
+    "resize",
+    handleFullscreenResize
   );
+
+
+  /*
+   * Recalculate after Android orientation changes.
+   */
+
+  if (
+    screen.orientation &&
+    screen.orientation.addEventListener
+  ) {
+
+    screen.orientation.addEventListener(
+      "change",
+      handleFullscreenResize
+    );
+
+  }
 
 
   /* =========================================================
@@ -1193,6 +1551,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "open"
               );
 
+
               menuToggle.setAttribute(
                 "aria-expanded",
                 "false"
@@ -1205,6 +1564,31 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
   }
+
+
+  /* =========================================================
+     FULLSCREEN STATE SAFETY
+     ========================================================= */
+
+  /*
+   * Make sure the fullscreen class cannot remain stuck
+   * when the page is being left or refreshed.
+   */
+
+  window.addEventListener(
+    "pagehide",
+    function () {
+
+      if (screenPlayer) {
+
+        screenPlayer.classList.remove(
+          "fullscreen-active"
+        );
+
+      }
+
+    }
+  );
 
 
   /* =========================================================
