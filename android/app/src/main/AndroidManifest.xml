@@ -11,11 +11,12 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Deeprowss">
 
+        <!-- Splash screen -->
         <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:name=".SplashActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Deeprowss.Splash">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +24,13 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Main website -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
     </application>
 
