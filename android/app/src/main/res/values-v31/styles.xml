@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <style
+        name="AppTheme"
+        parent="android:style/Theme.Material.NoActionBar">
+
+        <item name="android:windowBackground">
+            #07090D
+        </item>
+
+        <item name="android:colorBackground">
+            #07090D
+        </item>
+
+        <item name="android:windowNoTitle">
+            true
+        </item>
+
+        <item name="android:statusBarColor">
+            #07090D
+        </item>
+
+        <item name="android:navigationBarColor">
+            #07090D
+        </item>
+
+        <item name="android:navigationBarDividerColor">
+            #07090D
+        </item>
+
+        <item name="android:windowLightNavigationBar">
+            false
+        </item>
+
+        <item name="android:windowLightStatusBar">
+            false
+        </item>
+
+        <item name="android:windowIsTranslucent">
+            false
+        </item>
+
+        <item name="android:colorAccent">
+            #FF1744
+        </item>
+
+        <item name="android:fontFamily">
+            sans
+        </item>
+
+        <!-- =================================================
+             ANDROID 12+ SPLASH SCREEN
+             ================================================= -->
+
+        <item name="android:windowSplashScreenBackground">
+            #07090D
+        </item>
+
+        <item name="android:windowSplashScreenAnimatedIcon">
+            @drawable/ic_deeprows
+        </item>
+
+        <item name="android:windowSplashScreenIconBackgroundColor">
+            #07090D
+        </item>
+
+    </style>
+
+</resources>
