@@ -529,11 +529,11 @@ public class MainActivity extends Activity {
          */
 
         settings.setLoadWithOverviewMode(
-                false
+                true
         );
 
         settings.setUseWideViewPort(
-                false
+                true
         );
 
 
