@@ -66,10 +66,6 @@
 
   <!-- =========================================================
        CRITICAL FIRST-PAINT STYLES
-       
-       These styles appear before style.css so Android WebView
-       immediately paints the website dark instead of showing
-       a white page while CSS is loading.
        ========================================================= -->
 
   <style>
@@ -78,6 +74,7 @@
       background: #07090d;
       color-scheme: dark;
     }
+
 
     body {
       margin: 0;
@@ -91,31 +88,75 @@
       text-size-adjust: 100%;
     }
 
+
     *,
     *::before,
     *::after {
       box-sizing: border-box;
     }
 
+
     .screen-section {
       background: #07090d;
     }
 
+
+    /*
+     * The outer player contains:
+     *
+     * 1. 16:9 video frame
+     * 2. Separate notification underneath
+     */
+
     .screen-player {
+      position: relative;
+      width: 100%;
       background: #07090d;
     }
 
+
+    /*
+     * TRUE 16:9 VIDEO AREA
+     */
+
+    .screen-frame-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #000;
+    }
+
+
+    /*
+     * IFRAME MUST ONLY FILL THE 16:9 VIDEO AREA
+     */
+
     #screenFrame {
+      position: absolute;
+      inset: 0;
+
       display: block;
+
       width: 100%;
       height: 100%;
+
       border: 0;
       margin: 0;
       padding: 0;
-      background: #07090d;
+
+      background: #000;
     }
 
+
+    /*
+     * PLACEHOLDER IS INSIDE THE 16:9 FRAME
+     */
+
     .screen-placeholder {
+      position: absolute;
+      inset: 0;
+
       background: #07090d;
     }
 
@@ -130,7 +171,6 @@
     rel="stylesheet"
     href="style.css"
   >
-
 
 </head>
 
@@ -240,27 +280,36 @@
           id="screenPlayer"
         >
 
-          <!-- SCREEN STATUS -->
-
-          <div class="screen-status">
-
-            <span class="screen-live-dot"></span>
-
-            <span id="screenStatus">
-              READY
-            </span>
-
-          </div>
-
 
           <!-- =================================================
-               PLAYER FRAME
+               TRUE 16:9 VIDEO FRAME
                ================================================= -->
 
           <div
             class="screen-frame-wrap"
             id="screenFrameWrap"
           >
+
+
+            <!-- ===============================================
+                 SCREEN STATUS
+                 INSIDE VIDEO AREA
+                 =============================================== -->
+
+            <div class="screen-status">
+
+              <span class="screen-live-dot"></span>
+
+              <span id="screenStatus">
+                READY
+              </span>
+
+            </div>
+
+
+            <!-- ===============================================
+                 VIDEO IFRAME
+                 =============================================== -->
 
             <iframe
               id="screenFrame"
@@ -274,34 +323,48 @@
               referrerpolicy="no-referrer"
             ></iframe>
 
-          </div>
 
+            <!-- ===============================================
+                 SCREEN PLACEHOLDER
+                 INSIDE 16:9 VIDEO AREA
+                 =============================================== -->
 
-          <!-- SCREEN PLACEHOLDER -->
+            <div
+              class="screen-placeholder"
+              id="screenPlaceholder"
+            >
 
-          <div
-            class="screen-placeholder"
-            id="screenPlaceholder"
-          >
+              <div class="screen-placeholder-icon">
+                ⚽
+              </div>
 
-            <div class="screen-placeholder-icon">
-              ⚽
+              <strong>
+                Welcome
+              </strong>
+
+              <p>
+                Select a category and start watching.
+              </p>
+
             </div>
 
-            <strong>
-              Welcome
-            </strong>
-
-            <p>
-              Select a category and start watching.
-            </p>
 
           </div>
 
 
-          <!-- SCREEN INFORMATION -->
+          <!-- =================================================
+               SEPARATE NOTIFICATION / NOW SHOWING CARD
+               
+               IMPORTANT:
+               THIS IS OUTSIDE THE 16:9 VIDEO FRAME.
+               ================================================= -->
 
           <div class="screen-bottom">
+
+
+            <!-- ===============================================
+                 NOW SHOWING
+                 =============================================== -->
 
             <div class="now-showing">
 
@@ -316,6 +379,10 @@
             </div>
 
 
+            <!-- ===============================================
+                 FULLSCREEN BUTTON
+                 =============================================== -->
+
             <button
               type="button"
               class="fullscreen-button"
@@ -325,7 +392,9 @@
               ⛶
             </button>
 
+
           </div>
+
 
         </div>
 
@@ -1389,8 +1458,6 @@
               }
 
 
-              /* LIVE FIRST */
-
               if (
                 aData.status === "live" &&
                 bData.status !== "live"
@@ -1411,8 +1478,6 @@
               }
 
 
-              /* BOTH LIVE */
-
               if (
                 aData.status === "live" &&
                 bData.status === "live"
@@ -1425,8 +1490,6 @@
 
               }
 
-
-              /* UPCOMING BEFORE ENDED */
 
               if (
                 aData.status === "upcoming" &&
@@ -1448,8 +1511,6 @@
               }
 
 
-              /* UPCOMING */
-
               if (
                 aData.status === "upcoming" &&
                 bData.status === "upcoming"
@@ -1462,8 +1523,6 @@
 
               }
 
-
-              /* ENDED */
 
               if (
                 aData.status === "ended" &&
@@ -1577,8 +1636,6 @@
             );
 
 
-          /* DATE */
-
           if (dateElement) {
 
             dateElement.textContent =
@@ -1588,8 +1645,6 @@
 
           }
 
-
-          /* TIME */
 
           if (timeElement) {
 
