@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <style
+        name="AppTheme"
+        parent="@android:style/Theme.Material.Light.NoActionBar">
+
+        <!-- Android 12+ splash background -->
+        <item name="android:windowSplashScreenBackground">
+            @color/deeprows_background
+        </item>
+
+        <!-- Deeprowss icon instead of debug icon -->
+        <item name="android:windowSplashScreenAnimatedIcon">
+            @drawable/ic_deeprows
+        </item>
+
+        <!-- Normal application background -->
+        <item name="android:windowBackground">
+            @color/deeprows_background
+        </item>
+
+        <!-- Dark navigation bar -->
+        <item name="android:navigationBarColor">
+            @color/deeprows_background
+        </item>
+
+        <item name="android:windowLightNavigationBar">
+            false
+        </item>
+
+        <item name="android:windowActionModeOverlay">
+            true
+        </item>
+
+        <item name="android:windowIsTranslucent">
+            false
+        </item>
+
+    </style>
+
+</resources>
