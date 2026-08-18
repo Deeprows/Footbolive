@@ -46,8 +46,16 @@ public class MainActivity extends Activity {
 
     private int popupBarHeight;
 
+    /*
+     * TRUE when the branded offline screen
+     * is currently being displayed.
+     */
+    private boolean showingOfflinePage = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         /*
@@ -86,6 +94,7 @@ public class MainActivity extends Activity {
         mainWebView.loadUrl(WEBSITE_URL);
     }
 
+
     /*
      * =========================================================
      * MAIN WEBVIEW
@@ -116,12 +125,28 @@ public class MainActivity extends Activity {
                             return false;
                         }
 
-                        handleMainNavigation(
-                                request.getUrl().toString()
-                        );
+                        String url =
+                                request.getUrl().toString();
+
+                        /*
+                         * If the offline screen is showing
+                         * and TRY AGAIN was pressed,
+                         * return to the website.
+                         */
+                        if (showingOfflinePage) {
+
+                            showingOfflinePage = false;
+
+                            view.loadUrl(url);
+
+                            return true;
+                        }
+
+                        handleMainNavigation(url);
 
                         return true;
                     }
+
 
                     @Override
                     public boolean shouldOverrideUrlLoading(
@@ -130,15 +155,110 @@ public class MainActivity extends Activity {
                     ) {
 
                         if (url == null) {
+
                             return false;
+                        }
+
+                        /*
+                         * If the offline screen is showing,
+                         * allow TRY AGAIN to reload the site.
+                         */
+                        if (showingOfflinePage) {
+
+                            showingOfflinePage = false;
+
+                            view.loadUrl(url);
+
+                            return true;
                         }
 
                         handleMainNavigation(url);
 
                         return true;
                     }
+
+
+                    @Override
+                    public void onPageFinished(
+                            WebView view,
+                            String url
+                    ) {
+
+                        super.onPageFinished(
+                                view,
+                                url
+                        );
+
+                        /*
+                         * A successful Deeprowss page load
+                         * means the connection is working.
+                         */
+                        if (url != null &&
+                                url.startsWith(
+                                        "https://deeprows.github.io/"
+                                )) {
+
+                            showingOfflinePage = false;
+                        }
+                    }
+
+
+                    /*
+                     * IMPORTANT:
+                     *
+                     * Only show the offline page when the
+                     * MAIN document fails.
+                     *
+                     * A failed image, advert or script should
+                     * NOT replace the whole website.
+                     */
+                    @Override
+                    public void onReceivedError(
+                            WebView view,
+                            WebResourceRequest request,
+                            android.webkit.WebResourceError error
+                    ) {
+
+                        super.onReceivedError(
+                                view,
+                                request,
+                                error
+                        );
+
+                        if (request != null &&
+                                request.isForMainFrame()) {
+
+                            showOfflinePage();
+                        }
+                    }
+
+
+                    /*
+                     * Older WebView compatibility.
+                     */
+                    @Override
+                    public void onReceivedError(
+                            WebView view,
+                            int errorCode,
+                            String description,
+                            String failingUrl
+                    ) {
+
+                        super.onReceivedError(
+                                view,
+                                errorCode,
+                                description,
+                                failingUrl
+                        );
+
+                        if (android.os.Build.VERSION.SDK_INT < 23) {
+
+                            showOfflinePage();
+                        }
+                    }
                 }
         );
+
 
         /*
          * Chrome client.
@@ -146,6 +266,7 @@ public class MainActivity extends Activity {
         mainWebView.setWebChromeClient(
                 createChromeClient()
         );
+
 
         /*
          * Pull-to-refresh.
@@ -163,7 +284,18 @@ public class MainActivity extends Activity {
 
                         if (mainWebView != null) {
 
-                            mainWebView.reload();
+                            /*
+                             * If offline screen is showing,
+                             * try the real website again.
+                             */
+                            if (showingOfflinePage) {
+
+                                showWebsiteAgain();
+
+                            } else {
+
+                                mainWebView.reload();
+                            }
 
                             new Handler(
                                     Looper.getMainLooper()
@@ -187,6 +319,7 @@ public class MainActivity extends Activity {
                 }
         );
 
+
         /*
          * Add website.
          */
@@ -197,6 +330,7 @@ public class MainActivity extends Activity {
                         FrameLayout.LayoutParams.MATCH_PARENT
                 )
         );
+
 
         /*
          * Add refresh container.
@@ -209,6 +343,7 @@ public class MainActivity extends Activity {
                 )
         );
     }
+
 
     /*
      * =========================================================
@@ -262,6 +397,188 @@ public class MainActivity extends Activity {
         );
     }
 
+
+    /*
+     * =========================================================
+     * OFFLINE / NETWORK ERROR SCREEN
+     * =========================================================
+     */
+
+    private void showOfflinePage() {
+
+        if (mainWebView == null) {
+
+            return;
+        }
+
+        /*
+         * Prevent duplicate offline pages.
+         */
+        if (showingOfflinePage) {
+
+            return;
+        }
+
+        showingOfflinePage = true;
+
+        String offlineHtml =
+                "<!DOCTYPE html>" +
+
+                "<html>" +
+
+                "<head>" +
+
+                "<meta charset='UTF-8'>" +
+
+                "<meta name='viewport' " +
+                "content='width=device-width, " +
+                "initial-scale=1.0, " +
+                "maximum-scale=1.0, " +
+                "user-scalable=no'>" +
+
+                "<style>" +
+
+                "html,body{" +
+                "margin:0;" +
+                "padding:0;" +
+                "width:100%;" +
+                "height:100%;" +
+                "background:#07090d;" +
+                "color:#ffffff;" +
+                "font-family:Arial,sans-serif;" +
+                "overflow:hidden;" +
+                "}" +
+
+                "body{" +
+                "display:flex;" +
+                "align-items:center;" +
+                "justify-content:center;" +
+                "text-align:center;" +
+                "}" +
+
+                ".box{" +
+                "width:88%;" +
+                "max-width:420px;" +
+                "padding:30px 20px;" +
+                "box-sizing:border-box;" +
+                "}" +
+
+                ".logo{" +
+                "width:72px;" +
+                "height:72px;" +
+                "margin:0 auto 22px auto;" +
+                "border-radius:20px;" +
+                "background:#e6003c;" +
+                "display:flex;" +
+                "align-items:center;" +
+                "justify-content:center;" +
+                "font-size:32px;" +
+                "font-weight:800;" +
+                "color:#ffffff;" +
+                "box-shadow:" +
+                "0 10px 30px rgba(230,0,60,.30);" +
+                "}" +
+
+                "h1{" +
+                "font-size:25px;" +
+                "font-weight:700;" +
+                "margin:0 0 12px 0;" +
+                "}" +
+
+                "p{" +
+                "font-size:15px;" +
+                "line-height:1.6;" +
+                "color:#9299a8;" +
+                "margin:0 0 28px 0;" +
+                "}" +
+
+                "button{" +
+                "border:0;" +
+                "outline:none;" +
+                "border-radius:12px;" +
+                "background:#e6003c;" +
+                "color:#ffffff;" +
+                "font-size:15px;" +
+                "font-weight:700;" +
+                "padding:14px 30px;" +
+                "min-width:150px;" +
+                "}" +
+
+                "button:active{" +
+                "transform:scale(.97);" +
+                "}" +
+
+                "</style>" +
+
+                "</head>" +
+
+                "<body>" +
+
+                "<div class='box'>" +
+
+                "<div class='logo'>D</div>" +
+
+                "<h1>You're offline</h1>" +
+
+                "<p>" +
+
+                "We couldn't connect to Deeprowss right now." +
+
+                "<br>" +
+
+                "Please check your internet connection " +
+                "and try again." +
+
+                "</p>" +
+
+                "<button " +
+                "onclick='location.href=\"" +
+                WEBSITE_URL +
+                "\"'>" +
+
+                "TRY AGAIN" +
+
+                "</button>" +
+
+                "</div>" +
+
+                "</body>" +
+
+                "</html>";
+
+
+        /*
+         * Load the branded page locally.
+         *
+         * The actual GitHub URL is NOT displayed
+         * anywhere on the screen.
+         */
+        mainWebView.loadDataWithBaseURL(
+                WEBSITE_URL,
+                offlineHtml,
+                "text/html",
+                "UTF-8",
+                null
+        );
+    }
+
+
+    /*
+     * Try the real website again.
+     */
+    private void showWebsiteAgain() {
+
+        showingOfflinePage = false;
+
+        if (mainWebView != null) {
+
+            mainWebView.loadUrl(
+                    WEBSITE_URL
+            );
+        }
+    }
+
+
     /*
      * =========================================================
      * MAIN NAVIGATION
@@ -292,12 +609,14 @@ public class MainActivity extends Activity {
             return;
         }
 
+
         /*
          * External links / on-click ads
          * open inside the native popup.
          */
         openPopup(url);
     }
+
 
     /*
      * =========================================================
@@ -310,7 +629,8 @@ public class MainActivity extends Activity {
         return new WebChromeClient() {
 
             /*
-             * Handle window.open() and target="_blank".
+             * Handle window.open()
+             * and target="_blank".
              */
             @Override
             public boolean onCreateWindow(
@@ -334,6 +654,7 @@ public class MainActivity extends Activity {
                 return true;
             }
 
+
             /*
              * Video fullscreen.
              */
@@ -349,6 +670,7 @@ public class MainActivity extends Activity {
                 );
             }
 
+
             /*
              * Exit video fullscreen.
              */
@@ -359,6 +681,7 @@ public class MainActivity extends Activity {
             }
         };
     }
+
 
     /*
      * =========================================================
@@ -382,6 +705,7 @@ public class MainActivity extends Activity {
 
         customViewCallback = callback;
 
+
         /*
          * Hide normal website.
          */
@@ -392,6 +716,7 @@ public class MainActivity extends Activity {
             );
         }
 
+
         /*
          * Hide popup if video is inside popup.
          */
@@ -401,6 +726,7 @@ public class MainActivity extends Activity {
                     View.GONE
             );
         }
+
 
         /*
          * Put video above everything.
@@ -413,12 +739,14 @@ public class MainActivity extends Activity {
                 )
         );
 
+
         /*
          * Landscape.
          */
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         );
+
 
         /*
          * Status bar hidden.
@@ -427,12 +755,14 @@ public class MainActivity extends Activity {
         hideStatusBar();
     }
 
+
     private void exitVideoFullscreen() {
 
         if (customVideoView == null) {
 
             return;
         }
+
 
         /*
          * Remove video.
@@ -442,6 +772,7 @@ public class MainActivity extends Activity {
         );
 
         customVideoView = null;
+
 
         /*
          * Notify player.
@@ -453,12 +784,14 @@ public class MainActivity extends Activity {
             customViewCallback = null;
         }
 
+
         /*
          * Return portrait.
          */
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         );
+
 
         /*
          * Restore correct screen.
@@ -476,8 +809,10 @@ public class MainActivity extends Activity {
             );
         }
 
+
         hideStatusBar();
     }
+
 
     /*
      * =========================================================
@@ -505,12 +840,14 @@ public class MainActivity extends Activity {
             popupWebView = null;
         }
 
+
         popupWebView =
                 new WebView(this);
 
         configureWebView(
                 popupWebView
         );
+
 
         /*
          * Popup navigation stays inside
@@ -520,23 +857,25 @@ public class MainActivity extends Activity {
                 new WebViewClient()
         );
 
+
         /*
-         * IMPORTANT:
-         *
-         * The popup has its own ChromeClient,
+         * Popup has its own ChromeClient,
          * including fullscreen video support.
          */
         popupWebView.setWebChromeClient(
                 createChromeClient()
         );
 
+
         /*
          * Show popup before loading content.
          */
         showPopupContainer();
 
+
         return popupWebView;
     }
+
 
     private void openPopup(String url) {
 
@@ -551,6 +890,7 @@ public class MainActivity extends Activity {
 
         popup.loadUrl(url);
     }
+
 
     /*
      * =========================================================
@@ -568,12 +908,14 @@ public class MainActivity extends Activity {
             return;
         }
 
+
         popupContainer =
                 new FrameLayout(this);
 
         popupContainer.setBackgroundColor(
                 Color.BLACK
         );
+
 
         /*
          * -----------------------------------------------------
@@ -585,6 +927,7 @@ public class MainActivity extends Activity {
          * Therefore the X can never be covered
          * by the website/ad.
          */
+
         LinearLayout topBar =
                 new LinearLayout(this);
 
@@ -606,6 +949,7 @@ public class MainActivity extends Activity {
         topBar.setBackgroundColor(
                 Color.rgb(15, 18, 24)
         );
+
 
         /*
          * BACK.
@@ -648,6 +992,7 @@ public class MainActivity extends Activity {
                 }
         );
 
+
         /*
          * TITLE.
          */
@@ -678,6 +1023,7 @@ public class MainActivity extends Activity {
                 dp(8),
                 0
         );
+
 
         /*
          * X CLOSE BUTTON.
@@ -712,6 +1058,7 @@ public class MainActivity extends Activity {
                 }
         );
 
+
         /*
          * Add BACK.
          */
@@ -722,6 +1069,7 @@ public class MainActivity extends Activity {
                         popupBarHeight
                 )
         );
+
 
         /*
          * Add TITLE.
@@ -735,6 +1083,7 @@ public class MainActivity extends Activity {
                 )
         );
 
+
         /*
          * Add X.
          */
@@ -745,6 +1094,7 @@ public class MainActivity extends Activity {
                         popupBarHeight
                 )
         );
+
 
         /*
          * Top bar always stays at top.
@@ -761,12 +1111,11 @@ public class MainActivity extends Activity {
                 barParams
         );
 
+
         /*
          * -----------------------------------------------------
          * POPUP WEBVIEW
          * -----------------------------------------------------
-         *
-         * IMPORTANT:
          *
          * It starts below the top bar.
          *
@@ -782,6 +1131,7 @@ public class MainActivity extends Activity {
         webParams.topMargin =
                 popupBarHeight;
 
+
         if (popupWebView != null) {
 
             popupContainer.addView(
@@ -789,6 +1139,7 @@ public class MainActivity extends Activity {
                     webParams
             );
         }
+
 
         /*
          * Put popup above the website.
@@ -804,6 +1155,7 @@ public class MainActivity extends Activity {
                 popupParams
         );
 
+
         /*
          * Hide website while popup is open.
          */
@@ -814,11 +1166,13 @@ public class MainActivity extends Activity {
             );
         }
 
+
         /*
          * Make sure status bar stays hidden.
          */
         hideStatusBar();
     }
+
 
     /*
      * =========================================================
@@ -833,6 +1187,7 @@ public class MainActivity extends Activity {
             return;
         }
 
+
         /*
          * If popup video is fullscreen,
          * exit it first.
@@ -841,6 +1196,7 @@ public class MainActivity extends Activity {
 
             exitVideoFullscreen();
         }
+
 
         /*
          * Stop and destroy popup WebView.
@@ -861,6 +1217,7 @@ public class MainActivity extends Activity {
             popupWebView = null;
         }
 
+
         /*
          * Remove popup container.
          */
@@ -869,6 +1226,7 @@ public class MainActivity extends Activity {
         );
 
         popupContainer = null;
+
 
         /*
          * Restore main website.
@@ -880,6 +1238,7 @@ public class MainActivity extends Activity {
             );
         }
 
+
         /*
          * Portrait.
          */
@@ -887,11 +1246,13 @@ public class MainActivity extends Activity {
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         );
 
+
         /*
          * Status bar hidden.
          */
         hideStatusBar();
     }
+
 
     /*
      * =========================================================
@@ -912,6 +1273,7 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
+
         /*
          * Do NOT use:
          *
@@ -927,6 +1289,7 @@ public class MainActivity extends Activity {
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 );
     }
+
 
     /*
      * =========================================================
@@ -947,6 +1310,7 @@ public class MainActivity extends Activity {
             return;
         }
 
+
         /*
          * 2. Popup.
          */
@@ -965,6 +1329,7 @@ public class MainActivity extends Activity {
             return;
         }
 
+
         /*
          * 3. Main website history.
          */
@@ -979,6 +1344,7 @@ public class MainActivity extends Activity {
         }
     }
 
+
     /*
      * =========================================================
      * ACTIVITY LIFECYCLE
@@ -992,16 +1358,19 @@ public class MainActivity extends Activity {
 
         hideStatusBar();
 
+
         if (mainWebView != null) {
 
             mainWebView.onResume();
         }
+
 
         if (popupWebView != null) {
 
             popupWebView.onResume();
         }
     }
+
 
     @Override
     protected void onPause() {
@@ -1011,13 +1380,16 @@ public class MainActivity extends Activity {
             mainWebView.onPause();
         }
 
+
         if (popupWebView != null) {
 
             popupWebView.onPause();
         }
 
+
         super.onPause();
     }
+
 
     @Override
     protected void onDestroy() {
@@ -1036,6 +1408,7 @@ public class MainActivity extends Activity {
             customVideoView = null;
         }
 
+
         if (popupWebView != null) {
 
             try {
@@ -1049,6 +1422,7 @@ public class MainActivity extends Activity {
 
             popupWebView = null;
         }
+
 
         if (mainWebView != null) {
 
@@ -1064,8 +1438,10 @@ public class MainActivity extends Activity {
             mainWebView = null;
         }
 
+
         super.onDestroy();
     }
+
 
     /*
      * =========================================================
@@ -1084,6 +1460,7 @@ public class MainActivity extends Activity {
                 value * density + 0.5f
         );
     }
+
 
     /*
      * =========================================================
@@ -1116,10 +1493,12 @@ public class MainActivity extends Activity {
         private static final float MAX_PULL_DISTANCE =
                 300f;
 
+
         interface OnRefreshListener {
 
             void onRefresh();
         }
+
 
         RefreshableWebViewContainer(
                 Context context
@@ -1128,6 +1507,7 @@ public class MainActivity extends Activity {
             super(context);
 
             setClipChildren(false);
+
 
             /*
              * Refresh indicator.
@@ -1138,6 +1518,7 @@ public class MainActivity extends Activity {
             progressBar.setVisibility(
                     View.GONE
             );
+
 
             LayoutParams progressParams =
                     new LayoutParams(
@@ -1152,11 +1533,13 @@ public class MainActivity extends Activity {
             progressParams.topMargin =
                     dp(context, 16);
 
+
             addView(
                     progressBar,
                     progressParams
             );
         }
+
 
         void setWebView(
                 WebView webView
@@ -1165,6 +1548,7 @@ public class MainActivity extends Activity {
             this.webView = webView;
         }
 
+
         void setOnRefreshListener(
                 OnRefreshListener listener
         ) {
@@ -1172,11 +1556,13 @@ public class MainActivity extends Activity {
             this.listener = listener;
         }
 
+
         void stopRefreshing() {
 
             refreshing = false;
 
             dragging = false;
+
 
             if (progressBar != null) {
 
@@ -1184,6 +1570,7 @@ public class MainActivity extends Activity {
                         View.GONE
                 );
             }
+
 
             if (webView != null) {
 
@@ -1193,6 +1580,7 @@ public class MainActivity extends Activity {
                         .start();
             }
         }
+
 
         @Override
         public boolean onInterceptTouchEvent(
@@ -1205,6 +1593,7 @@ public class MainActivity extends Activity {
                 return false;
             }
 
+
             switch (event.getActionMasked()) {
 
                 case MotionEvent.ACTION_DOWN:
@@ -1216,11 +1605,13 @@ public class MainActivity extends Activity {
 
                     break;
 
+
                 case MotionEvent.ACTION_MOVE:
 
                     float distance =
                             event.getY() -
                             startY;
+
 
                     /*
                      * Only activate when
@@ -1239,6 +1630,7 @@ public class MainActivity extends Activity {
 
                     break;
 
+
                 case MotionEvent.ACTION_UP:
 
                 case MotionEvent.ACTION_CANCEL:
@@ -1248,8 +1640,10 @@ public class MainActivity extends Activity {
                     break;
             }
 
+
             return false;
         }
+
 
         @Override
         public boolean onTouchEvent(
@@ -1262,6 +1656,7 @@ public class MainActivity extends Activity {
                 return true;
             }
 
+
             switch (event.getActionMasked()) {
 
                 case MotionEvent.ACTION_DOWN:
@@ -1273,16 +1668,19 @@ public class MainActivity extends Activity {
 
                     return true;
 
+
                 case MotionEvent.ACTION_MOVE:
 
                     float distance =
                             event.getY() -
                             startY;
 
+
                     if (distance < 0) {
 
                         distance = 0;
                     }
+
 
                     if (distance >
                             MAX_PULL_DISTANCE) {
@@ -1290,6 +1688,7 @@ public class MainActivity extends Activity {
                         distance =
                                 MAX_PULL_DISTANCE;
                     }
+
 
                     if (distance > 0) {
 
@@ -1303,6 +1702,7 @@ public class MainActivity extends Activity {
                                 offset
                         );
 
+
                         /*
                          * Show indicator.
                          */
@@ -1313,6 +1713,7 @@ public class MainActivity extends Activity {
                                     .setVisibility(
                                             View.VISIBLE
                                     );
+
                         } else {
 
                             progressBar
@@ -1322,13 +1723,16 @@ public class MainActivity extends Activity {
                         }
                     }
 
+
                     return true;
+
 
                 case MotionEvent.ACTION_UP:
 
                     float finalDistance =
                             event.getY() -
                             startY;
+
 
                     if (finalDistance >=
                             TRIGGER_DISTANCE) {
@@ -1340,7 +1744,9 @@ public class MainActivity extends Activity {
                         stopRefreshing();
                     }
 
+
                     return true;
+
 
                 case MotionEvent.ACTION_CANCEL:
 
@@ -1349,8 +1755,10 @@ public class MainActivity extends Activity {
                     return true;
             }
 
+
             return true;
         }
+
 
         private void startRefreshing() {
 
@@ -1359,7 +1767,9 @@ public class MainActivity extends Activity {
                 return;
             }
 
+
             refreshing = true;
+
 
             if (progressBar != null) {
 
@@ -1367,6 +1777,7 @@ public class MainActivity extends Activity {
                         View.VISIBLE
                 );
             }
+
 
             if (webView != null) {
 
@@ -1378,11 +1789,13 @@ public class MainActivity extends Activity {
                         .start();
             }
 
+
             if (listener != null) {
 
                 listener.onRefresh();
             }
         }
+
 
         private static int dp(
                 Context context,
