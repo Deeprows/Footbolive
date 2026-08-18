@@ -1,1230 +1,3520 @@
-document.addEventListener("DOMContentLoaded", function () { 
- 
-  "use strict"; 
- 
- 
-  console.log("Deeprowss app loaded"); 
- 
- 
-  /* ========================================================= 
-     ZOOM / GESTURE PROTECTION 
-     ========================================================= */ 
- 
-  document.addEventListener( 
-    "gesturestart", 
-    function (event) { 
- 
-      event.preventDefault(); 
- 
-    }, 
-    { 
-      passive: false 
-    } 
-  ); 
- 
- 
-  document.addEventListener( 
-    "gesturechange", 
-    function (event) { 
- 
-      event.preventDefault(); 
- 
-    }, 
-    { 
-      passive: false 
-    } 
-  ); 
- 
- 
-  document.addEventListener( 
-    "gestureend", 
-    function (event) { 
- 
-      event.preventDefault(); 
- 
-    }, 
-    { 
-      passive: false 
-    } 
-  ); 
- 
- 
-  /* 
-   * Prevent Ctrl + mouse-wheel browser zoom. 
-   */ 
- 
-  document.addEventListener( 
-    "wheel", 
-    function (event) { 
- 
-      if (event.ctrlKey) { 
- 
-        event.preventDefault(); 
- 
-      } 
- 
-    }, 
-    { 
-      passive: false 
-    } 
-  ); 
- 
- 
-  /* 
-   * Prevent keyboard browser zoom. 
-   */ 
- 
-  document.addEventListener( 
-    "keydown", 
-    function (event) { 
- 
-      if (!event.ctrlKey) { 
-        return; 
-      } 
- 
- 
-      const key = 
-        event.key; 
- 
- 
-      if ( 
-        key === "+" || 
-        key === "=" || 
-        key === "-" || 
-        key === "0" 
-      ) { 
- 
-        event.preventDefault(); 
- 
-      } 
- 
-    } 
-  ); 
- 
- 
-  /* ========================================================= 
-     ELEMENTS 
-     ========================================================= */ 
- 
-  const siteHeader = 
-    document.querySelector(".site-header"); 
- 
-  const screenSection = 
-    document.querySelector(".screen-section"); 
- 
-  const screenFrame = 
-    document.getElementById("screenFrame"); 
- 
-  const screenPlaceholder = 
-    document.getElementById("screenPlaceholder"); 
- 
-  const screenStatus = 
-    document.getElementById("screenStatus"); 
- 
-  const nowShowing = 
-    document.getElementById("nowShowing"); 
- 
-  const fullscreenButton = 
-    document.getElementById("fullscreenButton"); 
- 
-  const screenPlayer = 
-    document.getElementById("screenPlayer"); 
- 
- 
-  /* ========================================================= 
-     APP BUTTONS 
-     ========================================================= */ 
- 
-  const footballButton = 
-    document.getElementById("footballButton"); 
- 
-  const highlightsButton = 
-    document.getElementById("highlightsButton"); 
- 
-  const tvButton = 
-    document.getElementById("tvButton"); 
- 
-  const moviesButton = 
-    document.getElementById("moviesButton"); 
- 
- 
-  /* ========================================================= 
-     CONTENT SECTIONS 
-     ========================================================= */ 
- 
-  const footballContent = 
-    document.getElementById("footballContent"); 
- 
-  const highlightsContent = 
-    document.getElementById("highlightsContent"); 
- 
-  const tvContent = 
-    document.getElementById("tvContent"); 
- 
-  const moviesContent = 
-    document.getElementById("moviesContent"); 
- 
- 
-  /* ========================================================= 
-     NAVIGATION 
-     ========================================================= */ 
- 
-  const navFootball = 
-    document.getElementById("navFootball"); 
- 
-  const navHighlights = 
-    document.getElementById("navHighlights"); 
- 
-  const navTV = 
-    document.getElementById("navTV"); 
- 
-  const navMovies = 
-    document.getElementById("navMovies"); 
- 
- 
-  /* ========================================================= 
-     MATCHES 
-     ========================================================= */ 
- 
-  const matchCards = 
-    document.querySelectorAll(".match-card"); 
- 
- 
-  /* ========================================================= 
-     HIGHLIGHTS 
-     ========================================================= */ 
- 
-  const highlightCards = 
-    document.querySelectorAll(".highlight-card"); 
- 
- 
-  /* ========================================================= 
-     TV CHANNELS 
-     ========================================================= */ 
- 
-  const tvChannels = 
-    document.querySelectorAll(".tv-channel"); 
- 
- 
-  /* ========================================================= 
-     MOVIES 
-     ========================================================= */ 
- 
-  const movieCards = 
-    document.querySelectorAll(".movie-card"); 
- 
- 
-  /* ========================================================= 
-     MOBILE MENU 
-     ========================================================= */ 
- 
-  const menuToggle = 
-    document.getElementById("menuToggle"); 
- 
-  const mainNav = 
-    document.getElementById("mainNav"); 
- 
- 
-  /* ========================================================= 
-     STICKY LAYOUT CALCULATION 
-     ========================================================= */ 
- 
-  function updateStickyPositions() { 
- 
-    if (!screenSection) { 
-      return; 
-    } 
- 
- 
-    const root = 
-      document.documentElement; 
- 
- 
-    const headerHeight = 
-      siteHeader 
-        ? siteHeader.getBoundingClientRect().height 
-        : 66; 
- 
- 
-    const screenHeight = 
-      screenSection.getBoundingClientRect().height; 
- 
- 
-    root.style.setProperty( 
-      "--header-height", 
-      headerHeight + "px" 
-    ); 
- 
- 
-    root.style.setProperty( 
-      "--screen-stack-height", 
-      screenHeight + "px" 
-    ); 
- 
- 
-    root.style.setProperty( 
-      "--app-menu-top", 
-      ( 
-        headerHeight + 
-        screenHeight 
-      ) + "px" 
-    ); 
- 
-  } 
- 
- 
-  updateStickyPositions(); 
- 
- 
-  window.addEventListener( 
-    "resize", 
-    updateStickyPositions 
-  ); 
- 
- 
-  if ( 
-    "ResizeObserver" in window && 
-    screenSection 
-  ) { 
- 
-    const stickyObserver = 
-      new ResizeObserver( 
-        function () { 
- 
-          updateStickyPositions(); 
- 
-        } 
-      ); 
- 
- 
-    stickyObserver.observe( 
-      screenSection 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     ACTIVE APP BUTTON 
-     ========================================================= */ 
- 
-  function setActiveButton(button) { 
- 
-    [ 
-      footballButton, 
-      highlightsButton, 
-      tvButton, 
-      moviesButton 
-    ].forEach(function (item) { 
- 
-      if (item) { 
- 
-        item.classList.remove( 
-          "active" 
-        ); 
- 
-      } 
- 
-    }); 
- 
- 
-    if (button) { 
- 
-      button.classList.add( 
-        "active" 
-      ); 
- 
-    } 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     ACTIVE NAV 
-     ========================================================= */ 
- 
-  function setActiveNav(link) { 
- 
-    [ 
-      navFootball, 
-      navHighlights, 
-      navTV, 
-      navMovies 
-    ].forEach(function (item) { 
- 
-      if (item) { 
- 
-        item.classList.remove( 
-          "active" 
-        ); 
- 
-      } 
- 
-    }); 
- 
- 
-    if (link) { 
- 
-      link.classList.add( 
-        "active" 
-      ); 
- 
-    } 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     SHOW CONTENT 
-     ========================================================= */ 
- 
-  function showContent(section) { 
- 
-    if (footballContent) { 
- 
-      footballContent.hidden = 
-        section !== "football"; 
- 
-    } 
- 
- 
-    if (highlightsContent) { 
- 
-      highlightsContent.hidden = 
-        section !== "highlights"; 
- 
-    } 
- 
- 
-    if (tvContent) { 
- 
-      tvContent.hidden = 
-        section !== "tv"; 
- 
-    } 
- 
- 
-    if (moviesContent) { 
- 
-      moviesContent.hidden = 
-        section !== "movies"; 
- 
-    } 
- 
- 
-    requestAnimationFrame( 
-      updateStickyPositions 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     OPEN FOOTBALL 
-     ========================================================= */ 
- 
-  function openFootball() { 
- 
-    showContent("football"); 
- 
-    setActiveButton( 
-      footballButton 
-    ); 
- 
-    setActiveNav( 
-      navFootball 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     OPEN HIGHLIGHTS 
-     ========================================================= */ 
- 
-  function openHighlights() { 
- 
-    showContent("highlights"); 
- 
-    setActiveButton( 
-      highlightsButton 
-    ); 
- 
-    setActiveNav( 
-      navHighlights 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     OPEN TV 
-     ========================================================= */ 
- 
-  function openTV() { 
- 
-    showContent("tv"); 
- 
-    setActiveButton( 
-      tvButton 
-    ); 
- 
-    setActiveNav( 
-      navTV 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     OPEN MOVIES 
-     ========================================================= */ 
- 
-  function openMovies() { 
- 
-    showContent("movies"); 
- 
-    setActiveButton( 
-      moviesButton 
-    ); 
- 
-    setActiveNav( 
-      navMovies 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     APP BUTTON EVENTS 
-     ========================================================= */ 
- 
-  if (footballButton) { 
- 
-    footballButton.addEventListener( 
-      "click", 
-      openFootball 
-    ); 
- 
-  } 
- 
- 
-  if (highlightsButton) { 
- 
-    highlightsButton.addEventListener( 
-      "click", 
-      openHighlights 
-    ); 
- 
-  } 
- 
- 
-  if (tvButton) { 
- 
-    tvButton.addEventListener( 
-      "click", 
-      openTV 
-    ); 
- 
-  } 
- 
- 
-  if (moviesButton) { 
- 
-    moviesButton.addEventListener( 
-      "click", 
-      openMovies 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     NAVIGATION EVENTS 
-     ========================================================= */ 
- 
-  if (navFootball) { 
- 
-    navFootball.addEventListener( 
-      "click", 
-      function (event) { 
- 
-        event.preventDefault(); 
- 
-        openFootball(); 
- 
-      } 
-    ); 
- 
-  } 
- 
- 
-  if (navHighlights) { 
- 
-    navHighlights.addEventListener( 
-      "click", 
-      function (event) { 
- 
-        event.preventDefault(); 
- 
-        openHighlights(); 
- 
-      } 
-    ); 
- 
-  } 
- 
- 
-  if (navTV) { 
- 
-    navTV.addEventListener( 
-      "click", 
-      function (event) { 
- 
-        event.preventDefault(); 
- 
-        openTV(); 
- 
-      } 
-    ); 
- 
-  } 
- 
- 
-  if (navMovies) { 
- 
-    navMovies.addEventListener( 
-      "click", 
-      function (event) { 
- 
-        event.preventDefault(); 
- 
-        openMovies(); 
- 
-      } 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     LOAD SCREEN 
-     ========================================================= */ 
- 
-  function loadScreen( 
-    url, 
-    name, 
-    type 
-  ) { 
- 
-    if (!screenFrame) { 
-      return; 
-    } 
- 
- 
-    if (!url) { 
-      return; 
-    } 
- 
- 
-    if (nowShowing) { 
- 
-      nowShowing.textContent = 
-        name || "Now Playing"; 
- 
-    } 
- 
- 
-    if (screenPlaceholder) { 
- 
-      screenPlaceholder.classList.add( 
-        "hidden" 
-      ); 
- 
-    } 
- 
- 
-    screenFrame.style.opacity = 
-      "0.25"; 
- 
- 
-    screenFrame.src = 
-      "about:blank"; 
- 
- 
-    setTimeout( 
-      function () { 
- 
-        screenFrame.src = 
-          url; 
- 
-        screenFrame.style.opacity = 
-          "1"; 
- 
- 
-        requestAnimationFrame( 
-          updateStickyPositions 
-        ); 
- 
-      }, 
-      150 
-    ); 
- 
- 
-    /* ======================================================= 
-       SCREEN STATUS 
-       ======================================================= */ 
- 
-    if (screenStatus) { 
- 
-      if (type === "tv") { 
- 
-        screenStatus.textContent = 
-          "LIVE TV"; 
- 
-      } else if (type === "highlight") { 
- 
-        screenStatus.textContent = 
-          "HIGHLIGHT"; 
- 
-      } else if (type === "movie") { 
- 
-        screenStatus.textContent = 
-          "MOVIE"; 
- 
-      } else { 
- 
-        screenStatus.textContent = 
-          "LIVE"; 
- 
-      } 
- 
-    } 
- 
- 
-    /* 
-     * Keep player visible. 
-     */ 
- 
-    if (screenPlayer) { 
- 
-      const rect = 
-        screenPlayer.getBoundingClientRect(); 
- 
- 
-      const headerHeight = 
-        siteHeader 
-          ? siteHeader.getBoundingClientRect().height 
-          : 66; 
- 
- 
-      if ( 
-        rect.top < 
-        headerHeight 
-      ) { 
- 
-        window.scrollBy( 
-          { 
-            top: 
-              rect.top - 
-              headerHeight - 
-              10, 
- 
-            behavior: 
-              "smooth" 
-          } 
-        ); 
- 
-      } 
- 
-    } 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     MATCH CLICK 
-     ========================================================= */ 
- 
-  matchCards.forEach( 
-    function (card) { 
- 
-      card.addEventListener( 
-        "click", 
-        function () { 
- 
-          const url = 
-            this.dataset.url; 
- 
-          const name = 
-            this.dataset.name || 
-            this.querySelector( 
-              ".match-teams" 
-            )?.textContent?.trim() || 
-            "Football Match"; 
- 
- 
-          loadScreen( 
-            url, 
-            name, 
-            "match" 
-          ); 
- 
-        } 
-      ); 
- 
-    } 
-  ); 
- 
- 
-  /* ========================================================= 
-     HIGHLIGHT CLICK 
-     ========================================================= */ 
- 
-  highlightCards.forEach( 
-    function (card) { 
- 
-      card.addEventListener( 
-        "click", 
-        function () { 
- 
-          const url = 
-            this.dataset.url; 
- 
-          const name = 
-            this.dataset.name || 
-            this.querySelector( 
-              "strong" 
-            )?.textContent?.trim() || 
-            "Football Highlight"; 
- 
- 
-          highlightCards.forEach( 
-            function (item) { 
- 
-              item.classList.remove( 
-                "active" 
-              ); 
- 
-            } 
-          ); 
- 
- 
-          this.classList.add( 
-            "active" 
-          ); 
- 
- 
-          loadScreen( 
-            url, 
-            name, 
-            "highlight" 
-          ); 
- 
- 
-          openHighlights(); 
- 
-        } 
-      ); 
- 
-    } 
-  ); 
- 
- 
-  /* ========================================================= 
-     TV CHANNEL CLICK 
-     ========================================================= */ 
- 
-  tvChannels.forEach( 
-    function (channel) { 
- 
-      channel.addEventListener( 
-        "click", 
-        function () { 
- 
-          const url = 
-            this.dataset.url; 
- 
-          const name = 
-            this.dataset.name || 
-            this.querySelector( 
-              ".tv-channel-info strong" 
-            )?.textContent?.trim() || 
-            "TV Channel"; 
- 
- 
-          tvChannels.forEach( 
-            function (item) { 
- 
-              item.classList.remove( 
-                "active" 
-              ); 
- 
-            } 
-          ); 
- 
- 
-          this.classList.add( 
-            "active" 
-          ); 
- 
- 
-          loadScreen( 
-            url, 
-            name, 
-            "tv" 
-          ); 
- 
- 
-          openTV(); 
- 
-        } 
-      ); 
- 
-    } 
-  ); 
- 
- 
-  /* ========================================================= 
-     MOVIE CLICK 
-     ========================================================= */ 
- 
-  movieCards.forEach( 
-    function (movie) { 
- 
-      movie.addEventListener( 
-        "click", 
-        function () { 
- 
-          const url = 
-            this.dataset.url; 
- 
-          const name = 
-            this.dataset.name || 
-            this.querySelector( 
-              ".movie-title" 
-            )?.textContent?.trim() || 
-            "Movie"; 
- 
- 
-          movieCards.forEach( 
-            function (item) { 
- 
-              item.classList.remove( 
-                "active" 
-              ); 
- 
-            } 
-          ); 
- 
- 
-          this.classList.add( 
-            "active" 
-          ); 
- 
- 
-          loadScreen( 
-            url, 
-            name, 
-            "movie" 
-          ); 
- 
- 
-          openMovies(); 
- 
-        } 
-      ); 
- 
-    } 
-  ); 
- 
- 
-  /* ========================================================= 
-     FULLSCREEN 
-     ========================================================= */ 
- 
-  if (fullscreenButton) { 
- 
-    fullscreenButton.addEventListener( 
-      "click", 
-      async function () { 
- 
-        if (document.fullscreenElement) { 
- 
-          if ( 
-            screen.orientation && 
-            screen.orientation.unlock 
-          ) { 
- 
-            try { 
- 
-              screen.orientation.unlock(); 
- 
-            } catch (error) { 
- 
-              console.log( 
-                "Orientation unlock unavailable:", 
-                error 
-              ); 
- 
-            } 
- 
-          } 
- 
- 
-          if (document.exitFullscreen) { 
- 
-            try { 
- 
-              await document.exitFullscreen(); 
- 
-            } catch (error) { 
- 
-              console.log( 
-                "Fullscreen exit failed:", 
-                error 
-              ); 
- 
-            } 
- 
-          } 
- 
-          return; 
- 
-        } 
- 
- 
-        if ( 
-          screenPlayer && 
-          screenPlayer.requestFullscreen 
-        ) { 
- 
-          try { 
- 
-            await screenPlayer.requestFullscreen( 
-              { 
-                navigationUI: "hide" 
-              } 
-            ); 
- 
- 
-            if ( 
-              screen.orientation && 
-              screen.orientation.lock 
-            ) { 
- 
-              try { 
- 
-                await screen.orientation.lock( 
-                  "landscape" 
-                ); 
- 
-              } catch (orientationError) { 
- 
-                console.log( 
-                  "Landscape orientation lock unavailable:", 
-                  orientationError 
-                ); 
- 
-              } 
- 
-            } 
- 
-          } catch (fullscreenError) { 
- 
-            console.log( 
-              "Fullscreen request failed:", 
-              fullscreenError 
-            ); 
- 
-          } 
- 
-        } 
- 
-      } 
-    ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     FULLSCREEN CHANGE 
-     ========================================================= */ 
- 
-  document.addEventListener( 
-    "fullscreenchange", 
-    async function () { 
- 
-      if (!fullscreenButton) { 
-        return; 
-      } 
- 
- 
-      if ( 
-        document.fullscreenElement 
-      ) { 
- 
-        fullscreenButton.textContent = 
-          "×"; 
- 
-        fullscreenButton.setAttribute( 
-          "aria-label", 
-          "Exit fullscreen" 
-        ); 
- 
-        fullscreenButton.setAttribute( 
-          "title", 
-          "Exit fullscreen" 
-        ); 
- 
- 
-        if ( 
-          screen.orientation && 
-          screen.orientation.lock 
-        ) { 
- 
-          try { 
- 
-            await screen.orientation.lock( 
-              "landscape" 
-            ); 
- 
-          } catch (error) { 
- 
-            console.log( 
-              "Landscape lock unavailable:", 
-              error 
-            ); 
- 
-          } 
- 
-        } 
- 
-      } 
- 
- 
-      else { 
- 
-        fullscreenButton.textContent = 
-          "⛶"; 
- 
-        fullscreenButton.setAttribute( 
-          "aria-label", 
-          "Enter fullscreen" 
-        ); 
- 
-        fullscreenButton.setAttribute( 
-          "title", 
-          "Enter fullscreen" 
-        ); 
- 
- 
-        if ( 
-          screen.orientation && 
-          screen.orientation.unlock 
-        ) { 
- 
-          try { 
- 
-            screen.orientation.unlock(); 
- 
-          } catch (error) { 
- 
-            console.log( 
-              "Orientation unlock unavailable:", 
-              error 
-            ); 
- 
-          } 
- 
-        } 
- 
-      } 
- 
- 
-      requestAnimationFrame( 
-        updateStickyPositions 
-      ); 
- 
-    } 
-  ); 
- 
- 
-  /* ========================================================= 
-     MOBILE MENU 
-     ========================================================= */ 
- 
-  if ( 
-    menuToggle && 
-    mainNav 
-  ) { 
- 
-    menuToggle.addEventListener( 
-      "click", 
-      function () { 
- 
-        const isOpen = 
-          mainNav.classList.toggle( 
-            "open" 
-          ); 
- 
- 
-        menuToggle.setAttribute( 
-          "aria-expanded", 
-          isOpen 
-            ? "true" 
-            : "false" 
-        ); 
- 
-      } 
-    ); 
- 
- 
-    mainNav 
-      .querySelectorAll("a") 
-      .forEach( 
-        function (link) { 
- 
-          link.addEventListener( 
-            "click", 
-            function () { 
- 
-              mainNav.classList.remove( 
-                "open" 
-              ); 
- 
-              menuToggle.setAttribute( 
-                "aria-expanded", 
-                "false" 
-              ); 
- 
-            } 
-          ); 
- 
-        } 
-      ); 
- 
-  } 
- 
- 
-  /* ========================================================= 
-     INITIAL STATE 
-     ========================================================= */ 
- 
-  openFootball(); 
- 
- 
-  /* 
-   * Final sticky calculation after rendering. 
-   */ 
- 
-  requestAnimationFrame( 
-    function () { 
- 
-      updateStickyPositions(); 
- 
-    } 
-  ); 
- 
- 
-});    it's not downloadable
+/* =========================================================
+   DEEPROWSS FOOTBALL APP
+   ========================================================= */
+
+:root {
+
+  --bg: #07090d;
+
+  --surface: #10141b;
+
+  --surface-2: #151a22;
+
+  --surface-3: #1b2029;
+
+  --line: rgba(255,255,255,.08);
+
+  --text: #ffffff;
+
+  --muted: #8d96a5;
+
+  --accent: #ff1744;
+
+  --accent-soft: rgba(255,23,68,.12);
+
+  --green: #20e070;
+
+  /* Match status colors */
+  --match-upcoming: #ff1744;
+
+  --match-live: #ff1744;
+
+  --match-ended: #858c98;
+
+  /*
+   * These values are updated automatically by JS
+   * according to the real height of the sticky screen.
+   */
+  --header-height: 66px;
+
+  --screen-stack-height: 0px;
+
+  --app-menu-top: 66px;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+
+  scroll-behavior: smooth;
+
+  touch-action: manipulation;
+
+  -webkit-tap-highlight-color: transparent;
+
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body {
+
+  margin: 0;
+
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      rgba(255,23,68,.06),
+      transparent 35%
+    ),
+    var(--bg);
+
+  color: var(--text);
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+
+  touch-action: manipulation;
+
+  overscroll-behavior-x: none;
+
+  overflow-x: hidden;
+}
+
+
+/*
+ * Allow normal text selection inside form controls.
+ */
+
+input,
+textarea,
+select {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  outline: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.container {
+
+  width: min(
+    1180px,
+    calc(100% - 30px)
+  );
+
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.site-header {
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 1000;
+
+  background:
+    rgba(7,9,13,.94);
+
+  border-bottom:
+    1px solid
+    var(--line);
+
+  backdrop-filter:
+    blur(15px);
+
+  -webkit-backdrop-filter:
+    blur(15px);
+}
+
+
+.nav-wrap {
+
+  min-height: 66px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 25px;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.brand {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  flex-shrink: 0;
+
+  font-size: 15px;
+
+  font-weight: 950;
+
+  letter-spacing: 1px;
+}
+
+.brand > span:last-child span {
+  color: var(--accent);
+}
+
+.brand-mark {
+
+  width: 34px;
+
+  height: 34px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--accent),
+      #b8002e
+    );
+
+  color: #fff;
+
+  font-weight: 950;
+
+  box-shadow:
+    0 5px 18px
+    rgba(255,23,68,.25);
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.main-nav {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  margin-left: auto;
+}
+
+.main-nav a {
+
+  padding: 9px 12px;
+
+  border-radius: 8px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  transition:
+    background .2s ease,
+    color .2s ease;
+}
+
+.main-nav a:hover {
+
+  color: #fff;
+
+  background:
+    rgba(255,255,255,.05);
+}
+
+.main-nav a.active {
+
+  color: #fff;
+
+  background:
+    var(--accent-soft);
+}
+
+
+/* =========================================================
+   MENU BUTTON
+   ========================================================= */
+
+.menu-toggle {
+
+  display: none;
+
+  width: 40px;
+
+  height: 40px;
+
+  border-radius: 9px;
+
+  background:
+    var(--surface);
+
+  color: #fff;
+
+  font-size: 20px;
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+}
+
+
+/* =========================================================
+   MAIN APP
+   ========================================================= */
+
+.football-app {
+
+  padding-bottom: 50px;
+
+  overflow: visible;
+}
+
+
+/* =========================================================
+   SCREEN SECTION
+   ========================================================= */
+
+.screen-section {
+
+  position: sticky;
+
+  top: var(--header-height);
+
+  z-index: 900;
+
+  padding:
+    20px 0 0;
+
+  background:
+    var(--bg);
+}
+
+
+/* =========================================================
+   SCREEN PLAYER
+   ========================================================= */
+
+.screen-player {
+
+  position: relative;
+
+  overflow: hidden;
+
+  background: #000;
+
+  border:
+    1px solid
+    rgba(255,255,255,.08);
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 20px 60px
+    rgba(0,0,0,.35);
+
+  touch-action: manipulation;
+}
+
+
+/* =========================================================
+   SCREEN STATUS
+   ========================================================= */
+
+.screen-status {
+
+  position: absolute;
+
+  top: 13px;
+
+  left: 13px;
+
+  z-index: 10;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding:
+    6px 10px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(0,0,0,.72);
+
+  backdrop-filter:
+    blur(8px);
+
+  -webkit-backdrop-filter:
+    blur(8px);
+
+  color: #fff;
+
+  font-size: 9px;
+
+  font-weight: 950;
+
+  letter-spacing: 1.2px;
+}
+
+
+.screen-live-dot {
+
+  width: 7px;
+
+  height: 7px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background:
+    var(--accent);
+
+  box-shadow:
+    0 0 10px
+    rgba(255,23,68,.8);
+}
+
+
+/* =========================================================
+   SCREEN IFRAME
+   ========================================================= */
+
+.screen-player iframe {
+
+  display: block;
+
+  width: 100%;
+
+  height: 540px;
+
+  border: 0;
+
+  background: #000;
+
+  opacity: 1;
+
+  transition:
+    opacity .25s ease;
+
+  touch-action: manipulation;
+}
+
+
+/* =========================================================
+   SCREEN PLACEHOLDER
+   ========================================================= */
+
+.screen-placeholder {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 3;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  background:
+    radial-gradient(
+      circle,
+      #151922 0%,
+      #050608 65%
+    );
+
+  color: #fff;
+
+  text-align: center;
+
+  pointer-events: none;
+
+  transition:
+    opacity .25s ease;
+}
+
+.screen-placeholder.hidden {
+
+  opacity: 0;
+
+  visibility: hidden;
+}
+
+.screen-placeholder-icon {
+
+  width: 58px;
+
+  height: 58px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 16px;
+
+  background:
+    rgba(255,255,255,.06);
+
+  font-size: 27px;
+}
+
+.screen-placeholder strong {
+
+  font-size: 14px;
+
+  color: #dce1e8;
+}
+
+
+/* =========================================================
+   SCREEN BOTTOM
+   ========================================================= */
+
+.screen-bottom {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding:
+    13px 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #11151d,
+      #0b0e14
+    );
+
+  border-top:
+    1px solid
+    var(--line);
+}
+
+.now-showing {
+
+  min-width: 0;
+}
+
+.now-showing span {
+
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: var(--muted);
+
+  font-size: 9px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.5px;
+}
+
+#nowShowing {
+
+  display: block;
+
+  overflow: hidden;
+
+  color: #fff;
+
+  font-size: 15px;
+
+  font-weight: 900;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   FULLSCREEN BUTTON
+   ========================================================= */
+
+.fullscreen-button {
+
+  flex-shrink: 0;
+
+  width: 40px;
+
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border:
+    1px solid
+    rgba(255,255,255,.1);
+
+  border-radius: 8px;
+
+  background:
+    var(--surface-3);
+
+  color: #fff;
+
+  font-size: 18px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    transform .2s ease,
+    color .2s ease;
+
+  touch-action: manipulation;
+}
+
+.fullscreen-button:hover {
+
+  background:
+    var(--accent);
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* =========================================================
+   FULLSCREEN PLAYER
+   ========================================================= */
+
+.screen-player:fullscreen {
+
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+
+  height: 100vh;
+
+  max-width: none;
+
+  max-height: none;
+
+  margin: 0;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: #000;
+
+  box-shadow: none;
+
+  overflow: hidden;
+
+  z-index: 999999;
+}
+
+
+.screen-player:-webkit-full-screen {
+
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+
+  height: 100vh;
+
+  max-width: none;
+
+  max-height: none;
+
+  margin: 0;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: #000;
+
+  box-shadow: none;
+
+  overflow: hidden;
+
+  z-index: 999999;
+}
+
+
+.screen-player:fullscreen iframe {
+
+  width: 100vw;
+
+  height: 100vh;
+
+  min-width: 100vw;
+
+  min-height: 100vh;
+
+  display: block;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: #000;
+
+  opacity: 1;
+}
+
+
+.screen-player:-webkit-full-screen iframe {
+
+  width: 100vw;
+
+  height: 100vh;
+
+  min-width: 100vw;
+
+  min-height: 100vh;
+
+  display: block;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: #000;
+
+  opacity: 1;
+}
+
+
+.screen-player:fullscreen .screen-status {
+
+  position: absolute;
+
+  top: 20px;
+
+  left: 20px;
+
+  z-index: 99999;
+}
+
+
+.screen-player:-webkit-full-screen .screen-status {
+
+  position: absolute;
+
+  top: 20px;
+
+  left: 20px;
+
+  z-index: 99999;
+}
+
+
+.screen-player:fullscreen .screen-bottom {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 99998;
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  padding: 0;
+
+  background: transparent;
+
+  border: 0;
+
+  pointer-events: none;
+}
+
+
+.screen-player:-webkit-full-screen .screen-bottom {
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 99998;
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  padding: 0;
+
+  background: transparent;
+
+  border: 0;
+
+  pointer-events: none;
+}
+
+
+.screen-player:fullscreen .now-showing {
+
+  display: none;
+}
+
+
+.screen-player:-webkit-full-screen .now-showing {
+
+  display: none;
+}
+
+
+.screen-player:fullscreen .fullscreen-button {
+
+  position: absolute;
+
+  top: 20px;
+
+  right: 20px;
+
+  z-index: 100000;
+
+  width: 52px;
+
+  height: 52px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(255,255,255,.18);
+
+  border-radius: 50%;
+
+  background:
+    rgba(0,0,0,.68);
+
+  color: #fff;
+
+  font-size: 34px;
+
+  font-weight: 300;
+
+  line-height: 1;
+
+  text-align: center;
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0 6px 25px
+    rgba(0,0,0,.35);
+
+  pointer-events: auto;
+
+  transform: none;
+}
+
+
+.screen-player:-webkit-full-screen .fullscreen-button {
+
+  position: absolute;
+
+  top: 20px;
+
+  right: 20px;
+
+  z-index: 100000;
+
+  width: 52px;
+
+  height: 52px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(255,255,255,.18);
+
+  border-radius: 50%;
+
+  background:
+    rgba(0,0,0,.68);
+
+  color: #fff;
+
+  font-size: 34px;
+
+  font-weight: 300;
+
+  line-height: 1;
+
+  text-align: center;
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0 6px 25px
+    rgba(0,0,0,.35);
+
+  pointer-events: auto;
+
+  transform: none;
+}
+
+
+.screen-player:fullscreen .fullscreen-button:hover {
+
+  background:
+    var(--accent);
+
+  transform: scale(1.05);
+}
+
+
+.screen-player:-webkit-full-screen .fullscreen-button:hover {
+
+  background:
+    var(--accent);
+
+  transform: scale(1.05);
+}
+
+
+@media (orientation: landscape) {
+
+  .screen-player:fullscreen {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-width: 100vw;
+
+    min-height: 100vh;
+  }
+
+  .screen-player:fullscreen iframe {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-width: 100vw;
+
+    min-height: 100vh;
+  }
+
+  .screen-player:-webkit-full-screen {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-width: 100vw;
+
+    min-height: 100vh;
+  }
+
+  .screen-player:-webkit-full-screen iframe {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    min-width: 100vw;
+
+    min-height: 100vh;
+  }
+}
+
+
+@media (max-width: 550px) {
+
+  .screen-player:fullscreen .fullscreen-button {
+
+    top: 14px;
+
+    right: 14px;
+
+    width: 48px;
+
+    height: 48px;
+
+    font-size: 31px;
+  }
+
+  .screen-player:-webkit-full-screen .fullscreen-button {
+
+    top: 14px;
+
+    right: 14px;
+
+    width: 48px;
+
+    height: 48px;
+
+    font-size: 31px;
+  }
+}
+
+
+/* =========================================================
+   APP MENU
+   ========================================================= */
+
+.app-menu {
+
+  position: sticky;
+
+  top: var(--app-menu-top);
+
+  z-index: 850;
+
+  padding:
+    17px 0 8px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      var(--bg) 0%,
+      var(--bg) 88%,
+      rgba(7,9,13,0) 100%
+    );
+}
+
+
+/* =========================================================
+   APP BUTTONS
+   ========================================================= */
+
+.app-buttons {
+
+  display: flex;
+
+  align-items: stretch;
+
+  gap: 10px;
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
+
+  scrollbar-width: none;
+
+  -webkit-overflow-scrolling: touch;
+
+  touch-action: pan-x;
+}
+
+.app-buttons::-webkit-scrollbar {
+  display: none;
+}
+
+.app-button {
+
+  flex:
+    0 0 auto;
+
+  min-width: 150px;
+
+  min-height: 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  padding:
+    10px 16px;
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--surface),
+      #0c1016
+    );
+
+  color: var(--muted);
+
+  font-size: 13px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    transform .2s ease,
+    background .2s ease,
+    border-color .2s ease,
+    color .2s ease;
+
+  touch-action: manipulation;
+}
+
+.app-button:hover {
+
+  transform:
+    translateY(-2px);
+
+  color: #fff;
+
+  border-color:
+    rgba(255,255,255,.14);
+}
+
+.app-button.active {
+
+  color: #fff;
+
+  border-color:
+    rgba(255,23,68,.45);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.18),
+      #10141b
+    );
+
+  box-shadow:
+    0 8px 25px
+    rgba(255,23,68,.07);
+}
+
+.app-button-icon {
+
+  font-size: 18px;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content-section {
+
+  padding:
+    25px 0 20px;
+}
+
+.content-heading {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 16px;
+}
+
+.content-heading h1 {
+
+  margin: 0;
+
+  font-size:
+    clamp(20px, 3vw, 26px);
+
+  letter-spacing: -.5px;
+}
+
+.content-count {
+
+  min-width: 27px;
+
+  height: 27px;
+
+  display: grid;
+
+  place-items: center;
+
+  padding: 0 8px;
+
+  border-radius: 999px;
+
+  background:
+    var(--surface-2);
+
+  color: var(--muted);
+
+  font-size: 11px;
+
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   MATCH GRID
+   ========================================================= */
+
+.match-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0,1fr));
+
+  gap: 12px;
+}
+
+
+/* =========================================================
+   FOOTBALL MATCH CARD
+   ========================================================= */
+
+.match-card {
+
+  position: relative;
+
+  min-height: 112px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 5px;
+
+  padding: 12px 14px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(255,23,68,.20);
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
+
+  color: #fff;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease,
+    border-color .3s ease,
+    box-shadow .3s ease,
+    background .3s ease,
+    opacity .3s ease;
+
+  touch-action: manipulation;
+}
+
+
+/* =========================================================
+   UPCOMING
+   ========================================================= */
+
+.match-card.is-upcoming {
+
+  border-color:
+    rgba(255,23,68,.28);
+
+  background:
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
+}
+
+.match-card.is-upcoming:hover {
+
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(255,23,68,.60);
+
+  box-shadow:
+    0 8px 24px
+    rgba(255,23,68,.10);
+}
+
+
+/* =========================================================
+   LIVE
+   ========================================================= */
+
+.match-card.is-live {
+
+  border-color:
+    rgba(255,23,68,.65);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.12),
+      #0c1016
+    );
+
+  box-shadow:
+    0 0 0 1px
+    rgba(255,23,68,.10),
+
+    0 0 22px
+    rgba(255,23,68,.12);
+
+  animation:
+    liveCardPulse 2s ease-in-out infinite;
+}
+
+.match-card.is-live:hover {
+
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(255,23,68,.85);
+
+  box-shadow:
+    0 0 0 1px
+    rgba(255,23,68,.16),
+
+    0 0 30px
+    rgba(255,23,68,.20);
+}
+
+
+/* =========================================================
+   ENDED
+   ========================================================= */
+
+.match-card.is-ended {
+
+  opacity: .58;
+
+  border-color:
+    rgba(255,255,255,.05);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.008)
+    );
+
+  box-shadow: none;
+
+  cursor: pointer;
+}
+
+.match-card.is-ended:hover {
+
+  transform: none;
+
+  border-color:
+    rgba(255,255,255,.08);
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   MATCH STATUS
+   ========================================================= */
+
+.match-status {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: fit-content;
+
+  min-height: 23px;
+
+  padding:
+    4px 10px;
+
+  margin-bottom: 1px;
+
+  border-radius: 999px;
+
+  font-size: 8px;
+
+  font-weight: 950;
+
+  letter-spacing: 1px;
+
+  line-height: 1;
+
+  transition:
+    color .3s ease,
+    background .3s ease,
+    border-color .3s ease;
+}
+
+
+/* UPCOMING */
+
+.match-status.upcoming {
+
+  color:
+    #ff637d;
+
+  background:
+    rgba(255,23,68,.10);
+
+  border:
+    1px solid
+    rgba(255,23,68,.25);
+}
+
+
+/* LIVE */
+
+.match-status.live {
+
+  color: #fff;
+
+  background:
+    var(--match-live);
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  font-weight: 950;
+
+  box-shadow:
+    0 0 12px
+    rgba(255,23,68,.25);
+}
+
+.match-status.live::before {
+
+  content: "";
+
+  width: 6px;
+
+  height: 6px;
+
+  margin-right: 6px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  box-shadow:
+    0 0 8px
+    rgba(255,255,255,.9);
+
+  animation:
+    livePulse 1.2s infinite;
+}
+
+
+/* ENDED */
+
+.match-status.ended {
+
+  color:
+    var(--match-ended);
+
+  background:
+    rgba(133,140,152,.10);
+
+  border:
+    1px solid
+    rgba(133,140,152,.16);
+}
+
+
+/* =========================================================
+   MATCH TEAMS
+   ========================================================= */
+
+.match-teams {
+
+  display: block;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  color: #fff;
+
+  font-size: 16px;
+
+  font-weight: 900;
+
+  line-height: 1.2;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.match-card.is-ended .match-teams {
+
+  color:
+    #858b95;
+}
+
+
+/* =========================================================
+   MATCH DATE
+   ========================================================= */
+
+.match-date {
+
+  display: inline-block;
+
+  color:
+    #aeb6c3;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  margin-top: 1px;
+}
+
+
+/* =========================================================
+   MATCH TIME
+   ========================================================= */
+
+.match-time {
+
+  display: inline-block;
+
+  color:
+    #ffffff;
+
+  font-size: 12px;
+
+  font-weight: 900;
+
+  line-height: 1.2;
+}
+
+
+/*
+ * Keep date and time visually compact.
+ */
+
+.match-date + .match-time {
+
+  margin-top: -2px;
+}
+
+
+/* =========================================================
+   MATCH COUNTDOWN
+   ========================================================= */
+
+.match-countdown {
+
+  display: block;
+
+  margin-top: 3px;
+
+  color:
+    #ff637d;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  letter-spacing: .1px;
+}
+
+.match-card.is-live .match-countdown {
+
+  color:
+    #ff637d;
+
+  font-weight: 950;
+}
+
+.match-card.is-ended .match-countdown {
+
+  color:
+    #777e89;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   LIVE ANIMATIONS
+   ========================================================= */
+
+@keyframes livePulse {
+
+  0%,
+  100% {
+
+    opacity: 1;
+
+    transform:
+      scale(1);
+  }
+
+  50% {
+
+    opacity: .35;
+
+    transform:
+      scale(.75);
+  }
+}
+
+
+@keyframes liveCardPulse {
+
+  0%,
+  100% {
+
+    box-shadow:
+      0 0 0 1px
+      rgba(255,23,68,.10),
+
+      0 0 18px
+      rgba(255,23,68,.08);
+  }
+
+  50% {
+
+    box-shadow:
+      0 0 0 1px
+      rgba(255,23,68,.22),
+
+      0 0 28px
+      rgba(255,23,68,.17);
+  }
+}
+
+
+/* =========================================================
+   HIGHLIGHTS
+   ========================================================= */
+
+.highlight-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0,1fr));
+
+  gap: 10px;
+}
+
+
+/* =========================================================
+   HIGHLIGHT CARD
+   ========================================================= */
+
+.highlight-card {
+
+  position: relative;
+
+  min-width: 0;
+
+  min-height: 135px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  padding: 13px;
+
+  overflow: hidden;
+
+  isolation: isolate;
+
+  border:
+    1px solid
+    rgba(255,255,255,.09);
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
+
+  color: #fff;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
+
+  touch-action: manipulation;
+}
+
+.highlight-card::before {
+
+  content: "";
+
+  position: absolute;
+
+  width: 115px;
+
+  height: 115px;
+
+  top: -62px;
+
+  right: -6px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.09);
+
+  z-index: -1;
+}
+
+.highlight-card::after {
+
+  content: "";
+
+  position: absolute;
+
+  width: 88px;
+
+  height: 88px;
+
+  top: -48px;
+
+  right: 23px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.035);
+
+  z-index: -1;
+}
+
+.highlight-card:hover {
+
+  transform:
+    translateY(-3px);
+
+  border-color:
+    rgba(255,23,68,.4);
+
+  box-shadow:
+    0 10px 25px
+    rgba(0,0,0,.28);
+}
+
+.highlight-card.active {
+
+  border-color:
+    rgba(255,23,68,.65);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.13),
+      #10141b
+    );
+}
+
+
+/* =========================================================
+   HIGHLIGHT THUMBNAIL
+   ========================================================= */
+
+.highlight-thumbnail {
+
+  width: 50px;
+
+  height: 50px;
+
+  display: grid;
+
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #252b36,
+      #151922
+    );
+
+  border:
+    1px solid
+    rgba(255,255,255,.09);
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.05),
+
+    0 5px 15px
+    rgba(0,0,0,.2);
+
+  font-size: 24px;
+
+  line-height: 1;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+.highlight-thumbnail span {
+
+  width: auto;
+
+  height: auto;
+
+  display: block;
+
+  padding: 0;
+
+  border-radius: 0;
+
+  background: transparent;
+
+  color: #fff;
+
+  font-size: 22px;
+
+  line-height: 1;
+}
+
+.highlight-card strong {
+
+  display: block;
+
+  width: 100%;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  padding:
+    9px 5px 0 0;
+
+  color: #fff;
+
+  font-size: 14px;
+
+  font-weight: 900;
+
+  line-height: 1.2;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+.highlight-card small {
+
+  display: block;
+
+  width: 100%;
+
+  padding:
+    5px 5px 0 0;
+
+  color:
+    #9aa3b2;
+
+  font-size: 10px;
+
+  line-height: 1.2;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   TV CHANNELS
+   ========================================================= */
+
+.tv-content {
+
+  padding-top: 20px;
+}
+
+.tv-category {
+
+  padding-top: 22px;
+}
+
+.tv-category-heading {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 12px;
+}
+
+.tv-category-heading h2 {
+
+  margin: 0;
+
+  font-size: 18px;
+
+  letter-spacing: -.3px;
+}
+
+.tv-category-heading span {
+
+  color: var(--muted);
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   TV CHANNEL GRID
+   ========================================================= */
+
+.tv-channel-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0,1fr));
+
+  gap: 10px;
+}
+
+
+/* =========================================================
+   TV CHANNEL CARD
+   ========================================================= */
+
+.tv-channel {
+
+  position: relative;
+
+  min-width: 0;
+
+  min-height: 135px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  padding: 13px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.09);
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
+
+  color: #fff;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  isolation: isolate;
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
+
+  touch-action: manipulation;
+}
+
+.tv-channel::before {
+
+  content: "";
+
+  position: absolute;
+
+  width: 115px;
+
+  height: 115px;
+
+  top: -62px;
+
+  right: -6px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.09);
+
+  z-index: -1;
+}
+
+.tv-channel::after {
+
+  content: "";
+
+  position: absolute;
+
+  width: 88px;
+
+  height: 88px;
+
+  top: -48px;
+
+  right: 23px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.035);
+
+  z-index: -1;
+}
+
+.tv-channel:hover {
+
+  transform:
+    translateY(-3px);
+
+  border-color:
+    rgba(255,23,68,.4);
+
+  box-shadow:
+    0 10px 25px
+    rgba(0,0,0,.28);
+}
+
+.tv-channel.active {
+
+  border-color:
+    rgba(255,23,68,.65);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.13),
+      #10141b
+    );
+
+  box-shadow:
+    0 0 0 1px
+    rgba(255,23,68,.08),
+
+    0 10px 25px
+    rgba(0,0,0,.22);
+}
+
+
+/* =========================================================
+   TV ICON
+   ========================================================= */
+
+.tv-channel-icon {
+
+  width: 50px;
+
+  height: 50px;
+
+  display: grid;
+
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #252b36,
+      #151922
+    );
+
+  border:
+    1px solid
+    rgba(255,255,255,.09);
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.05),
+
+    0 5px 15px
+    rgba(0,0,0,.2);
+
+  font-size: 24px;
+
+  line-height: 1;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   TV INFO
+   ========================================================= */
+
+.tv-channel-info {
+
+  min-width: 0;
+
+  width: 100%;
+
+  padding-top: 9px;
+
+  padding-right: 5px;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+.tv-channel-info strong {
+
+  display: block;
+
+  overflow: hidden;
+
+  margin-bottom: 5px;
+
+  color: #fff;
+
+  font-size: 14px;
+
+  font-weight: 900;
+
+  line-height: 1.2;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.tv-channel-info small {
+
+  display: block;
+
+  color:
+    #9aa3b2;
+
+  font-size: 10px;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   TV STATUS
+   ========================================================= */
+
+.tv-channel-status {
+
+  position: absolute;
+
+  top: 13px;
+
+  right: 13px;
+
+  z-index: 3;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 32px;
+
+  padding:
+    6px 9px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255,23,68,.13);
+
+  color:
+    #ff5b78;
+
+  font-size: 9px;
+
+  font-weight: 950;
+
+  letter-spacing: 1px;
+}
+
+.tv-channel.active .tv-channel-status {
+
+  background:
+    rgba(255,23,68,.2);
+
+  color:
+    #ff6b86;
+}
+
+
+/* =========================================================
+   MOVIES
+   ========================================================= */
+
+.movies-content {
+
+  padding-top: 25px;
+}
+
+
+/* =========================================================
+   MOVIE GRID
+   ========================================================= */
+
+.movie-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0,1fr));
+
+  gap: 12px;
+}
+
+
+/* =========================================================
+   MOVIE CARD
+   ========================================================= */
+
+.movie-card {
+
+  position: relative;
+
+  min-width: 0;
+
+  min-height: 150px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 17px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--surface),
+      #0c1016
+    );
+
+  color: #fff;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
+
+  touch-action: manipulation;
+}
+
+.movie-card::before {
+
+  content: "";
+
+  position: absolute;
+
+  width: 110px;
+
+  height: 110px;
+
+  top: -58px;
+
+  right: -8px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,23,68,.08);
+
+  pointer-events: none;
+}
+
+.movie-card:hover {
+
+  transform:
+    translateY(-3px);
+
+  border-color:
+    rgba(255,23,68,.45);
+
+  box-shadow:
+    0 10px 25px
+    rgba(0,0,0,.22);
+}
+
+.movie-card.active {
+
+  border-color:
+    rgba(255,23,68,.65);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.13),
+      #10141b
+    );
+
+  box-shadow:
+    0 0 0 1px
+    rgba(255,23,68,.08);
+}
+
+
+/* =========================================================
+   MOVIE STATUS
+   ========================================================= */
+
+.movie-status {
+
+  display: inline-flex;
+
+  padding:
+    4px 7px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255,23,68,.12);
+
+  color:
+    #ff637d;
+
+  font-size: 8px;
+
+  font-weight: 950;
+
+  letter-spacing: 1px;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   MOVIE ICON
+   ========================================================= */
+
+.movie-icon {
+
+  position: absolute;
+
+  top: 15px;
+
+  right: 15px;
+
+  width: 42px;
+
+  height: 42px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #252b36,
+      #151922
+    );
+
+  border:
+    1px solid
+    rgba(255,255,255,.09);
+
+  font-size: 20px;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   MOVIE TITLE
+   ========================================================= */
+
+.movie-title {
+
+  display: block;
+
+  max-width: 75%;
+
+  overflow: hidden;
+
+  font-size: 16px;
+
+  font-weight: 900;
+
+  line-height: 1.2;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+.movie-rating {
+
+  color:
+    var(--muted);
+
+  font-size: 11px;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+
+  padding:
+    35px 15px;
+
+  color: var(--muted);
+
+  text-align: center;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+
+  border-top:
+    1px solid
+    var(--line);
+
+  padding:
+    20px 0;
+
+  background:
+    #05070a;
+}
+
+.footer-wrap {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  color: var(--muted);
+
+  font-size: 11px;
+}
+
+.footer strong {
+
+  color: #fff;
+
+  font-size: 12px;
+
+  letter-spacing: .7px;
+}
+
+.footer strong span {
+  color: var(--accent);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .match-grid {
+
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+  }
+
+  .highlight-grid {
+
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+  }
+
+  .tv-channel-grid {
+
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+  }
+
+  .movie-grid {
+
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+  }
+}
+
+
+/* =========================================================
+   TABLET / MOBILE NAV
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  :root {
+
+    --header-height: 60px;
+  }
+
+
+  .nav-wrap {
+
+    position: relative;
+
+    min-height: 60px;
+  }
+
+
+  .menu-toggle {
+
+    display: grid;
+
+    place-items: center;
+
+    margin-left: auto;
+  }
+
+
+  .main-nav {
+
+    position: absolute;
+
+    top:
+      calc(100% + 1px);
+
+    left: 0;
+
+    right: 0;
+
+    display: none;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 3px;
+
+    padding: 10px;
+
+    background:
+      rgba(7,9,13,.98);
+
+    border-bottom:
+      1px solid
+      var(--line);
+
+    box-shadow:
+      0 15px 30px
+      rgba(0,0,0,.3);
+  }
+
+  .main-nav.open {
+    display: flex;
+  }
+
+  .main-nav a {
+    padding: 12px;
+  }
+
+
+  .screen-section {
+
+    top:
+      var(--header-height);
+  }
+
+
+  .screen-player {
+
+    border-radius: 12px;
+  }
+
+
+  .screen-player iframe {
+
+    height: 400px;
+  }
+
+
+  .app-buttons {
+
+    gap: 8px;
+
+    padding-bottom: 2px;
+
+    touch-action: pan-x;
+  }
+
+
+  .app-button {
+
+    min-width: 145px;
+
+    min-height: 52px;
+
+    padding:
+      8px 13px;
+
+    font-size: 11px;
+  }
+
+
+  .app-button-icon {
+    font-size: 16px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 550px) {
+
+  .container {
+
+    width:
+      calc(100% - 20px);
+  }
+
+
+  .screen-section {
+
+    top:
+      var(--header-height);
+
+    padding-top: 10px;
+  }
+
+
+  .screen-player iframe {
+
+    height: 235px;
+  }
+
+
+  .screen-bottom {
+
+    padding:
+      11px 12px;
+  }
+
+
+  #nowShowing {
+
+    font-size: 13px;
+  }
+
+
+  .fullscreen-button {
+
+    width: 36px;
+
+    height: 34px;
+
+    font-size: 16px;
+  }
+
+
+  .content-section {
+    padding-top: 18px;
+  }
+
+
+  .content-heading h1 {
+    font-size: 19px;
+  }
+
+
+  /* =======================================================
+     FOOTBALL FIXTURE CARDS
+     ======================================================= */
+
+  .match-grid {
+
+    grid-template-columns:
+      1fr;
+
+    gap: 9px;
+  }
+
+
+  .match-card {
+
+    min-height: 105px;
+
+    height: 105px;
+
+    padding:
+      9px 14px;
+
+    gap: 3px;
+
+    border-radius: 14px;
+
+    border:
+      1px solid
+      rgba(255,23,68,.30);
+
+    justify-content: center;
+
+    text-align: center;
+  }
+
+
+  .match-card.is-upcoming {
+
+    border-color:
+      rgba(255,23,68,.30);
+
+    background:
+      linear-gradient(
+        145deg,
+        #11151c,
+        #0b0e14
+      );
+  }
+
+
+  .match-card.is-upcoming:hover {
+
+    transform: none;
+
+    border-color:
+      rgba(255,23,68,.55);
+
+    box-shadow:
+      0 6px 18px
+      rgba(255,23,68,.08);
+  }
+
+
+  .match-card.is-live {
+
+    border-color:
+      rgba(255,23,68,.65);
+  }
+
+
+  .match-card.is-ended {
+
+    min-height: 105px;
+
+    height: 105px;
+  }
+
+
+  /* STATUS */
+
+  .match-status {
+
+    min-height: 21px;
+
+    padding:
+      4px 9px;
+
+    margin: 0 0 2px;
+
+    font-size: 7px;
+
+    letter-spacing: .9px;
+  }
+
+
+  /* TEAMS */
+
+  .match-teams {
+
+    width: 100%;
+
+    font-size: 15px;
+
+    font-weight: 900;
+
+    line-height: 1.15;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    overflow: hidden;
+  }
+
+
+  /* DATE */
+
+  .match-date {
+
+    display: inline-block;
+
+    margin-top: 2px;
+
+    color:
+      #9da6b4;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    line-height: 1.1;
+  }
+
+
+  /* TIME */
+
+  .match-time {
+
+    display: inline-block;
+
+    color:
+      #ffffff;
+
+    font-size: 11px;
+
+    font-weight: 900;
+
+    line-height: 1.1;
+
+    margin-left: 4px;
+  }
+
+
+  /*
+   * Put date and time on the same visual row.
+   */
+
+  .match-date + .match-time {
+
+    margin-top: 0;
+  }
+
+
+  /* COUNTDOWN */
+
+  .match-countdown {
+
+    margin-top: 3px;
+
+    color:
+      #ff637d;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    line-height: 1.1;
+  }
+
+
+  .match-card.is-live .match-countdown {
+
+    color:
+      #ff637d;
+  }
+
+
+  .match-card.is-ended .match-countdown {
+
+    color:
+      #777e89;
+  }
+
+
+  /* =======================================================
+     HIGHLIGHTS
+     ======================================================= */
+
+  .highlight-grid {
+
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+
+    gap: 8px;
+  }
+
+
+  .highlight-card {
+
+    min-height: 128px;
+
+    padding: 11px;
+
+    border-radius: 14px;
+  }
+
+
+  .highlight-thumbnail {
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 13px;
+
+    font-size: 22px;
+  }
+
+
+  .highlight-thumbnail span {
+    font-size: 21px;
+  }
+
+
+  .highlight-card strong {
+
+    padding:
+      7px 4px 0 0;
+
+    font-size: 12px;
+  }
+
+
+  .highlight-card small {
+
+    padding:
+      4px 4px 0 0;
+
+    font-size: 9px;
+  }
+
+
+  .highlight-card::before {
+
+    width: 100px;
+
+    height: 100px;
+
+    top: -54px;
+
+    right: -8px;
+  }
+
+
+  .highlight-card::after {
+
+    width: 76px;
+
+    height: 76px;
+
+    top: -42px;
+
+    right: 18px;
+  }
+
+
+  /* =======================================================
+     TV
+     ======================================================= */
+
+  .tv-category {
+    padding-top: 18px;
+  }
+
+
+  .tv-category-heading h2 {
+    font-size: 16px;
+  }
+
+
+  .tv-category-heading span {
+    font-size: 9px;
+  }
+
+
+  .tv-channel-grid {
+
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+
+    gap: 8px;
+  }
+
+
+  .tv-channel {
+
+    min-height: 128px;
+
+    padding: 11px;
+
+    border-radius: 14px;
+  }
+
+
+  .tv-channel-icon {
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 13px;
+
+    font-size: 22px;
+  }
+
+
+  .tv-channel-status {
+
+    top: 11px;
+
+    right: 11px;
+
+    min-height: 29px;
+
+    padding:
+      5px 8px;
+
+    font-size: 8px;
+
+    letter-spacing: .8px;
+  }
+
+
+  .tv-channel-info {
+    padding-top: 7px;
+  }
+
+
+  .tv-channel-info strong {
+
+    margin-bottom: 4px;
+
+    font-size: 12px;
+  }
+
+
+  .tv-channel-info small {
+    font-size: 9px;
+  }
+
+
+  .tv-channel::before {
+
+    width: 100px;
+
+    height: 100px;
+
+    top: -54px;
+
+    right: -8px;
+  }
+
+
+  .tv-channel::after {
+
+    width: 76px;
+
+    height: 76px;
+
+    top: -42px;
+
+    right: 18px;
+  }
+
+
+  /* =======================================================
+     MOVIES
+     ======================================================= */
+
+  .movie-grid {
+
+    grid-template-columns:
+      1fr;
+
+    gap: 10px;
+  }
+
+
+  .movie-card {
+
+    min-height: 105px;
+
+    padding: 15px;
+
+    border-radius: 14px;
+  }
+
+
+  .movie-status {
+
+    font-size: 8px;
+
+    padding:
+      4px 7px;
+  }
+
+
+  .movie-title {
+
+    font-size: 15px;
+
+    max-width: 72%;
+  }
+
+
+  .movie-rating {
+    font-size: 10px;
+  }
+
+
+  .movie-icon {
+
+    width: 43px;
+
+    height: 43px;
+
+    top: 13px;
+
+    right: 13px;
+
+    border-radius: 12px;
+
+    font-size: 20px;
+  }
+
+
+  /* =======================================================
+     FOOTER
+     ======================================================= */
+
+  .footer-wrap {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .app-button {
+
+    min-width: 140px;
+
+    font-size: 10px;
+
+    gap: 5px;
+  }
+
+
+  .app-button-icon {
+    font-size: 14px;
+  }
+
+
+  /* FOOTBALL */
+
+  .match-card {
+
+    min-height: 100px;
+
+    height: 100px;
+
+    padding:
+      8px 12px;
+
+    gap: 2px;
+  }
+
+
+  .match-card.is-ended {
+
+    min-height: 100px;
+
+    height: 100px;
+  }
+
+
+  .match-status {
+
+    min-height: 20px;
+
+    padding:
+      4px 8px;
+
+    font-size: 7px;
+  }
+
+
+  .match-teams {
+
+    font-size: 14px;
+  }
+
+
+  .match-date {
+
+    font-size: 8px;
+  }
+
+
+  .match-time {
+
+    font-size: 10px;
+  }
+
+
+  .match-countdown {
+
+    font-size: 8px;
+
+    margin-top: 2px;
+  }
+
+
+  /* HIGHLIGHTS */
+
+  .highlight-grid {
+    gap: 7px;
+  }
+
+
+  .highlight-card {
+
+    min-height: 122px;
+
+    padding: 10px;
+
+    border-radius: 13px;
+  }
+
+
+  .highlight-thumbnail {
+
+    width: 43px;
+
+    height: 43px;
+
+    border-radius: 12px;
+
+    font-size: 21px;
+  }
+
+
+  .highlight-thumbnail span {
+    font-size: 20px;
+  }
+
+
+  .highlight-card strong {
+    font-size: 12px;
+  }
+
+
+  .highlight-card small {
+    font-size: 9px;
+  }
+
+
+  /* TV */
+
+  .tv-channel-grid {
+    gap: 7px;
+  }
+
+
+  .tv-channel {
+
+    min-height: 122px;
+
+    padding: 10px;
+
+    border-radius: 13px;
+  }
+
+
+  .tv-channel-icon {
+
+    width: 43px;
+
+    height: 43px;
+
+    border-radius: 12px;
+
+    font-size: 21px;
+  }
+
+
+  .tv-channel-status {
+
+    top: 10px;
+
+    right: 10px;
+
+    padding:
+      5px 7px;
+
+    font-size: 7px;
+  }
+
+
+  .tv-channel-info strong {
+    font-size: 12px;
+  }
+
+
+  .tv-channel-info small {
+    font-size: 9px;
+  }
+
+
+  /* MOVIE */
+
+  .movie-card {
+
+    min-height: 102px;
+
+    padding: 14px;
+  }
+
+
+  .movie-title {
+    font-size: 14px;
+  }
+
+
+  .movie-icon {
+
+    width: 40px;
+
+    height: 40px;
+
+    top: 12px;
+
+    right: 12px;
+
+    font-size: 19px;
+  }
+}
+
+
+/* =========================================================
+   REDUCE MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+
+    scroll-behavior: auto !important;
+
+    animation-duration: .01ms !important;
+
+    animation-iteration-count: 1 !important;
+
+    transition-duration: .01ms !important;
+  }
+}
