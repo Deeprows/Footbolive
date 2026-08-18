@@ -1,10 +1,12 @@
 package com.deeprows.football;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -16,6 +18,7 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -29,6 +32,8 @@ public class MainActivity extends Activity {
     private View customView;
     private WebChromeClient.CustomViewCallback customViewCallback;
 
+    private RefreshableWebViewContainer refreshContainer;
+
     private final String WEBSITE_URL =
             "https://deeprows.github.io/Footbolive/";
 
@@ -41,7 +46,7 @@ public class MainActivity extends Activity {
         /*
          * FULL SCREEN
          *
-         * Hide STATUS BAR only.
+         * Status bar hidden.
          * Navigation bar remains visible.
          */
         getWindow().setFlags(
@@ -49,9 +54,6 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
-        /*
-         * Keep navigation bar visible.
-         */
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         );
@@ -65,7 +67,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * Root container.
+         * Root layout.
          */
         rootLayout = new FrameLayout(this);
 
@@ -76,15 +78,21 @@ public class MainActivity extends Activity {
         setContentView(rootLayout);
 
         /*
-         * Main website.
+         * Create main website.
          */
         createMainWebView();
 
+        /*
+         * Load website.
+         */
         mainWebView.loadUrl(WEBSITE_URL);
     }
 
     private void createMainWebView() {
 
+        /*
+         * Create WebView.
+         */
         mainWebView = new WebView(this);
 
         WebSettings settings =
@@ -107,7 +115,7 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(false);
 
         /*
-         * Popup / new window support.
+         * New windows / target="_blank".
          */
         settings.setSupportMultipleWindows(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
@@ -175,8 +183,8 @@ public class MainActivity extends Activity {
                 new WebChromeClient() {
 
                     /*
-                     * Handle target="_blank"
-                     * and window.open().
+                     * Handle window.open()
+                     * and target="_blank".
                      */
                     @Override
                     public boolean onCreateWindow(
@@ -230,9 +238,9 @@ public class MainActivity extends Activity {
                         );
 
                         /*
-                         * Hide main WebView.
+                         * Hide website.
                          */
-                        mainWebView.setVisibility(
+                        refreshContainer.setVisibility(
                                 View.GONE
                         );
 
@@ -244,18 +252,10 @@ public class MainActivity extends Activity {
                         );
 
                         /*
-                         * Hide status bar.
-                         * Keep navigation bar visible.
+                         * Status bar remains hidden.
+                         * Navigation bar remains visible.
                          */
-                        getWindow().setFlags(
-                                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                                WindowManager.LayoutParams.FLAG_FULLSCREEN
-                        );
-
-                        getWindow().getDecorView()
-                                .setSystemUiVisibility(
-                                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                );
+                        keepFullScreen();
                     }
 
                     /*
@@ -285,39 +285,84 @@ public class MainActivity extends Activity {
                         /*
                          * Show website again.
                          */
-                        mainWebView.setVisibility(
+                        refreshContainer.setVisibility(
                                 View.VISIBLE
                         );
 
                         /*
-                         * Return to portrait.
+                         * Portrait.
                          */
                         setRequestedOrientation(
                                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                         );
 
                         /*
-                         * Status bar stays hidden.
-                         * Navigation bar stays visible.
+                         * Keep status bar hidden.
+                         * Keep navigation bar visible.
                          */
-                        getWindow().setFlags(
-                                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                                WindowManager.LayoutParams.FLAG_FULLSCREEN
-                        );
-
-                        getWindow().getDecorView()
-                                .setSystemUiVisibility(
-                                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                );
+                        keepFullScreen();
                     }
                 }
         );
 
         /*
-         * Add website to screen.
+         * Native pull-to-refresh container.
+         */
+        refreshContainer =
+                new RefreshableWebViewContainer(this);
+
+        refreshContainer.setBackgroundColor(
+                Color.rgb(7, 9, 13)
+        );
+
+        refreshContainer.setWebView(
+                mainWebView
+        );
+
+        /*
+         * Refresh callback.
+         */
+        refreshContainer.setOnRefreshListener(
+                () -> {
+
+                    if (mainWebView != null) {
+                        mainWebView.reload();
+                    }
+
+                    /*
+                     * Small delay so the refresh
+                     * indicator doesn't disappear
+                     * before the reload begins.
+                     */
+                    mainWebView.postDelayed(
+                            () -> {
+
+                                if (refreshContainer != null) {
+                                    refreshContainer.stopRefreshing();
+                                }
+
+                            },
+                            700
+                    );
+                }
+        );
+
+        /*
+         * Add WebView to refresh container.
+         */
+        refreshContainer.addView(
+                mainWebView,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        /*
+         * Add refresh container to root.
          */
         rootLayout.addView(
-                mainWebView,
+                refreshContainer,
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT
@@ -328,8 +373,8 @@ public class MainActivity extends Activity {
     private void handleMainNavigation(String url) {
 
         /*
-         * Keep Deeprowss pages inside the
-         * main WebView.
+         * Keep Deeprowss pages inside
+         * the main WebView.
          */
         if (url.startsWith(
                 "https://deeprows.github.io/"
@@ -342,7 +387,7 @@ public class MainActivity extends Activity {
 
         /*
          * External/on-click navigation
-         * opens inside our popup.
+         * opens inside the popup.
          */
         openPopup(url);
     }
@@ -383,8 +428,8 @@ public class MainActivity extends Activity {
                 );
 
         /*
-         * Popup navigation stays inside
-         * the popup WebView.
+         * Keep popup navigation inside
+         * popup WebView.
          */
         popupWebView.setWebViewClient(
                 new WebViewClient()
@@ -410,15 +455,14 @@ public class MainActivity extends Activity {
     private void showPopupContainer() {
 
         /*
-         * Don't create another popup if one
-         * already exists.
+         * Only one popup at a time.
          */
         if (popupContainer != null) {
             return;
         }
 
         /*
-         * Popup background.
+         * Popup container.
          */
         popupContainer =
                 new FrameLayout(this);
@@ -428,7 +472,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * TOP CONTROL BAR
+         * Top control bar.
          */
         LinearLayout topBar =
                 new LinearLayout(this);
@@ -453,7 +497,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * BACK BUTTON
+         * BACK BUTTON.
          */
         ImageButton backButton =
                 new ImageButton(this);
@@ -490,7 +534,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * TITLE
+         * TITLE.
          */
         TextView title =
                 new TextView(this);
@@ -519,7 +563,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * CLOSE BUTTON
+         * CLOSE BUTTON.
          */
         ImageButton closeButton =
                 new ImageButton(this);
@@ -545,7 +589,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * BACK
+         * Back button.
          */
         topBar.addView(
                 backButton,
@@ -556,7 +600,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * TITLE
+         * Title.
          */
         LinearLayout.LayoutParams titleParams =
                 new LinearLayout.LayoutParams(
@@ -571,7 +615,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * X
+         * X button.
          */
         topBar.addView(
                 closeButton,
@@ -582,7 +626,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * Add top bar FIRST.
+         * Add top bar.
          */
         FrameLayout.LayoutParams topBarParams =
                 new FrameLayout.LayoutParams(
@@ -597,11 +641,9 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * WEBVIEW AREA
+         * Popup WebView.
          *
-         * It starts BELOW the control bar.
-         * Therefore the X can NEVER be
-         * covered by the WebView.
+         * It starts below the top bar.
          */
         FrameLayout.LayoutParams webParams =
                 new FrameLayout.LayoutParams(
@@ -618,7 +660,7 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * Put popup above the website.
+         * Add popup over website.
          */
         rootLayout.addView(
                 popupContainer,
@@ -629,9 +671,10 @@ public class MainActivity extends Activity {
         );
 
         /*
-         * Hide website while popup is open.
+         * Hide main website while popup
+         * is active.
          */
-        mainWebView.setVisibility(
+        refreshContainer.setVisibility(
                 View.INVISIBLE
         );
     }
@@ -643,7 +686,7 @@ public class MainActivity extends Activity {
         }
 
         /*
-         * Stop and destroy popup WebView.
+         * Stop and destroy popup.
          */
         if (popupWebView != null) {
 
@@ -664,18 +707,22 @@ public class MainActivity extends Activity {
         popupContainer = null;
 
         /*
-         * Restore website.
+         * Restore main website.
          */
-        mainWebView.setVisibility(
+        refreshContainer.setVisibility(
                 View.VISIBLE
         );
+
+        /*
+         * Keep status bar hidden.
+         */
+        keepFullScreen();
     }
 
     /*
-     * Keep status bar hidden.
+     * Hide STATUS BAR.
      *
-     * IMPORTANT:
-     * Navigation bar is NOT hidden.
+     * Navigation BAR remains visible.
      */
     private void keepFullScreen() {
 
@@ -684,6 +731,16 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
+        /*
+         * IMPORTANT:
+         *
+         * We intentionally DO NOT use:
+         *
+         * SYSTEM_UI_FLAG_HIDE_NAVIGATION
+         * SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+         *
+         * Therefore the navigation bar remains visible.
+         */
         getWindow().getDecorView()
                 .setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -745,8 +802,7 @@ public class MainActivity extends Activity {
         super.onResume();
 
         /*
-         * Make sure status bar remains hidden
-         * when returning to the app.
+         * Make sure status bar remains hidden.
          */
         keepFullScreen();
     }
@@ -770,4 +826,88 @@ public class MainActivity extends Activity {
 
         super.onDestroy();
     }
-}
+
+
+    /*
+     * =========================================================
+     * NATIVE PULL-DOWN-TO-REFRESH CONTAINER
+     * =========================================================
+     *
+     * This avoids AndroidX completely.
+     *
+     * Pull down when the WebView is already at
+     * the top of the page.
+     */
+    private static class RefreshableWebViewContainer
+            extends FrameLayout {
+
+        private WebView webView;
+
+        private float startY;
+
+        private boolean dragging = false;
+
+        private boolean refreshing = false;
+
+        private final int TRIGGER_DISTANCE = 180;
+
+        private final int MAX_PULL_DISTANCE = 300;
+
+        private ProgressBar progressBar;
+
+        private OnRefreshListener listener;
+
+        interface OnRefreshListener {
+            void onRefresh();
+        }
+
+        public RefreshableWebViewContainer(
+                Context context) {
+
+            super(context);
+
+            setClipChildren(false);
+
+            /*
+             * Refresh indicator.
+             */
+            progressBar =
+                    new ProgressBar(
+                            context
+                    );
+
+            progressBar.setVisibility(
+                    View.GONE
+            );
+
+            LayoutParams progressParams =
+                    new LayoutParams(
+                            70,
+                            70
+                    );
+
+            progressParams.gravity =
+                    Gravity.TOP |
+                    Gravity.CENTER_HORIZONTAL;
+
+            progressParams.topMargin = 20;
+
+            addView(
+                    progressBar,
+                    progressParams
+            );
+        }
+
+        public void setWebView(
+                WebView webView) {
+
+            this.webView = webView;
+        }
+
+        public void setOnRefreshListener(
+                OnRefreshListener listener) {
+
+            this.listener = listener;
+        }
+
+        public void
