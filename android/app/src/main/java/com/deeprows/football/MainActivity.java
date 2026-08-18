@@ -544,8 +544,14 @@ public class MainActivity extends Activity {
         settings.setTextZoom(
                 100
         );
+        
+        settings.setDefaultTextEncodingName(
+        "UTF-8"
+        );
 
-
+         settings.setSupportZoom(
+        false
+        );
         /*
          * =====================================================
          * IMPORTANT CACHE SETTING
