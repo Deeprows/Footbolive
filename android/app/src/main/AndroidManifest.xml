@@ -2,35 +2,36 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Internet access for the Deeprowss website -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:hardwareAccelerated="true"
-        android:label="Deeprowss"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.Deeprowss">
+        android:icon="@mipmap/ic_launcher"
+        android:label="Deeprowss Football"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="false">
 
-        <!-- Splash screen -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:exported="true"
+            android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Deeprowss.Splash">
+            android:windowSoftInputMode="adjustResize">
 
             <intent-filter>
+
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
 
         </activity>
-
-        <!-- Main website -->
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false"
-            android:screenOrientation="portrait" />
 
     </application>
 
