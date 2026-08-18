@@ -7,7 +7,7 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
   >
 
   <meta
@@ -20,12 +20,117 @@
     content="#07090d"
   >
 
+  <meta
+    name="color-scheme"
+    content="dark"
+  >
+
+  <meta
+    name="mobile-web-app-capable"
+    content="yes"
+  >
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  >
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  >
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Deeprowss"
+  >
+
   <title>Deeprowss</title>
+
+
+  <!-- =========================================================
+       FAVICON / APP ICON
+       ========================================================= -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="icons/icon-192.png"
+  >
+
+  <link
+    rel="apple-touch-icon"
+    href="icons/icon-192.png"
+  >
+
+
+  <!-- =========================================================
+       CRITICAL FIRST-PAINT STYLES
+       
+       These styles appear before style.css so Android WebView
+       immediately paints the website dark instead of showing
+       a white page while CSS is loading.
+       ========================================================= -->
+
+  <style>
+
+    html {
+      background: #07090d;
+      color-scheme: dark;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-width: 0;
+      width: 100%;
+      min-height: 100vh;
+      background: #07090d;
+      color: #ffffff;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    .screen-section {
+      background: #07090d;
+    }
+
+    .screen-player {
+      background: #07090d;
+    }
+
+    #screenFrame {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      background: #07090d;
+    }
+
+    .screen-placeholder {
+      background: #07090d;
+    }
+
+  </style>
+
+
+  <!-- =========================================================
+       MAIN WEBSITE CSS
+       ========================================================= -->
 
   <link
     rel="stylesheet"
     href="style.css"
   >
+
 
 </head>
 
@@ -112,7 +217,6 @@
   </header>
 
 
-
   <!-- =========================================================
        MAIN APP
        ========================================================= -->
@@ -136,7 +240,6 @@
           id="screenPlayer"
         >
 
-
           <!-- SCREEN STATUS -->
 
           <div class="screen-status">
@@ -150,16 +253,28 @@
           </div>
 
 
-          <!-- VIDEO / STREAM SCREEN -->
+          <!-- =================================================
+               PLAYER FRAME
+               ================================================= -->
 
-          <iframe
-            id="screenFrame"
-            src="about:blank"
-            title="Deeprowss Screen"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowfullscreen
-            referrerpolicy="no-referrer"
-          ></iframe>
+          <div
+            class="screen-frame-wrap"
+            id="screenFrameWrap"
+          >
+
+            <iframe
+              id="screenFrame"
+              src="about:blank"
+              title="Deeprowss Screen"
+              loading="eager"
+              allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+              allowfullscreen
+              webkitallowfullscreen
+              mozallowfullscreen
+              referrerpolicy="no-referrer"
+            ></iframe>
+
+          </div>
 
 
           <!-- SCREEN PLACEHOLDER -->
@@ -178,7 +293,7 @@
             </strong>
 
             <p>
-             Select a category and start watching.
+              Select a category and start watching.
             </p>
 
           </div>
@@ -212,13 +327,11 @@
 
           </div>
 
-
         </div>
 
       </div>
 
     </section>
-
 
 
     <!-- =======================================================
@@ -318,7 +431,6 @@
     </section>
 
 
-
     <!-- =======================================================
          FOOTBALL LIVE
          ======================================================= -->
@@ -329,7 +441,6 @@
     >
 
       <div class="container">
-
 
         <div class="content-heading">
 
@@ -354,19 +465,7 @@
 
 
           <!-- =================================================
-               CHELSEA VS JUVENTUS
-
-               IMPORTANT:
-               data-kickoff uses NIGERIA TIME.
-
-               Format:
-               YYYY-MM-DDTHH:MM:SS+01:00
-
-               Example:
-               2026-08-17T20:00:00+01:00
-
-               Change ONLY this value when you want to
-               schedule the match.
+               DEPORTIVO VS ELCHE
                ================================================= -->
 
           <button
@@ -378,8 +477,6 @@
             data-duration="96"
           >
 
-            <!-- MATCH STATUS -->
-
             <span
               class="match-status"
               data-match-status
@@ -387,15 +484,9 @@
               UPCOMING
             </span>
 
-
-            <!-- MATCH TEAMS -->
-
             <span class="match-teams">
               Deportivo vs Elche
             </span>
-
-
-            <!-- MATCH DATE -->
 
             <span
               class="match-date"
@@ -404,18 +495,12 @@
               Date
             </span>
 
-
-            <!-- MATCH LOCAL TIME -->
-
             <span
               class="match-time"
               data-match-time
             >
               Time
             </span>
-
-
-            <!-- COUNTDOWN -->
 
             <span
               class="match-countdown"
@@ -425,7 +510,12 @@
             </span>
 
           </button>
-          
+
+
+          <!-- =================================================
+               CARDIFF VS WREXHAM
+               ================================================= -->
+
           <button
             type="button"
             class="match-card"
@@ -435,8 +525,6 @@
             data-duration="96"
           >
 
-            <!-- MATCH STATUS -->  
-
             <span
               class="match-status"
               data-match-status
@@ -444,15 +532,9 @@
               UPCOMING
             </span>
 
-
-            <!-- MATCH TEAMS -->
-
             <span class="match-teams">
               Cardiff vs Wrexham
             </span>
-
-
-            <!-- MATCH DATE -->
 
             <span
               class="match-date"
@@ -461,18 +543,12 @@
               Date
             </span>
 
-
-            <!-- MATCH LOCAL TIME -->
-
             <span
               class="match-time"
               data-match-time
             >
               Time
             </span>
-
-
-            <!-- COUNTDOWN -->
 
             <span
               class="match-countdown"
@@ -501,7 +577,6 @@
     </section>
 
 
-
     <!-- =======================================================
          HIGHLIGHTS
          ======================================================= -->
@@ -513,7 +588,6 @@
     >
 
       <div class="container">
-
 
         <div class="content-heading">
 
@@ -537,7 +611,7 @@
         >
 
 
-          <!-- CHELSEA VS Real Sociedad HIGHLIGHT -->
+          <!-- CHELSEA VS REAL SOCIEDAD -->
 
           <button
             type="button"
@@ -583,7 +657,6 @@
     </section>
 
 
-
     <!-- =======================================================
          TV CHANNELS
          ======================================================= -->
@@ -613,8 +686,9 @@
         </div>
 
 
-
-        <!-- SPORTS -->
+        <!-- ===================================================
+             SPORTS
+             =================================================== -->
 
         <div
           class="tv-category"
@@ -670,8 +744,9 @@
         </div>
 
 
-
-        <!-- MOVIES / FILM CHANNEL -->
+        <!-- ===================================================
+             MOVIES / FILM
+             =================================================== -->
 
         <div
           class="tv-category"
@@ -727,8 +802,9 @@
         </div>
 
 
-
-        <!-- MUSIC -->
+        <!-- ===================================================
+             MUSIC
+             =================================================== -->
 
         <div
           class="tv-category"
@@ -784,8 +860,9 @@
         </div>
 
 
-
-        <!-- NEWS -->
+        <!-- ===================================================
+             NEWS
+             =================================================== -->
 
         <div
           class="tv-category"
@@ -855,7 +932,6 @@
     </section>
 
 
-
     <!-- =======================================================
          MOVIES
          ======================================================= -->
@@ -891,7 +967,7 @@
         >
 
 
-          <!-- HOUSEMAID (2026) -->
+          <!-- HOUSEMAID -->
 
           <button
             type="button"
@@ -919,10 +995,13 @@
 
           </button>
 
+
+          <!-- SPIDERMAN -->
+
           <button
             type="button"
             class="movie-card"
-            data-name="Housemaid (2026)"
+            data-name="Spiderman: Brand New Day (2026)"
             data-url="https://vsembed.su/embed/movie/tt22084616"
             data-date="2026-08-18"
           >
@@ -966,7 +1045,6 @@
   </main>
 
 
-
   <!-- =========================================================
        FOOTER
        ========================================================= -->
@@ -988,9 +1066,8 @@
   </footer>
 
 
-
   <!-- =========================================================
-       JAVASCRIPT
+       MAIN JAVASCRIPT
        ========================================================= -->
 
   <script src="script.js"></script>
@@ -1002,131 +1079,155 @@
 
   <script>
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
 
-      const matchList =
-        document.getElementById("matchList");
+        const matchList =
+          document.getElementById("matchList");
 
-      const highlightList =
-        document.getElementById("highlightList");
+        const highlightList =
+          document.getElementById("highlightList");
 
-      const movieList =
-        document.getElementById("movieList");
+        const movieList =
+          document.getElementById("movieList");
 
 
-      const matchCards =
-        matchList
-          ? Array.from(
-              matchList.querySelectorAll(
-                ".match-card[data-kickoff]"
+        const matchCards =
+          matchList
+            ? Array.from(
+                matchList.querySelectorAll(
+                  ".match-card[data-kickoff]"
+                )
               )
-            )
-          : [];
+            : [];
 
 
-      /*
-       * Football match duration.
-       *
-       * The match is considered finished after 96 minutes.
-       */
-
-      const DEFAULT_MATCH_DURATION = 96;
+        const DEFAULT_MATCH_DURATION = 96;
 
 
-      /*
-       * Format the date using the visitor's own
-       * browser timezone and language.
-       */
+        /* =====================================================
+           DATE
+           ===================================================== */
 
-      function formatLocalDate(date) {
+        function formatLocalDate(date) {
 
-        return new Intl.DateTimeFormat(
-          undefined,
-          {
-            weekday: "short",
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-          }
-        ).format(date);
+          return new Intl.DateTimeFormat(
+            undefined,
+            {
+              weekday: "short",
+              day: "numeric",
+              month: "short",
+              year: "numeric"
+            }
+          ).format(date);
 
-      }
-
-
-      /*
-       * Format the kickoff time using the visitor's
-       * own timezone.
-       */
-
-      function formatLocalTime(date) {
-
-        return new Intl.DateTimeFormat(
-          undefined,
-          {
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-            timeZoneName: "short"
-          }
-        ).format(date);
-
-      }
-
-
-      /*
-       * Convert milliseconds into:
-       *
-       * Days
-       * Hours
-       * Minutes
-       * Seconds
-       */
-
-      function formatCountdown(milliseconds) {
-
-        if (milliseconds <= 0) {
-          return "00:00:00";
         }
 
 
-        let totalSeconds = Math.floor(
-          milliseconds / 1000
-        );
+        /* =====================================================
+           TIME
+           ===================================================== */
+
+        function formatLocalTime(date) {
+
+          return new Intl.DateTimeFormat(
+            undefined,
+            {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+              timeZoneName: "short"
+            }
+          ).format(date);
+
+        }
 
 
-        const days = Math.floor(
-          totalSeconds / 86400
-        );
+        /* =====================================================
+           COUNTDOWN
+           ===================================================== */
 
-        totalSeconds %= 86400;
+        function formatCountdown(milliseconds) {
 
+          if (milliseconds <= 0) {
 
-        const hours = Math.floor(
-          totalSeconds / 3600
-        );
+            return "00:00:00";
 
-        totalSeconds %= 3600;
-
-
-        const minutes = Math.floor(
-          totalSeconds / 60
-        );
-
-        const seconds = totalSeconds % 60;
+          }
 
 
-        const hh = String(hours).padStart(2, "0");
+          let totalSeconds =
+            Math.floor(
+              milliseconds / 1000
+            );
 
-        const mm = String(minutes).padStart(2, "0");
 
-        const ss = String(seconds).padStart(2, "0");
+          const days =
+            Math.floor(
+              totalSeconds / 86400
+            );
 
 
-        if (days > 0) {
+          totalSeconds %= 86400;
+
+
+          const hours =
+            Math.floor(
+              totalSeconds / 3600
+            );
+
+
+          totalSeconds %= 3600;
+
+
+          const minutes =
+            Math.floor(
+              totalSeconds / 60
+            );
+
+
+          const seconds =
+            totalSeconds % 60;
+
+
+          const hh =
+            String(hours).padStart(
+              2,
+              "0"
+            );
+
+
+          const mm =
+            String(minutes).padStart(
+              2,
+              "0"
+            );
+
+
+          const ss =
+            String(seconds).padStart(
+              2,
+              "0"
+            );
+
+
+          if (days > 0) {
+
+            return (
+              days +
+              "d " +
+              hh +
+              ":" +
+              mm +
+              ":" +
+              ss
+            );
+
+          }
+
 
           return (
-            days +
-            "d " +
             hh +
             ":" +
             mm +
@@ -1137,79 +1238,86 @@
         }
 
 
-        return (
-          hh +
-          ":" +
-          mm +
-          ":" +
-          ss
-        );
+        /* =====================================================
+           MATCH STATUS
+           ===================================================== */
 
-      }
-
-
-      /*
-       * Get the current status of a match.
-       *
-       * Returns:
-       *
-       * upcoming
-       * live
-       * ended
-       */
-
-      function getMatchStatus(card, now) {
-
-        const kickoffString =
-          card.dataset.kickoff;
-
-
-        if (!kickoffString) {
-          return null;
-        }
-
-
-        const kickoff =
-          new Date(kickoffString);
-
-
-        if (Number.isNaN(kickoff.getTime())) {
-          return null;
-        }
-
-
-        const duration =
-          Number(
-            card.dataset.duration
-          ) ||
-          DEFAULT_MATCH_DURATION;
-
-
-        const endTime =
-          new Date(
-            kickoff.getTime() +
-            duration * 60 * 1000
-          );
-
-
-        if (now < kickoff) {
-
-          return {
-            status: "upcoming",
-            kickoff: kickoff,
-            endTime: endTime
-          };
-
-        }
-
-
-        if (
-          now >= kickoff &&
-          now < endTime
+        function getMatchStatus(
+          card,
+          now
         ) {
 
+          const kickoffString =
+            card.dataset.kickoff;
+
+
+          if (!kickoffString) {
+
+            return null;
+
+          }
+
+
+          const kickoff =
+            new Date(
+              kickoffString
+            );
+
+
+          if (
+            Number.isNaN(
+              kickoff.getTime()
+            )
+          ) {
+
+            return null;
+
+          }
+
+
+          const duration =
+            Number(
+              card.dataset.duration
+            ) ||
+            DEFAULT_MATCH_DURATION;
+
+
+          const endTime =
+            new Date(
+              kickoff.getTime() +
+              duration *
+              60 *
+              1000
+            );
+
+
+          if (now < kickoff) {
+
+            return {
+              status: "upcoming",
+              kickoff: kickoff,
+              endTime: endTime
+            };
+
+          }
+
+
+          if (
+            now >= kickoff &&
+            now < endTime
+          ) {
+
+            return {
+              status: "live",
+              kickoff: kickoff,
+              endTime: endTime
+            };
+
+          }
+
+
           return {
-            status: "live",
+            status: "ended",
             kickoff: kickoff,
             endTime: endTime
           };
@@ -1217,548 +1325,574 @@
         }
 
 
-        return {
-          status: "ended",
-          kickoff: kickoff,
-          endTime: endTime
-        };
+        /* =====================================================
+           SORT FOOTBALL MATCHES
+           ===================================================== */
 
-      }
+        function sortFootballMatches(
+          now
+        ) {
 
+          if (!matchList) {
 
-      /*
-       * Sort football matches.
-       *
-       * Priority:
-       *
-       * 1. LIVE matches
-       * 2. UPCOMING matches by nearest kickoff
-       * 3. ENDED matches
-       *
-       * This function runs every second so a match
-       * automatically moves from upcoming to live
-       * and eventually to the bottom when it ends.
-       */
-
-      function sortFootballMatches(now) {
-
-        if (!matchList) {
-          return;
-        }
-
-
-        const cards =
-          Array.from(
-            matchList.querySelectorAll(
-              ".match-card[data-kickoff]"
-            )
-          );
-
-
-        cards.sort(function (a, b) {
-
-          const aData =
-            getMatchStatus(a, now);
-
-          const bData =
-            getMatchStatus(b, now);
-
-
-          if (!aData && !bData) {
-            return 0;
-          }
-
-
-          if (!aData) {
-            return 1;
-          }
-
-
-          if (!bData) {
-            return -1;
-          }
-
-
-          /*
-           * LIVE matches always come first.
-           */
-
-          if (
-            aData.status === "live" &&
-            bData.status !== "live"
-          ) {
-
-            return -1;
+            return;
 
           }
 
 
-          if (
-            aData.status !== "live" &&
-            bData.status === "live"
-          ) {
-
-            return 1;
-
-          }
-
-
-          /*
-           * If both are live, sort by kickoff time.
-           */
-
-          if (
-            aData.status === "live" &&
-            bData.status === "live"
-          ) {
-
-            return (
-              aData.kickoff.getTime() -
-              bData.kickoff.getTime()
+          const cards =
+            Array.from(
+              matchList.querySelectorAll(
+                ".match-card[data-kickoff]"
+              )
             );
 
-          }
+
+          cards.sort(
+            function (a, b) {
+
+              const aData =
+                getMatchStatus(
+                  a,
+                  now
+                );
 
 
-          /*
-           * Upcoming matches come before ended matches.
-           */
-
-          if (
-            aData.status === "upcoming" &&
-            bData.status === "ended"
-          ) {
-
-            return -1;
-
-          }
+              const bData =
+                getMatchStatus(
+                  b,
+                  now
+                );
 
 
-          if (
-            aData.status === "ended" &&
-            bData.status === "upcoming"
-          ) {
+              if (
+                !aData &&
+                !bData
+              ) {
 
-            return 1;
+                return 0;
 
-          }
-
-
-          /*
-           * Upcoming matches:
-           * closest kickoff first.
-           */
-
-          if (
-            aData.status === "upcoming" &&
-            bData.status === "upcoming"
-          ) {
-
-            return (
-              aData.kickoff.getTime() -
-              bData.kickoff.getTime()
-            );
-
-          }
+              }
 
 
-          /*
-           * Ended matches stay at the bottom.
-           *
-           * Most recently ended match appears first
-           * among ended matches.
-           */
+              if (!aData) {
 
-          if (
-            aData.status === "ended" &&
-            bData.status === "ended"
-          ) {
+                return 1;
 
-            return (
-              bData.kickoff.getTime() -
-              aData.kickoff.getTime()
-            );
-
-          }
+              }
 
 
-          return 0;
+              if (!bData) {
 
-        });
+                return -1;
 
-
-        cards.forEach(function (card) {
-
-          matchList.appendChild(card);
-
-        });
-
-      }
+              }
 
 
-      /*
-       * Update one match card.
-       */
+              /* LIVE FIRST */
 
-      function updateMatch(card) {
+              if (
+                aData.status === "live" &&
+                bData.status !== "live"
+              ) {
 
-        const kickoffString =
-          card.dataset.kickoff;
+                return -1;
 
-
-        if (!kickoffString) {
-          return;
-        }
+              }
 
 
-        const kickoff =
-          new Date(kickoffString);
+              if (
+                aData.status !== "live" &&
+                bData.status === "live"
+              ) {
+
+                return 1;
+
+              }
 
 
-        if (Number.isNaN(kickoff.getTime())) {
-          return;
-        }
+              /* BOTH LIVE */
+
+              if (
+                aData.status === "live" &&
+                bData.status === "live"
+              ) {
+
+                return (
+                  aData.kickoff.getTime() -
+                  bData.kickoff.getTime()
+                );
+
+              }
 
 
-        const duration =
-          Number(
-            card.dataset.duration
-          ) ||
-          DEFAULT_MATCH_DURATION;
+              /* UPCOMING BEFORE ENDED */
+
+              if (
+                aData.status === "upcoming" &&
+                bData.status === "ended"
+              ) {
+
+                return -1;
+
+              }
 
 
-        const endTime =
-          new Date(
-            kickoff.getTime() +
-            duration * 60 * 1000
+              if (
+                aData.status === "ended" &&
+                bData.status === "upcoming"
+              ) {
+
+                return 1;
+
+              }
+
+
+              /* UPCOMING */
+
+              if (
+                aData.status === "upcoming" &&
+                bData.status === "upcoming"
+              ) {
+
+                return (
+                  aData.kickoff.getTime() -
+                  bData.kickoff.getTime()
+                );
+
+              }
+
+
+              /* ENDED */
+
+              if (
+                aData.status === "ended" &&
+                bData.status === "ended"
+              ) {
+
+                return (
+                  bData.kickoff.getTime() -
+                  aData.kickoff.getTime()
+                );
+
+              }
+
+
+              return 0;
+
+            }
           );
 
 
-        const now = new Date();
+          cards.forEach(
+            function (card) {
 
-
-        const status =
-          card.querySelector(
-            "[data-match-status]"
-          );
-
-
-        const dateElement =
-          card.querySelector(
-            "[data-match-date]"
-          );
-
-
-        const timeElement =
-          card.querySelector(
-            "[data-match-time]"
-          );
-
-
-        const countdownElement =
-          card.querySelector(
-            "[data-match-countdown]"
-          );
-
-
-        /*
-         * Always display the kickoff date
-         * and time in the visitor's timezone.
-         */
-
-        if (dateElement) {
-
-          dateElement.textContent =
-            formatLocalDate(kickoff);
-
-        }
-
-
-        if (timeElement) {
-
-          timeElement.textContent =
-            formatLocalTime(kickoff);
-
-        }
-
-
-        /*
-         * UPCOMING
-         */
-
-        if (now < kickoff) {
-
-          card.classList.remove(
-            "is-live",
-            "is-ended"
-          );
-
-          card.classList.add(
-            "is-upcoming"
-          );
-
-
-          if (status) {
-
-            status.textContent =
-              "UPCOMING";
-
-            status.className =
-              "match-status upcoming";
-
-          }
-
-
-          if (countdownElement) {
-
-            countdownElement.textContent =
-              "Starts in " +
-              formatCountdown(
-                kickoff.getTime() -
-                now.getTime()
+              matchList.appendChild(
+                card
               );
 
-          }
+            }
+          );
 
-
-          return;
         }
 
 
-        /*
-         * LIVE
-         *
-         * From kickoff until 96 minutes
-         * after kickoff.
-         */
+        /* =====================================================
+           UPDATE MATCH
+           ===================================================== */
 
-        if (
-          now >= kickoff &&
-          now < endTime
+        function updateMatch(
+          card
         ) {
 
-          card.classList.remove(
-            "is-upcoming",
-            "is-ended"
-          );
-
-          card.classList.add(
-            "is-live"
-          );
+          const kickoffString =
+            card.dataset.kickoff;
 
 
-          if (status) {
+          if (!kickoffString) {
 
-            status.textContent =
-              "● LIVE";
-
-            status.className =
-              "match-status live";
+            return;
 
           }
 
 
-          if (countdownElement) {
+          const kickoff =
+            new Date(
+              kickoffString
+            );
 
-            countdownElement.textContent =
-              "LIVE NOW";
+
+          if (
+            Number.isNaN(
+              kickoff.getTime()
+            )
+          ) {
+
+            return;
 
           }
 
 
-          return;
-        }
+          const duration =
+            Number(
+              card.dataset.duration
+            ) ||
+            DEFAULT_MATCH_DURATION;
 
 
-        /*
-         * ENDED
-         *
-         * After 96 minutes.
-         */
-
-        card.classList.remove(
-          "is-upcoming",
-          "is-live"
-        );
-
-        card.classList.add(
-          "is-ended"
-        );
-
-
-        if (status) {
-
-          status.textContent =
-            "ENDED";
-
-          status.className =
-            "match-status ended";
-
-        }
-
-
-        if (countdownElement) {
-
-          countdownElement.textContent =
-            "Match ended";
-
-        }
-
-      }
-
-
-      /*
-       * Sort Highlights from newest to oldest.
-       *
-       * Add data-date="YYYY-MM-DD" to every
-       * highlight card when adding new content.
-       */
-
-      function sortHighlights() {
-
-        if (!highlightList) {
-          return;
-        }
-
-
-        const cards =
-          Array.from(
-            highlightList.querySelectorAll(
-              ".highlight-card[data-date]"
-            )
-          );
-
-
-        cards.sort(function (a, b) {
-
-          const dateA =
+          const endTime =
             new Date(
-              a.dataset.date + "T00:00:00"
-            ).getTime();
+              kickoff.getTime() +
+              duration *
+              60 *
+              1000
+            );
 
-
-          const dateB =
-            new Date(
-              b.dataset.date + "T00:00:00"
-            ).getTime();
-
-
-          return dateB - dateA;
-
-        });
-
-
-        cards.forEach(function (card) {
-
-          highlightList.appendChild(card);
-
-        });
-
-      }
-
-
-      /*
-       * Sort Movies from newest to oldest.
-       *
-       * Add data-date="YYYY-MM-DD" to every
-       * movie card when adding new content.
-       */
-
-      function sortMovies() {
-
-        if (!movieList) {
-          return;
-        }
-
-
-        const cards =
-          Array.from(
-            movieList.querySelectorAll(
-              ".movie-card[data-date]"
-            )
-          );
-
-
-        cards.sort(function (a, b) {
-
-          const dateA =
-            new Date(
-              a.dataset.date + "T00:00:00"
-            ).getTime();
-
-
-          const dateB =
-            new Date(
-              b.dataset.date + "T00:00:00"
-            ).getTime();
-
-
-          return dateB - dateA;
-
-        });
-
-
-        cards.forEach(function (card) {
-
-          movieList.appendChild(card);
-
-        });
-
-      }
-
-
-      /*
-       * Initial update.
-       */
-
-      const initialNow = new Date();
-
-
-      matchCards.forEach(
-        updateMatch
-      );
-
-
-      sortFootballMatches(
-        initialNow
-      );
-
-
-      sortHighlights();
-
-
-      sortMovies();
-
-
-      /*
-       * Update every second so:
-       *
-       * - Football countdown changes
-       * - Match status changes
-       * - Matches automatically move position
-       */
-
-      setInterval(
-        function () {
 
           const now =
             new Date();
 
 
-          matchCards.forEach(
-            updateMatch
+          const status =
+            card.querySelector(
+              "[data-match-status]"
+            );
+
+
+          const dateElement =
+            card.querySelector(
+              "[data-match-date]"
+            );
+
+
+          const timeElement =
+            card.querySelector(
+              "[data-match-time]"
+            );
+
+
+          const countdownElement =
+            card.querySelector(
+              "[data-match-countdown]"
+            );
+
+
+          /* DATE */
+
+          if (dateElement) {
+
+            dateElement.textContent =
+              formatLocalDate(
+                kickoff
+              );
+
+          }
+
+
+          /* TIME */
+
+          if (timeElement) {
+
+            timeElement.textContent =
+              formatLocalTime(
+                kickoff
+              );
+
+          }
+
+
+          /* ===================================================
+             UPCOMING
+             =================================================== */
+
+          if (now < kickoff) {
+
+            card.classList.remove(
+              "is-live",
+              "is-ended"
+            );
+
+            card.classList.add(
+              "is-upcoming"
+            );
+
+
+            if (status) {
+
+              status.textContent =
+                "UPCOMING";
+
+              status.className =
+                "match-status upcoming";
+
+            }
+
+
+            if (
+              countdownElement
+            ) {
+
+              countdownElement.textContent =
+                "Starts in " +
+                formatCountdown(
+                  kickoff.getTime() -
+                  now.getTime()
+                );
+
+            }
+
+
+            return;
+
+          }
+
+
+          /* ===================================================
+             LIVE
+             =================================================== */
+
+          if (
+            now >= kickoff &&
+            now < endTime
+          ) {
+
+            card.classList.remove(
+              "is-upcoming",
+              "is-ended"
+            );
+
+            card.classList.add(
+              "is-live"
+            );
+
+
+            if (status) {
+
+              status.textContent =
+                "● LIVE";
+
+              status.className =
+                "match-status live";
+
+            }
+
+
+            if (
+              countdownElement
+            ) {
+
+              countdownElement.textContent =
+                "LIVE NOW";
+
+            }
+
+
+            return;
+
+          }
+
+
+          /* ===================================================
+             ENDED
+             =================================================== */
+
+          card.classList.remove(
+            "is-upcoming",
+            "is-live"
+          );
+
+          card.classList.add(
+            "is-ended"
           );
 
 
-          sortFootballMatches(
-            now
+          if (status) {
+
+            status.textContent =
+              "ENDED";
+
+            status.className =
+              "match-status ended";
+
+          }
+
+
+          if (
+            countdownElement
+          ) {
+
+            countdownElement.textContent =
+              "Match ended";
+
+          }
+
+        }
+
+
+        /* =====================================================
+           SORT HIGHLIGHTS
+           ===================================================== */
+
+        function sortHighlights() {
+
+          if (!highlightList) {
+
+            return;
+
+          }
+
+
+          const cards =
+            Array.from(
+              highlightList.querySelectorAll(
+                ".highlight-card[data-date]"
+              )
+            );
+
+
+          cards.sort(
+            function (a, b) {
+
+              const dateA =
+                new Date(
+                  a.dataset.date +
+                  "T00:00:00"
+                ).getTime();
+
+
+              const dateB =
+                new Date(
+                  b.dataset.date +
+                  "T00:00:00"
+                ).getTime();
+
+
+              return dateB - dateA;
+
+            }
           );
 
-        },
-        1000
-      );
 
-    });
+          cards.forEach(
+            function (card) {
+
+              highlightList.appendChild(
+                card
+              );
+
+            }
+          );
+
+        }
+
+
+        /* =====================================================
+           SORT MOVIES
+           ===================================================== */
+
+        function sortMovies() {
+
+          if (!movieList) {
+
+            return;
+
+          }
+
+
+          const cards =
+            Array.from(
+              movieList.querySelectorAll(
+                ".movie-card[data-date]"
+              )
+            );
+
+
+          cards.sort(
+            function (a, b) {
+
+              const dateA =
+                new Date(
+                  a.dataset.date +
+                  "T00:00:00"
+                ).getTime();
+
+
+              const dateB =
+                new Date(
+                  b.dataset.date +
+                  "T00:00:00"
+                ).getTime();
+
+
+              return dateB - dateA;
+
+            }
+          );
+
+
+          cards.forEach(
+            function (card) {
+
+              movieList.appendChild(
+                card
+              );
+
+            }
+          );
+
+        }
+
+
+        /* =====================================================
+           INITIAL UPDATE
+           ===================================================== */
+
+        const initialNow =
+          new Date();
+
+
+        matchCards.forEach(
+          updateMatch
+        );
+
+
+        sortFootballMatches(
+          initialNow
+        );
+
+
+        sortHighlights();
+
+
+        sortMovies();
+
+
+        /* =====================================================
+           UPDATE EVERY SECOND
+           ===================================================== */
+
+        setInterval(
+          function () {
+
+            const now =
+              new Date();
+
+
+            matchCards.forEach(
+              updateMatch
+            );
+
+
+            sortFootballMatches(
+              now
+            );
+
+          },
+          1000
+        );
+
+      }
+    );
 
   </script>
 
