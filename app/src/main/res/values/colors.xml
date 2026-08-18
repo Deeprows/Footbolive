@@ -2,6 +2,83 @@
 
 <resources>
 
-    <color name="deeprows_background">#07090D</color>
+    <!--
+        =========================================================
+        DEEPROWSS FOOTBALL APP THEME
+        =========================================================
+
+        Dark startup theme.
+        Prevents the default Android white screen
+        from appearing before the WebView loads.
+
+        MainActivity uses:
+            @style/AppTheme
+    -->
+
+    <style
+        name="AppTheme"
+        parent="android:style/Theme.Material.Light.NoActionBar">
+
+        <!--
+            Dark window background.
+            This is the most important setting for
+            preventing the white startup screen.
+        -->
+        <item name="android:windowBackground">@color/deeprows_background</item>
+
+        <!--
+            Make the status bar dark.
+            MainActivity hides the status bar anyway,
+            but this prevents a white flash during startup.
+        -->
+        <item name="android:statusBarColor">@color/deeprows_background</item>
+
+        <!--
+            Dark navigation bar.
+        -->
+        <item name="android:navigationBarColor">@color/deeprows_navigation</item>
+
+        <!--
+            White navigation bar icons.
+        -->
+        <item name="android:windowLightNavigationBar">false</item>
+
+        <!--
+            White status bar icons if the status bar
+            becomes visible temporarily.
+        -->
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!--
+            Do not show an ActionBar.
+        -->
+        <item name="android:windowActionModeOverlay">true</item>
+
+        <!--
+            Prevent the Activity from displaying
+            a default title bar.
+        -->
+        <item name="android:windowNoTitle">true</item>
+
+        <!--
+            Hardware acceleration for smooth WebView
+            rendering and video playback.
+        -->
+        <item name="android:windowDisablePreview">false</item>
+
+        <!--
+            Keep the application background dark while
+            the WebView is being created.
+        -->
+        <item name="android:colorAccent">@color/deeprows_accent</item>
+
+        <!--
+            Disable the old Android transition animation.
+            This helps prevent a white flash when the
+            Activity opens.
+        -->
+        <item name="android:windowAnimationStyle">@null</item>
+
+    </style>
 
 </resources>
