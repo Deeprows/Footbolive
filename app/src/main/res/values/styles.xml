@@ -2,24 +2,65 @@
 
 <resources>
 
+    <!-- =====================================================
+         MAIN APPLICATION THEME
+         ===================================================== -->
+
     <style
         name="AppTheme"
-        parent="@android:style/Theme.Material.Light.NoActionBar">
+        parent="android:style/Theme.Material.NoActionBar">
 
-        <!-- Prevent white launch window -->
-        <item name="android:windowBackground">@color/deeprows_background</item>
+        <!-- Dark application background -->
+        <item name="android:windowBackground">#07090D</item>
 
-        <!-- Dark navigation bar -->
-        <item name="android:navigationBarColor">@color/deeprows_background</item>
+        <item name="android:colorBackground">#07090D</item>
 
-        <!-- White navigation bar icons -->
-        <item name="android:windowLightNavigationBar">false</item>
+        <!-- No title -->
+        <item name="android:windowNoTitle">true</item>
 
-        <!-- No action bar -->
-        <item name="android:windowActionModeOverlay">true</item>
+        <!-- Keep status bar dark -->
+        <item name="android:statusBarColor">#07090D</item>
 
-        <!-- Hardware acceleration -->
-        <item name="android:windowIsTranslucent">false</item>
+        <!-- Navigation bar -->
+        <item name="android:navigationBarColor">#07090D</item>
+
+        <item name="android:navigationBarDividerColor">
+            #07090D
+        </item>
+
+        <!-- White navigation-bar icons -->
+        <item name="android:windowLightNavigationBar">
+            false
+        </item>
+
+        <!-- White status-bar icons -->
+        <item name="android:windowLightStatusBar">
+            false
+        </item>
+
+        <!-- Prevent translucent white window -->
+        <item name="android:windowIsTranslucent">
+            false
+        </item>
+
+        <!-- Prevent default preview window -->
+        <item name="android:windowDisablePreview">
+            false
+        </item>
+
+        <!-- Hardware accelerated -->
+        <item name="android:windowIsFloating">
+            false
+        </item>
+
+        <!-- Accent -->
+        <item name="android:colorAccent">
+            #FF1744
+        </item>
+
+        <item name="android:fontFamily">
+            sans
+        </item>
 
     </style>
 
