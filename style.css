@@ -437,11 +437,7 @@ a {
 
   width: 100%;
 
-  height: clamp(
-    360px,
-    calc((100vw - 30px) * 0.5625),
-    540px
-  );
+  height: 540px;
 
   border: 0;
 
@@ -3521,43 +3517,4 @@ a {
 
     transition-duration: .01ms !important;
   }
-}
-
-
-/* =========================================================
-   RESPONSIVE PLAYER — MOBILE / ANDROID WEBVIEW
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-  .screen-player {
-    width: 100%;
-    overflow: hidden;
-  }
-
-  .screen-player iframe {
-    width: 100%;
-    height: calc((100vw - 30px) * 0.5625);
-    min-height: 0;
-    max-height: none;
-    display: block;
-    border: 0;
-    background: #000;
-    vertical-align: top;
-  }
-
-}
-
-
-/* =========================================================
-   VERY SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 360px) {
-
-  .screen-player iframe {
-    height: calc((100vw - 30px) * 0.5625);
-    min-height: 0;
-  }
-
 }
