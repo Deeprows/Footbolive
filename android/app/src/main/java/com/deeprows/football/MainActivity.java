@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
@@ -31,6 +29,9 @@ public class MainActivity extends Activity {
             "https://deeprows.github.io/Footbolive/";
 
     private static final int POPUP_BAR_HEIGHT_DP = 58;
+
+    private static final int BG_COLOR =
+            Color.rgb(7, 9, 13);
 
     private FrameLayout rootLayout;
 
@@ -58,43 +59,34 @@ public class MainActivity extends Activity {
 
         /*
          * =====================================================
-         * REMOVE WHITE WINDOW FLASH
+         * WINDOW
          * =====================================================
-         *
-         * Set the Android window background BEFORE the WebView
-         * is created. This prevents the white screen that can
-         * appear while Deeprowss is loading.
          */
 
-        Window window = getWindow();
-
-        window.setBackgroundDrawable(
-                new ColorDrawable(
-                        Color.rgb(7, 9, 13)
+        getWindow().setBackgroundDrawable(
+                new android.graphics.drawable.ColorDrawable(
+                        BG_COLOR
                 )
         );
 
-        window.setNavigationBarColor(
-                Color.rgb(7, 9, 13)
+        getWindow().setNavigationBarColor(
+                BG_COLOR
         );
 
-        /*
-         * Hardware acceleration.
-         */
-        window.setFlags(
+        getWindow().setStatusBarColor(
+                BG_COLOR
+        );
+
+        getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
         );
 
-        /*
-         * Hide status bar.
-         *
-         * Navigation bar remains visible.
-         */
         hideStatusBar();
 
         popupBarHeight =
                 dp(POPUP_BAR_HEIGHT_DP);
+
 
         /*
          * =====================================================
@@ -106,29 +98,37 @@ public class MainActivity extends Activity {
                 new FrameLayout(this);
 
         rootLayout.setBackgroundColor(
-                Color.rgb(7, 9, 13)
+                BG_COLOR
         );
 
-        setContentView(rootLayout);
+        setContentView(
+                rootLayout
+        );
+
 
         /*
          * =====================================================
-         * MAIN WEBSITE
+         * MAIN WEBVIEW
          * =====================================================
          */
 
         createMainWebView();
 
-        /*
-         * Make sure the WebView itself can never start
-         * with a white background.
-         */
+
         if (mainWebView != null) {
 
             mainWebView.setBackgroundColor(
-                    Color.rgb(7, 9, 13)
+                    BG_COLOR
             );
         }
+
+
+        /*
+         * Load website.
+         *
+         * The WebView cache is disabled in configureWebView()
+         * so the newest CSS/JS from GitHub Pages is requested.
+         */
 
         mainWebView.loadUrl(
                 WEBSITE_URL
@@ -147,12 +147,8 @@ public class MainActivity extends Activity {
         mainWebView =
                 new WebView(this);
 
-        /*
-         * IMPORTANT:
-         * WebView background is explicitly dark.
-         */
         mainWebView.setBackgroundColor(
-                Color.rgb(7, 9, 13)
+                BG_COLOR
         );
 
         configureWebView(
@@ -161,8 +157,11 @@ public class MainActivity extends Activity {
 
 
         /*
-         * Main website navigation.
+         * =====================================================
+         * WEBSITE NAVIGATION
+         * =====================================================
          */
+
         mainWebView.setWebViewClient(
                 new WebViewClient() {
 
@@ -181,16 +180,21 @@ public class MainActivity extends Activity {
                         String url =
                                 request.getUrl().toString();
 
+
                         if (showingOfflinePage) {
 
-                            showingOfflinePage = false;
+                            showingOfflinePage =
+                                    false;
 
                             view.loadUrl(url);
 
                             return true;
                         }
 
-                        handleMainNavigation(url);
+
+                        handleMainNavigation(
+                                url
+                        );
 
                         return true;
                     }
@@ -207,16 +211,21 @@ public class MainActivity extends Activity {
                             return false;
                         }
 
+
                         if (showingOfflinePage) {
 
-                            showingOfflinePage = false;
+                            showingOfflinePage =
+                                    false;
 
                             view.loadUrl(url);
 
                             return true;
                         }
 
-                        handleMainNavigation(url);
+
+                        handleMainNavigation(
+                                url
+                        );
 
                         return true;
                     }
@@ -235,12 +244,14 @@ public class MainActivity extends Activity {
                                 favicon
                         );
 
+
                         /*
-                         * Keep the WebView dark while a new page
-                         * is being loaded.
+                         * Never show white while the website
+                         * or a new page is loading.
                          */
+
                         view.setBackgroundColor(
-                                Color.rgb(7, 9, 13)
+                                BG_COLOR
                         );
                     }
 
@@ -256,20 +267,23 @@ public class MainActivity extends Activity {
                                 url
                         );
 
+
                         if (url != null &&
                                 url.startsWith(
                                         "https://deeprows.github.io/"
                                 )) {
 
-                            showingOfflinePage = false;
+                            showingOfflinePage =
+                                    false;
                         }
                     }
 
 
                     /*
-                     * Only show offline screen when the MAIN
+                     * Only show offline page if the MAIN
                      * document fails.
                      */
+
                     @Override
                     public void onReceivedError(
                             WebView view,
@@ -283,6 +297,7 @@ public class MainActivity extends Activity {
                                 error
                         );
 
+
                         if (request != null &&
                                 request.isForMainFrame()) {
 
@@ -291,9 +306,6 @@ public class MainActivity extends Activity {
                     }
 
 
-                    /*
-                     * Older WebView compatibility.
-                     */
                     @Override
                     public void onReceivedError(
                             WebView view,
@@ -309,6 +321,7 @@ public class MainActivity extends Activity {
                                 failingUrl
                         );
 
+
                         if (android.os.Build.VERSION.SDK_INT < 23) {
 
                             showOfflinePage();
@@ -319,28 +332,35 @@ public class MainActivity extends Activity {
 
 
         /*
-         * Chrome client.
+         * =====================================================
+         * CHROME CLIENT
+         * =====================================================
          */
+
         mainWebView.setWebChromeClient(
                 createChromeClient()
         );
 
 
         /*
-         * Pull-to-refresh.
+         * =====================================================
+         * PULL TO REFRESH
+         * =====================================================
          */
+
         refreshContainer =
                 new RefreshableWebViewContainer(
                         this
                 );
 
         refreshContainer.setBackgroundColor(
-                Color.rgb(7, 9, 13)
+                BG_COLOR
         );
 
         refreshContainer.setWebView(
                 mainWebView
         );
+
 
         refreshContainer.setOnRefreshListener(
                 new RefreshableWebViewContainer.OnRefreshListener() {
@@ -348,35 +368,39 @@ public class MainActivity extends Activity {
                     @Override
                     public void onRefresh() {
 
-                        if (mainWebView != null) {
+                        if (mainWebView == null) {
 
-                            if (showingOfflinePage) {
-
-                                showWebsiteAgain();
-
-                            } else {
-
-                                mainWebView.reload();
-                            }
-
-                            new Handler(
-                                    Looper.getMainLooper()
-                            ).postDelayed(
-                                    new Runnable() {
-
-                                        @Override
-                                        public void run() {
-
-                                            if (refreshContainer != null) {
-
-                                                refreshContainer
-                                                        .stopRefreshing();
-                                            }
-                                        }
-                                    },
-                                    900
-                            );
+                            return;
                         }
+
+
+                        if (showingOfflinePage) {
+
+                            showWebsiteAgain();
+
+                        } else {
+
+                            mainWebView.reload();
+                        }
+
+
+                        new Handler(
+                                Looper.getMainLooper()
+                        ).postDelayed(
+                                new Runnable() {
+
+                                    @Override
+                                    public void run() {
+
+                                        if (refreshContainer != null) {
+
+                                            refreshContainer
+                                                    .stopRefreshing();
+                                        }
+                                    }
+                                },
+                                900
+                        );
                     }
                 }
         );
@@ -385,6 +409,7 @@ public class MainActivity extends Activity {
         /*
          * Add WebView.
          */
+
         refreshContainer.addView(
                 mainWebView,
                 new FrameLayout.LayoutParams(
@@ -397,6 +422,7 @@ public class MainActivity extends Activity {
         /*
          * Add refresh container.
          */
+
         rootLayout.addView(
                 refreshContainer,
                 new FrameLayout.LayoutParams(
@@ -420,11 +446,32 @@ public class MainActivity extends Activity {
         WebSettings settings =
                 webView.getSettings();
 
-        settings.setJavaScriptEnabled(true);
 
-        settings.setDomStorageEnabled(true);
+        /*
+         * JavaScript.
+         */
 
-        settings.setDatabaseEnabled(true);
+        settings.setJavaScriptEnabled(
+                true
+        );
+
+
+        /*
+         * DOM.
+         */
+
+        settings.setDomStorageEnabled(
+                true
+        );
+
+        settings.setDatabaseEnabled(
+                true
+        );
+
+
+        /*
+         * Multiple windows.
+         */
 
         settings.setJavaScriptCanOpenWindowsAutomatically(
                 true
@@ -434,9 +481,19 @@ public class MainActivity extends Activity {
                 true
         );
 
+
+        /*
+         * Media.
+         */
+
         settings.setMediaPlaybackRequiresUserGesture(
                 false
         );
+
+
+        /*
+         * Content access.
+         */
 
         settings.setAllowFileAccess(
                 true
@@ -445,6 +502,11 @@ public class MainActivity extends Activity {
         settings.setAllowContentAccess(
                 true
         );
+
+
+        /*
+         * Zoom controls OFF.
+         */
 
         settings.setBuiltInZoomControls(
                 false
@@ -456,13 +518,16 @@ public class MainActivity extends Activity {
 
 
         /*
-         * IMPORTANT:
+         * =====================================================
+         * IMPORTANT WEB VIEW SCALING
+         * =====================================================
          *
-         * Do NOT force WebView scaling.
+         * Do NOT force Android to resize the website.
          *
-         * The website's CSS viewport should control
-         * the size of the website.
+         * The HTML viewport and website CSS control the
+         * responsive layout.
          */
+
         settings.setLoadWithOverviewMode(
                 false
         );
@@ -473,8 +538,33 @@ public class MainActivity extends Activity {
 
 
         /*
+         * Keep website text at its real CSS size.
+         */
+
+        settings.setTextZoom(
+                100
+        );
+
+
+        /*
+         * =====================================================
+         * IMPORTANT CACHE SETTING
+         * =====================================================
+         *
+         * This prevents an old style.css or script.js from
+         * remaining in the WebView cache after you update
+         * the GitHub website.
+         */
+
+        settings.setCacheMode(
+                WebSettings.LOAD_NO_CACHE
+        );
+
+
+        /*
          * Cookies.
          */
+
         CookieManager cookieManager =
                 CookieManager.getInstance();
 
@@ -502,12 +592,15 @@ public class MainActivity extends Activity {
             return;
         }
 
+
         if (showingOfflinePage) {
 
             return;
         }
 
-        showingOfflinePage = true;
+
+        showingOfflinePage =
+                true;
 
 
         String offlineHtml =
@@ -520,9 +613,9 @@ public class MainActivity extends Activity {
                 "<meta charset='UTF-8'>" +
 
                 "<meta name='viewport' " +
-                "content='width=device-width, " +
-                "initial-scale=1.0, " +
-                "maximum-scale=1.0, " +
+                "content='width=device-width," +
+                "initial-scale=1.0," +
+                "maximum-scale=1.0," +
                 "user-scalable=no'>" +
 
                 "<style>" +
@@ -533,7 +626,7 @@ public class MainActivity extends Activity {
                 "width:100%;" +
                 "height:100%;" +
                 "background:#07090d;" +
-                "color:#ffffff;" +
+                "color:#fff;" +
                 "font-family:Arial,sans-serif;" +
                 "overflow:hidden;" +
                 "}" +
@@ -555,46 +648,40 @@ public class MainActivity extends Activity {
                 ".logo{" +
                 "width:72px;" +
                 "height:72px;" +
-                "margin:0 auto 22px auto;" +
+                "margin:0 auto 22px;" +
                 "border-radius:20px;" +
-                "background:#e6003c;" +
+                "background:#ff1744;" +
                 "display:flex;" +
                 "align-items:center;" +
                 "justify-content:center;" +
                 "font-size:32px;" +
                 "font-weight:800;" +
-                "color:#ffffff;" +
-                "box-shadow:" +
-                "0 10px 30px rgba(230,0,60,.30);" +
+                "color:#fff;" +
                 "}" +
 
                 "h1{" +
                 "font-size:25px;" +
                 "font-weight:700;" +
-                "margin:0 0 12px 0;" +
+                "margin:0 0 12px;" +
                 "}" +
 
                 "p{" +
                 "font-size:15px;" +
                 "line-height:1.6;" +
                 "color:#9299a8;" +
-                "margin:0 0 28px 0;" +
+                "margin:0 0 28px;" +
                 "}" +
 
                 "button{" +
                 "border:0;" +
                 "outline:none;" +
                 "border-radius:12px;" +
-                "background:#e6003c;" +
-                "color:#ffffff;" +
+                "background:#ff1744;" +
+                "color:#fff;" +
                 "font-size:15px;" +
                 "font-weight:700;" +
                 "padding:14px 30px;" +
                 "min-width:150px;" +
-                "}" +
-
-                "button:active{" +
-                "transform:scale(.97);" +
                 "}" +
 
                 "</style>" +
@@ -637,8 +724,9 @@ public class MainActivity extends Activity {
 
 
         mainWebView.setBackgroundColor(
-                Color.rgb(7, 9, 13)
+                BG_COLOR
         );
+
 
         mainWebView.loadDataWithBaseURL(
                 WEBSITE_URL,
@@ -658,12 +746,14 @@ public class MainActivity extends Activity {
 
     private void showWebsiteAgain() {
 
-        showingOfflinePage = false;
+        showingOfflinePage =
+                false;
+
 
         if (mainWebView != null) {
 
             mainWebView.setBackgroundColor(
-                    Color.rgb(7, 9, 13)
+                    BG_COLOR
             );
 
             mainWebView.loadUrl(
@@ -690,26 +780,24 @@ public class MainActivity extends Activity {
         }
 
 
-        /*
-         * Deeprowss pages remain inside main WebView.
-         */
         if (url.startsWith(
                 "https://deeprows.github.io/"
         )) {
 
             if (mainWebView != null) {
 
-                mainWebView.loadUrl(url);
+                mainWebView.loadUrl(
+                        url
+                );
             }
 
             return;
         }
 
 
-        /*
-         * External pages open in native popup.
-         */
-        openPopup(url);
+        openPopup(
+                url
+        );
     }
 
 
@@ -734,15 +822,19 @@ public class MainActivity extends Activity {
                 WebView popup =
                         createPopupWebView();
 
+
                 WebView.WebViewTransport transport =
                         (WebView.WebViewTransport)
                                 resultMsg.obj;
+
 
                 transport.setWebView(
                         popup
                 );
 
+
                 resultMsg.sendToTarget();
+
 
                 return true;
             }
@@ -788,9 +880,12 @@ public class MainActivity extends Activity {
             return;
         }
 
-        customVideoView = view;
 
-        customViewCallback = callback;
+        customVideoView =
+                view;
+
+        customViewCallback =
+                callback;
 
 
         if (refreshContainer != null) {
@@ -822,6 +917,7 @@ public class MainActivity extends Activity {
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         );
 
+
         hideStatusBar();
     }
 
@@ -838,14 +934,17 @@ public class MainActivity extends Activity {
                 customVideoView
         );
 
-        customVideoView = null;
+
+        customVideoView =
+                null;
 
 
         if (customViewCallback != null) {
 
             customViewCallback.onCustomViewHidden();
 
-            customViewCallback = null;
+            customViewCallback =
+                    null;
         }
 
 
@@ -891,16 +990,19 @@ public class MainActivity extends Activity {
             } catch (Exception ignored) {
             }
 
-            popupWebView = null;
+            popupWebView =
+                    null;
         }
 
 
         popupWebView =
                 new WebView(this);
 
+
         popupWebView.setBackgroundColor(
                 Color.BLACK
         );
+
 
         configureWebView(
                 popupWebView
@@ -934,10 +1036,14 @@ public class MainActivity extends Activity {
             return;
         }
 
+
         WebView popup =
                 createPopupWebView();
 
-        popup.loadUrl(url);
+
+        popup.loadUrl(
+                url
+        );
     }
 
 
@@ -958,24 +1064,25 @@ public class MainActivity extends Activity {
         popupContainer =
                 new FrameLayout(this);
 
+
         popupContainer.setBackgroundColor(
                 Color.BLACK
         );
 
 
-        /*
-         * TOP BAR
-         */
         LinearLayout topBar =
                 new LinearLayout(this);
+
 
         topBar.setOrientation(
                 LinearLayout.HORIZONTAL
         );
 
+
         topBar.setGravity(
                 Gravity.CENTER_VERTICAL
         );
+
 
         topBar.setPadding(
                 dp(4),
@@ -984,32 +1091,39 @@ public class MainActivity extends Activity {
                 0
         );
 
+
         topBar.setBackgroundColor(
                 Color.rgb(15, 18, 24)
         );
 
 
         /*
-         * BACK
+         * BACK BUTTON
          */
+
         ImageButton backButton =
                 new ImageButton(this);
+
 
         backButton.setImageResource(
                 android.R.drawable.ic_media_previous
         );
 
+
         backButton.setBackgroundColor(
                 Color.TRANSPARENT
         );
+
 
         backButton.setColorFilter(
                 Color.WHITE
         );
 
+
         backButton.setContentDescription(
                 "Back"
         );
+
 
         backButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -1034,28 +1148,35 @@ public class MainActivity extends Activity {
         /*
          * TITLE
          */
+
         TextView title =
                 new TextView(this);
+
 
         title.setText(
                 "Deeprowss"
         );
 
+
         title.setTextColor(
                 Color.WHITE
         );
+
 
         title.setTextSize(
                 15
         );
 
+
         title.setGravity(
                 Gravity.CENTER_VERTICAL
         );
 
+
         title.setSingleLine(
                 true
         );
+
 
         title.setPadding(
                 dp(8),
@@ -1068,24 +1189,30 @@ public class MainActivity extends Activity {
         /*
          * CLOSE
          */
+
         ImageButton closeButton =
                 new ImageButton(this);
+
 
         closeButton.setImageResource(
                 android.R.drawable.ic_menu_close_clear_cancel
         );
 
+
         closeButton.setBackgroundColor(
                 Color.TRANSPARENT
         );
+
 
         closeButton.setColorFilter(
                 Color.WHITE
         );
 
+
         closeButton.setContentDescription(
                 "Close"
         );
+
 
         closeButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -1134,20 +1261,19 @@ public class MainActivity extends Activity {
                         Gravity.TOP
                 );
 
+
         popupContainer.addView(
                 topBar,
                 barParams
         );
 
 
-        /*
-         * POPUP WEBVIEW
-         */
         FrameLayout.LayoutParams webParams =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT
                 );
+
 
         webParams.topMargin =
                 popupBarHeight;
@@ -1220,7 +1346,8 @@ public class MainActivity extends Activity {
             } catch (Exception ignored) {
             }
 
-            popupWebView = null;
+            popupWebView =
+                    null;
         }
 
 
@@ -1228,7 +1355,9 @@ public class MainActivity extends Activity {
                 popupContainer
         );
 
-        popupContainer = null;
+
+        popupContainer =
+                null;
 
 
         if (refreshContainer != null) {
@@ -1267,14 +1396,6 @@ public class MainActivity extends Activity {
                 .setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 );
-
-
-        /*
-         * Keep navigation bar dark.
-         */
-        getWindow().setNavigationBarColor(
-                Color.rgb(7, 9, 13)
-        );
     }
 
 
@@ -1383,7 +1504,8 @@ public class MainActivity extends Activity {
             } catch (Exception ignored) {
             }
 
-            customVideoView = null;
+            customVideoView =
+                    null;
         }
 
 
@@ -1398,7 +1520,8 @@ public class MainActivity extends Activity {
             } catch (Exception ignored) {
             }
 
-            popupWebView = null;
+            popupWebView =
+                    null;
         }
 
 
@@ -1413,7 +1536,8 @@ public class MainActivity extends Activity {
             } catch (Exception ignored) {
             }
 
-            mainWebView = null;
+            mainWebView =
+                    null;
         }
 
 
@@ -1427,12 +1551,15 @@ public class MainActivity extends Activity {
      * =========================================================
      */
 
-    private int dp(int value) {
+    private int dp(
+            int value
+    ) {
 
         float density =
                 getResources()
                         .getDisplayMetrics()
                         .density;
+
 
         return (int) (
                 value * density + 0.5f
@@ -1461,8 +1588,10 @@ public class MainActivity extends Activity {
 
         private OnRefreshListener listener;
 
+
         private static final float TRIGGER_DISTANCE =
                 180f;
+
 
         private static final float MAX_PULL_DISTANCE =
                 300f;
@@ -1480,15 +1609,15 @@ public class MainActivity extends Activity {
 
             super(context);
 
-            setClipChildren(false);
 
-            setBackgroundColor(
-                    Color.rgb(7, 9, 13)
+            setClipChildren(
+                    false
             );
 
 
             progressBar =
                     new ProgressBar(context);
+
 
             progressBar.setVisibility(
                     View.GONE
@@ -1501,9 +1630,11 @@ public class MainActivity extends Activity {
                             dp(context, 42)
                     );
 
+
             progressParams.gravity =
                     Gravity.TOP |
                     Gravity.CENTER_HORIZONTAL;
+
 
             progressParams.topMargin =
                     dp(context, 16);
@@ -1520,7 +1651,8 @@ public class MainActivity extends Activity {
                 WebView webView
         ) {
 
-            this.webView = webView;
+            this.webView =
+                    webView;
         }
 
 
@@ -1528,15 +1660,18 @@ public class MainActivity extends Activity {
                 OnRefreshListener listener
         ) {
 
-            this.listener = listener;
+            this.listener =
+                    listener;
         }
 
 
         void stopRefreshing() {
 
-            refreshing = false;
+            refreshing =
+                    false;
 
-            dragging = false;
+            dragging =
+                    false;
 
 
             if (progressBar != null) {
@@ -1569,14 +1704,17 @@ public class MainActivity extends Activity {
             }
 
 
-            switch (event.getActionMasked()) {
+            switch (
+                    event.getActionMasked()
+            ) {
 
                 case MotionEvent.ACTION_DOWN:
 
                     startY =
                             event.getY();
 
-                    dragging = false;
+                    dragging =
+                            false;
 
                     break;
 
@@ -1593,7 +1731,8 @@ public class MainActivity extends Activity {
 
                         if (distance > 15) {
 
-                            dragging = true;
+                            dragging =
+                                    true;
 
                             return true;
                         }
@@ -1606,7 +1745,8 @@ public class MainActivity extends Activity {
 
                 case MotionEvent.ACTION_CANCEL:
 
-                    dragging = false;
+                    dragging =
+                            false;
 
                     break;
             }
@@ -1628,14 +1768,17 @@ public class MainActivity extends Activity {
             }
 
 
-            switch (event.getActionMasked()) {
+            switch (
+                    event.getActionMasked()
+            ) {
 
                 case MotionEvent.ACTION_DOWN:
 
                     startY =
                             event.getY();
 
-                    dragging = true;
+                    dragging =
+                            true;
 
                     return true;
 
@@ -1649,7 +1792,8 @@ public class MainActivity extends Activity {
 
                     if (distance < 0) {
 
-                        distance = 0;
+                        distance =
+                                0;
                     }
 
 
@@ -1665,6 +1809,7 @@ public class MainActivity extends Activity {
 
                         float offset =
                                 distance * 0.55f;
+
 
                         webView.setTranslationY(
                                 offset
@@ -1733,7 +1878,8 @@ public class MainActivity extends Activity {
             }
 
 
-            refreshing = true;
+            refreshing =
+                    true;
 
 
             if (progressBar != null) {
@@ -1771,6 +1917,7 @@ public class MainActivity extends Activity {
                     context.getResources()
                             .getDisplayMetrics()
                             .density;
+
 
             return (int) (
                     value * density + 0.5f
