@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   "use strict";
 
-
   console.log("Deeprowss app loaded");
 
 
@@ -13,81 +12,46 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener(
     "gesturestart",
     function (event) {
-
       event.preventDefault();
-
     },
-    {
-      passive: false
-    }
+    { passive: false }
   );
-
 
   document.addEventListener(
     "gesturechange",
     function (event) {
-
       event.preventDefault();
-
     },
-    {
-      passive: false
-    }
+    { passive: false }
   );
-
 
   document.addEventListener(
     "gestureend",
     function (event) {
-
       event.preventDefault();
-
     },
-    {
-      passive: false
-    }
+    { passive: false }
   );
-
-
-  /*
-   * Prevent Ctrl + mouse-wheel browser zoom.
-   */
 
   document.addEventListener(
     "wheel",
     function (event) {
-
       if (event.ctrlKey) {
-
         event.preventDefault();
-
       }
-
     },
-    {
-      passive: false
-    }
+    { passive: false }
   );
-
-
-  /*
-   * Prevent keyboard browser zoom.
-   */
 
   document.addEventListener(
     "keydown",
     function (event) {
 
       if (!event.ctrlKey) {
-
         return;
-
       }
 
-
-      const key =
-        event.key;
-
+      const key = event.key;
 
       if (
         key === "+" ||
@@ -95,9 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         key === "-" ||
         key === "0"
       ) {
-
         event.preventDefault();
-
       }
 
     }
@@ -111,33 +73,57 @@ document.addEventListener("DOMContentLoaded", function () {
   const siteHeader =
     document.querySelector(".site-header");
 
-
   const screenSection =
     document.querySelector(".screen-section");
-
 
   const screenFrame =
     document.getElementById("screenFrame");
 
-
   const screenPlaceholder =
     document.getElementById("screenPlaceholder");
-
 
   const screenStatus =
     document.getElementById("screenStatus");
 
-
   const nowShowing =
     document.getElementById("nowShowing");
-
 
   const fullscreenButton =
     document.getElementById("fullscreenButton");
 
-
   const screenPlayer =
     document.getElementById("screenPlayer");
+
+
+  /* =========================================================
+     FOOTBALL SCREEN CONTROLS
+     ========================================================= */
+
+  const footballScreenControls =
+    document.getElementById("footballScreenControls");
+
+  const mainScreenButton =
+    document.getElementById("mainScreenButton");
+
+  const altScreenButton =
+    document.getElementById("altScreenButton");
+
+
+  /* =========================================================
+     ALTERNATIVE FOOTBALL SCREEN
+     ========================================================= */
+
+  const altScreenOverlay =
+    document.getElementById("altScreenOverlay");
+
+  const altScreenFrame =
+    document.getElementById("altScreenFrame");
+
+  const altScreenMatch =
+    document.getElementById("altScreenMatch");
+
+  const closeAltScreen =
+    document.getElementById("closeAltScreen");
 
 
   /* =========================================================
@@ -147,14 +133,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const footballButton =
     document.getElementById("footballButton");
 
-
   const highlightsButton =
     document.getElementById("highlightsButton");
 
-
   const tvButton =
     document.getElementById("tvButton");
-
 
   const moviesButton =
     document.getElementById("moviesButton");
@@ -167,14 +150,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const footballContent =
     document.getElementById("footballContent");
 
-
   const highlightsContent =
     document.getElementById("highlightsContent");
 
-
   const tvContent =
     document.getElementById("tvContent");
-
 
   const moviesContent =
     document.getElementById("moviesContent");
@@ -187,14 +167,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const navFootball =
     document.getElementById("navFootball");
 
-
   const navHighlights =
     document.getElementById("navHighlights");
 
-
   const navTV =
     document.getElementById("navTV");
-
 
   const navMovies =
     document.getElementById("navMovies");
@@ -239,9 +216,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const menuToggle =
     document.getElementById("menuToggle");
 
-
   const mainNav =
     document.getElementById("mainNav");
+
+
+  /* =========================================================
+     CURRENT SCREEN STATE
+     ========================================================= */
+
+  let currentScreenType = "";
+  let currentMatchCard = null;
+  let currentMainUrl = "";
+  let currentAltUrl = "";
+  let screenLoadTimer = null;
 
 
   /* =========================================================
@@ -251,37 +238,29 @@ document.addEventListener("DOMContentLoaded", function () {
   function updateStickyPositions() {
 
     if (!screenSection) {
-
       return;
-
     }
-
 
     const root =
       document.documentElement;
-
 
     const headerHeight =
       siteHeader
         ? siteHeader.getBoundingClientRect().height
         : 66;
 
-
     const screenHeight =
       screenSection.getBoundingClientRect().height;
-
 
     root.style.setProperty(
       "--header-height",
       headerHeight + "px"
     );
 
-
     root.style.setProperty(
       "--screen-stack-height",
       screenHeight + "px"
     );
-
 
     root.style.setProperty(
       "--app-menu-top",
@@ -311,12 +290,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const stickyObserver =
       new ResizeObserver(
         function () {
-
           updateStickyPositions();
-
         }
       );
-
 
     stickyObserver.observe(
       screenSection
@@ -340,23 +316,14 @@ document.addEventListener("DOMContentLoaded", function () {
       function (item) {
 
         if (item) {
-
-          item.classList.remove(
-            "active"
-          );
-
+          item.classList.remove("active");
         }
 
       }
     );
 
-
     if (button) {
-
-      button.classList.add(
-        "active"
-      );
-
+      button.classList.add("active");
     }
 
   }
@@ -377,23 +344,14 @@ document.addEventListener("DOMContentLoaded", function () {
       function (item) {
 
         if (item) {
-
-          item.classList.remove(
-            "active"
-          );
-
+          item.classList.remove("active");
         }
 
       }
     );
 
-
     if (link) {
-
-      link.classList.add(
-        "active"
-      );
-
+      link.classList.add("active");
     }
 
   }
@@ -406,34 +364,33 @@ document.addEventListener("DOMContentLoaded", function () {
   function showContent(section) {
 
     if (footballContent) {
-
       footballContent.hidden =
         section !== "football";
-
     }
-
 
     if (highlightsContent) {
-
       highlightsContent.hidden =
         section !== "highlights";
-
     }
-
 
     if (tvContent) {
-
       tvContent.hidden =
         section !== "tv";
+    }
 
+    if (moviesContent) {
+      moviesContent.hidden =
+        section !== "movies";
     }
 
 
-    if (moviesContent) {
+    /*
+     * Alt Screen is football-only.
+     * Leaving Football automatically closes it.
+     */
 
-      moviesContent.hidden =
-        section !== "movies";
-
+    if (section !== "football") {
+      hideAltScreen();
     }
 
 
@@ -452,15 +409,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showContent("football");
 
-
     setActiveButton(
       footballButton
     );
 
-
     setActiveNav(
       navFootball
     );
+
+
+    /*
+     * If a football match is already selected,
+     * restore its Main / Alt controls.
+     */
+
+    updateFootballControls();
 
   }
 
@@ -473,11 +436,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showContent("highlights");
 
-
     setActiveButton(
       highlightsButton
     );
-
 
     setActiveNav(
       navHighlights
@@ -494,11 +455,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showContent("tv");
 
-
     setActiveButton(
       tvButton
     );
-
 
     setActiveNav(
       navTV
@@ -515,11 +474,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showContent("movies");
 
-
     setActiveButton(
       moviesButton
     );
-
 
     setActiveNav(
       navMovies
@@ -541,7 +498,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
-
   if (highlightsButton) {
 
     highlightsButton.addEventListener(
@@ -551,7 +507,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
-
   if (tvButton) {
 
     tvButton.addEventListener(
@@ -560,7 +515,6 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
   }
-
 
   if (moviesButton) {
 
@@ -591,7 +545,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
-
   if (navHighlights) {
 
     navHighlights.addEventListener(
@@ -607,7 +560,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
-
   if (navTV) {
 
     navTV.addEventListener(
@@ -622,7 +574,6 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
   }
-
 
   if (navMovies) {
 
@@ -641,25 +592,393 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     LOAD SCREEN
+     CHECK ALT URL
      ========================================================= */
 
-  function loadScreen(
-    url,
-    name,
-    type
-  ) {
+  function hasValidAltUrl(url) {
 
-    if (!screenFrame) {
+    if (!url) {
+      return false;
+    }
+
+    const normalized =
+      String(url).trim();
+
+    if (!normalized) {
+      return false;
+    }
+
+    if (
+      normalized.indexOf("PASTE-") === 0 ||
+      normalized.indexOf("ALT-SCREEN-URL") !== -1
+    ) {
+      return false;
+    }
+
+    return true;
+
+  }
+
+
+  /* =========================================================
+     UPDATE FOOTBALL CONTROLS
+     ========================================================= */
+
+  function updateFootballControls() {
+
+    if (!footballScreenControls) {
+      return;
+    }
+
+
+    /*
+     * Alt Screen exists ONLY when:
+     *
+     * 1. Current screen is a football match.
+     * 2. The selected match has a valid data-alt-url.
+     */
+
+    const shouldShow =
+      currentScreenType === "match" &&
+      hasValidAltUrl(currentAltUrl);
+
+
+    footballScreenControls.hidden =
+      !shouldShow;
+
+
+    if (!shouldShow) {
+
+      if (mainScreenButton) {
+        mainScreenButton.classList.remove("active");
+      }
+
+      if (altScreenButton) {
+        altScreenButton.classList.remove("active");
+      }
 
       return;
 
     }
 
 
-    if (!url) {
+    if (mainScreenButton) {
+      mainScreenButton.classList.add("active");
+    }
+
+    if (altScreenButton) {
+      altScreenButton.classList.remove("active");
+    }
+
+  }
+
+
+  /* =========================================================
+     HIDE ALT SCREEN
+     ========================================================= */
+
+  function hideAltScreen() {
+
+    if (altScreenFrame) {
+      altScreenFrame.src =
+        "about:blank";
+    }
+
+
+    if (altScreenOverlay) {
+      altScreenOverlay.hidden =
+        true;
+    }
+
+
+    document.body.classList.remove(
+      "alt-screen-open"
+    );
+
+
+    if (mainScreenButton) {
+      mainScreenButton.classList.add("active");
+    }
+
+    if (altScreenButton) {
+      altScreenButton.classList.remove("active");
+    }
+
+
+    /*
+     * Never leave Alt Screen active after switching
+     * to another section or another match.
+     */
+
+  }
+
+
+  /* =========================================================
+     OPEN ALT SCREEN
+     ========================================================= */
+
+  function openAltScreen() {
+
+    /*
+     * Alt Screen can ONLY be opened for Football.
+     */
+
+    if (
+      currentScreenType !== "match" ||
+      !currentMatchCard
+    ) {
 
       return;
+
+    }
+
+
+    if (!hasValidAltUrl(currentAltUrl)) {
+
+      alert(
+        "No alternative screen has been added for this match yet."
+      );
+
+      return;
+
+    }
+
+
+    const matchName =
+      currentMatchCard.dataset.name ||
+      currentMatchCard.querySelector(
+        ".match-teams"
+      )?.textContent?.trim() ||
+      "Football Match";
+
+
+    if (altScreenMatch) {
+      altScreenMatch.textContent =
+        matchName;
+    }
+
+
+    if (altScreenFrame) {
+
+      altScreenFrame.src =
+        "about:blank";
+
+
+      /*
+       * Small delay prevents old content from visually
+       * flashing before the alternative stream loads.
+       */
+
+      setTimeout(
+        function () {
+
+          if (
+            currentScreenType === "match" &&
+            hasValidAltUrl(currentAltUrl)
+          ) {
+
+            altScreenFrame.src =
+              currentAltUrl;
+
+          }
+
+        },
+        80
+      );
+
+    }
+
+
+    if (altScreenOverlay) {
+      altScreenOverlay.hidden =
+        false;
+    }
+
+
+    document.body.classList.add(
+      "alt-screen-open"
+    );
+
+
+    if (mainScreenButton) {
+      mainScreenButton.classList.remove("active");
+    }
+
+    if (altScreenButton) {
+      altScreenButton.classList.add("active");
+    }
+
+  }
+
+
+  /* =========================================================
+     MAIN SCREEN BUTTON
+     ========================================================= */
+
+  if (mainScreenButton) {
+
+    mainScreenButton.addEventListener(
+      "click",
+      function () {
+
+        if (
+          currentScreenType !== "match" ||
+          !currentMainUrl
+        ) {
+          return;
+        }
+
+
+        hideAltScreen();
+
+        loadScreen(
+          currentMainUrl,
+          currentMatchCard?.dataset.name ||
+          "Football Match",
+          "match",
+          true
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     ALT SCREEN BUTTON
+     ========================================================= */
+
+  if (altScreenButton) {
+
+    altScreenButton.addEventListener(
+      "click",
+      function () {
+        openAltScreen();
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     CLOSE ALT SCREEN BUTTON
+     ========================================================= */
+
+  if (closeAltScreen) {
+
+    closeAltScreen.addEventListener(
+      "click",
+      function () {
+        hideAltScreen();
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     CLICK OUTSIDE ALT SCREEN
+     ========================================================= */
+
+  if (altScreenOverlay) {
+
+    altScreenOverlay.addEventListener(
+      "click",
+      function (event) {
+
+        if (
+          event.target === altScreenOverlay
+        ) {
+
+          hideAltScreen();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     ESC KEY
+     ========================================================= */
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (
+        event.key === "Escape" &&
+        altScreenOverlay &&
+        !altScreenOverlay.hidden
+      ) {
+
+        hideAltScreen();
+
+      }
+
+    }
+  );
+
+
+  /* =========================================================
+     LOAD SCREEN
+     ========================================================= */
+
+  function loadScreen(
+    url,
+    name,
+    type,
+    keepMatchState
+  ) {
+
+    if (!screenFrame) {
+      return;
+    }
+
+    if (!url) {
+      return;
+    }
+
+
+    /*
+     * Cancel a previous delayed iframe load.
+     */
+
+    if (screenLoadTimer) {
+
+      clearTimeout(
+        screenLoadTimer
+      );
+
+      screenLoadTimer = null;
+
+    }
+
+
+    /*
+     * Alt Screen is always closed when the main screen,
+     * TV, Movie, or Highlight changes.
+     */
+
+    hideAltScreen();
+
+
+    currentScreenType =
+      type || "";
+
+
+    if (!keepMatchState) {
+
+      if (type !== "match") {
+
+        currentMatchCard = null;
+        currentMainUrl = "";
+        currentAltUrl = "";
+
+      }
 
     }
 
@@ -689,24 +1008,26 @@ document.addEventListener("DOMContentLoaded", function () {
       "about:blank";
 
 
-    setTimeout(
-      function () {
+    screenLoadTimer =
+      setTimeout(
+        function () {
 
-        screenFrame.src =
-          url;
+          screenFrame.src =
+            url;
+
+          screenFrame.style.opacity =
+            "1";
+
+          screenLoadTimer = null;
 
 
-        screenFrame.style.opacity =
-          "1";
+          requestAnimationFrame(
+            updateStickyPositions
+          );
 
-
-        requestAnimationFrame(
-          updateStickyPositions
-        );
-
-      },
-      150
-    );
+        },
+        150
+      );
 
 
     /* =======================================================
@@ -747,6 +1068,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
+     * Football controls are recalculated after every screen
+     * change. TV, Movies and Highlights cannot display them.
+     */
+
+    updateFootballControls();
+
+
+    /*
      * Keep player visible.
      */
 
@@ -754,7 +1083,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const rect =
         screenPlayer.getBoundingClientRect();
-
 
       const headerHeight =
         siteHeader
@@ -767,17 +1095,15 @@ document.addEventListener("DOMContentLoaded", function () {
         headerHeight
       ) {
 
-        window.scrollBy(
-          {
-            top:
-              rect.top -
-              headerHeight -
-              10,
+        window.scrollBy({
+          top:
+            rect.top -
+            headerHeight -
+            10,
 
-            behavior:
-              "smooth"
-          }
-        );
+          behavior:
+            "smooth"
+        });
 
       }
 
@@ -801,6 +1127,10 @@ document.addEventListener("DOMContentLoaded", function () {
             this.dataset.url;
 
 
+          const altUrl =
+            this.dataset.altUrl || "";
+
+
           const name =
             this.dataset.name ||
             this.querySelector(
@@ -809,11 +1139,66 @@ document.addEventListener("DOMContentLoaded", function () {
             "Football Match";
 
 
+          /*
+           * Save the selected football match.
+           */
+
+          currentMatchCard =
+            this;
+
+          currentMainUrl =
+            url || "";
+
+          currentAltUrl =
+            altUrl || "";
+
+          currentScreenType =
+            "match";
+
+
+          /*
+           * Mark selected match.
+           */
+
+          matchCards.forEach(
+            function (item) {
+
+              item.classList.remove(
+                "active",
+                "selected"
+              );
+
+            }
+          );
+
+
+          this.classList.add(
+            "active",
+            "selected"
+          );
+
+
+          /*
+           * Always return to Main Screen when a new
+           * football match is selected.
+           */
+
+          hideAltScreen();
+
+
           loadScreen(
             url,
             name,
-            "match"
+            "match",
+            true
           );
+
+
+          /*
+           * Make sure Football section is active.
+           */
+
+          openFootball();
 
         }
       );
@@ -860,6 +1245,15 @@ document.addEventListener("DOMContentLoaded", function () {
             "active"
           );
 
+
+          currentMatchCard =
+            null;
+
+          currentMainUrl =
+            "";
+
+          currentAltUrl =
+            "";
 
           loadScreen(
             url,
@@ -916,6 +1310,15 @@ document.addEventListener("DOMContentLoaded", function () {
           );
 
 
+          currentMatchCard =
+            null;
+
+          currentMainUrl =
+            "";
+
+          currentAltUrl =
+            "";
+
           loadScreen(
             url,
             name,
@@ -971,6 +1374,15 @@ document.addEventListener("DOMContentLoaded", function () {
           );
 
 
+          currentMatchCard =
+            null;
+
+          currentMainUrl =
+            "";
+
+          currentAltUrl =
+            "";
+
           loadScreen(
             url,
             name,
@@ -991,21 +1403,10 @@ document.addEventListener("DOMContentLoaded", function () {
      FULLSCREEN
      ========================================================= */
 
-  /*
-   * Fullscreen is applied to the SCREEN PLAYER container,
-   * NOT directly to the iframe.
-   *
-   * This is important because the iframe should remain a
-   * true 16:9 video area while the surrounding player handles
-   * the fullscreen viewport.
-   */
-
   function enterScreenFullscreen() {
 
     if (!screenPlayer) {
-
       return;
-
     }
 
 
@@ -1048,11 +1449,6 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         );
 
-
-      /*
-       * Some Android WebViews and older browsers do not
-       * return a Promise from the fullscreen request.
-       */
 
       if (
         result &&
@@ -1098,19 +1494,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function exitScreenFullscreen() {
 
-    /*
-     * Unlock orientation first when possible.
-     */
-
     if (
       screen.orientation &&
       screen.orientation.unlock
     ) {
 
       try {
-
         screen.orientation.unlock();
-
       }
 
       catch (error) {
@@ -1141,7 +1531,6 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
       }
-
 
       return;
 
@@ -1188,10 +1577,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  /*
-   * FULLSCREEN BUTTON
-   */
-
   if (fullscreenButton) {
 
     fullscreenButton.addEventListener(
@@ -1229,9 +1614,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleFullscreenChange() {
 
     if (!fullscreenButton) {
-
       return;
-
     }
 
 
@@ -1253,10 +1636,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
 
-      /*
-       * Change fullscreen button to X.
-       */
-
       fullscreenButton.textContent =
         "×";
 
@@ -1272,13 +1651,6 @@ document.addEventListener("DOMContentLoaded", function () {
         "Exit fullscreen"
       );
 
-
-      /*
-       * Lock landscape AFTER fullscreen has started.
-       *
-       * This prevents the video from becoming larger than
-       * the viewport during the orientation transition.
-       */
 
       if (
         screen.orientation &&
@@ -1326,12 +1698,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
     else {
-
-      /*
-       * Fullscreen has ended.
-       */
 
       if (screenPlayer) {
 
@@ -1358,19 +1725,13 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
 
-      /*
-       * Unlock orientation.
-       */
-
       if (
         screen.orientation &&
         screen.orientation.unlock
       ) {
 
         try {
-
           screen.orientation.unlock();
-
         }
 
         catch (error) {
@@ -1387,55 +1748,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /*
-     * Recalculate the layout after the browser has
-     * finished changing the fullscreen viewport.
-     */
-
     requestAnimationFrame(
       function () {
-
         updateStickyPositions();
-
       }
     );
 
   }
 
 
-  /*
-   * Standard fullscreen event.
-   */
-
   document.addEventListener(
     "fullscreenchange",
     handleFullscreenChange
   );
-
-
-  /*
-   * WebKit fullscreen event.
-   */
 
   document.addEventListener(
     "webkitfullscreenchange",
     handleFullscreenChange
   );
 
-
-  /*
-   * Firefox fullscreen event.
-   */
-
   document.addEventListener(
     "mozfullscreenchange",
     handleFullscreenChange
   );
-
-
-  /*
-   * Older Microsoft fullscreen event.
-   */
 
   document.addEventListener(
     "MSFullscreenChange",
@@ -1481,19 +1816,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  /*
-   * Recalculate after browser viewport changes.
-   */
-
   window.addEventListener(
     "resize",
     handleFullscreenResize
   );
 
-
-  /*
-   * Recalculate after Android orientation changes.
-   */
 
   if (
     screen.orientation &&
@@ -1567,17 +1894,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     FULLSCREEN STATE SAFETY
+     ALT SCREEN PAGE SAFETY
      ========================================================= */
-
-  /*
-   * Make sure the fullscreen class cannot remain stuck
-   * when the page is being left or refreshed.
-   */
 
   window.addEventListener(
     "pagehide",
     function () {
+
+      hideAltScreen();
+
 
       if (screenPlayer) {
 
@@ -1598,15 +1923,9 @@ document.addEventListener("DOMContentLoaded", function () {
   openFootball();
 
 
-  /*
-   * Final sticky calculation after rendering.
-   */
-
   requestAnimationFrame(
     function () {
-
       updateStickyPositions();
-
     }
   );
 
