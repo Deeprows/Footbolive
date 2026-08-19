@@ -212,6 +212,44 @@
       gap: 10px;
     }
 
+    /* MOVIE DOWNLOAD BUTTON - MOVIES ONLY */
+    .movie-download-button {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      min-width: 48px;
+      padding: 0 15px;
+      border: 1px solid #2a2e37;
+      border-radius: 14px;
+      background: #10131a;
+      color: #ffffff;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .movie-download-button:hover {
+      border-color: #e9003f;
+      background: #171a22;
+    }
+
+    .movie-download-button:active {
+      transform: scale(0.98);
+    }
+
+    .movie-download-button.is-disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .football-app:has(#moviesContent:not([hidden])) .movie-download-button {
+      display: inline-flex;
+    }
+
   </style>
 
 
@@ -446,6 +484,21 @@
               >
                 <span id="altScreenButtonText">Alt Screen</span>
               </button>
+
+
+              <!-- MOVIE DOWNLOAD - MOVIES ONLY -->
+              <a
+                class="movie-download-button is-disabled"
+                id="movieDownloadButton"
+                href="#"
+                aria-label="Download movie"
+                aria-hidden="true"
+                aria-disabled="true"
+                download
+              >
+                <span aria-hidden="true">⇩</span>
+                <span>Download</span>
+              </a>
 
 
               <button
@@ -1105,6 +1158,12 @@
         >
 
 
+          <!--
+               Each movie can have its own download URL:
+               data-download-url="https://example.com/movie-file.mp4"
+               The Download button appears only in the Movies section.
+               -->
+
           <!-- HOUSEMAID -->
 
           <button
@@ -1112,6 +1171,7 @@
             class="movie-card"
             data-name="Housemaid (2026)"
             data-url="https://vsembed.su/embed/movie/tt39319989"
+            data-download-url=""
             data-date="2026-08-17"
           >
 
@@ -1141,6 +1201,7 @@
             class="movie-card"
             data-name="Spiderman: Brand New Day (2026)"
             data-url="https://vsembed.su/embed/movie/tt22084616"
+            data-download-url=""
             data-date="2026-08-18"
           >
 
@@ -1245,7 +1306,14 @@
         const footballContent =
           document.getElementById("footballContent");
 
+        const moviesContent =
+          document.getElementById("moviesContent");
+
+        const movieDownloadButton =
+          document.getElementById("movieDownloadButton");
+
         let currentMatchCard = null;
+        let currentMovieCard = null;
         let altScreenActive = false;
 
 
@@ -1460,6 +1528,216 @@
         );
 
 
+        /* =====================================================
+           MOVIE DOWNLOAD
+           ===================================================== */
+
+        function getMovieDownloadUrl(card) {
+
+          if (!card) {
+            return "";
+          }
+
+          return (
+            card.dataset.downloadUrl ||
+            card.getAttribute("data-download-url") ||
+            ""
+          ).trim();
+
+        }
+
+
+        function updateMovieDownloadButton() {
+
+          if (!movieDownloadButton) {
+            return;
+          }
+
+          const moviesActive =
+            Boolean(
+              moviesContent &&
+              !moviesContent.hidden
+            );
+
+          const downloadUrl =
+            getMovieDownloadUrl(currentMovieCard);
+
+          const available =
+            moviesActive &&
+            Boolean(downloadUrl);
+
+          movieDownloadButton.style.display =
+            moviesActive
+              ? "inline-flex"
+              : "none";
+
+          movieDownloadButton.setAttribute(
+            "aria-hidden",
+            moviesActive
+              ? "false"
+              : "true"
+          );
+
+          movieDownloadButton.setAttribute(
+            "aria-disabled",
+            available
+              ? "false"
+              : "true"
+          );
+
+          movieDownloadButton.classList.toggle(
+            "is-disabled",
+            !available
+          );
+
+          if (available) {
+            movieDownloadButton.href = downloadUrl;
+            movieDownloadButton.setAttribute(
+              "download",
+              ""
+            );
+          } else {
+            movieDownloadButton.href = "#";
+          }
+        }
+
+
+        if (movieList) {
+
+          movieList.addEventListener(
+            "click",
+            function (event) {
+
+              const card =
+                event.target.closest(
+                  ".movie-card[data-url]"
+                );
+
+              if (!card) {
+                return;
+              }
+
+              currentMovieCard = card;
+
+              updateMovieDownloadButton();
+
+            },
+            true
+          );
+
+        }
+
+
+        if (movieDownloadButton) {
+
+          movieDownloadButton.addEventListener(
+            "click",
+            function (event) {
+
+              const downloadUrl =
+                getMovieDownloadUrl(currentMovieCard);
+
+              const moviesActive =
+                Boolean(
+                  moviesContent &&
+                  !moviesContent.hidden
+                );
+
+              if (!moviesActive || !downloadUrl) {
+                event.preventDefault();
+              }
+
+            }
+          );
+
+        }
+
+
+        updateMovieDownloadButton();
+
+        if (moviesContent) {
+
+          const movieSectionObserver =
+            new MutationObserver(
+              function () {
+
+                if (moviesContent.hidden) {
+                  currentMovieCard = null;
+                }
+
+                updateMovieDownloadButton();
+
+              }
+            );
+
+          movieSectionObserver.observe(
+            moviesContent,
+            {
+              attributes: true,
+              attributeFilter: ["hidden"]
+            }
+          );
+
+        }
+
+
+        ["moviesButton", "navMovies"].forEach(
+          function (buttonId) {
+
+            const button =
+              document.getElementById(buttonId);
+
+            if (!button) {
+              return;
+            }
+
+            button.addEventListener(
+              "click",
+              function () {
+                setTimeout(
+                  updateMovieDownloadButton,
+                  0
+                );
+              },
+              true
+            );
+
+          }
+        );
+
+
+        ["footballButton", "navFootball",
+         "highlightsButton", "navHighlights",
+         "tvButton", "navTV"].forEach(
+          function (buttonId) {
+
+            const button =
+              document.getElementById(buttonId);
+
+            if (!button) {
+              return;
+            }
+
+            button.addEventListener(
+              "click",
+              function () {
+
+                setTimeout(
+                  function () {
+                    currentMovieCard = null;
+                    updateMovieDownloadButton();
+                  },
+                  0
+                );
+
+              },
+              true
+            );
+
+          }
+        );
+
+
         if (matchList) {
 
           matchList.addEventListener(
@@ -1515,7 +1793,9 @@
 
                 altScreenActive = false;
                 currentMatchCard = null;
+                currentMovieCard = null;
                 updateAltScreenButton();
+                updateMovieDownloadButton();
 
               },
               true
