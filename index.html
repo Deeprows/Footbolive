@@ -1,1957 +1,2316 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="Deeprowss Football Live, Highlights, TV Channels and Movies.">
+<meta name="theme-color" content="#07090d">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deeprowss">
 
-  <meta charset="UTF-8">
+<title>Deeprowss</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-  >
+<style>
+:root{
+  --bg:#07090d;
+  --panel:#0d1016;
+  --panel-2:#11151c;
+  --panel-3:#151a22;
+  --border:#1c212a;
+  --border-light:#292f39;
+  --text:#f5f7fa;
+  --muted:#8b93a1;
+  --muted-2:#626a77;
+  --red:#e11d48;
+  --red-2:#f43f5e;
+  --green:#22c55e;
+  --shadow:0 18px 50px rgba(0,0,0,.35);
+}
 
-  <meta
-    name="description"
-    content="Deeprowss Football Live, Highlights, TV Channels and Movies."
-  >
+*{
+  box-sizing:border-box;
+}
 
-  <meta
-    name="theme-color"
-    content="#07090d"
-  >
+html{
+  scroll-behavior:smooth;
+  background:var(--bg);
+}
 
-  <meta
-    name="color-scheme"
-    content="dark"
-  >
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-  <meta
-    name="mobile-web-app-capable"
-    content="yes"
-  >
+button,
+a{
+  -webkit-tap-highlight-color:transparent;
+}
 
-  <meta
-    name="apple-mobile-web-app-capable"
-    content="yes"
-  >
+button{
+  font-family:inherit;
+}
 
-  <meta
-    name="apple-mobile-web-app-status-bar-style"
-    content="black-translucent"
-  >
+.container{
+  width:min(100% - 40px, 1100px);
+  margin:0 auto;
+}
 
-  <meta
-    name="apple-mobile-web-app-title"
-    content="Deeprowss"
-  >
+/* =========================================================
+   HEADER
+   ========================================================= */
 
-  <title>Deeprowss</title>
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(7,9,13,.94);
+  border-bottom:1px solid #171b22;
+  backdrop-filter:blur(14px);
+}
 
+.nav-wrap{
+  min-height:115px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+}
 
-  <!-- =========================================================
-       FAVICON / APP ICON
-       ========================================================= -->
+.brand{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  color:#fff;
+  text-decoration:none;
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:1px;
+}
 
-  <link
-    rel="icon"
-    type="image/png"
-    href="icons/icon-192.png"
-  >
+.brand > span:last-child span{
+  color:var(--red);
+}
 
-  <link
-    rel="apple-touch-icon"
-    href="icons/icon-192.png"
-  >
+.brand-mark{
+  width:66px;
+  height:66px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  background:linear-gradient(145deg,#f11d4e,#c90037);
+  color:#fff;
+  font-size:28px;
+  font-weight:900;
+  box-shadow:0 12px 35px rgba(225,29,72,.25);
+}
 
+.menu-toggle{
+  width:66px;
+  height:66px;
+  border:0;
+  border-radius:18px;
+  background:#11161e;
+  color:#fff;
+  font-size:34px;
+  cursor:pointer;
+}
 
-  <!-- =========================================================
-       CRITICAL FIRST-PAINT STYLES
-       ========================================================= -->
+.main-nav{
+  display:none;
+  position:absolute;
+  top:95px;
+  right:0;
+  width:230px;
+  padding:10px;
+  background:#10141b;
+  border:1px solid var(--border-light);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+}
 
-  <style>
+.main-nav.open{
+  display:flex;
+  flex-direction:column;
+}
 
-    html {
-      background: #07090d;
-      color-scheme: dark;
-    }
+.main-nav a{
+  color:#dfe3e8;
+  text-decoration:none;
+  padding:13px 14px;
+  border-radius:9px;
+  font-weight:700;
+}
 
+.main-nav a:hover,
+.main-nav a.active{
+  background:#1b2029;
+  color:#fff;
+}
 
-    body {
-      margin: 0;
-      padding: 0;
-      min-width: 0;
-      width: 100%;
-      min-height: 100vh;
-      background: #07090d;
-      color: #ffffff;
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
+/* =========================================================
+   SCREEN
+   ========================================================= */
 
+.screen-section{
+  padding:20px 0 0;
+}
 
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
+.screen-player{
+  width:100%;
+  background:var(--panel);
+  border:1px solid #191e26;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
 
+.screen-frame-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:16 / 9;
+  background:#000;
+  overflow:hidden;
+}
 
-    .screen-section {
-      background: #07090d;
-    }
+.screen-frame-wrap iframe{
+  width:100%;
+  height:100%;
+  display:block;
+  border:0;
+  background:#000;
+}
 
+.screen-status{
+  position:absolute;
+  top:18px;
+  left:18px;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 15px;
+  border-radius:30px;
+  background:rgba(3,5,8,.9);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.5px;
+}
 
-    /*
-     * The outer player contains:
-     *
-     * 1. 16:9 video frame
-     * 2. Separate notification underneath
-     */
+.screen-live-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#ff1648;
+  box-shadow:0 0 12px rgba(255,22,72,.8);
+}
 
-    .screen-player {
-      position: relative;
-      width: 100%;
-      background: #07090d;
-    }
+.screen-placeholder{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:8px;
+  background:#080a0f;
+  text-align:center;
+  padding:20px;
+}
 
+.screen-placeholder-icon{
+  font-size:44px;
+}
 
-    /*
-     * TRUE 16:9 VIDEO AREA
-     */
+.screen-placeholder strong{
+  font-size:20px;
+}
 
-    .screen-frame-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      background: #000;
-    }
+.screen-placeholder p{
+  margin:0;
+  color:var(--muted);
+}
 
+.screen-placeholder.hidden{
+  display:none;
+}
 
-    /*
-     * IFRAME MUST ONLY FILL THE 16:9 VIDEO AREA
-     */
+.screen-bottom{
+  min-height:105px;
+  padding:20px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  background:#0d1016;
+}
 
-    #screenFrame {
-      position: absolute;
-      inset: 0;
+.now-showing{
+  min-width:0;
+}
 
-      display: block;
+.now-showing > span:first-child{
+  display:block;
+  margin-bottom:7px;
+  color:#8e96a5;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:2px;
+}
 
-      width: 100%;
-      height: 100%;
+.now-showing > strong{
+  display:block;
+  color:#f5f7fa;
+  font-size:22px;
+  line-height:1.2;
+}
 
-      border: 0;
-      margin: 0;
-      padding: 0;
+.fullscreen-button{
+  flex:none;
+  width:60px;
+  height:60px;
+  border:1px solid #303641;
+  border-radius:15px;
+  background:#171c24;
+  color:#fff;
+  font-size:28px;
+  cursor:pointer;
+}
 
-      background: #000;
-    }
+/* =========================================================
+   FOOTBALL SCREEN CONTROLS
+   ========================================================= */
 
+.football-screen-controls{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
 
-    /*
-     * PLACEHOLDER IS INSIDE THE 16:9 FRAME
-     */
+.screen-control{
+  border:1px solid #303641;
+  background:#151a22;
+  color:#aeb5c1;
+  padding:9px 13px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s ease;
+}
 
-    .screen-placeholder {
-      position: absolute;
-      inset: 0;
+.screen-control:hover{
+  border-color:var(--red);
+  color:#fff;
+}
 
-      background: #07090d;
-    }
+.screen-control.active{
+  background:var(--red);
+  border-color:var(--red);
+  color:#fff;
+}
 
-  </style>
+/* =========================================================
+   APP MENU
+   ========================================================= */
 
+.app-menu{
+  padding:32px 0 12px;
+}
 
-  <!-- =========================================================
-       MAIN WEBSITE CSS
-       ========================================================= -->
+.app-buttons{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding-bottom:4px;
+}
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+.app-buttons::-webkit-scrollbar{
+  display:none;
+}
 
+.app-button{
+  flex:1 0 245px;
+  min-height:78px;
+  border:1px solid #20252e;
+  border-radius:20px;
+  background:#0e1218;
+  color:#8f97a5;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.app-button.active{
+  color:#fff;
+  border-color:rgba(225,29,72,.75);
+  background:linear-gradient(180deg,#17131a,#101218);
+  box-shadow:inset 0 0 0 1px rgba(225,29,72,.12);
+}
+
+.app-button-icon{
+  margin-right:8px;
+  font-size:22px;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content-section{
+  padding:30px 0 70px;
+}
+
+.content-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:22px;
+}
+
+.content-heading h1{
+  margin:0;
+  font-size:30px;
+  line-height:1.1;
+  letter-spacing:-.5px;
+}
+
+.content-count{
+  width:50px;
+  height:50px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#11161e;
+  color:#8c94a2;
+  font-weight:800;
+}
+
+.match-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+
+.match-card{
+  width:100%;
+  min-height:175px;
+  border:1px solid #171c23;
+  border-radius:22px;
+  background:#0b0e13;
+  color:#fff;
+  padding:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.match-card:hover,
+.match-card.selected{
+  border-color:#343a45;
+  transform:translateY(-2px);
+}
+
+.match-status{
+  padding:8px 14px;
+  border:1px solid #272c34;
+  border-radius:20px;
+  background:#12161d;
+  color:#a0a7b3;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+.match-status.live{
+  color:#fff;
+  background:#991b1b;
+  border-color:#dc2626;
+}
+
+.match-teams{
+  margin-top:14px;
+  font-size:22px;
+  font-weight:900;
+}
+
+.match-date,
+.match-time,
+.match-countdown{
+  margin-top:7px;
+  color:#8e96a3;
+  font-size:14px;
+  font-weight:700;
+}
+
+.match-time{
+  color:#d5dae1;
+}
+
+.match-countdown{
+  color:#727a88;
+}
+
+/* =========================================================
+   HIGHLIGHTS
+   ========================================================= */
+
+.highlight-grid,
+.movie-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+
+.highlight-card,
+.movie-card{
+  min-height:220px;
+  border:1px solid #1c2129;
+  border-radius:18px;
+  background:#0d1117;
+  color:#fff;
+  padding:0;
+  overflow:hidden;
+  cursor:pointer;
+  text-align:left;
+}
+
+.highlight-thumbnail{
+  min-height:150px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#181d25,#080a0e);
+}
+
+.highlight-thumbnail span{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--red);
+  font-size:23px;
+}
+
+.highlight-card strong,
+.highlight-card small{
+  display:block;
+  padding:12px 14px 0;
+}
+
+.highlight-card small{
+  padding-top:6px;
+  padding-bottom:14px;
+  color:var(--muted);
+}
+
+.movie-card{
+  min-height:250px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+
+.movie-icon{
+  font-size:50px;
+  margin:auto 0 20px;
+}
+
+.movie-status{
+  align-self:flex-start;
+  padding:7px 10px;
+  border-radius:8px;
+  background:#1c2028;
+  color:#9da5b2;
+  font-size:11px;
+  font-weight:900;
+}
+
+.movie-title{
+  margin-top:12px;
+  font-size:17px;
+  font-weight:900;
+}
+
+.movie-rating{
+  margin-top:7px;
+  color:#a0a8b5;
+  font-size:13px;
+}
+
+/* =========================================================
+   TV
+   ========================================================= */
+
+.tv-category{
+  margin-bottom:30px;
+}
+
+.tv-category-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.tv-category-heading h2{
+  margin:0;
+  font-size:21px;
+}
+
+.tv-category-heading span{
+  color:#737b89;
+  font-size:12px;
+  font-weight:700;
+}
+
+.tv-channel-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.tv-channel{
+  width:100%;
+  min-height:80px;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  border:1px solid #1b2028;
+  border-radius:15px;
+  background:#0d1117;
+  color:#fff;
+  cursor:pointer;
+  text-align:left;
+}
+
+.tv-channel-icon{
+  width:45px;
+  height:45px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#171c24;
+  font-size:22px;
+}
+
+.tv-channel-info{
+  min-width:0;
+  flex:1;
+}
+
+.tv-channel-info strong,
+.tv-channel-info small{
+  display:block;
+}
+
+.tv-channel-info small{
+  margin-top:4px;
+  color:#747d8b;
+}
+
+.tv-channel-status{
+  color:#22c55e;
+  font-size:11px;
+  font-weight:900;
+}
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state{
+  padding:30px;
+  text-align:center;
+  border:1px dashed #252a33;
+  border-radius:16px;
+  color:#747c89;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer{
+  border-top:1px solid #161b22;
+  padding:34px 0;
+  background:#080a0e;
+}
+
+.footer-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.footer-wrap strong{
+  font-size:20px;
+}
+
+.footer-wrap strong span{
+  color:var(--red);
+}
+
+.footer-wrap > span{
+  color:#555d69;
+  font-size:13px;
+}
+
+/* =========================================================
+   ALT SCREEN OVERLAY
+   ========================================================= */
+
+.alt-screen-overlay{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(0,0,0,.95);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.alt-screen-overlay[hidden]{
+  display:none;
+}
+
+.alt-screen-box{
+  width:100%;
+  max-width:1100px;
+  background:#0b0e13;
+  border:1px solid #292f39;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 25px 90px rgba(0,0,0,.75);
+}
+
+.alt-screen-header{
+  min-height:62px;
+  padding:11px 14px 11px 17px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:#10141b;
+  border-bottom:1px solid #272c35;
+}
+
+.alt-screen-title{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.alt-screen-label{
+  color:var(--red-2);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1.6px;
+}
+
+.alt-screen-match{
+  color:#fff;
+  font-size:16px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.alt-screen-close{
+  flex:none;
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:10px;
+  background:#1b2029;
+  color:#fff;
+  font-size:25px;
+  cursor:pointer;
+}
+
+.alt-screen-frame-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:16 / 9;
+  background:#000;
+}
+
+.alt-screen-frame{
+  width:100%;
+  height:100%;
+  display:block;
+  border:0;
+  background:#000;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:600px){
+
+  .container{
+    width:min(100% - 38px, 1100px);
+  }
+
+  .nav-wrap{
+    min-height:115px;
+  }
+
+  .brand{
+    font-size:20px;
+    gap:12px;
+  }
+
+  .brand-mark{
+    width:66px;
+    height:66px;
+  }
+
+  .menu-toggle{
+    width:66px;
+    height:66px;
+  }
+
+  .screen-section{
+    padding-top:20px;
+  }
+
+  .screen-player{
+    border-radius:21px;
+  }
+
+  .screen-status{
+    top:12px;
+    left:12px;
+    padding:9px 12px;
+  }
+
+  .screen-bottom{
+    min-height:130px;
+    padding:17px 16px;
+    align-items:flex-start;
+  }
+
+  .now-showing > strong{
+    font-size:20px;
+  }
+
+  .fullscreen-button{
+    width:58px;
+    height:58px;
+  }
+
+  .football-screen-controls{
+    max-width:270px;
+  }
+
+  .screen-control{
+    padding:8px 10px;
+    font-size:11px;
+  }
+
+  .content-section{
+    padding-top:28px;
+  }
+
+  .content-heading h1{
+    font-size:28px;
+  }
+
+  .match-card{
+    min-height:185px;
+  }
+
+  .match-teams{
+    font-size:21px;
+  }
+
+  .highlight-grid,
+  .movie-grid{
+    grid-template-columns:1fr;
+  }
+
+  .alt-screen-overlay{
+    padding:10px;
+  }
+
+  .alt-screen-box{
+    border-radius:12px;
+  }
+
+  .alt-screen-header{
+    padding:10px 12px;
+  }
+
+  .alt-screen-match{
+    font-size:14px;
+  }
+
+  .alt-screen-close{
+    width:36px;
+    height:36px;
+    font-size:22px;
+  }
+}
+</style>
 </head>
-
 
 <body>
 
+<!-- =======================================================
+     HEADER
+     ======================================================= -->
 
-  <!-- =========================================================
-       HEADER
-       ========================================================= -->
+<header>
+  <div class="container nav-wrap">
 
-  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Deeprowss Home">
+      <span class="brand-mark">D</span>
+      <span>DEE<span>PROWSS</span></span>
+    </a>
 
-    <div class="container nav-wrap">
+    <button
+      type="button"
+      class="menu-toggle"
+      id="menuToggle"
+      aria-label="Open navigation"
+      aria-expanded="false"
+      aria-controls="mainNav"
+    >☰</button>
 
-      <a
-        class="brand"
-        href="index.html"
-        aria-label="Deeprowss Home"
-      >
+    <nav class="main-nav" id="mainNav" aria-label="Main navigation">
 
-        <span class="brand-mark">
-          D
-        </span>
-
-        <span>
-          DEE<span>PROWSS</span>
-        </span>
-
+      <a href="#" id="navFootball" class="active">
+        Football Live
       </a>
 
+      <a href="#" id="navHighlights">
+        Highlights
+      </a>
 
-      <button
-        type="button"
-        class="menu-toggle"
-        id="menuToggle"
-        aria-label="Open navigation"
-        aria-expanded="false"
-        aria-controls="mainNav"
-      >
-        ☰
-      </button>
+      <a href="#" id="navTV">
+        TV Channels
+      </a>
+
+      <a href="#" id="navMovies">
+        Movies
+      </a>
+
+    </nav>
+
+  </div>
+</header>
 
 
-      <nav
-        class="main-nav"
-        id="mainNav"
-        aria-label="Main navigation"
-      >
+<!-- =======================================================
+     SCREEN
+     ======================================================= -->
 
-        <a
-          href="#"
-          id="navFootball"
-          class="active"
+<section class="screen-section" id="screenSection">
+
+  <div class="container">
+
+    <div class="screen-player" id="screenPlayer">
+
+      <div class="screen-frame-wrap" id="screenFrameWrap">
+
+        <div class="screen-status">
+          <span class="screen-live-dot"></span>
+          <span id="screenStatus">READY</span>
+        </div>
+
+        <iframe
+          id="screenFrame"
+          src="about:blank"
+          title="Deeprowss Screen"
+          loading="eager"
+          allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+          allowfullscreen
+          webkitallowfullscreen
+          mozallowfullscreen
+          referrerpolicy="no-referrer"
+        ></iframe>
+
+        <div class="screen-placeholder" id="screenPlaceholder">
+
+          <div class="screen-placeholder-icon">⚽</div>
+
+          <strong>Welcome</strong>
+
+          <p>Select a category and start watching.</p>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           NOTIFICATION / NOW SHOWING CARD
+           ================================================= -->
+
+      <div class="screen-bottom">
+
+        <div class="now-showing">
+
+          <span>NOW SHOWING</span>
+
+          <strong id="nowShowing">
+            Select a match
+          </strong>
+
+          <!-- FOOTBALL ONLY -->
+          <div
+            class="football-screen-controls"
+            id="footballScreenControls"
+            hidden
+          >
+
+            <button
+              type="button"
+              class="screen-control active"
+              id="mainScreenButton"
+            >
+              ▶ Main Screen
+            </button>
+
+            <button
+              type="button"
+              class="screen-control"
+              id="altScreenButton"
+            >
+              ▣ Alt Screen
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="fullscreen-button"
+          id="fullscreenButton"
+          aria-label="Fullscreen"
         >
-          Football Live
-        </a>
+          ⛶
+        </button>
 
-        <a
-          href="#"
-          id="navHighlights"
-        >
-          Highlights
-        </a>
-
-        <a
-          href="#"
-          id="navTV"
-        >
-          TV Channels
-        </a>
-
-        <a
-          href="#"
-          id="navMovies"
-        >
-          Movies
-        </a>
-
-      </nav>
+      </div>
 
     </div>
 
-  </header>
+  </div>
 
+</section>
 
-  <!-- =========================================================
-       MAIN APP
-       ========================================================= -->
 
-  <main class="football-app">
+<!-- =======================================================
+     MAIN APP BUTTONS
+     ======================================================= -->
 
+<section class="app-menu" id="appMenu">
 
-    <!-- =======================================================
-         SCREEN
-         ======================================================= -->
+  <div class="container">
 
-    <section
-      class="screen-section"
-      id="screenSection"
-    >
+    <div class="app-buttons">
 
-      <div class="container">
+      <button
+        type="button"
+        class="app-button football-button active"
+        id="footballButton"
+      >
+        <span class="app-button-icon">⚽</span>
+        <span>Football Live</span>
+      </button>
 
-        <div
-          class="screen-player"
-          id="screenPlayer"
-        >
+      <button
+        type="button"
+        class="app-button highlights-button"
+        id="highlightsButton"
+      >
+        <span class="app-button-icon">🎬</span>
+        <span>Highlights</span>
+      </button>
 
+      <button
+        type="button"
+        class="app-button tv-button"
+        id="tvButton"
+      >
+        <span class="app-button-icon">📺</span>
+        <span>TV Channels</span>
+      </button>
 
-          <!-- =================================================
-               TRUE 16:9 VIDEO FRAME
-               ================================================= -->
+      <button
+        type="button"
+        class="app-button movies-button"
+        id="moviesButton"
+      >
+        <span class="app-button-icon">🍿</span>
+        <span>Movies</span>
+      </button>
 
-          <div
-            class="screen-frame-wrap"
-            id="screenFrameWrap"
-          >
+    </div>
 
+  </div>
 
-            <!-- ===============================================
-                 SCREEN STATUS
-                 INSIDE VIDEO AREA
-                 =============================================== -->
+</section>
 
-            <div class="screen-status">
 
-              <span class="screen-live-dot"></span>
+<!-- =======================================================
+     FOOTBALL LIVE
+     ======================================================= -->
 
-              <span id="screenStatus">
-                READY
-              </span>
+<section class="content-section" id="footballContent">
 
-            </div>
+  <div class="container">
 
+    <div class="content-heading">
 
-            <!-- ===============================================
-                 VIDEO IFRAME
-                 =============================================== -->
+      <h1>Upcoming &amp; Live Matches</h1>
 
-            <iframe
-              id="screenFrame"
-              src="about:blank"
-              title="Deeprowss Screen"
-              loading="eager"
-              allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-              allowfullscreen
-              webkitallowfullscreen
-              mozallowfullscreen
-              referrerpolicy="no-referrer"
-            ></iframe>
-
-
-            <!-- ===============================================
-                 SCREEN PLACEHOLDER
-                 INSIDE 16:9 VIDEO AREA
-                 =============================================== -->
-
-            <div
-              class="screen-placeholder"
-              id="screenPlaceholder"
-            >
-
-              <div class="screen-placeholder-icon">
-                ⚽
-              </div>
-
-              <strong>
-                Welcome
-              </strong>
-
-              <p>
-                Select a category and start watching.
-              </p>
-
-            </div>
-
-
-          </div>
-
-
-          <!-- =================================================
-               SEPARATE NOTIFICATION / NOW SHOWING CARD
-               
-               IMPORTANT:
-               THIS IS OUTSIDE THE 16:9 VIDEO FRAME.
-               ================================================= -->
-
-          <div class="screen-bottom">
-
-
-            <!-- ===============================================
-                 NOW SHOWING
-                 =============================================== -->
-
-            <div class="now-showing">
-
-              <span>
-                NOW SHOWING
-              </span>
-
-              <strong id="nowShowing">
-                Select a match
-              </strong>
-
-            </div>
-
-
-            <!-- ===============================================
-                 FULLSCREEN BUTTON
-                 =============================================== -->
-
-            <button
-              type="button"
-              class="fullscreen-button"
-              id="fullscreenButton"
-              aria-label="Fullscreen"
-            >
-              ⛶
-            </button>
-
-
-          </div>
-
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================================
-         MAIN APP BUTTONS
-         ======================================================= -->
-
-    <section
-      class="app-menu"
-      id="appMenu"
-    >
-
-      <div class="container">
-
-        <div class="app-buttons">
-
-
-          <!-- FOOTBALL LIVE -->
-
-          <button
-            type="button"
-            class="app-button football-button active"
-            id="footballButton"
-          >
-
-            <span class="app-button-icon">
-              ⚽
-            </span>
-
-            <span>
-              Football Live
-            </span>
-
-          </button>
-
-
-          <!-- HIGHLIGHTS -->
-
-          <button
-            type="button"
-            class="app-button highlights-button"
-            id="highlightsButton"
-          >
-
-            <span class="app-button-icon">
-              🎬
-            </span>
-
-            <span>
-              Highlights
-            </span>
-
-          </button>
-
-
-          <!-- TV CHANNELS -->
-
-          <button
-            type="button"
-            class="app-button tv-button"
-            id="tvButton"
-          >
-
-            <span class="app-button-icon">
-              📺
-            </span>
-
-            <span>
-              TV Channels
-            </span>
-
-          </button>
-
-
-          <!-- MOVIES -->
-
-          <button
-            type="button"
-            class="app-button movies-button"
-            id="moviesButton"
-          >
-
-            <span class="app-button-icon">
-              🍿
-            </span>
-
-            <span>
-              Movies
-            </span>
-
-          </button>
-
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================================
-         FOOTBALL LIVE
-         ======================================================= -->
-
-    <section
-      class="content-section"
-      id="footballContent"
-    >
-
-      <div class="container">
-
-        <div class="content-heading">
-
-          <h1>
-            Upcoming &amp; Live Matches
-          </h1>
-
-          <span
-            class="content-count"
-            id="matchCount"
-          >
-            1
-          </span>
-
-        </div>
-
-
-        <div
-          class="match-grid"
-          id="matchList"
-        >
-
-
-          <!-- =================================================
-               DEPORTIVO VS ELCHE
-               ================================================= -->
-
-          <button
-            type="button"
-            class="match-card"
-            data-name="Deportivo vs Elche"
-            data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
-            data-kickoff="2026-08-17T20:00:00+01:00"
-            data-duration="96"
-          >
-
-            <span
-              class="match-status"
-              data-match-status
-            >
-              UPCOMING
-            </span>
-
-            <span class="match-teams">
-              Deportivo vs Elche
-            </span>
-
-            <span
-              class="match-date"
-              data-match-date
-            >
-              Date
-            </span>
-
-            <span
-              class="match-time"
-              data-match-time
-            >
-              Time
-            </span>
-
-            <span
-              class="match-countdown"
-              data-match-countdown
-            >
-              Starting soon
-            </span>
-
-          </button>
-
-
-          <!-- =================================================
-               CARDIFF VS WREXHAM
-               ================================================= -->
-
-          <button
-            type="button"
-            class="match-card"
-            data-name="Cardiff vs Wrexham"
-            data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
-            data-kickoff="2026-08-17T20:00:00+01:00"
-            data-duration="96"
-          >
-
-            <span
-              class="match-status"
-              data-match-status
-            >
-              UPCOMING
-            </span>
-
-            <span class="match-teams">
-              Cardiff vs Wrexham
-            </span>
-
-            <span
-              class="match-date"
-              data-match-date
-            >
-              Date
-            </span>
-
-            <span
-              class="match-time"
-              data-match-time
-            >
-              Time
-            </span>
-
-            <span
-              class="match-countdown"
-              data-match-countdown
-            >
-              Starting soon
-            </span>
-
-          </button>
-
-
-        </div>
-
-
-        <div
-          class="empty-state"
-          id="footballEmpty"
-          hidden
-        >
-          No matches available.
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================================
-         HIGHLIGHTS
-         ======================================================= -->
-
-    <section
-      class="content-section highlights-content"
-      id="highlightsContent"
-      hidden
-    >
-
-      <div class="container">
-
-        <div class="content-heading">
-
-          <h1>
-            Football Highlights
-          </h1>
-
-          <span
-            class="content-count"
-            id="highlightCount"
-          >
-            1
-          </span>
-
-        </div>
-
-
-        <div
-          class="highlight-grid"
-          id="highlightList"
-        >
-
-
-          <!-- CHELSEA VS REAL SOCIEDAD -->
-
-          <button
-            type="button"
-            class="highlight-card"
-            data-name="Chelsea vs Real Sociedad Highlights"
-            data-url="https://filemoon.org/en/E1x3AqDe3yk6/embed"
-            data-date="2026-08-17"
-          >
-
-            <div class="highlight-thumbnail">
-
-              <span>
-                ▶
-              </span>
-
-            </div>
-
-            <strong>
-              Chelsea vs Real Sociedad
-            </strong>
-
-            <small>
-              Highlights
-            </small>
-
-          </button>
-
-
-        </div>
-
-
-        <div
-          class="empty-state"
-          id="highlightEmpty"
-          hidden
-        >
-          No highlights available.
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================================
-         TV CHANNELS
-         ======================================================= -->
-
-    <section
-      class="content-section tv-content"
-      id="tvContent"
-      hidden
-    >
-
-      <div class="container">
-
-
-        <div class="content-heading">
-
-          <h1>
-            TV Channels
-          </h1>
-
-          <span
-            class="content-count"
-            id="tvCount"
-          >
-            4
-          </span>
-
-        </div>
-
-
-        <!-- ===================================================
-             SPORTS
-             =================================================== -->
-
-        <div
-          class="tv-category"
-          data-tv-category
-        >
-
-          <div class="tv-category-heading">
-
-            <h2>
-              ⚽ Sports
-            </h2>
-
-            <span>
-              Live Sports
-            </span>
-
-          </div>
-
-
-          <div class="tv-channel-grid">
-
-            <button
-              type="button"
-              class="tv-channel"
-              data-name="Bahrain Sports"
-              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/chunklist_w1526827686_b978000.m3u8"
-            >
-
-              <span class="tv-channel-icon">
-                ⚽
-              </span>
-
-              <span class="tv-channel-info">
-
-                <strong>
-                  Bahrain Sports
-                </strong>
-
-                <small>
-                  Sports
-                </small>
-
-              </span>
-
-              <span class="tv-channel-status">
-                LIVE
-              </span>
-
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- ===================================================
-             MOVIES / FILM
-             =================================================== -->
-
-        <div
-          class="tv-category"
-          data-tv-category
-        >
-
-          <div class="tv-category-heading">
-
-            <h2>
-              🎬 Movies
-            </h2>
-
-            <span>
-              Movie Channels
-            </span>
-
-          </div>
-
-
-          <div class="tv-channel-grid">
-
-            <button
-              type="button"
-              class="tv-channel"
-              data-name="FilmBox"
-              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://iptv.prosto.tv/ch63/tracks-v1a1/mono.m3u8"
-            >
-
-              <span class="tv-channel-icon">
-                🎬
-              </span>
-
-              <span class="tv-channel-info">
-
-                <strong>
-                  FilmBox
-                </strong>
-
-                <small>
-                  Movies
-                </small>
-
-              </span>
-
-              <span class="tv-channel-status">
-                LIVE
-              </span>
-
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- ===================================================
-             MUSIC
-             =================================================== -->
-
-        <div
-          class="tv-category"
-          data-tv-category
-        >
-
-          <div class="tv-category-heading">
-
-            <h2>
-              🎵 Music
-            </h2>
-
-            <span>
-              Music Channels
-            </span>
-
-          </div>
-
-
-          <div class="tv-channel-grid">
-
-            <button
-              type="button"
-              class="tv-channel"
-              data-name="Afrobeat TV"
-              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://stream.ecable.tv/afrobeats/index.m3u8"
-            >
-
-              <span class="tv-channel-icon">
-                🎵
-              </span>
-
-              <span class="tv-channel-info">
-
-                <strong>
-                  Afrobeat TV
-                </strong>
-
-                <small>
-                  African Music
-                </small>
-
-              </span>
-
-              <span class="tv-channel-status">
-                LIVE
-              </span>
-
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- ===================================================
-             NEWS
-             =================================================== -->
-
-        <div
-          class="tv-category"
-          data-tv-category
-        >
-
-          <div class="tv-category-heading">
-
-            <h2>
-              📰 News
-            </h2>
-
-            <span>
-              News Channels
-            </span>
-
-          </div>
-
-
-          <div class="tv-channel-grid">
-
-            <button
-              type="button"
-              class="tv-channel"
-              data-name="ABC News"
-              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://abcnews-streams.akamaized.net/hls/live/2023560-b/abcnewshudson1/master_400.m3u8"
-            >
-
-              <span class="tv-channel-icon">
-                📰
-              </span>
-
-              <span class="tv-channel-info">
-
-                <strong>
-                  ABC News
-                </strong>
-
-                <small>
-                  World News
-                </small>
-
-              </span>
-
-              <span class="tv-channel-status">
-                LIVE
-              </span>
-
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <div
-          class="empty-state"
-          id="tvEmpty"
-          hidden
-        >
-          No TV channels available.
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================================
-         MOVIES
-         ======================================================= -->
-
-    <section
-      class="content-section movies-content"
-      id="moviesContent"
-      hidden
-    >
-
-      <div class="container">
-
-
-        <div class="content-heading">
-
-          <h1>
-            Movies
-          </h1>
-
-          <span
-            class="content-count"
-            id="movieCount"
-          >
-            1
-          </span>
-
-        </div>
-
-
-        <div
-          class="movie-grid"
-          id="movieList"
-        >
-
-
-          <!-- HOUSEMAID -->
-
-          <button
-            type="button"
-            class="movie-card"
-            data-name="Housemaid (2026)"
-            data-url="https://vsembed.su/embed/movie/tt39319989"
-            data-date="2026-08-17"
-          >
-
-            <span class="movie-status">
-              MOVIE
-            </span>
-
-            <span class="movie-icon">
-              🎬
-            </span>
-
-            <span class="movie-title">
-              Housemaid (2026)
-            </span>
-
-            <span class="movie-rating">
-              IMDb 5.1/10
-            </span>
-
-          </button>
-
-
-          <!-- SPIDERMAN -->
-
-          <button
-            type="button"
-            class="movie-card"
-            data-name="Spiderman: Brand New Day (2026)"
-            data-url="https://vsembed.su/embed/movie/tt22084616"
-            data-date="2026-08-18"
-          >
-
-            <span class="movie-status">
-              MOVIE
-            </span>
-
-            <span class="movie-icon">
-              🎬
-            </span>
-
-            <span class="movie-title">
-              Spiderman: Brand New Day (2026)
-            </span>
-
-            <span class="movie-rating">
-              IMDb 8.1/10
-            </span>
-
-          </button>
-
-
-        </div>
-
-
-        <div
-          class="empty-state"
-          id="movieEmpty"
-          hidden
-        >
-          No movies available.
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-  </main>
-
-
-  <!-- =========================================================
-       FOOTER
-       ========================================================= -->
-
-  <footer class="footer">
-
-    <div class="container footer-wrap">
-
-      <strong>
-        DEE<span>PROWSS</span>
-      </strong>
-
-      <span>
-        Football • Highlights • TV • Movies
+      <span class="content-count" id="matchCount">
+        2
       </span>
 
     </div>
 
-  </footer>
+
+    <div class="match-grid" id="matchList">
+
+      <!-- =================================================
+           DEPORTIVO VS ELCHE
+           ================================================= -->
+
+      <button
+        type="button"
+        class="match-card"
+        data-name="Deportivo vs Elche"
+        data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
+        data-alt-url="PASTE-DEPORTIVO-ALT-SCREEN-URL-HERE"
+        data-kickoff="2026-08-17T20:00:00+01:00"
+        data-duration="96"
+      >
+
+        <span class="match-status" data-match-status>
+          UPCOMING
+        </span>
+
+        <span class="match-teams">
+          Deportivo vs Elche
+        </span>
+
+        <span class="match-date" data-match-date>
+          Date
+        </span>
+
+        <span class="match-time" data-match-time>
+          Time
+        </span>
+
+        <span class="match-countdown" data-match-countdown>
+          Starting soon
+        </span>
+
+      </button>
 
 
-  <!-- =========================================================
-       MAIN JAVASCRIPT
-       ========================================================= -->
+      <!-- =================================================
+           CARDIFF VS WREXHAM
+           ================================================= -->
 
-  <script src="script.js"></script>
+      <button
+        type="button"
+        class="match-card"
+        data-name="Cardiff vs Wrexham"
+        data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
+        data-alt-url="PASTE-CARDIFF-ALT-SCREEN-URL-HERE"
+        data-kickoff="2026-08-17T20:00:00+01:00"
+        data-duration="96"
+      >
+
+        <span class="match-status" data-match-status>
+          UPCOMING
+        </span>
+
+        <span class="match-teams">
+          Cardiff vs Wrexham
+        </span>
+
+        <span class="match-date" data-match-date>
+          Date
+        </span>
+
+        <span class="match-time" data-match-time>
+          Time
+        </span>
+
+        <span class="match-countdown" data-match-countdown>
+          Starting soon
+        </span>
+
+      </button>
+
+    </div>
 
 
-  <!-- =========================================================
-       FOOTBALL MATCH DATE / TIME SYSTEM
-       ========================================================= -->
+    <div class="empty-state" id="footballEmpty" hidden>
+      No matches available.
+    </div>
 
-  <script>
+  </div>
 
-    document.addEventListener(
-      "DOMContentLoaded",
-      function () {
-
-        const matchList =
-          document.getElementById("matchList");
-
-        const highlightList =
-          document.getElementById("highlightList");
-
-        const movieList =
-          document.getElementById("movieList");
+</section>
 
 
-        const matchCards =
-          matchList
-            ? Array.from(
-                matchList.querySelectorAll(
-                  ".match-card[data-kickoff]"
-                )
-              )
-            : [];
+<!-- =======================================================
+     HIGHLIGHTS
+     ======================================================= -->
+
+<section
+  class="content-section highlights-content"
+  id="highlightsContent"
+  hidden
+>
+
+  <div class="container">
+
+    <div class="content-heading">
+
+      <h1>Football Highlights</h1>
+
+      <span class="content-count" id="highlightCount">
+        1
+      </span>
+
+    </div>
 
 
-        const DEFAULT_MATCH_DURATION = 96;
+    <div class="highlight-grid" id="highlightList">
+
+      <button
+        type="button"
+        class="highlight-card"
+        data-name="Chelsea vs Real Sociedad Highlights"
+        data-url="https://filemoon.org/en/E1x3AqDe3yk6/embed"
+        data-date="2026-08-17"
+      >
+
+        <div class="highlight-thumbnail">
+          <span>▶</span>
+        </div>
+
+        <strong>
+          Chelsea vs Real Sociedad
+        </strong>
+
+        <small>
+          Highlights
+        </small>
+
+      </button>
+
+    </div>
 
 
-        /* =====================================================
-           DATE
-           ===================================================== */
+    <div class="empty-state" id="highlightEmpty" hidden>
+      No highlights available.
+    </div>
 
-        function formatLocalDate(date) {
+  </div>
 
-          return new Intl.DateTimeFormat(
-            undefined,
-            {
-              weekday: "short",
-              day: "numeric",
-              month: "short",
-              year: "numeric"
-            }
-          ).format(date);
+</section>
 
+
+<!-- =======================================================
+     TV CHANNELS
+     ======================================================= -->
+
+<section
+  class="content-section tv-content"
+  id="tvContent"
+  hidden
+>
+
+  <div class="container">
+
+    <div class="content-heading">
+
+      <h1>TV Channels</h1>
+
+      <span class="content-count" id="tvCount">
+        4
+      </span>
+
+    </div>
+
+
+    <!-- SPORTS -->
+
+    <div class="tv-category" data-tv-category>
+
+      <div class="tv-category-heading">
+        <h2>⚽ Sports</h2>
+        <span>Live Sports</span>
+      </div>
+
+      <div class="tv-channel-grid">
+
+        <button
+          type="button"
+          class="tv-channel"
+          data-name="Bahrain Sports"
+          data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/chunklist_w1526827686_b978000.m3u8"
+        >
+
+          <span class="tv-channel-icon">⚽</span>
+
+          <span class="tv-channel-info">
+
+            <strong>Bahrain Sports</strong>
+
+            <small>Sports</small>
+
+          </span>
+
+          <span class="tv-channel-status">
+            LIVE
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- MOVIES -->
+
+    <div class="tv-category" data-tv-category>
+
+      <div class="tv-category-heading">
+        <h2>🎬 Movies</h2>
+        <span>Movie Channels</span>
+      </div>
+
+      <div class="tv-channel-grid">
+
+        <button
+          type="button"
+          class="tv-channel"
+          data-name="FilmBox"
+          data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://iptv.prosto.tv/ch63/tracks-v1a1/mono.m3u8"
+        >
+
+          <span class="tv-channel-icon">🎬</span>
+
+          <span class="tv-channel-info">
+
+            <strong>FilmBox</strong>
+
+            <small>Movies</small>
+
+          </span>
+
+          <span class="tv-channel-status">
+            LIVE
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- MUSIC -->
+
+    <div class="tv-category" data-tv-category>
+
+      <div class="tv-category-heading">
+        <h2>🎵 Music</h2>
+        <span>Music Channels</span>
+      </div>
+
+      <div class="tv-channel-grid">
+
+        <button
+          type="button"
+          class="tv-channel"
+          data-name="Afrobeat TV"
+          data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://stream.ecable.tv/afrobeats/index.m3u8"
+        >
+
+          <span class="tv-channel-icon">🎵</span>
+
+          <span class="tv-channel-info">
+
+            <strong>Afrobeat TV</strong>
+
+            <small>African Music</small>
+
+          </span>
+
+          <span class="tv-channel-status">
+            LIVE
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- NEWS -->
+
+    <div class="tv-category" data-tv-category>
+
+      <div class="tv-category-heading">
+        <h2>📰 News</h2>
+        <span>News Channels</span>
+      </div>
+
+      <div class="tv-channel-grid">
+
+        <button
+          type="button"
+          class="tv-channel"
+          data-name="ABC News"
+          data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://abcnews-streams.akamaized.net/hls/live/2023560-b/abcnewshudson1/master_400.m3u8"
+        >
+
+          <span class="tv-channel-icon">📰</span>
+
+          <span class="tv-channel-info">
+
+            <strong>ABC News</strong>
+
+            <small>World News</small>
+
+          </span>
+
+          <span class="tv-channel-status">
+            LIVE
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="empty-state" id="tvEmpty" hidden>
+      No TV channels available.
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =======================================================
+     MOVIES
+     ======================================================= -->
+
+<section
+  class="content-section movies-content"
+  id="moviesContent"
+  hidden
+>
+
+  <div class="container">
+
+    <div class="content-heading">
+
+      <h1>Movies</h1>
+
+      <span class="content-count" id="movieCount">
+        2
+      </span>
+
+    </div>
+
+
+    <div class="movie-grid" id="movieList">
+
+      <!-- HOUSEMAID -->
+
+      <button
+        type="button"
+        class="movie-card"
+        data-name="Housemaid (2026)"
+        data-url="https://vsembed.su/embed/movie/tt39319989"
+        data-date="2026-08-17"
+      >
+
+        <span class="movie-status">
+          MOVIE
+        </span>
+
+        <span class="movie-icon">
+          🎬
+        </span>
+
+        <span class="movie-title">
+          Housemaid (2026)
+        </span>
+
+        <span class="movie-rating">
+          IMDb 5.1/10
+        </span>
+
+      </button>
+
+
+      <!-- SPIDERMAN -->
+
+      <button
+        type="button"
+        class="movie-card"
+        data-name="Spiderman: Brand New Day (2026)"
+        data-url="https://vsembed.su/embed/movie/tt22084616"
+        data-date="2026-08-18"
+      >
+
+        <span class="movie-status">
+          MOVIE
+        </span>
+
+        <span class="movie-icon">
+          🎬
+        </span>
+
+        <span class="movie-title">
+          Spiderman: Brand New Day (2026)
+        </span>
+
+        <span class="movie-rating">
+          IMDb 8.1/10
+        </span>
+
+      </button>
+
+    </div>
+
+
+    <div class="empty-state" id="movieEmpty" hidden>
+      No movies available.
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =======================================================
+     FOOTER
+     ======================================================= -->
+
+<footer>
+
+  <div class="container footer-wrap">
+
+    <strong>
+      DEE<span>PROWSS</span>
+    </strong>
+
+    <span>
+      Football • Highlights • TV • Movies
+    </span>
+
+  </div>
+
+</footer>
+
+
+<!-- =======================================================
+     ALTERNATIVE FOOTBALL SCREEN
+     ======================================================= -->
+
+<div
+  class="alt-screen-overlay"
+  id="altScreenOverlay"
+  hidden
+>
+
+  <div class="alt-screen-box">
+
+    <div class="alt-screen-header">
+
+      <div class="alt-screen-title">
+
+        <span class="alt-screen-label">
+          ALTERNATIVE SCREEN
+        </span>
+
+        <span
+          class="alt-screen-match"
+          id="altScreenMatch"
+        >
+          Football Match
+        </span>
+
+      </div>
+
+      <button
+        type="button"
+        class="alt-screen-close"
+        id="closeAltScreen"
+        aria-label="Close alternative screen"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div class="alt-screen-frame-wrap">
+
+      <iframe
+        class="alt-screen-frame"
+        id="altScreenFrame"
+        src="about:blank"
+        title="Alternative Football Screen"
+        allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+        allowfullscreen
+        webkitallowfullscreen
+        mozallowfullscreen
+        referrerpolicy="no-referrer"
+      ></iframe>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+/* =========================================================
+   DEEPROWSS APP
+   ========================================================= */
+
+(function(){
+
+  const screenFrame =
+    document.getElementById("screenFrame");
+
+  const screenPlaceholder =
+    document.getElementById("screenPlaceholder");
+
+  const screenStatus =
+    document.getElementById("screenStatus");
+
+  const nowShowing =
+    document.getElementById("nowShowing");
+
+  const fullscreenButton =
+    document.getElementById("fullscreenButton");
+
+  const footballScreenControls =
+    document.getElementById("footballScreenControls");
+
+  const mainScreenButton =
+    document.getElementById("mainScreenButton");
+
+  const altScreenButton =
+    document.getElementById("altScreenButton");
+
+  const altScreenOverlay =
+    document.getElementById("altScreenOverlay");
+
+  const altScreenFrame =
+    document.getElementById("altScreenFrame");
+
+  const altScreenMatch =
+    document.getElementById("altScreenMatch");
+
+  const closeAltScreen =
+    document.getElementById("closeAltScreen");
+
+  const menuToggle =
+    document.getElementById("menuToggle");
+
+  const mainNav =
+    document.getElementById("mainNav");
+
+
+  let currentMatch = null;
+  let currentMainUrl = "";
+  let currentAltUrl = "";
+
+
+  /* =======================================================
+     NAVIGATION
+     ======================================================= */
+
+  const sections = {
+    football:{
+      section:document.getElementById("footballContent"),
+      button:document.getElementById("footballButton"),
+      nav:document.getElementById("navFootball")
+    },
+
+    highlights:{
+      section:document.getElementById("highlightsContent"),
+      button:document.getElementById("highlightsButton"),
+      nav:document.getElementById("navHighlights")
+    },
+
+    tv:{
+      section:document.getElementById("tvContent"),
+      button:document.getElementById("tvButton"),
+      nav:document.getElementById("navTV")
+    },
+
+    movies:{
+      section:document.getElementById("moviesContent"),
+      button:document.getElementById("moviesButton"),
+      nav:document.getElementById("navMovies")
+    }
+  };
+
+
+  function showSection(name){
+
+    Object.keys(sections).forEach(function(key){
+
+      const item = sections[key];
+
+      item.section.hidden = key !== name;
+
+      item.button.classList.toggle(
+        "active",
+        key === name
+      );
+
+      item.nav.classList.toggle(
+        "active",
+        key === name
+      );
+
+    });
+
+
+    if(name !== "football"){
+      footballScreenControls.hidden = true;
+    }else if(currentAltUrl){
+      footballScreenControls.hidden = false;
+    }
+
+
+    mainNav.classList.remove("open");
+
+    menuToggle.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+
+  }
+
+
+  sections.football.button.addEventListener(
+    "click",
+    function(){
+      showSection("football");
+    }
+  );
+
+  sections.highlights.button.addEventListener(
+    "click",
+    function(){
+      showSection("highlights");
+    }
+  );
+
+  sections.tv.button.addEventListener(
+    "click",
+    function(){
+      showSection("tv");
+    }
+  );
+
+  sections.movies.button.addEventListener(
+    "click",
+    function(){
+      showSection("movies");
+    }
+  );
+
+
+  sections.football.nav.addEventListener(
+    "click",
+    function(event){
+      event.preventDefault();
+      showSection("football");
+    }
+  );
+
+  sections.highlights.nav.addEventListener(
+    "click",
+    function(event){
+      event.preventDefault();
+      showSection("highlights");
+    }
+  );
+
+  sections.tv.nav.addEventListener(
+    "click",
+    function(event){
+      event.preventDefault();
+      showSection("tv");
+    }
+  );
+
+  sections.movies.nav.addEventListener(
+    "click",
+    function(event){
+      event.preventDefault();
+      showSection("movies");
+    }
+  );
+
+
+  /* =======================================================
+     MOBILE MENU
+     ======================================================= */
+
+  menuToggle.addEventListener(
+    "click",
+    function(){
+
+      const isOpen =
+        mainNav.classList.toggle("open");
+
+      menuToggle.setAttribute(
+        "aria-expanded",
+        isOpen ? "true" : "false"
+      );
+
+    }
+  );
+
+
+  /* =======================================================
+     LOAD MAIN SCREEN
+     ======================================================= */
+
+  function loadMainScreen(){
+
+    if(!currentMainUrl){
+      return;
+    }
+
+    closeAlternativeScreen();
+
+    screenFrame.src = currentMainUrl;
+
+    screenPlaceholder.classList.add("hidden");
+
+    screenStatus.textContent = "LIVE";
+
+    mainScreenButton.classList.add("active");
+
+    altScreenButton.classList.remove("active");
+
+  }
+
+
+  /* =======================================================
+     OPEN ALTERNATIVE SCREEN
+     ======================================================= */
+
+  function openAltScreen(){
+
+    if(
+      !currentAltUrl ||
+      currentAltUrl.indexOf("PASTE-") === 0
+    ){
+      alert(
+        "No alternative screen has been added for this match yet."
+      );
+
+      return;
+    }
+
+
+    altScreenMatch.textContent =
+      currentMatch || "Football Match";
+
+    altScreenFrame.src =
+      currentAltUrl;
+
+    altScreenOverlay.hidden = false;
+
+    document.body.style.overflow = "hidden";
+
+    mainScreenButton.classList.remove("active");
+
+    altScreenButton.classList.add("active");
+
+  }
+
+
+  /* =======================================================
+     CLOSE ALTERNATIVE SCREEN
+     ======================================================= */
+
+  function closeAlternativeScreen(){
+
+    altScreenOverlay.hidden = true;
+
+    altScreenFrame.src =
+      "about:blank";
+
+    document.body.style.overflow = "";
+
+    mainScreenButton.classList.add("active");
+
+    altScreenButton.classList.remove("active");
+
+  }
+
+
+  mainScreenButton.addEventListener(
+    "click",
+    loadMainScreen
+  );
+
+  altScreenButton.addEventListener(
+    "click",
+    openAltScreen
+  );
+
+  closeAltScreen.addEventListener(
+    "click",
+    closeAlternativeScreen
+  );
+
+
+  altScreenOverlay.addEventListener(
+    "click",
+    function(event){
+
+      if(event.target === altScreenOverlay){
+        closeAlternativeScreen();
+      }
+
+    }
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    function(event){
+
+      if(
+        event.key === "Escape" &&
+        !altScreenOverlay.hidden
+      ){
+        closeAlternativeScreen();
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     FULLSCREEN
+     ======================================================= */
+
+  fullscreenButton.addEventListener(
+    "click",
+    async function(){
+
+      const player =
+        document.getElementById("screenPlayer");
+
+      try{
+
+        if(document.fullscreenElement){
+          await document.exitFullscreen();
+        }else if(player.requestFullscreen){
+          await player.requestFullscreen();
         }
 
-
-        /* =====================================================
-           TIME
-           ===================================================== */
-
-        function formatLocalTime(date) {
-
-          return new Intl.DateTimeFormat(
-            undefined,
-            {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-              timeZoneName: "short"
-            }
-          ).format(date);
-
-        }
-
-
-        /* =====================================================
-           COUNTDOWN
-           ===================================================== */
-
-        function formatCountdown(milliseconds) {
-
-          if (milliseconds <= 0) {
-
-            return "00:00:00";
-
-          }
-
-
-          let totalSeconds =
-            Math.floor(
-              milliseconds / 1000
-            );
-
-
-          const days =
-            Math.floor(
-              totalSeconds / 86400
-            );
-
-
-          totalSeconds %= 86400;
-
-
-          const hours =
-            Math.floor(
-              totalSeconds / 3600
-            );
-
-
-          totalSeconds %= 3600;
-
-
-          const minutes =
-            Math.floor(
-              totalSeconds / 60
-            );
-
-
-          const seconds =
-            totalSeconds % 60;
-
-
-          const hh =
-            String(hours).padStart(
-              2,
-              "0"
-            );
-
-
-          const mm =
-            String(minutes).padStart(
-              2,
-              "0"
-            );
-
-
-          const ss =
-            String(seconds).padStart(
-              2,
-              "0"
-            );
-
-
-          if (days > 0) {
-
-            return (
-              days +
-              "d " +
-              hh +
-              ":" +
-              mm +
-              ":" +
-              ss
-            );
-
-          }
-
-
-          return (
-            hh +
-            ":" +
-            mm +
-            ":" +
-            ss
-          );
-
-        }
-
-
-        /* =====================================================
-           MATCH STATUS
-           ===================================================== */
-
-        function getMatchStatus(
-          card,
-          now
-        ) {
-
-          const kickoffString =
-            card.dataset.kickoff;
-
-
-          if (!kickoffString) {
-
-            return null;
-
-          }
-
-
-          const kickoff =
-            new Date(
-              kickoffString
-            );
-
-
-          if (
-            Number.isNaN(
-              kickoff.getTime()
-            )
-          ) {
-
-            return null;
-
-          }
-
-
-          const duration =
-            Number(
-              card.dataset.duration
-            ) ||
-            DEFAULT_MATCH_DURATION;
-
-
-          const endTime =
-            new Date(
-              kickoff.getTime() +
-              duration *
-              60 *
-              1000
-            );
-
-
-          if (now < kickoff) {
-
-            return {
-              status: "upcoming",
-              kickoff: kickoff,
-              endTime: endTime
-            };
-
-          }
-
-
-          if (
-            now >= kickoff &&
-            now < endTime
-          ) {
-
-            return {
-              status: "live",
-              kickoff: kickoff,
-              endTime: endTime
-            };
-
-          }
-
-
-          return {
-            status: "ended",
-            kickoff: kickoff,
-            endTime: endTime
-          };
-
-        }
-
-
-        /* =====================================================
-           SORT FOOTBALL MATCHES
-           ===================================================== */
-
-        function sortFootballMatches(
-          now
-        ) {
-
-          if (!matchList) {
-
-            return;
-
-          }
-
-
-          const cards =
-            Array.from(
-              matchList.querySelectorAll(
-                ".match-card[data-kickoff]"
-              )
-            );
-
-
-          cards.sort(
-            function (a, b) {
-
-              const aData =
-                getMatchStatus(
-                  a,
-                  now
-                );
-
-
-              const bData =
-                getMatchStatus(
-                  b,
-                  now
-                );
-
-
-              if (
-                !aData &&
-                !bData
-              ) {
-
-                return 0;
-
-              }
-
-
-              if (!aData) {
-
-                return 1;
-
-              }
-
-
-              if (!bData) {
-
-                return -1;
-
-              }
-
-
-              if (
-                aData.status === "live" &&
-                bData.status !== "live"
-              ) {
-
-                return -1;
-
-              }
-
-
-              if (
-                aData.status !== "live" &&
-                bData.status === "live"
-              ) {
-
-                return 1;
-
-              }
-
-
-              if (
-                aData.status === "live" &&
-                bData.status === "live"
-              ) {
-
-                return (
-                  aData.kickoff.getTime() -
-                  bData.kickoff.getTime()
-                );
-
-              }
-
-
-              if (
-                aData.status === "upcoming" &&
-                bData.status === "ended"
-              ) {
-
-                return -1;
-
-              }
-
-
-              if (
-                aData.status === "ended" &&
-                bData.status === "upcoming"
-              ) {
-
-                return 1;
-
-              }
-
-
-              if (
-                aData.status === "upcoming" &&
-                bData.status === "upcoming"
-              ) {
-
-                return (
-                  aData.kickoff.getTime() -
-                  bData.kickoff.getTime()
-                );
-
-              }
-
-
-              if (
-                aData.status === "ended" &&
-                bData.status === "ended"
-              ) {
-
-                return (
-                  bData.kickoff.getTime() -
-                  aData.kickoff.getTime()
-                );
-
-              }
-
-
-              return 0;
-
-            }
-          );
-
-
-          cards.forEach(
-            function (card) {
-
-              matchList.appendChild(
-                card
-              );
-
-            }
-          );
-
-        }
-
-
-        /* =====================================================
-           UPDATE MATCH
-           ===================================================== */
-
-        function updateMatch(
-          card
-        ) {
-
-          const kickoffString =
-            card.dataset.kickoff;
-
-
-          if (!kickoffString) {
-
-            return;
-
-          }
-
-
-          const kickoff =
-            new Date(
-              kickoffString
-            );
-
-
-          if (
-            Number.isNaN(
-              kickoff.getTime()
-            )
-          ) {
-
-            return;
-
-          }
-
-
-          const duration =
-            Number(
-              card.dataset.duration
-            ) ||
-            DEFAULT_MATCH_DURATION;
-
-
-          const endTime =
-            new Date(
-              kickoff.getTime() +
-              duration *
-              60 *
-              1000
-            );
-
-
-          const now =
-            new Date();
-
-
-          const status =
-            card.querySelector(
-              "[data-match-status]"
-            );
-
-
-          const dateElement =
-            card.querySelector(
-              "[data-match-date]"
-            );
-
-
-          const timeElement =
-            card.querySelector(
-              "[data-match-time]"
-            );
-
-
-          const countdownElement =
-            card.querySelector(
-              "[data-match-countdown]"
-            );
-
-
-          if (dateElement) {
-
-            dateElement.textContent =
-              formatLocalDate(
-                kickoff
-              );
-
-          }
-
-
-          if (timeElement) {
-
-            timeElement.textContent =
-              formatLocalTime(
-                kickoff
-              );
-
-          }
-
-
-          /* ===================================================
-             UPCOMING
-             =================================================== */
-
-          if (now < kickoff) {
-
-            card.classList.remove(
-              "is-live",
-              "is-ended"
-            );
-
-            card.classList.add(
-              "is-upcoming"
-            );
-
-
-            if (status) {
-
-              status.textContent =
-                "UPCOMING";
-
-              status.className =
-                "match-status upcoming";
-
-            }
-
-
-            if (
-              countdownElement
-            ) {
-
-              countdownElement.textContent =
-                "Starts in " +
-                formatCountdown(
-                  kickoff.getTime() -
-                  now.getTime()
-                );
-
-            }
-
-
-            return;
-
-          }
-
-
-          /* ===================================================
-             LIVE
-             =================================================== */
-
-          if (
-            now >= kickoff &&
-            now < endTime
-          ) {
-
-            card.classList.remove(
-              "is-upcoming",
-              "is-ended"
-            );
-
-            card.classList.add(
-              "is-live"
-            );
-
-
-            if (status) {
-
-              status.textContent =
-                "● LIVE";
-
-              status.className =
-                "match-status live";
-
-            }
-
-
-            if (
-              countdownElement
-            ) {
-
-              countdownElement.textContent =
-                "LIVE NOW";
-
-            }
-
-
-            return;
-
-          }
-
-
-          /* ===================================================
-             ENDED
-             =================================================== */
-
-          card.classList.remove(
-            "is-upcoming",
-            "is-live"
-          );
-
-          card.classList.add(
-            "is-ended"
-          );
-
-
-          if (status) {
-
-            status.textContent =
-              "ENDED";
-
-            status.className =
-              "match-status ended";
-
-          }
-
-
-          if (
-            countdownElement
-          ) {
-
-            countdownElement.textContent =
-              "Match ended";
-
-          }
-
-        }
-
-
-        /* =====================================================
-           SORT HIGHLIGHTS
-           ===================================================== */
-
-        function sortHighlights() {
-
-          if (!highlightList) {
-
-            return;
-
-          }
-
-
-          const cards =
-            Array.from(
-              highlightList.querySelectorAll(
-                ".highlight-card[data-date]"
-              )
-            );
-
-
-          cards.sort(
-            function (a, b) {
-
-              const dateA =
-                new Date(
-                  a.dataset.date +
-                  "T00:00:00"
-                ).getTime();
-
-
-              const dateB =
-                new Date(
-                  b.dataset.date +
-                  "T00:00:00"
-                ).getTime();
-
-
-              return dateB - dateA;
-
-            }
-          );
-
-
-          cards.forEach(
-            function (card) {
-
-              highlightList.appendChild(
-                card
-              );
-
-            }
-          );
-
-        }
-
-
-        /* =====================================================
-           SORT MOVIES
-           ===================================================== */
-
-        function sortMovies() {
-
-          if (!movieList) {
-
-            return;
-
-          }
-
-
-          const cards =
-            Array.from(
-              movieList.querySelectorAll(
-                ".movie-card[data-date]"
-              )
-            );
-
-
-          cards.sort(
-            function (a, b) {
-
-              const dateA =
-                new Date(
-                  a.dataset.date +
-                  "T00:00:00"
-                ).getTime();
-
-
-              const dateB =
-                new Date(
-                  b.dataset.date +
-                  "T00:00:00"
-                ).getTime();
-
-
-              return dateB - dateA;
-
-            }
-          );
-
-
-          cards.forEach(
-            function (card) {
-
-              movieList.appendChild(
-                card
-              );
-
-            }
-          );
-
-        }
-
-
-        /* =====================================================
-           INITIAL UPDATE
-           ===================================================== */
-
-        const initialNow =
-          new Date();
-
-
-        matchCards.forEach(
-          updateMatch
-        );
-
-
-        sortFootballMatches(
-          initialNow
-        );
-
-
-        sortHighlights();
-
-
-        sortMovies();
-
-
-        /* =====================================================
-           UPDATE EVERY SECOND
-           ===================================================== */
-
-        setInterval(
-          function () {
-
-            const now =
-              new Date();
-
-
-            matchCards.forEach(
-              updateMatch
-            );
-
-
-            sortFootballMatches(
-              now
-            );
-
-          },
-          1000
+      }catch(error){
+
+        console.log(
+          "Fullscreen unavailable:",
+          error
         );
 
       }
-    );
 
-  </script>
+    }
+  );
 
+
+  /* =======================================================
+     FOOTBALL MATCHES
+     ======================================================= */
+
+  document.querySelectorAll(".match-card")
+    .forEach(function(matchCard){
+
+      matchCard.addEventListener(
+        "click",
+        function(){
+
+          document.querySelectorAll(
+            ".match-card"
+          ).forEach(function(card){
+            card.classList.remove("selected");
+          });
+
+          matchCard.classList.add("selected");
+
+
+          currentMatch =
+            matchCard.dataset.name || "Football Match";
+
+          currentMainUrl =
+            matchCard.dataset.url || "";
+
+          currentAltUrl =
+            matchCard.dataset.altUrl || "";
+
+
+          nowShowing.textContent =
+            currentMatch;
+
+
+          if(currentAltUrl){
+            footballScreenControls.hidden = false;
+          }else{
+            footballScreenControls.hidden = true;
+          }
+
+
+          closeAlternativeScreen();
+
+          loadMainScreen();
+
+        }
+      );
+
+    });
+
+
+  /* =======================================================
+     HIGHLIGHTS
+     ======================================================= */
+
+  document.querySelectorAll(".highlight-card")
+    .forEach(function(card){
+
+      card.addEventListener(
+        "click",
+        function(){
+
+          const url =
+            card.dataset.url || "";
+
+          const name =
+            card.dataset.name || "Highlight";
+
+          if(url){
+
+            screenFrame.src = url;
+
+            screenPlaceholder.classList.add("hidden");
+
+            screenStatus.textContent =
+              "HIGHLIGHTS";
+
+            nowShowing.textContent =
+              name;
+
+            footballScreenControls.hidden = true;
+
+            closeAlternativeScreen();
+
+          }
+
+        }
+      );
+
+    });
+
+
+  /* =======================================================
+     TV CHANNELS
+     ======================================================= */
+
+  document.querySelectorAll(".tv-channel")
+    .forEach(function(channel){
+
+      channel.addEventListener(
+        "click",
+        function(){
+
+          const url =
+            channel.dataset.url || "";
+
+          const name =
+            channel.dataset.name || "TV Channel";
+
+          if(url){
+
+            screenFrame.src = url;
+
+            screenPlaceholder.classList.add("hidden");
+
+            screenStatus.textContent =
+              "LIVE TV";
+
+            nowShowing.textContent =
+              name;
+
+            footballScreenControls.hidden = true;
+
+            closeAlternativeScreen();
+
+          }
+
+        }
+      );
+
+    });
+
+
+  /* =======================================================
+     MOVIES
+     ======================================================= */
+
+  document.querySelectorAll(".movie-card")
+    .forEach(function(movie){
+
+      movie.addEventListener(
+        "click",
+        function(){
+
+          const url =
+            movie.dataset.url || "";
+
+          const name =
+            movie.dataset.name || "Movie";
+
+          if(url){
+
+            screenFrame.src = url;
+
+            screenPlaceholder.classList.add("hidden");
+
+            screenStatus.textContent =
+              "MOVIE";
+
+            nowShowing.textContent =
+              name;
+
+            footballScreenControls.hidden = true;
+
+            closeAlternativeScreen();
+
+          }
+
+        }
+      );
+
+    });
+
+
+  /* =======================================================
+     FOOTBALL MATCH DATE / STATUS
+     ======================================================= */
+
+  function updateMatchStatuses(){
+
+    document.querySelectorAll(".match-card")
+      .forEach(function(card){
+
+        const kickoff =
+          new Date(card.dataset.kickoff);
+
+        const duration =
+          Number(card.dataset.duration || 96);
+
+        const end =
+          new Date(
+            kickoff.getTime() +
+            duration * 60 * 1000
+          );
+
+        const status =
+          card.querySelector(
+            "[data-match-status]"
+          );
+
+        const date =
+          card.querySelector(
+            "[data-match-date]"
+          );
+
+        const time =
+          card.querySelector(
+            "[data-match-time]"
+          );
+
+        const countdown =
+          card.querySelector(
+            "[data-match-countdown]"
+          );
+
+
+        if(date){
+
+          date.textContent =
+            kickoff.toLocaleDateString(
+              undefined,
+              {
+                weekday:"short",
+                month:"short",
+                day:"numeric",
+                year:"numeric"
+              }
+            );
+
+        }
+
+
+        if(time){
+
+          time.textContent =
+            kickoff.toLocaleTimeString(
+              undefined,
+              {
+                hour:"numeric",
+                minute:"2-digit",
+                timeZoneName:"short"
+              }
+            );
+
+        }
+
+
+        const now =
+          new Date();
+
+
+        if(now < kickoff){
+
+          status.textContent =
+            "UPCOMING";
+
+          status.classList.remove("live");
+
+          const diff =
+            kickoff.getTime() -
+            now.getTime();
+
+          countdown.textContent =
+            "Starts in " +
+            formatCountdown(diff);
+
+        }else if(now >= kickoff && now <= end){
+
+          status.textContent =
+            "LIVE";
+
+          status.classList.add("live");
+
+          countdown.textContent =
+            "Match is live";
+
+        }else{
+
+          status.textContent =
+            "ENDED";
+
+          status.classList.remove("live");
+
+          countdown.textContent =
+            "Match ended";
+
+        }
+
+      });
+
+  }
+
+
+  function formatCountdown(milliseconds){
+
+    const totalSeconds =
+      Math.max(
+        0,
+        Math.floor(milliseconds / 1000)
+      );
+
+    const days =
+      Math.floor(totalSeconds / 86400);
+
+    const hours =
+      Math.floor(
+        (totalSeconds % 86400) / 3600
+      );
+
+    const minutes =
+      Math.floor(
+        (totalSeconds % 3600) / 60
+      );
+
+    if(days > 0){
+      return days + "d " + hours + "h";
+    }
+
+    if(hours > 0){
+      return hours + "h " + minutes + "m";
+    }
+
+    return minutes + "m";
+  }
+
+
+  updateMatchStatuses();
+
+  setInterval(
+    updateMatchStatuses,
+    30000
+  );
+
+
+})();
+</script>
 
 </body>
-
 </html>
