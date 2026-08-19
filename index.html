@@ -160,12 +160,6 @@
       background: #07090d;
     }
 
-
-    /* FOOTBALL ALT SCREEN: hidden outside Football Live */
-    .alt-screen-button[hidden] {
-      display: none !important;
-    }
-
     /* ALT SCREEN BUTTON - FOOTBALL ONLY */
     .alt-screen-button {
       display: inline-flex;
@@ -606,7 +600,7 @@
             class="match-card"
             data-name="Deportivo vs Elche"
             data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
-            data-alt-url=""
+            data-alt-url="https://filemoon.org/en/E1x3AqDe3yk6/embed"
             data-kickoff="2026-08-17T20:00:00+01:00"
             data-duration="96"
           >
@@ -1262,52 +1256,17 @@
         }
 
 
-        function isFootballSectionActive() {
-
-          const footballContent =
-            document.getElementById("footballContent");
-
-          const footballButton =
-            document.getElementById("footballButton");
-
-          if (!footballContent || !footballButton) {
-            return false;
-          }
-
-          return (
-            !footballContent.hidden &&
-            footballButton.classList.contains("active")
-          );
-
-        }
-
-
         function updateAltScreenButton() {
 
           if (!altScreenButton) {
             return;
           }
 
-          const footballActive =
-            isFootballSectionActive();
-
           const altUrl =
             getAlternativeUrl(currentMatchCard);
 
           const available =
             Boolean(altUrl);
-
-          if (footballActive) {
-            altScreenButton.hidden = false;
-            altScreenButton.style.removeProperty("display");
-          } else {
-            altScreenButton.hidden = true;
-            altScreenButton.style.setProperty(
-              "display",
-              "none",
-              "important"
-            );
-          }
 
           altScreenButton.disabled =
             !available;
@@ -1421,7 +1380,7 @@
         }
 
 
-        ["footballButton", "highlightsButton", "tvButton", "moviesButton", "navFootball", "navHighlights", "navTV", "navMovies"].forEach(
+        ["highlightsButton", "tvButton", "moviesButton"].forEach(
           function (buttonId) {
 
             const button =
@@ -1435,15 +1394,9 @@
               "click",
               function () {
 
-                if (buttonId !== "footballButton" && buttonId !== "navFootball") {
-                  altScreenActive = false;
-                  currentMatchCard = null;
-                }
-
-                setTimeout(
-                  updateAltScreenButton,
-                  0
-                );
+                altScreenActive = false;
+                currentMatchCard = null;
+                updateAltScreenButton();
 
               },
               true
@@ -1451,9 +1404,6 @@
 
           }
         );
-
-
-        updateAltScreenButton();
 
 
         const matchCards =
