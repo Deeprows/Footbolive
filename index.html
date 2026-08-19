@@ -160,6 +160,49 @@
       background: #07090d;
     }
 
+    /* ALT SCREEN BUTTON - FOOTBALL ONLY */
+    .alt-screen-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 16px;
+      border: 1px solid #2a2e37;
+      border-radius: 14px;
+      background: #10131a;
+      color: #ffffff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .alt-screen-button:hover {
+      border-color: #e9003f;
+      background: #171a22;
+    }
+
+    .alt-screen-button:active {
+      transform: scale(0.98);
+    }
+
+    .alt-screen-button.is-active {
+      border-color: #e9003f;
+      background: rgba(233, 0, 63, 0.12);
+    }
+
+    .alt-screen-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .screen-bottom-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
   </style>
 
 
@@ -380,17 +423,32 @@
 
 
             <!-- ===============================================
-                 FULLSCREEN BUTTON
+                 FOOTBALL ALT SCREEN + FULLSCREEN
                  =============================================== -->
 
-            <button
-              type="button"
-              class="fullscreen-button"
-              id="fullscreenButton"
-              aria-label="Fullscreen"
-            >
-              ⛶
-            </button>
+            <div class="screen-bottom-actions">
+
+              <button
+                type="button"
+                class="alt-screen-button"
+                id="altScreenButton"
+                aria-label="Alternative screen"
+                aria-pressed="false"
+              >
+                <span id="altScreenButtonText">Alt Screen</span>
+              </button>
+
+
+              <button
+                type="button"
+                class="fullscreen-button"
+                id="fullscreenButton"
+                aria-label="Fullscreen"
+              >
+                ⛶
+              </button>
+
+            </div>
 
 
           </div>
@@ -542,6 +600,7 @@
             class="match-card"
             data-name="Deportivo vs Elche"
             data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
+            data-alt-url=""
             data-kickoff="2026-08-17T20:00:00+01:00"
             data-duration="96"
           >
@@ -590,6 +649,7 @@
             class="match-card"
             data-name="Cardiff vs Wrexham"
             data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
+            data-alt-url=""
             data-kickoff="2026-08-17T20:00:00+01:00"
             data-duration="96"
           >
@@ -1160,6 +1220,190 @@
 
         const movieList =
           document.getElementById("movieList");
+
+        const screenFrame =
+          document.getElementById("screenFrame");
+
+        const screenStatus =
+          document.getElementById("screenStatus");
+
+        const altScreenButton =
+          document.getElementById("altScreenButton");
+
+        const altScreenButtonText =
+          document.getElementById("altScreenButtonText");
+
+        let currentMatchCard = null;
+        let altScreenActive = false;
+
+
+        /* =====================================================
+           FOOTBALL ALT SCREEN
+           ===================================================== */
+
+        function getAlternativeUrl(card) {
+
+          if (!card) {
+            return "";
+          }
+
+          return (
+            card.dataset.altUrl ||
+            card.getAttribute("data-alt-url") ||
+            ""
+          ).trim();
+
+        }
+
+
+        function updateAltScreenButton() {
+
+          if (!altScreenButton) {
+            return;
+          }
+
+          const altUrl =
+            getAlternativeUrl(currentMatchCard);
+
+          const available =
+            Boolean(altUrl);
+
+          altScreenButton.disabled =
+            !available;
+
+          altScreenButton.classList.toggle(
+            "is-active",
+            altScreenActive && available
+          );
+
+          altScreenButton.setAttribute(
+            "aria-pressed",
+            altScreenActive && available
+              ? "true"
+              : "false"
+          );
+
+          if (altScreenButtonText) {
+            altScreenButtonText.textContent =
+              altScreenActive && available
+                ? "Main Screen"
+                : "Alt Screen";
+          }
+
+        }
+
+
+        function switchFootballScreen() {
+
+          if (!currentMatchCard || !screenFrame) {
+            return;
+          }
+
+          const mainUrl =
+            (
+              currentMatchCard.dataset.url ||
+              ""
+            ).trim();
+
+          const altUrl =
+            getAlternativeUrl(
+              currentMatchCard
+            );
+
+          if (!altUrl) {
+            return;
+          }
+
+          if (!altScreenActive) {
+
+            screenFrame.src = altUrl;
+            altScreenActive = true;
+
+            if (screenStatus) {
+              screenStatus.textContent =
+                "ALT SCREEN";
+            }
+
+          } else {
+
+            screenFrame.src = mainUrl;
+            altScreenActive = false;
+
+            if (screenStatus) {
+              screenStatus.textContent =
+                "LIVE";
+            }
+
+          }
+
+          updateAltScreenButton();
+
+        }
+
+
+        if (matchList) {
+
+          matchList.addEventListener(
+            "click",
+            function (event) {
+
+              const card =
+                event.target.closest(
+                  ".match-card[data-url]"
+                );
+
+              if (!card) {
+                return;
+              }
+
+              currentMatchCard = card;
+              altScreenActive = false;
+
+              updateAltScreenButton();
+
+            },
+            true
+          );
+
+        }
+
+
+        if (altScreenButton) {
+
+          altScreenButton.addEventListener(
+            "click",
+            function () {
+              switchFootballScreen();
+            }
+          );
+
+        }
+
+
+        ["highlightsButton", "tvButton", "moviesButton"].forEach(
+          function (buttonId) {
+
+            const button =
+              document.getElementById(buttonId);
+
+            if (!button) {
+              return;
+            }
+
+            button.addEventListener(
+              "click",
+              function () {
+
+                altScreenActive = false;
+                currentMatchCard = null;
+                updateAltScreenButton();
+
+              },
+              true
+            );
+
+          }
+        );
 
 
         const matchCards =
