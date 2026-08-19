@@ -270,7 +270,7 @@ public class MainActivity extends Activity {
 
                         if (url != null &&
                                 url.startsWith(
-                                        "https://deeprows.github.io/"
+                                        "https://deeprowss.com"
                                 )) {
 
                             showingOfflinePage =
