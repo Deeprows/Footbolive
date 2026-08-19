@@ -197,6 +197,15 @@
       cursor: not-allowed;
     }
 
+    /*
+     * ALT SCREEN IS FOOTBALL-ONLY.
+     * The button is inside the notification bar, but it must disappear
+     * whenever Football Live is not the active section.
+     */
+    .football-app:has(#footballContent[hidden]) .alt-screen-button {
+      display: none !important;
+    }
+
     .screen-bottom-actions {
       display: flex;
       align-items: center;
@@ -1233,6 +1242,9 @@
         const altScreenButtonText =
           document.getElementById("altScreenButtonText");
 
+        const footballContent =
+          document.getElementById("footballContent");
+
         let currentMatchCard = null;
         let altScreenActive = false;
 
@@ -1256,11 +1268,45 @@
         }
 
 
+        function updateAltScreenVisibility() {
+
+          if (!altScreenButton) {
+            return;
+          }
+
+          const footballActive =
+            Boolean(
+              footballContent &&
+              !footballContent.hidden
+            );
+
+          altScreenButton.style.display =
+            footballActive
+              ? "inline-flex"
+              : "none";
+
+          altScreenButton.setAttribute(
+            "aria-hidden",
+            footballActive
+              ? "false"
+              : "true"
+          );
+
+          if (!footballActive) {
+            altScreenActive = false;
+            currentMatchCard = null;
+          }
+
+        }
+
+
         function updateAltScreenButton() {
 
           if (!altScreenButton) {
             return;
           }
+
+          updateAltScreenVisibility();
 
           const altUrl =
             getAlternativeUrl(currentMatchCard);
@@ -1339,6 +1385,79 @@
           updateAltScreenButton();
 
         }
+
+
+        /*
+         * Keep Alt Screen synchronized with the active Football section.
+         * This also catches section changes made by script.js.
+         */
+        updateAltScreenVisibility();
+
+        if (footballContent) {
+          const footballSectionObserver =
+            new MutationObserver(
+              function () {
+                updateAltScreenVisibility();
+              }
+            );
+
+          footballSectionObserver.observe(
+            footballContent,
+            {
+              attributes: true,
+              attributeFilter: ["hidden"]
+            }
+          );
+        }
+
+        ["footballButton", "navFootball"].forEach(
+          function (buttonId) {
+
+            const button =
+              document.getElementById(buttonId);
+
+            if (!button) {
+              return;
+            }
+
+            button.addEventListener(
+              "click",
+              function () {
+                setTimeout(
+                  updateAltScreenVisibility,
+                  0
+                );
+              },
+              true
+            );
+
+          }
+        );
+
+        ["highlightsButton", "tvButton", "moviesButton",
+         "navHighlights", "navTV", "navMovies"].forEach(
+          function (buttonId) {
+
+            const button =
+              document.getElementById(buttonId);
+
+            if (!button) {
+              return;
+            }
+
+            button.addEventListener(
+              "click",
+              function () {
+                setTimeout(
+                  updateAltScreenVisibility,
+                  0
+                );
+              },
+              true
+            );
+
+          }
+        );
 
 
         if (matchList) {
