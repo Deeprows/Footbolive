@@ -160,6 +160,12 @@
       background: #07090d;
     }
 
+
+    /* FOOTBALL ALT SCREEN: hidden outside Football Live */
+    .alt-screen-button[hidden] {
+      display: none !important;
+    }
+
     /* ALT SCREEN BUTTON - FOOTBALL ONLY */
     .alt-screen-button {
       display: inline-flex;
@@ -1291,8 +1297,17 @@
           const available =
             Boolean(altUrl);
 
-          altScreenButton.hidden =
-            !footballActive;
+          if (footballActive) {
+            altScreenButton.hidden = false;
+            altScreenButton.style.removeProperty("display");
+          } else {
+            altScreenButton.hidden = true;
+            altScreenButton.style.setProperty(
+              "display",
+              "none",
+              "important"
+            );
+          }
 
           altScreenButton.disabled =
             !available;
