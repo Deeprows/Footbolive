@@ -1480,11 +1480,8 @@
         document.body.appendChild(notificationButton);
 
         if (Notification.permission === "granted") {
-          notificationButton.textContent = "🔔 Notifications Enabled";
-          notificationButton.disabled = true;
-          notificationButton.style.opacity = "0.65";
-          notificationButton.style.cursor = "default";
-        }
+  notificationButton.remove();
+}
 
         if (Notification.permission === "denied") {
           notificationButton.textContent = "🔔 Notifications Blocked";
@@ -1531,12 +1528,7 @@
                   token
                 );
 
-                notificationButton.textContent =
-                  "🔔 Notifications Enabled";
-
-                notificationButton.disabled = true;
-                notificationButton.style.opacity = "0.65";
-                notificationButton.style.cursor = "default";
+                notificationButton.remove();
 
               } else {
 
