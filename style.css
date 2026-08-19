@@ -148,14 +148,22 @@ a{color:inherit;text-decoration:none}
 }
 .fullscreen-button:hover{background:var(--accent);transform:translateY(-1px)}
 
+/* =========================================================
+   FULLSCREEN PLAYER
+   Portrait can use the taller 16:11/16:12 wrapper from index.html.
+   Landscape fullscreen is kept independent of that ratio.
+   ========================================================= */
+
 .screen-player:fullscreen,
 .screen-player:-webkit-full-screen{
   position:fixed;
   inset:0;
-  width:100%;
-  height:100%;
+  width:100vw;
+  height:100vh;
   max-width:none;
   max-height:none;
+  min-width:0;
+  min-height:0;
   margin:0;
   padding:0;
   border:0;
@@ -165,32 +173,27 @@ a{color:inherit;text-decoration:none}
   overflow:hidden;
   z-index:999999;
 }
-.screen-player:fullscreen iframe,
+
 .screen-player:fullscreen iframe,
 .screen-player:-webkit-full-screen iframe{
-  width:100vw;
-  height:100vh;
+  width:100%;
+  height:100%;
   min-width:0;
   min-height:0;
-  max-width:100vw;
-  max-height:100vh;
+  max-width:100%;
+  max-height:100%;
   display:block;
   border:0;
   border-radius:0;
   background:#000;
   opacity:1;
 }
-@media (orientation: landscape){
-  .screen-player:fullscreen iframe,
-  .screen-player:-webkit-full-screen iframe{
-    transform:scale(.85);
-    transform-origin:center center;
-  }
-}
+
 .screen-player:fullscreen .screen-status,
 .screen-player:-webkit-full-screen .screen-status{
   position:absolute;top:20px;left:20px;z-index:99999;
 }
+
 .screen-player:fullscreen .screen-bottom,
 .screen-player:-webkit-full-screen .screen-bottom{
   position:absolute;inset:0;z-index:99998;display:block;width:100%;height:100%;
@@ -211,6 +214,34 @@ a{color:inherit;text-decoration:none}
 .screen-player:fullscreen .fullscreen-button:hover,
 .screen-player:-webkit-full-screen .fullscreen-button:hover{
   background:var(--accent);transform:scale(1.05);
+}
+
+/* Keep landscape fullscreen independent from the portrait player ratio.
+   Do NOT scale or force a 16:9 width here; Android handles the viewport
+   after the orientation lock in script.js. */
+@media (orientation:landscape){
+  .screen-player:fullscreen,
+  .screen-player:-webkit-full-screen{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    min-width:0;
+    min-height:0;
+    max-width:none;
+    max-height:none;
+  }
+
+  .screen-player:fullscreen iframe,
+  .screen-player:-webkit-full-screen iframe{
+    width:100%;
+    height:100%;
+    min-width:0;
+    min-height:0;
+    max-width:100%;
+    max-height:100%;
+    transform:none;
+  }
 }
 
 .app-menu{
@@ -567,9 +598,36 @@ a{color:inherit;text-decoration:none}
   .movie-icon{width:40px;height:40px;top:12px;right:12px;font-size:19px}
 }
 
+/* =========================================================
+   LANDSCAPE FULLSCREEN
+   =========================================================
+   Removed the old forced min-width/min-height and scale(.85)
+   rules. Fullscreen now uses the actual landscape viewport.
+   ========================================================= */
+
 @media (orientation:landscape){
-  .screen-player:fullscreen,.screen-player:-webkit-full-screen{width:100vw;height:100vh;min-width:100vw;min-height:100vh}
-  .screen-player:fullscreen iframe,.screen-player:-webkit-full-screen iframe{width:100vw;height:100vh;min-width:100vw;min-height:100vh}
+  .screen-player:fullscreen,
+  .screen-player:-webkit-full-screen{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    min-width:0;
+    min-height:0;
+    max-width:none;
+    max-height:none;
+  }
+
+  .screen-player:fullscreen iframe,
+  .screen-player:-webkit-full-screen iframe{
+    width:100%;
+    height:100%;
+    min-width:0;
+    min-height:0;
+    max-width:100%;
+    max-height:100%;
+    transform:none;
+  }
 }
 
 @media (max-width:550px){
