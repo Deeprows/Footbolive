@@ -1524,11 +1524,56 @@
                  * to send targeted messages through an API later.
                  */
                 console.log(
-                  "Deeprowss FCM registration token:",
-                  token
-                );
+  "Deeprowss FCM registration token:",
+  token
+);
 
-                notificationButton.remove();
+/*
+ * Register this browser with the Deeprowss
+ * notification topic.
+ *
+ * IMPORTANT:
+ * Replace the URL below after your
+ * Firebase Function has been deployed.
+ */
+const registrationResponse = await fetch(
+  "YOUR_FIREBASE_FUNCTION_URL",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      token: token
+    })
+  }
+);
+
+if (!registrationResponse.ok) {
+
+  throw new Error(
+    "Notification subscription registration failed."
+  );
+
+}
+
+const registrationResult =
+  await registrationResponse.json();
+
+if (!registrationResult.success) {
+
+  throw new Error(
+    "Firebase notification subscription failed."
+  );
+
+}
+
+console.log(
+  "Deeprowss notifications subscribed:",
+  registrationResult.topic
+);
+
+notificationButton.remove();
 
               } else {
 
