@@ -184,7 +184,7 @@ opacity:1;
 @media (orientation: landscape){
 .screen-player:fullscreen iframe,
 .screen-player:-webkit-full-screen iframe{
-transform:scale(.92);
+transform:scale(.96);
 transform-origin:center center;
 }
 }
