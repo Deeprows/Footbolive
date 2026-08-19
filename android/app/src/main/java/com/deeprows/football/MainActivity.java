@@ -26,7 +26,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     private static final String WEBSITE_URL =
-            "https://deeprows.github.io/Footbolive/";
+            "https://deeprowss.com";
 
     private static final int POPUP_BAR_HEIGHT_DP = 58;
 
