@@ -14,10 +14,6 @@
             #07090D
         </item>
 
-        <item name="android:windowNoTitle">
-            true
-        </item>
-
         <item name="android:statusBarColor">
             #07090D
         </item>
@@ -38,6 +34,10 @@
             false
         </item>
 
+        <item name="android:windowNoTitle">
+            true
+        </item>
+
         <item name="android:windowIsTranslucent">
             false
         </item>
@@ -48,20 +48,6 @@
 
         <item name="android:fontFamily">
             sans
-        </item>
-
-        <!-- Android 12+ Splash Screen -->
-
-        <item name="android:windowSplashScreenBackground">
-            #07090D
-        </item>
-
-        <item name="android:windowSplashScreenAnimatedIcon">
-            @drawable/deeprowss_splash
-        </item>
-
-        <item name="android:windowSplashScreenIconBackgroundColor">
-            #07090D
         </item>
 
     </style>
