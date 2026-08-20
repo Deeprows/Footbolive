@@ -123,6 +123,9 @@ width:58px;height:58px;display:grid;place-items:center;border-radius:16px;
 background:rgba(255,255,255,.06);font-size:27px;
 }
 .screen-placeholder strong{font-size:14px;color:#dce1e8}
+.screen-placeholder[hidden] {
+  display: none !important;
+}
 
 .screen-bottom{
 display:flex;align-items:center;justify-content:space-between;gap:15px;
