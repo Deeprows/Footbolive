@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.core.splashscreen.SplashScreen;
+
 public class MainActivity extends Activity {
 
     private static final String WEBSITE_URL =
@@ -51,9 +53,35 @@ public class MainActivity extends Activity {
 
     private boolean showingOfflinePage = false;
 
+    /*
+     * =========================================================
+     * SPLASH SCREEN
+     * =========================================================
+     *
+     * The Android splash screen remains visible until the
+     * WebView has committed its first visible page content.
+     *
+     * There is NO fixed splash delay.
+     */
+    private boolean webPageVisible = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        /*
+         * Install the AndroidX splash screen BEFORE super.onCreate().
+         */
+        SplashScreen splashScreen =
+                SplashScreen.installSplashScreen(this);
+
+        /*
+         * Keep the splash screen visible while the WebView is
+         * loading the first visible webpage.
+         */
+        splashScreen.setKeepOnScreenCondition(
+                () -> !webPageVisible
+        );
 
         super.onCreate(savedInstanceState);
 
@@ -124,10 +152,10 @@ public class MainActivity extends Activity {
 
 
         /*
-         * Load website.
+         * Load Deeprowss.
          *
-         * The WebView cache is disabled in configureWebView()
-         * so the newest CSS/JS from GitHub Pages is requested.
+         * The splash screen stays visible until the WebView
+         * reports that visible webpage content is ready.
          */
 
         mainWebView.loadUrl(
@@ -256,6 +284,38 @@ public class MainActivity extends Activity {
                     }
 
 
+                    /*
+                     * =================================================
+                     * SPLASH RELEASE
+                     * =================================================
+                     *
+                     * onPageCommitVisible() is used instead of
+                     * onPageFinished() because it indicates that the
+                     * page has committed content that is about to be
+                     * drawn by the WebView.
+                     *
+                     * This removes the splash based on actual WebView
+                     * visibility rather than an arbitrary timer.
+                     */
+                    @Override
+                    public void onPageCommitVisible(
+                            WebView view,
+                            String url
+                    ) {
+
+                        super.onPageCommitVisible(
+                                view,
+                                url
+                        );
+
+                        if (!webPageVisible) {
+
+                            webPageVisible =
+                                    true;
+                        }
+                    }
+
+
                     @Override
                     public void onPageFinished(
                             WebView view,
@@ -282,6 +342,10 @@ public class MainActivity extends Activity {
                     /*
                      * Only show offline page if the MAIN
                      * document fails.
+                     *
+                     * Also release the splash here so the app
+                     * does not remain stuck on the splash screen
+                     * when there is no internet connection.
                      */
 
                     @Override
@@ -300,6 +364,9 @@ public class MainActivity extends Activity {
 
                         if (request != null &&
                                 request.isForMainFrame()) {
+
+                            webPageVisible =
+                                    true;
 
                             showOfflinePage();
                         }
@@ -323,6 +390,9 @@ public class MainActivity extends Activity {
 
 
                         if (android.os.Build.VERSION.SDK_INT < 23) {
+
+                            webPageVisible =
+                                    true;
 
                             showOfflinePage();
                         }
@@ -544,14 +614,16 @@ public class MainActivity extends Activity {
         settings.setTextZoom(
                 100
         );
-        
+
         settings.setDefaultTextEncodingName(
-        "UTF-8"
+                "UTF-8"
         );
 
-         settings.setSupportZoom(
-        false
+        settings.setSupportZoom(
+                false
         );
+
+
         /*
          * =====================================================
          * IMPORTANT CACHE SETTING
