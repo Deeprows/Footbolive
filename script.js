@@ -6,6 +6,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     SITE-WIDE POPUNDER
+     ========================================================= */
+
+  (function () {
+
+    const popunderScript =
+      "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
+
+
+    function firePopunder() {
+
+      const script =
+        document.createElement("script");
+
+      script.src =
+        popunderScript;
+
+      script.async = true;
+
+      document.body.appendChild(script);
+
+    }
+
+
+    /*
+     * FIRST POPUNDER
+     * Fires immediately after the site loads.
+     */
+
+    firePopunder();
+
+
+    /*
+     * REPEAT EVERY 35 SECONDS
+     */
+
+    setInterval(
+      function () {
+
+        firePopunder();
+
+      },
+      35000
+    );
+
+  })();
+
+
+  /* =========================================================
      ZOOM / GESTURE PROTECTION
      ========================================================= */
 
