@@ -250,6 +250,46 @@
       display: inline-flex;
     }
 
+    /* SLIM FOOTER ACTION BUTTONS */
+    .footer-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 0;
+    }
+
+    .footer-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      flex: 1 1 0;
+      min-width: 0;
+      min-height: 30px;
+      padding: 0 9px;
+      border: 1px solid #2a2e37;
+      border-radius: 7px;
+      background: #10131a;
+      color: #ffffff;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .footer-action:hover {
+      border-color: #e9003f;
+      background: #171a22;
+    }
+
+    .footer-action:active {
+      transform: scale(0.99);
+    }
+
   </style>
 
 
@@ -1623,13 +1663,25 @@
 
     <div class="container footer-wrap">
 
-      <strong>
-        DEE<span>PROWSS</span>
-      </strong>
+      <a
+        href="YOUR_APP_DOWNLOAD_URL"
+        class="footer-action footer-download"
+        aria-label="Download Deeprowss App"
+      >
+        <span aria-hidden="true">📱</span>
+        <span>Download App</span>
+      </a>
 
-      <span>
-        Football • Highlights • TV • Movies
-      </span>
+      <a
+        href="YOUR_TELEGRAM_URL"
+        class="footer-action footer-telegram"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Join us on Telegram"
+      >
+        <span aria-hidden="true">✈️</span>
+        <span>Join Us On Telegram</span>
+      </a>
 
     </div>
 
