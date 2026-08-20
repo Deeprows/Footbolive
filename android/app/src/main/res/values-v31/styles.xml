@@ -2,8 +2,47 @@
 
 <resources>
 
+    <!-- =====================================================
+         MAIN APPLICATION THEME
+         ===================================================== -->
+
     <style
         name="AppTheme"
+        parent="Theme.SplashScreen">
+
+        <!-- =================================================
+             SPLASH SCREEN
+             ================================================= -->
+
+        <!-- Background shown immediately when the app opens -->
+        <item name="windowSplashScreenBackground">
+            #07090D
+        </item>
+
+        <!-- Current splash icon -->
+        <item name="windowSplashScreenAnimatedIcon">
+            @drawable/ic_deeprows
+        </item>
+
+        <!-- Background behind the splash icon -->
+        <item name="windowSplashScreenIconBackgroundColor">
+            #07090D
+        </item>
+
+        <!-- Theme used after the splash screen disappears -->
+        <item name="postSplashScreenTheme">
+            @style/AppThemeMain
+        </item>
+
+    </style>
+
+
+    <!-- =====================================================
+         MAIN APPLICATION WINDOW
+         ===================================================== -->
+
+    <style
+        name="AppThemeMain"
         parent="android:style/Theme.Material.NoActionBar">
 
         <item name="android:windowBackground">
@@ -48,22 +87,6 @@
 
         <item name="android:fontFamily">
             sans
-        </item>
-
-        <!-- =================================================
-             ANDROID 12+ SPLASH SCREEN
-             ================================================= -->
-
-        <item name="android:windowSplashScreenBackground">
-            #07090D
-        </item>
-
-        <item name="android:windowSplashScreenAnimatedIcon">
-            @drawable/ic_deeprows
-        </item>
-
-        <item name="android:windowSplashScreenIconBackgroundColor">
-            #07090D
         </item>
 
     </style>
