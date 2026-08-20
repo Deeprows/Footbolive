@@ -2,91 +2,27 @@
 
 <resources>
 
-    <!-- =====================================================
-         MAIN APPLICATION THEME
-         ===================================================== -->
-
     <style
         name="AppTheme"
         parent="Theme.SplashScreen">
 
-        <!-- =================================================
-             SPLASH SCREEN
-             ================================================= -->
-
-        <!-- Background shown immediately when the app opens -->
+        <!-- Android system splash background -->
         <item name="windowSplashScreenBackground">
             #07090D
         </item>
 
-        <!-- Current splash icon -->
+        <!-- Small system splash icon only -->
         <item name="windowSplashScreenAnimatedIcon">
             @drawable/ic_deeprows
         </item>
 
-        <!-- Background behind the splash icon -->
         <item name="windowSplashScreenIconBackgroundColor">
             #07090D
         </item>
 
-        <!-- Theme used after the splash screen disappears -->
+        <!-- Switch to the normal application theme -->
         <item name="postSplashScreenTheme">
             @style/AppThemeMain
-        </item>
-
-    </style>
-
-
-    <!-- =====================================================
-         MAIN APPLICATION WINDOW
-         ===================================================== -->
-
-    <style
-        name="AppThemeMain"
-        parent="android:style/Theme.Material.NoActionBar">
-
-        <item name="android:windowBackground">
-            #07090D
-        </item>
-
-        <item name="android:colorBackground">
-            #07090D
-        </item>
-
-        <item name="android:windowNoTitle">
-            true
-        </item>
-
-        <item name="android:statusBarColor">
-            #07090D
-        </item>
-
-        <item name="android:navigationBarColor">
-            #07090D
-        </item>
-
-        <item name="android:navigationBarDividerColor">
-            #07090D
-        </item>
-
-        <item name="android:windowLightNavigationBar">
-            false
-        </item>
-
-        <item name="android:windowLightStatusBar">
-            false
-        </item>
-
-        <item name="android:windowIsTranslucent">
-            false
-        </item>
-
-        <item name="android:colorAccent">
-            #FF1744
-        </item>
-
-        <item name="android:fontFamily">
-            sans
         </item>
 
     </style>
