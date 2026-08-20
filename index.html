@@ -252,13 +252,15 @@
 
     /* SLIM FOOTER ACTION BUTTONS */
     .footer-wrap {
-      display: flex;
-      flex-direction: row;
+      display: flex !important;
+      flex-direction: row !important;
       align-items: center;
       justify-content: center;
-      flex-wrap: nowrap;
+      flex-wrap: nowrap !important;
       gap: 4px;
-      padding: 5px 0;
+      padding: 5px 4px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .footer-action {
@@ -266,11 +268,13 @@
       align-items: center;
       justify-content: center;
       gap: 3px;
-      flex: 0 1 auto;
-      width: auto;
+      flex: 1 1 0 !important;
+      width: 0 !important;
+      max-width: 180px;
       min-width: 0;
       min-height: 26px;
-      padding: 0 7px;
+      padding: 0 5px;
+      box-sizing: border-box;
       border: 1px solid #2a2e37;
       border-radius: 7px;
       background: #10131a;
@@ -281,6 +285,8 @@
       line-height: 1;
       text-decoration: none;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       transition: border-color 0.2s ease, background 0.2s ease;
     }
 
