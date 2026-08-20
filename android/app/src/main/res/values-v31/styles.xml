@@ -4,25 +4,64 @@
 
     <style
         name="AppTheme"
-        parent="Theme.SplashScreen">
+        parent="android:style/Theme.Material.NoActionBar">
 
-        <!-- Android system splash background -->
-        <item name="windowSplashScreenBackground">
+        <item name="android:windowBackground">
             #07090D
         </item>
 
-        <!-- Small system splash icon only -->
-        <item name="windowSplashScreenAnimatedIcon">
-            @drawable/ic_deeprows
-        </item>
-
-        <item name="windowSplashScreenIconBackgroundColor">
+        <item name="android:colorBackground">
             #07090D
         </item>
 
-        <!-- Switch to the normal application theme -->
-        <item name="postSplashScreenTheme">
-            @style/AppThemeMain
+        <item name="android:windowNoTitle">
+            true
+        </item>
+
+        <item name="android:statusBarColor">
+            #07090D
+        </item>
+
+        <item name="android:navigationBarColor">
+            #07090D
+        </item>
+
+        <item name="android:navigationBarDividerColor">
+            #07090D
+        </item>
+
+        <item name="android:windowLightNavigationBar">
+            false
+        </item>
+
+        <item name="android:windowLightStatusBar">
+            false
+        </item>
+
+        <item name="android:windowIsTranslucent">
+            false
+        </item>
+
+        <item name="android:colorAccent">
+            #FF1744
+        </item>
+
+        <item name="android:fontFamily">
+            sans
+        </item>
+
+        <!-- Android 12+ Splash Screen -->
+
+        <item name="android:windowSplashScreenBackground">
+            #07090D
+        </item>
+
+        <item name="android:windowSplashScreenAnimatedIcon">
+            @drawable/deeprowss_splash
+        </item>
+
+        <item name="android:windowSplashScreenIconBackgroundColor">
+            #07090D
         </item>
 
     </style>
