@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   (function () {
 
     const popunderScript =
-      "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
+      "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22d8.js";
 
 
     function firePopunder() {
@@ -30,17 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /*
-     * FIRST POPUNDER
-     * Fires immediately after the site loads.
-     */
-
     firePopunder();
 
-
-    /*
-     * REPEAT EVERY 35 SECONDS
-     */
 
     setInterval(
       function () {
@@ -277,6 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentMatchCard = null;
   let currentMainUrl = "";
   let currentAltUrl = "";
+  let currentMovieCard = null;
   let screenLoadTimer = null;
 
 
@@ -433,11 +425,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /*
-     * Alt Screen is football-only.
-     * Leaving Football automatically closes it.
-     */
-
     if (section !== "football") {
       hideAltScreen();
     }
@@ -465,12 +452,6 @@ document.addEventListener("DOMContentLoaded", function () {
     setActiveNav(
       navFootball
     );
-
-
-    /*
-     * If a football match is already selected,
-     * restore its Main / Alt controls.
-     */
 
     updateFootballControls();
 
@@ -679,22 +660,12 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-
-    /*
-     * Alt Screen exists ONLY when:
-     *
-     * 1. Current screen is a football match.
-     * 2. The selected match has a valid data-alt-url.
-     */
-
     const shouldShow =
       currentScreenType === "match" &&
       hasValidAltUrl(currentAltUrl);
 
-
     footballScreenControls.hidden =
       !shouldShow;
-
 
     if (!shouldShow) {
 
@@ -709,7 +680,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
 
     }
-
 
     if (mainScreenButton) {
       mainScreenButton.classList.add("active");
@@ -733,17 +703,14 @@ document.addEventListener("DOMContentLoaded", function () {
         "about:blank";
     }
 
-
     if (altScreenOverlay) {
       altScreenOverlay.hidden =
         true;
     }
 
-
     document.body.classList.remove(
       "alt-screen-open"
     );
-
 
     if (mainScreenButton) {
       mainScreenButton.classList.add("active");
@@ -752,12 +719,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (altScreenButton) {
       altScreenButton.classList.remove("active");
     }
-
-
-    /*
-     * Never leave Alt Screen active after switching
-     * to another section or another match.
-     */
 
   }
 
@@ -768,19 +729,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function openAltScreen() {
 
-    /*
-     * Alt Screen can ONLY be opened for Football.
-     */
-
     if (
       currentScreenType !== "match" ||
       !currentMatchCard
     ) {
-
       return;
-
     }
-
 
     if (!hasValidAltUrl(currentAltUrl)) {
 
@@ -792,7 +746,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
     const matchName =
       currentMatchCard.dataset.name ||
       currentMatchCard.querySelector(
@@ -800,23 +753,15 @@ document.addEventListener("DOMContentLoaded", function () {
       )?.textContent?.trim() ||
       "Football Match";
 
-
     if (altScreenMatch) {
       altScreenMatch.textContent =
         matchName;
     }
 
-
     if (altScreenFrame) {
 
       altScreenFrame.src =
         "about:blank";
-
-
-      /*
-       * Small delay prevents old content from visually
-       * flashing before the alternative stream loads.
-       */
 
       setTimeout(
         function () {
@@ -837,17 +782,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
     if (altScreenOverlay) {
       altScreenOverlay.hidden =
         false;
     }
 
-
     document.body.classList.add(
       "alt-screen-open"
     );
-
 
     if (mainScreenButton) {
       mainScreenButton.classList.remove("active");
@@ -876,7 +818,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ) {
           return;
         }
-
 
         hideAltScreen();
 
@@ -991,11 +932,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-
-    /*
-     * Cancel a previous delayed iframe load.
-     */
-
     if (screenLoadTimer) {
 
       clearTimeout(
@@ -1006,18 +942,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
-    /*
-     * Alt Screen is always closed when the main screen,
-     * TV, Movie, or Highlight changes.
-     */
-
     hideAltScreen();
-
 
     currentScreenType =
       type || "";
-
 
     if (!keepMatchState) {
 
@@ -1031,14 +959,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
     if (nowShowing) {
 
       nowShowing.textContent =
         name || "Now Playing";
 
     }
-
 
     if (screenPlaceholder) {
 
@@ -1048,14 +974,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
     screenFrame.style.opacity =
       "0.25";
 
-
     screenFrame.src =
       "about:blank";
-
 
     screenLoadTimer =
       setTimeout(
@@ -1069,7 +992,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
           screenLoadTimer = null;
 
-
           requestAnimationFrame(
             updateStickyPositions
           );
@@ -1077,11 +999,6 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         150
       );
-
-
-    /* =======================================================
-       SCREEN STATUS
-       ======================================================= */
 
     if (screenStatus) {
 
@@ -1115,18 +1032,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
-    /*
-     * Football controls are recalculated after every screen
-     * change. TV, Movies and Highlights cannot display them.
-     */
-
     updateFootballControls();
-
-
-    /*
-     * Keep player visible.
-     */
 
     if (screenPlayer) {
 
@@ -1137,7 +1043,6 @@ document.addEventListener("DOMContentLoaded", function () {
         siteHeader
           ? siteHeader.getBoundingClientRect().height
           : 66;
-
 
       if (
         rect.top <
@@ -1162,7 +1067,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     MATCH CLICK
+     LEGACY STATIC CARD CLICK HANDLERS
      ========================================================= */
 
   matchCards.forEach(
@@ -1172,82 +1077,9 @@ document.addEventListener("DOMContentLoaded", function () {
         "click",
         function () {
 
-          const url =
-            this.dataset.url;
-
-
-          const altUrl =
-            this.dataset.altUrl || "";
-
-
-          const name =
-            this.dataset.name ||
-            this.querySelector(
-              ".match-teams"
-            )?.textContent?.trim() ||
-            "Football Match";
-
-
-          /*
-           * Save the selected football match.
-           */
-
-          currentMatchCard =
-            this;
-
-          currentMainUrl =
-            url || "";
-
-          currentAltUrl =
-            altUrl || "";
-
-          currentScreenType =
-            "match";
-
-
-          /*
-           * Mark selected match.
-           */
-
-          matchCards.forEach(
-            function (item) {
-
-              item.classList.remove(
-                "active",
-                "selected"
-              );
-
-            }
+          selectMatchCard(
+            this
           );
-
-
-          this.classList.add(
-            "active",
-            "selected"
-          );
-
-
-          /*
-           * Always return to Main Screen when a new
-           * football match is selected.
-           */
-
-          hideAltScreen();
-
-
-          loadScreen(
-            url,
-            name,
-            "match",
-            true
-          );
-
-
-          /*
-           * Make sure Football section is active.
-           */
-
-          openFootball();
 
         }
       );
@@ -1255,10 +1087,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   );
 
-
-  /* =========================================================
-     HIGHLIGHT CLICK
-     ========================================================= */
 
   highlightCards.forEach(
     function (card) {
@@ -1267,51 +1095,9 @@ document.addEventListener("DOMContentLoaded", function () {
         "click",
         function () {
 
-          const url =
-            this.dataset.url;
-
-
-          const name =
-            this.dataset.name ||
-            this.querySelector(
-              "strong"
-            )?.textContent?.trim() ||
-            "Football Highlight";
-
-
-          highlightCards.forEach(
-            function (item) {
-
-              item.classList.remove(
-                "active"
-              );
-
-            }
+          selectHighlightCard(
+            this
           );
-
-
-          this.classList.add(
-            "active"
-          );
-
-
-          currentMatchCard =
-            null;
-
-          currentMainUrl =
-            "";
-
-          currentAltUrl =
-            "";
-
-          loadScreen(
-            url,
-            name,
-            "highlight"
-          );
-
-
-          openHighlights();
 
         }
       );
@@ -1319,10 +1105,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   );
 
-
-  /* =========================================================
-     TV CHANNEL CLICK
-     ========================================================= */
 
   tvChannels.forEach(
     function (channel) {
@@ -1331,51 +1113,27 @@ document.addEventListener("DOMContentLoaded", function () {
         "click",
         function () {
 
-          const url =
-            this.dataset.url;
-
-
-          const name =
-            this.dataset.name ||
-            this.querySelector(
-              ".tv-channel-info strong"
-            )?.textContent?.trim() ||
-            "TV Channel";
-
-
-          tvChannels.forEach(
-            function (item) {
-
-              item.classList.remove(
-                "active"
-              );
-
-            }
+          selectTVChannel(
+            this
           );
 
+        }
+      );
 
-          this.classList.add(
-            "active"
+    }
+  );
+
+
+  movieCards.forEach(
+    function (movie) {
+
+      movie.addEventListener(
+        "click",
+        function () {
+
+          selectMovieCard(
+            this
           );
-
-
-          currentMatchCard =
-            null;
-
-          currentMainUrl =
-            "";
-
-          currentAltUrl =
-            "";
-
-          loadScreen(
-            url,
-            name,
-            "tv"
-          );
-
-
-          openTV();
 
         }
       );
@@ -1385,67 +1143,222 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     MOVIE CLICK
+     CARD SELECTION FUNCTIONS
+     Works for both old HTML cards and new JSON cards.
      ========================================================= */
 
-  movieCards.forEach(
-    function (movie) {
+  function selectMatchCard(card) {
 
-      movie.addEventListener(
-        "click",
-        function () {
+    const url =
+      card.dataset.url || "";
 
-          const url =
-            this.dataset.url;
+    const altUrl =
+      card.dataset.altUrl || "";
 
+    const name =
+      card.dataset.name ||
+      card.querySelector(
+        ".match-teams"
+      )?.textContent?.trim() ||
+      "Football Match";
 
-          const name =
-            this.dataset.name ||
-            this.querySelector(
-              ".movie-title"
-            )?.textContent?.trim() ||
-            "Movie";
+    currentMatchCard =
+      card;
 
+    currentMainUrl =
+      url;
 
-          movieCards.forEach(
-            function (item) {
+    currentAltUrl =
+      altUrl;
 
-              item.classList.remove(
-                "active"
-              );
+    currentScreenType =
+      "match";
 
-            }
+    document
+      .querySelectorAll(
+        ".match-card"
+      )
+      .forEach(
+        function (item) {
+
+          item.classList.remove(
+            "active",
+            "selected"
           );
-
-
-          this.classList.add(
-            "active"
-          );
-
-
-          currentMatchCard =
-            null;
-
-          currentMainUrl =
-            "";
-
-          currentAltUrl =
-            "";
-
-          loadScreen(
-            url,
-            name,
-            "movie"
-          );
-
-
-          openMovies();
 
         }
       );
 
-    }
-  );
+    card.classList.add(
+      "active",
+      "selected"
+    );
+
+    hideAltScreen();
+
+    loadScreen(
+      url,
+      name,
+      "match",
+      true
+    );
+
+    openFootball();
+
+  }
+
+
+  function selectHighlightCard(card) {
+
+    const url =
+      card.dataset.url || "";
+
+    const name =
+      card.dataset.name ||
+      card.querySelector(
+        "strong"
+      )?.textContent?.trim() ||
+      "Football Highlight";
+
+    document
+      .querySelectorAll(
+        ".highlight-card"
+      )
+      .forEach(
+        function (item) {
+
+          item.classList.remove(
+            "active"
+          );
+
+        }
+      );
+
+    card.classList.add(
+      "active"
+    );
+
+    currentMatchCard =
+      null;
+
+    currentMainUrl =
+      "";
+
+    currentAltUrl =
+      "";
+
+    loadScreen(
+      url,
+      name,
+      "highlight"
+    );
+
+    openHighlights();
+
+  }
+
+
+  function selectTVChannel(channel) {
+
+    const url =
+      channel.dataset.url || "";
+
+    const name =
+      channel.dataset.name ||
+      channel.querySelector(
+        ".tv-channel-info strong"
+      )?.textContent?.trim() ||
+      "TV Channel";
+
+    document
+      .querySelectorAll(
+        ".tv-channel"
+      )
+      .forEach(
+        function (item) {
+
+          item.classList.remove(
+            "active"
+          );
+
+        }
+      );
+
+    channel.classList.add(
+      "active"
+    );
+
+    currentMatchCard =
+      null;
+
+    currentMainUrl =
+      "";
+
+    currentAltUrl =
+      "";
+
+    loadScreen(
+      url,
+      name,
+      "tv"
+    );
+
+    openTV();
+
+  }
+
+
+  function selectMovieCard(movie) {
+
+    const url =
+      movie.dataset.url || "";
+
+    const name =
+      movie.dataset.name ||
+      movie.querySelector(
+        ".movie-title"
+      )?.textContent?.trim() ||
+      "Movie";
+
+    document
+      .querySelectorAll(
+        ".movie-card"
+      )
+      .forEach(
+        function (item) {
+
+          item.classList.remove(
+            "active"
+          );
+
+        }
+      );
+
+    movie.classList.add(
+      "active"
+    );
+
+    currentMatchCard =
+      null;
+
+    currentMainUrl =
+      "";
+
+    currentAltUrl =
+      "";
+
+    currentMovieCard =
+      movie;
+
+    loadScreen(
+      url,
+      name,
+      "movie"
+    );
+
+    openMovies();
+
+  }
 
 
   /* =========================================================
@@ -1458,11 +1371,9 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-
     screenPlayer.classList.add(
       "fullscreen-active"
     );
-
 
     const requestFullscreen =
       screenPlayer.requestFullscreen ||
@@ -1470,23 +1381,19 @@ document.addEventListener("DOMContentLoaded", function () {
       screenPlayer.mozRequestFullScreen ||
       screenPlayer.msRequestFullscreen;
 
-
     if (!requestFullscreen) {
 
       screenPlayer.classList.remove(
         "fullscreen-active"
       );
 
-
       console.log(
         "Fullscreen API is not available."
       );
 
-
       return;
 
     }
-
 
     try {
 
@@ -1497,7 +1404,6 @@ document.addEventListener("DOMContentLoaded", function () {
             navigationUI: "hide"
           }
         );
-
 
       if (
         result &&
@@ -1511,7 +1417,6 @@ document.addEventListener("DOMContentLoaded", function () {
               "Fullscreen request failed:",
               error
             );
-
 
             screenPlayer.classList.remove(
               "fullscreen-active"
@@ -1530,7 +1435,6 @@ document.addEventListener("DOMContentLoaded", function () {
         "Fullscreen request failed:",
         error
       );
-
 
       screenPlayer.classList.remove(
         "fullscreen-active"
@@ -1563,13 +1467,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
     const exitFullscreen =
       document.exitFullscreen ||
       document.webkitExitFullscreen ||
       document.mozCancelFullScreen ||
       document.msExitFullscreen;
-
 
     if (!exitFullscreen) {
 
@@ -1585,14 +1487,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
     try {
 
       const result =
         exitFullscreen.call(
           document
         );
-
 
       if (
         result &&
@@ -1638,7 +1538,6 @@ document.addEventListener("DOMContentLoaded", function () {
           document.mozFullScreenElement ||
           document.msFullscreenElement;
 
-
         if (activeFullscreen) {
 
           exitScreenFullscreen();
@@ -1646,7 +1545,6 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
 
         }
-
 
         enterScreenFullscreen();
 
@@ -1666,13 +1564,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-
     const activeFullscreen =
       document.fullscreenElement ||
       document.webkitFullscreenElement ||
       document.mozFullScreenElement ||
       document.msFullscreenElement;
-
 
     if (activeFullscreen) {
 
@@ -1684,22 +1580,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
       }
 
-
       fullscreenButton.textContent =
         "×";
-
 
       fullscreenButton.setAttribute(
         "aria-label",
         "Exit fullscreen"
       );
 
-
       fullscreenButton.setAttribute(
         "title",
         "Exit fullscreen"
       );
-
 
       if (
         screen.orientation &&
@@ -1712,7 +1604,6 @@ document.addEventListener("DOMContentLoaded", function () {
             screen.orientation.lock(
               "landscape"
             );
-
 
           if (
             lockResult &&
@@ -1757,22 +1648,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
       }
 
-
       fullscreenButton.textContent =
         "⛶";
-
 
       fullscreenButton.setAttribute(
         "aria-label",
         "Enter fullscreen"
       );
 
-
       fullscreenButton.setAttribute(
         "title",
         "Enter fullscreen"
       );
-
 
       if (
         screen.orientation &&
@@ -1795,7 +1682,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
     }
-
 
     requestAnimationFrame(
       function () {
@@ -1844,7 +1730,6 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
     }
-
 
     fullscreenResizeTimer =
       setTimeout(
@@ -1902,7 +1787,6 @@ document.addEventListener("DOMContentLoaded", function () {
             "open"
           );
 
-
         menuToggle.setAttribute(
           "aria-expanded",
           isOpen
@@ -1912,7 +1796,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       }
     );
-
 
     mainNav
       .querySelectorAll("a")
@@ -1926,7 +1809,6 @@ document.addEventListener("DOMContentLoaded", function () {
               mainNav.classList.remove(
                 "open"
               );
-
 
               menuToggle.setAttribute(
                 "aria-expanded",
@@ -1943,7 +1825,1113 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     ALT SCREEN PAGE SAFETY
+     JSON CONTENT HELPERS
+     ========================================================= */
+
+  function escapeHTML(value) {
+
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+  }
+
+
+  function findFirstElement(
+    selectors
+  ) {
+
+    for (
+      const selector of selectors
+    ) {
+
+      const element =
+        document.querySelector(
+          selector
+        );
+
+      if (element) {
+        return element;
+      }
+
+    }
+
+    return null;
+
+  }
+
+
+  function findContainer(
+    selectors
+  ) {
+
+    for (
+      const selector of selectors
+    ) {
+
+      const element =
+        document.querySelector(
+          selector
+        );
+
+      if (element) {
+        return element;
+      }
+
+    }
+
+    return null;
+
+  }
+
+
+  /* =========================================================
+     JSON FOOTBALL CARD
+     ========================================================= */
+
+  function createExternalFootballCard(
+    match
+  ) {
+
+    const card =
+      document.createElement("button");
+
+    card.type =
+      "button";
+
+    card.className =
+      "match-card";
+
+    card.dataset.name =
+      match.name || "";
+
+    card.dataset.url =
+      match.url || "";
+
+    card.dataset.altUrl =
+      match.altUrl || "";
+
+    card.dataset.kickoff =
+      match.kickoff || "";
+
+    card.dataset.duration =
+      Number(match.duration) || 96;
+
+    card.dataset.externalContent =
+      "true";
+
+    card.innerHTML = `
+      <span class="match-status" data-match-status>
+        UPCOMING
+      </span>
+
+      <span class="match-teams">
+        ${escapeHTML(match.name || "")}
+      </span>
+
+      <span class="match-date" data-match-date></span>
+
+      <span class="match-time" data-match-time></span>
+
+      <span class="match-countdown" data-match-countdown>
+        Starting soon
+      </span>
+    `;
+
+    card.addEventListener(
+      "click",
+      function () {
+        selectMatchCard(this);
+      }
+    );
+
+    return card;
+
+  }
+
+
+  /* =========================================================
+     JSON HIGHLIGHT CARD
+     ========================================================= */
+
+  function createExternalHighlightCard(
+    item
+  ) {
+
+    const card =
+      document.createElement("button");
+
+    card.type =
+      "button";
+
+    card.className =
+      "highlight-card";
+
+    card.dataset.name =
+      item.name || "";
+
+    card.dataset.url =
+      item.url || "";
+
+    card.dataset.date =
+      item.date || "";
+
+    card.dataset.externalContent =
+      "true";
+
+    card.innerHTML = `
+      <div class="highlight-thumbnail">
+        <span>▶</span>
+      </div>
+
+      <strong>
+        ${escapeHTML(item.name || "")}
+      </strong>
+
+      <small>
+        Highlights
+      </small>
+    `;
+
+    card.addEventListener(
+      "click",
+      function () {
+        selectHighlightCard(this);
+      }
+    );
+
+    return card;
+
+  }
+
+
+  /* =========================================================
+     JSON TV CHANNEL CARD
+     ========================================================= */
+
+  function createExternalTVCard(
+    channel
+  ) {
+
+    const card =
+      document.createElement("button");
+
+    card.type =
+      "button";
+
+    card.className =
+      "tv-channel";
+
+    card.dataset.name =
+      channel.name || "";
+
+    card.dataset.url =
+      channel.url || "";
+
+    card.dataset.externalContent =
+      "true";
+
+    card.innerHTML = `
+      <span class="tv-channel-icon">
+        ${escapeHTML(channel.icon || "📺")}
+      </span>
+
+      <span class="tv-channel-info">
+        <strong>
+          ${escapeHTML(channel.name || "")}
+        </strong>
+
+        <small>
+          ${escapeHTML(channel.category || "")}
+        </small>
+      </span>
+
+      <span class="tv-channel-status">
+        ${escapeHTML(channel.status || "LIVE")}
+      </span>
+    `;
+
+    card.addEventListener(
+      "click",
+      function () {
+        selectTVChannel(this);
+      }
+    );
+
+    return card;
+
+  }
+
+
+  /* =========================================================
+     JSON MOVIE CARD
+     ========================================================= */
+
+  function createExternalMovieCard(
+    movie
+  ) {
+
+    const card =
+      document.createElement("button");
+
+    card.type =
+      "button";
+
+    card.className =
+      "movie-card";
+
+    card.dataset.name =
+      movie.name || "";
+
+    card.dataset.url =
+      movie.url || "";
+
+    card.dataset.downloadUrl =
+      movie.downloadUrl || "";
+
+    card.dataset.date =
+      movie.date || "";
+
+    card.dataset.rating =
+      movie.rating || "";
+
+    card.dataset.externalContent =
+      "true";
+
+    card.innerHTML = `
+      <span class="movie-status">
+        MOVIE
+      </span>
+
+      <span class="movie-icon">
+        🎬
+      </span>
+
+      <span class="movie-title">
+        ${escapeHTML(movie.name || "")}
+      </span>
+
+      <span class="movie-rating">
+        IMDb ${escapeHTML(movie.rating || "N/A")}
+      </span>
+    `;
+
+    card.addEventListener(
+      "click",
+      function () {
+        selectMovieCard(this);
+      }
+    );
+
+    return card;
+
+  }
+
+
+  /* =========================================================
+     ADD JSON FOOTBALL
+     ========================================================= */
+
+  function addExternalFootball(
+    matches
+  ) {
+
+    const container =
+      findContainer([
+        "#matchList",
+        ".match-list",
+        "#footballContent .matches-grid",
+        "#footballContent .match-grid"
+      ]);
+
+    if (!container) {
+      console.warn(
+        "Football JSON container not found."
+      );
+      return;
+    }
+
+    matches.forEach(
+      function (match) {
+
+        if (
+          !match ||
+          !match.name ||
+          !match.url ||
+          !match.kickoff
+        ) {
+          return;
+        }
+
+        const card =
+          createExternalFootballCard(
+            match
+          );
+
+        container.appendChild(
+          card
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     ADD JSON HIGHLIGHTS
+     ========================================================= */
+
+  function addExternalHighlights(
+    highlights
+  ) {
+
+    const container =
+      findContainer([
+        "#highlightList",
+        ".highlight-list",
+        "#highlightsContent .highlights-grid",
+        "#highlightsContent .highlight-grid"
+      ]);
+
+    if (!container) {
+      console.warn(
+        "Highlights JSON container not found."
+      );
+      return;
+    }
+
+    highlights.forEach(
+      function (item) {
+
+        if (
+          !item ||
+          !item.name ||
+          !item.url
+        ) {
+          return;
+        }
+
+        container.appendChild(
+          createExternalHighlightCard(
+            item
+          )
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     ADD JSON TV CHANNELS
+     ========================================================= */
+
+  function addExternalTV(
+    channels
+  ) {
+
+    const container =
+      findContainer([
+        "#tvContent .tv-channels",
+        "#tvContent .tv-channel-container",
+        "#tvContent .tv-grid-container",
+        "#tvContent"
+      ]);
+
+    if (!container) {
+      console.warn(
+        "TV JSON container not found."
+      );
+      return;
+    }
+
+    const categoryGrids =
+      new Map();
+
+    channels.forEach(
+      function (channel) {
+
+        if (
+          !channel ||
+          !channel.name ||
+          !channel.url
+        ) {
+          return;
+        }
+
+        const category =
+          channel.category ||
+          "Other";
+
+        let grid =
+          categoryGrids.get(
+            category
+          );
+
+        if (!grid) {
+
+          grid =
+            findFirstElement([
+              '[data-tv-category="' +
+              CSS.escape(category) +
+              '"] .tv-channel-grid',
+              '[data-category="' +
+              CSS.escape(category) +
+              '"] .tv-channel-grid'
+            ]);
+
+          if (!grid) {
+
+            const section =
+              document.createElement(
+                "section"
+              );
+
+            section.className =
+              "tv-category";
+
+            section.dataset.tvCategory =
+              category;
+
+            section.innerHTML = `
+              <div class="tv-category-heading">
+                <h2>
+                  ${escapeHTML(
+                    channel.categoryIcon ||
+                    "📺"
+                  )}
+                  ${escapeHTML(category)}
+                </h2>
+              </div>
+
+              <div class="tv-channel-grid"></div>
+            `;
+
+            container.appendChild(
+              section
+            );
+
+            grid =
+              section.querySelector(
+                ".tv-channel-grid"
+              );
+
+          }
+
+          categoryGrids.set(
+            category,
+            grid
+          );
+
+        }
+
+        grid.appendChild(
+          createExternalTVCard(
+            channel
+          )
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     ADD JSON MOVIES
+     ========================================================= */
+
+  function addExternalMovies(
+    movies
+  ) {
+
+    const container =
+      findContainer([
+        "#movieList",
+        ".movie-list",
+        "#moviesContent .movies-grid",
+        "#moviesContent .movie-grid"
+      ]);
+
+    if (!container) {
+      console.warn(
+        "Movies JSON container not found."
+      );
+      return;
+    }
+
+    movies.forEach(
+      function (movie) {
+
+        if (
+          !movie ||
+          !movie.name ||
+          !movie.url
+        ) {
+          return;
+        }
+
+        container.appendChild(
+          createExternalMovieCard(
+            movie
+          )
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     JSON FOOTBALL STATUS
+     ========================================================= */
+
+  function updateExternalMatchStatus(
+    card,
+    now
+  ) {
+
+    const kickoff =
+      new Date(
+        card.dataset.kickoff
+      );
+
+    if (
+      Number.isNaN(
+        kickoff.getTime()
+      )
+    ) {
+      return;
+    }
+
+    const duration =
+      Number(
+        card.dataset.duration
+      ) || 96;
+
+    const endTime =
+      new Date(
+        kickoff.getTime() +
+        duration * 60 * 1000
+      );
+
+    const status =
+      card.querySelector(
+        "[data-match-status]"
+      );
+
+    const dateElement =
+      card.querySelector(
+        "[data-match-date]"
+      );
+
+    const timeElement =
+      card.querySelector(
+        "[data-match-time]"
+      );
+
+    const countdown =
+      card.querySelector(
+        "[data-match-countdown]"
+      );
+
+    if (dateElement) {
+
+      dateElement.textContent =
+        new Intl.DateTimeFormat(
+          undefined,
+          {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+          }
+        ).format(kickoff);
+
+    }
+
+    if (timeElement) {
+
+      timeElement.textContent =
+        new Intl.DateTimeFormat(
+          undefined,
+          {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            timeZoneName: "short"
+          }
+        ).format(kickoff);
+
+    }
+
+    if (now < kickoff) {
+
+      card.classList.remove(
+        "is-live",
+        "is-ended"
+      );
+
+      card.classList.add(
+        "is-upcoming"
+      );
+
+      if (status) {
+
+        status.textContent =
+          "UPCOMING";
+
+        status.className =
+          "match-status upcoming";
+
+      }
+
+      if (countdown) {
+
+        countdown.textContent =
+          "Starts in " +
+          formatExternalCountdown(
+            kickoff.getTime() -
+            now.getTime()
+          );
+
+      }
+
+      return;
+
+    }
+
+    if (
+      now >= kickoff &&
+      now < endTime
+    ) {
+
+      card.classList.remove(
+        "is-upcoming",
+        "is-ended"
+      );
+
+      card.classList.add(
+        "is-live"
+      );
+
+      if (status) {
+
+        status.textContent =
+          "● LIVE";
+
+        status.className =
+          "match-status live";
+
+      }
+
+      if (countdown) {
+        countdown.textContent =
+          "LIVE NOW";
+      }
+
+      return;
+
+    }
+
+    card.classList.remove(
+      "is-upcoming",
+      "is-live"
+    );
+
+    card.classList.add(
+      "is-ended"
+    );
+
+    if (status) {
+
+      status.textContent =
+        "ENDED";
+
+      status.className =
+        "match-status ended";
+
+    }
+
+    if (countdown) {
+      countdown.textContent =
+        "Match ended";
+    }
+
+  }
+
+
+  function formatExternalCountdown(
+    milliseconds
+  ) {
+
+    if (milliseconds <= 0) {
+      return "00:00:00";
+    }
+
+    let seconds =
+      Math.floor(
+        milliseconds / 1000
+      );
+
+    const days =
+      Math.floor(
+        seconds / 86400
+      );
+
+    seconds %= 86400;
+
+    const hours =
+      Math.floor(
+        seconds / 3600
+      );
+
+    seconds %= 3600;
+
+    const minutes =
+      Math.floor(
+        seconds / 60
+      );
+
+    seconds %= 60;
+
+    const hh =
+      String(hours)
+        .padStart(2, "0");
+
+    const mm =
+      String(minutes)
+        .padStart(2, "0");
+
+    const ss =
+      String(seconds)
+        .padStart(2, "0");
+
+    if (days > 0) {
+
+      return (
+        days +
+        "d " +
+        hh +
+        ":" +
+        mm +
+        ":" +
+        ss
+      );
+
+    }
+
+    return (
+      hh +
+      ":" +
+      mm +
+      ":" +
+      ss
+    );
+
+  }
+
+
+  /* =========================================================
+     SORT EXTERNAL HIGHLIGHTS / MOVIES
+     ========================================================= */
+
+  function sortExternalDateCards(
+    selector,
+    dateAttribute
+  ) {
+
+    const cards =
+      Array.from(
+        document.querySelectorAll(
+          selector +
+          '[data-external-content="true"]'
+        )
+      );
+
+    cards.sort(
+      function (a, b) {
+
+        const dateA =
+          new Date(
+            a.dataset[dateAttribute] ||
+            "1970-01-01"
+          ).getTime();
+
+        const dateB =
+          new Date(
+            b.dataset[dateAttribute] ||
+            "1970-01-01"
+          ).getTime();
+
+        return dateB - dateA;
+
+      }
+    );
+
+    if (!cards.length) {
+      return;
+    }
+
+    const parent =
+      cards[0].parentElement;
+
+    if (!parent) {
+      return;
+    }
+
+    cards.forEach(
+      function (card) {
+        parent.appendChild(card);
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     LOAD EXTERNAL JSON CONTENT
+     ========================================================= */
+
+  async function loadExternalContent() {
+
+    const cacheBust =
+      "?v=" +
+      Date.now();
+
+
+    /* =======================================================
+       FOOTBALL
+       ======================================================= */
+
+    try {
+
+      const response =
+        await fetch(
+          "content/football/matches.json" +
+          cacheBust,
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (response.ok) {
+
+        const data =
+          await response.json();
+
+        if (Array.isArray(data)) {
+          addExternalFootball(data);
+        }
+
+      }
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Football JSON loading failed:",
+        error
+      );
+
+    }
+
+
+    /* =======================================================
+       HIGHLIGHTS
+       ======================================================= */
+
+    try {
+
+      const response =
+        await fetch(
+          "content/highlights/highlights.json" +
+          cacheBust,
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (response.ok) {
+
+        const data =
+          await response.json();
+
+        if (Array.isArray(data)) {
+          addExternalHighlights(data);
+        }
+
+      }
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Highlights JSON loading failed:",
+        error
+      );
+
+    }
+
+
+    /* =======================================================
+       TV
+       ======================================================= */
+
+    try {
+
+      const response =
+        await fetch(
+          "content/tv/channels.json" +
+          cacheBust,
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (response.ok) {
+
+        const data =
+          await response.json();
+
+        if (Array.isArray(data)) {
+          addExternalTV(data);
+        }
+
+      }
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "TV JSON loading failed:",
+        error
+      );
+
+    }
+
+
+    /* =======================================================
+       MOVIES
+       ======================================================= */
+
+    try {
+
+      const response =
+        await fetch(
+          "content/movies/movies.json" +
+          cacheBust,
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (response.ok) {
+
+        const data =
+          await response.json();
+
+        if (Array.isArray(data)) {
+          addExternalMovies(data);
+        }
+
+      }
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Movies JSON loading failed:",
+        error
+      );
+
+    }
+
+
+    /* =======================================================
+       INITIAL JSON MATCH STATUS
+       ======================================================= */
+
+    document
+      .querySelectorAll(
+        '#matchList .match-card[data-external-content="true"]'
+      )
+      .forEach(
+        function (card) {
+
+          updateExternalMatchStatus(
+            card,
+            new Date()
+          );
+
+        }
+      );
+
+
+    sortExternalDateCards(
+      ".highlight-card",
+      "date"
+    );
+
+    sortExternalDateCards(
+      ".movie-card",
+      "date"
+    );
+
+
+    requestAnimationFrame(
+      updateStickyPositions
+    );
+
+    console.log(
+      "Deeprowss external JSON content loaded."
+    );
+
+  }
+
+
+  /* =========================================================
+     UPDATE JSON MATCHES EVERY SECOND
+     ========================================================= */
+
+  setInterval(
+    function () {
+
+      const now =
+        new Date();
+
+      document
+        .querySelectorAll(
+          '#matchList .match-card[data-external-content="true"]'
+        )
+        .forEach(
+          function (card) {
+
+            updateExternalMatchStatus(
+              card,
+              now
+            );
+
+          }
+        );
+
+    },
+    1000
+  );
+
+
+  /* =========================================================
+     MOBILE MENU / PAGE SAFETY
      ========================================================= */
 
   window.addEventListener(
@@ -1951,7 +2939,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function () {
 
       hideAltScreen();
-
 
       if (screenPlayer) {
 
@@ -1977,6 +2964,13 @@ document.addEventListener("DOMContentLoaded", function () {
       updateStickyPositions();
     }
   );
+
+
+  /* =========================================================
+     START EXTERNAL CONTENT
+     ========================================================= */
+
+  loadExternalContent();
 
 
 });
