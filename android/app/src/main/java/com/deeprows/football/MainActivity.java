@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
             "https://t.me/deeprows";
 
     private static final String OTHER_EXTERNAL_URL =
-            "https://REPLACE-WITH-YOUR-SECOND-LINK.com";
+            "https://archive.org/download/deeprowss_202608/Deeprowss.apk";
 
     private static final int POPUP_BAR_HEIGHT_DP = 58;
 
