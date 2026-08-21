@@ -3,6 +3,8 @@ package com.deeprows.football;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.Intent;
+import android.net.Uri;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +31,25 @@ public class MainActivity extends Activity {
 
     private static final String WEBSITE_URL =
             "https://deeprowss.com";
+
+    /*
+     * =========================================================
+     * EXTERNAL LINK EXCEPTIONS
+     * =========================================================
+     *
+     * These links bypass the in-app popup WebView and are opened
+     * externally by Android.
+     *
+     * Telegram is included so the Telegram app/browser can handle
+     * the link normally.
+     *
+     * Replace OTHER_EXTERNAL_URL with your second link.
+     */
+    private static final String TELEGRAM_URL =
+            "https://t.me/deeprows";
+
+    private static final String OTHER_EXTERNAL_URL =
+            "https://REPLACE-WITH-YOUR-SECOND-LINK.com";
 
     private static final int POPUP_BAR_HEIGHT_DP = 58;
 
@@ -858,6 +879,30 @@ public class MainActivity extends Activity {
         }
 
 
+        /*
+         * =========================================================
+         * EXTERNAL LINK EXCEPTIONS
+         * =========================================================
+         *
+         * These specific links are NOT opened inside the app's
+         * popup WebView. Android handles them externally.
+         *
+         * Everything else keeps the existing behavior.
+         */
+        if (isExternalExceptionUrl(url)) {
+
+            openExternalUrl(url);
+
+            return;
+        }
+
+
+        /*
+         * =========================================================
+         * NORMAL DEEPROWSS NAVIGATION
+         * =========================================================
+         */
+
         if (url.startsWith(
                 "https://deeprows.github.io/"
         )) {
@@ -873,9 +918,122 @@ public class MainActivity extends Activity {
         }
 
 
+        /*
+         * All other links keep using the existing
+         * in-app popup WebView.
+         */
+
         openPopup(
                 url
         );
+    }
+
+
+    /*
+     * =========================================================
+     * EXTERNAL URL CHECK
+     * =========================================================
+     */
+
+    private boolean isExternalExceptionUrl(
+            String url
+    ) {
+
+        if (url == null) {
+
+            return false;
+        }
+
+
+        String normalizedUrl =
+                url.trim().toLowerCase(
+                        java.util.Locale.US
+                );
+
+
+        /*
+         * Telegram.
+         *
+         * Handles:
+         * https://t.me/deeprows
+         * https://telegram.me/deeprows
+         * Telegram links with additional path/query data.
+         */
+        if (normalizedUrl.startsWith(
+                "https://t.me/deeprows"
+        ) ||
+                normalizedUrl.startsWith(
+                        "http://t.me/deeprows"
+                ) ||
+                normalizedUrl.startsWith(
+                        "https://telegram.me/deeprows"
+                ) ||
+                normalizedUrl.startsWith(
+                        "http://telegram.me/deeprows"
+                )) {
+
+            return true;
+        }
+
+
+        /*
+         * Second external-link exception.
+         *
+         * Replace OTHER_EXTERNAL_URL above with your real URL.
+         */
+        String otherUrl =
+                OTHER_EXTERNAL_URL
+                        .trim()
+                        .toLowerCase(
+                                java.util.Locale.US
+                        );
+
+
+        if (!otherUrl.contains(
+                "REPLACE-WITH-YOUR-SECOND-LINK"
+        ) &&
+                !otherUrl.isEmpty() &&
+                normalizedUrl.startsWith(
+                        otherUrl
+                )) {
+
+            return true;
+        }
+
+
+        return false;
+    }
+
+
+    /*
+     * =========================================================
+     * OPEN EXTERNAL URL
+     * =========================================================
+     */
+
+    private void openExternalUrl(
+            String url
+    ) {
+
+        try {
+
+            Intent intent =
+                    new Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(url)
+                    );
+
+            startActivity(intent);
+
+        } catch (Exception ignored) {
+
+            /*
+             * If no external application can handle the URL,
+             * keep the link inside the existing popup WebView
+             * rather than crashing the app.
+             */
+            openPopup(url);
+        }
     }
 
 
