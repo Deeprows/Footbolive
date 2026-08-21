@@ -356,12 +356,12 @@ TV CHANNEL CARD
 .tv-channel{
 position:relative;
 min-width:0;
-min-height:135px;
+min-height:90px;
 display:flex;
 flex-direction:column;
 align-items:flex-start;
 justify-content:space-between;
-padding:13px;
+padding:10px;
 border:1px solid rgba(255,255,255,.09);
 border-radius:16px;
 background:linear-gradient(145deg,#11151c,#0b0e14);
@@ -378,8 +378,8 @@ touch-action:manipulation;
 .tv-channel{
 width:150px;
 max-width:150px;
-min-height:140px;
-padding:16px;
+min-height:100px;
+padding:14px;
 }
 .tv-channel-icon{width:64px;height:64px;font-size:32px}
 .tv-channel-info strong{font-size:16px}
@@ -518,7 +518,7 @@ box-shadow:0 15px 30px rgba(0,0,0,.3);
 .tv-channel{
 width:150px;
 max-width:150px;
-min-height:150px;
+min-height:100px;
 padding:12px;
 }
 .tv-channel-icon{width:52px;height:52px;border-radius:13px;font-size:26px}
