@@ -1362,7 +1362,67 @@ public class MainActivity extends Activity {
 
 
         popupWebView.setWebViewClient(
-                new WebViewClient()
+                new WebViewClient() {
+
+                    @Override
+                    public boolean shouldOverrideUrlLoading(
+                            WebView view,
+                            WebResourceRequest request
+                    ) {
+
+                        if (request == null ||
+                                request.getUrl() == null) {
+
+                            return false;
+                        }
+
+                        String url =
+                                request.getUrl().toString();
+
+                        /*
+                         * IMPORTANT:
+                         * Popup links do not pass through the main
+                         * WebView navigation handler. Therefore Telegram
+                         * and other external exceptions must also be
+                         * checked here.
+                         */
+                        if (isExternalExceptionUrl(url)) {
+
+                            openExternalUrl(url);
+
+                            closePopup();
+
+                            return true;
+                        }
+
+                        return false;
+                    }
+
+
+                    @Override
+                    public boolean shouldOverrideUrlLoading(
+                            WebView view,
+                            String url
+                    ) {
+
+                        if (url == null ||
+                                url.trim().isEmpty()) {
+
+                            return false;
+                        }
+
+                        if (isExternalExceptionUrl(url)) {
+
+                            openExternalUrl(url);
+
+                            closePopup();
+
+                            return true;
+                        }
+
+                        return false;
+                    }
+                }
         );
 
 
