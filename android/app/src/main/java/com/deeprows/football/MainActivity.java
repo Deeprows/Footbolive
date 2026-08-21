@@ -1,6 +1,7 @@
 package com.deeprows.football;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -15,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -48,9 +51,6 @@ public class MainActivity extends Activity {
      */
     private static final String TELEGRAM_URL =
             "https://t.me/deeprows";
-
-    private static final String OTHER_EXTERNAL_URL =
-            "https://drive.google.com/file/d/1HNtB5W5seFU4iFJehCSIplTelg1uQEgR/view?usp=sharing";
 
     private static final int POPUP_BAR_HEIGHT_DP = 58;
 
@@ -777,6 +777,50 @@ public class MainActivity extends Activity {
 
 
         /*
+         * =====================================================
+         * MIXED CONTENT
+         * =====================================================
+         */
+
+        if (android.os.Build.VERSION.SDK_INT >=
+                android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+            settings.setMixedContentMode(
+                    WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            );
+        }
+
+
+        /*
+         * =====================================================
+         * DOWNLOAD SUPPORT
+         * =====================================================
+         */
+
+        webView.setDownloadListener(
+                new DownloadListener() {
+
+                    @Override
+                    public void onDownloadStart(
+                            String url,
+                            String userAgent,
+                            String contentDisposition,
+                            String mimeType,
+                            long contentLength
+                    ) {
+
+                        handleWebDownload(
+                                url,
+                                userAgent,
+                                contentDisposition,
+                                mimeType
+                        );
+                    }
+                }
+        );
+
+
+        /*
          * Cookies.
          */
 
@@ -791,6 +835,116 @@ public class MainActivity extends Activity {
                 webView,
                 true
         );
+    }
+
+
+    /*
+     * =========================================================
+     * WEB DOWNLOAD
+     * =========================================================
+     */
+
+    private void handleWebDownload(
+            String url,
+            String userAgent,
+            String contentDisposition,
+            String mimeType
+    ) {
+
+        if (url == null ||
+                url.trim().isEmpty()) {
+
+            return;
+        }
+
+        try {
+
+            if (isExternalExceptionUrl(url)) {
+
+                openExternalUrl(url);
+
+                return;
+            }
+
+            DownloadManager.Request request =
+                    new DownloadManager.Request(
+                            Uri.parse(url)
+                    );
+
+            if (mimeType != null &&
+                    !mimeType.trim().isEmpty()) {
+
+                request.setMimeType(mimeType);
+            }
+
+            if (userAgent != null &&
+                    !userAgent.trim().isEmpty()) {
+
+                request.addRequestHeader(
+                        "User-Agent",
+                        userAgent
+                );
+            }
+
+            String cookies =
+                    CookieManager
+                            .getInstance()
+                            .getCookie(url);
+
+            if (cookies != null &&
+                    !cookies.trim().isEmpty()) {
+
+                request.addRequestHeader(
+                        "Cookie",
+                        cookies
+                );
+            }
+
+            request.setDescription(
+                    "Downloading from Deeprowss"
+            );
+
+            request.setNotificationVisibility(
+                    DownloadManager
+                            .Request
+                            .VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+            );
+
+            String fileName =
+                    android.webkit.URLUtil
+                            .guessFileName(
+                                    url,
+                                    contentDisposition,
+                                    mimeType
+                            );
+
+            if (fileName == null ||
+                    fileName.trim().isEmpty()) {
+
+                fileName =
+                        "deeprowss_download";
+            }
+
+            request.setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    fileName
+            );
+
+            DownloadManager manager =
+                    (DownloadManager)
+                            getSystemService(
+                                    DOWNLOAD_SERVICE
+                            );
+
+            if (manager != null) {
+
+                manager.enqueue(request);
+            }
+
+        } catch (Exception ignored) {
+
+            // Do not crash the app if a website uses an unsupported download scheme.
+        }
     }
 
 
@@ -1055,69 +1209,38 @@ public class MainActivity extends Activity {
             String url
     ) {
 
-        if (url == null) {
+        if (url == null ||
+                url.trim().isEmpty()) {
 
             return false;
         }
 
+        try {
 
-        String normalizedUrl =
-                url.trim().toLowerCase(
-                        java.util.Locale.US
-                );
+            Uri uri =
+                    Uri.parse(url);
 
+            String host =
+                    uri.getHost();
 
-        /*
-         * Telegram.
-         *
-         * Handles:
-         * https://t.me/deeprows
-         * https://telegram.me/deeprows
-         * Telegram links with additional path/query data.
-         */
-        if (normalizedUrl.startsWith(
-                "https://t.me/deeprows"
-        ) ||
-                normalizedUrl.startsWith(
-                        "http://t.me/deeprows"
-                ) ||
-                normalizedUrl.startsWith(
-                        "https://telegram.me/deeprows"
-                ) ||
-                normalizedUrl.startsWith(
-                        "http://telegram.me/deeprows"
-                )) {
+            if (host == null) {
 
-            return true;
+                return false;
+            }
+
+            host =
+                    host.toLowerCase(
+                            java.util.Locale.US
+                    );
+
+            return host.equals("t.me") ||
+                    host.equals("telegram.me") ||
+                    host.equals("www.telegram.me");
+
+        } catch (Exception ignored) {
+
+            return false;
         }
-
-
-        /*
-         * Second external-link exception.
-         *
-         * Replace OTHER_EXTERNAL_URL above with your real URL.
-         */
-        String otherUrl =
-                OTHER_EXTERNAL_URL
-                        .trim()
-                        .toLowerCase(
-                                java.util.Locale.US
-                        );
-
-
-        if (!otherUrl.contains(
-                "REPLACE-WITH-YOUR-SECOND-LINK"
-        ) &&
-                !otherUrl.isEmpty() &&
-                normalizedUrl.startsWith(
-                        otherUrl
-                )) {
-
-            return true;
-        }
-
-
-        return false;
     }
 
 
