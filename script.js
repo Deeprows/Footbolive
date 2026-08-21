@@ -10,38 +10,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     SITE-WIDE POPUNDER
-     ========================================================= */
+   SITE-WIDE POPUNDER
+   ========================================================= */
 
-  (function () {
+(function () {
 
-    const popunderScript =
-      "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8.js";
+  const popunderScript =
+    "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
 
-    function firePopunder() {
+  const script =
+    document.createElement("script");
 
-      const script =
-        document.createElement("script");
+  script.src =
+    popunderScript;
 
-      script.src =
-        popunderScript;
+  script.async = true;
 
-      script.async = true;
+  document.body.appendChild(script);
 
-      document.body.appendChild(script);
-
-    }
-
-    firePopunder();
-
-    setInterval(
-      function () {
-        firePopunder();
-      },
-      35000
-    );
-
-  })();
+})();
 
 
   /* =========================================================
