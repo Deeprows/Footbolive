@@ -3,11 +3,10 @@ package com.deeprows.football;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,7 +17,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -31,109 +32,49 @@ import android.widget.TextView;
 
 import androidx.core.splashscreen.SplashScreen;
 
+import java.util.Locale;
+
 public class MainActivity extends Activity {
 
-    private static final String WEBSITE_URL =
-            "https://deeprowss.com";
-
-    /*
-     * =========================================================
-     * EXTERNAL LINK EXCEPTIONS
-     * =========================================================
-     *
-     * These links bypass the in-app popup WebView and are opened
-     * externally by Android.
-     *
-     * Telegram is included so the Telegram app/browser can handle
-     * the link normally.
-     *
-     * Replace OTHER_EXTERNAL_URL with your second link.
-     */
-    private static final String TELEGRAM_URL =
-            "https://t.me/deeprows";
-
+    private static final String WEBSITE_URL = "https://deeprowss.com";
     private static final int POPUP_BAR_HEIGHT_DP = 58;
-
-    private static final int BG_COLOR =
-            Color.rgb(7, 9, 13);
+    private static final int BG_COLOR = Color.rgb(7, 9, 13);
 
     private FrameLayout rootLayout;
-
     private RefreshableWebViewContainer refreshContainer;
-
     private WebView mainWebView;
 
     private WebView popupWebView;
-
     private FrameLayout popupContainer;
 
     private View customVideoView;
-
     private WebChromeClient.CustomViewCallback customViewCallback;
 
     private int popupBarHeight;
-
     private boolean showingOfflinePage = false;
-
-    /*
-     * =========================================================
-     * SPLASH SCREEN
-     * =========================================================
-     *
-     * The Android splash screen remains visible until the
-     * WebView has committed its first visible page content.
-     *
-     * There is NO fixed splash delay.
-     */
     private boolean webPageVisible = false;
-
-    /*
-     * Custom splash overlay.
-     *
-     * The complete deeprowss_splash.png is shown centered at a normal size
-     * instead of being treated as the Android 12 splash icon.
-     */
     private View customSplashView;
 
+    private ValueCallback<Uri[]> filePathCallback;
+    private static final int FILE_CHOOSER_REQUEST = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        /*
-         * Install the AndroidX splash screen BEFORE super.onCreate().
-         */
         SplashScreen splashScreen =
                 SplashScreen.installSplashScreen(this);
 
-        /*
-         * Keep the splash screen visible while the WebView is
-         * loading the first visible webpage.
-         */
         splashScreen.setKeepOnScreenCondition(
                 () -> !webPageVisible
         );
 
         super.onCreate(savedInstanceState);
 
-        /*
-         * =====================================================
-         * WINDOW
-         * =====================================================
-         */
-
         getWindow().setBackgroundDrawable(
-                new android.graphics.drawable.ColorDrawable(
-                        BG_COLOR
-                )
+                new android.graphics.drawable.ColorDrawable(BG_COLOR)
         );
-
-        getWindow().setNavigationBarColor(
-                BG_COLOR
-        );
-
-        getWindow().setStatusBarColor(
-                BG_COLOR
-        );
+        getWindow().setNavigationBarColor(BG_COLOR);
+        getWindow().setStatusBarColor(BG_COLOR);
 
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
@@ -141,86 +82,20 @@ public class MainActivity extends Activity {
         );
 
         hideStatusBar();
+        popupBarHeight = dp(POPUP_BAR_HEIGHT_DP);
 
-        popupBarHeight =
-                dp(POPUP_BAR_HEIGHT_DP);
-
-
-        /*
-         * =====================================================
-         * ROOT
-         * =====================================================
-         */
-
-        rootLayout =
-                new FrameLayout(this);
-
-        rootLayout.setBackgroundColor(
-                BG_COLOR
-        );
-
-        setContentView(
-                rootLayout
-        );
-
-        /*
-         * =====================================================
-         * CUSTOM DEEPROWSS SPLASH
-         * =====================================================
-         *
-         * Android 12+ treats windowSplashScreenAnimatedIcon as an icon.
-         * Our deeprowss_splash.png is a complete splash composition, so show
-         * the whole image in a centered ImageView instead.
-         */
+        rootLayout = new FrameLayout(this);
+        rootLayout.setBackgroundColor(BG_COLOR);
+        setContentView(rootLayout);
 
         showCustomSplash();
-
-
-        /*
-         * =====================================================
-         * MAIN WEBVIEW
-         * =====================================================
-         */
-
         createMainWebView();
 
-
-        if (mainWebView != null) {
-
-            mainWebView.setBackgroundColor(
-                    BG_COLOR
-            );
-        }
-
-
-        /*
-         * Load Deeprowss.
-         *
-         * The splash screen stays visible until the WebView
-         * reports that visible webpage content is ready.
-         */
-
-        mainWebView.loadUrl(
-                WEBSITE_URL
-        );
+        mainWebView.loadUrl(WEBSITE_URL);
     }
 
-
-    /*
-     * =========================================================
-     * CUSTOM SPLASH
-     * =========================================================
-     */
-
     private void showCustomSplash() {
-
-        if (rootLayout == null) {
-            return;
-        }
-
-        if (customSplashView != null) {
-            return;
-        }
+        if (rootLayout == null || customSplashView != null) return;
 
         android.widget.ImageView splashImage =
                 new android.widget.ImageView(this);
@@ -236,386 +111,212 @@ public class MainActivity extends Activity {
         splashImage.setScaleType(
                 android.widget.ImageView.ScaleType.CENTER_INSIDE
         );
-
         splashImage.setAdjustViewBounds(true);
+        splashImage.setBackgroundColor(BG_COLOR);
 
-        splashImage.setBackgroundColor(
-                BG_COLOR
-        );
-
-        /*
-         * Keep the complete square splash centered with margins so it
-         * cannot become an oversized full-screen image.
-         */
         int margin = dp(32);
 
-        FrameLayout.LayoutParams splashParams =
+        FrameLayout.LayoutParams params =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT
                 );
 
-        splashParams.setMargins(
-                margin,
-                margin,
-                margin,
-                margin
-        );
+        params.setMargins(margin, margin, margin, margin);
 
         customSplashView = splashImage;
-
-        rootLayout.addView(
-                customSplashView,
-                splashParams
-        );
-
+        rootLayout.addView(customSplashView, params);
         customSplashView.bringToFront();
     }
 
-
     private void hideCustomSplash() {
-
-        if (customSplashView == null) {
-            return;
-        }
+        if (customSplashView == null) return;
 
         View splash = customSplashView;
-
         customSplashView = null;
 
         splash.animate()
                 .alpha(0f)
                 .setDuration(180)
-                .withEndAction(
-                        () -> {
-                            if (rootLayout != null) {
-                                rootLayout.removeView(splash);
-                            }
-                        }
-                )
+                .withEndAction(() -> {
+                    if (rootLayout != null) {
+                        rootLayout.removeView(splash);
+                    }
+                })
                 .start();
     }
 
-
-    /*
-     * =========================================================
-     * MAIN WEBVIEW
-     * =========================================================
-     */
-
     private void createMainWebView() {
 
-        mainWebView =
-                new WebView(this);
+        mainWebView = new WebView(this);
+        mainWebView.setBackgroundColor(BG_COLOR);
 
-        mainWebView.setBackgroundColor(
-                BG_COLOR
-        );
-
-        configureWebView(
-                mainWebView
-        );
-
+        configureWebView(mainWebView);
 
         /*
-         * =====================================================
-         * WEBSITE NAVIGATION
-         * =====================================================
+         * IMPORTANT:
+         * Normal HTTP/HTTPS navigation stays inside the SAME WebView.
+         * This makes the app behave much more like Chrome.
          */
+        mainWebView.setWebViewClient(new WebViewClient() {
 
-        mainWebView.setWebViewClient(
-                new WebViewClient() {
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(
-                            WebView view,
-                            WebResourceRequest request
-                    ) {
-
-                        if (request == null ||
-                                request.getUrl() == null) {
-
-                            return false;
-                        }
-
-                        String url =
-                                request.getUrl().toString();
-
-
-                        if (showingOfflinePage) {
-
-                            showingOfflinePage =
-                                    false;
-
-                            view.loadUrl(url);
-
-                            return true;
-                        }
-
-
-                        handleMainNavigation(
-                                url
-                        );
-
-                        return true;
-                    }
-
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(
-                            WebView view,
-                            String url
-                    ) {
-
-                        if (url == null) {
-
-                            return false;
-                        }
-
-
-                        if (showingOfflinePage) {
-
-                            showingOfflinePage =
-                                    false;
-
-                            view.loadUrl(url);
-
-                            return true;
-                        }
-
-
-                        handleMainNavigation(
-                                url
-                        );
-
-                        return true;
-                    }
-
-
-                    @Override
-                    public void onPageStarted(
-                            WebView view,
-                            String url,
-                            android.graphics.Bitmap favicon
-                    ) {
-
-                        super.onPageStarted(
-                                view,
-                                url,
-                                favicon
-                        );
-
-
-                        /*
-                         * Never show white while the website
-                         * or a new page is loading.
-                         */
-
-                        view.setBackgroundColor(
-                                BG_COLOR
-                        );
-                    }
-
-
-                    /*
-                     * =================================================
-                     * SPLASH RELEASE
-                     * =================================================
-                     *
-                     * onPageCommitVisible() is used instead of
-                     * onPageFinished() because it indicates that the
-                     * page has committed content that is about to be
-                     * drawn by the WebView.
-                     *
-                     * This removes the splash based on actual WebView
-                     * visibility rather than an arbitrary timer.
-                     */
-                    @Override
-                    public void onPageCommitVisible(
-                            WebView view,
-                            String url
-                    ) {
-
-                        super.onPageCommitVisible(
-                                view,
-                                url
-                        );
-
-                        if (!webPageVisible) {
-
-                            webPageVisible =
-                                    true;
-
-                            hideCustomSplash();
-                        }
-                    }
-
-
-                    @Override
-                    public void onPageFinished(
-                            WebView view,
-                            String url
-                    ) {
-
-                        super.onPageFinished(
-                                view,
-                                url
-                        );
-
-
-                        if (url != null &&
-                                url.startsWith(
-                                        "https://deeprowss.com"
-                                )) {
-
-                            showingOfflinePage =
-                                    false;
-                        }
-                    }
-
-
-                    /*
-                     * Only show offline page if the MAIN
-                     * document fails.
-                     *
-                     * Also release the splash here so the app
-                     * does not remain stuck on the splash screen
-                     * when there is no internet connection.
-                     */
-
-                    @Override
-                    public void onReceivedError(
-                            WebView view,
-                            WebResourceRequest request,
-                            android.webkit.WebResourceError error
-                    ) {
-
-                        super.onReceivedError(
-                                view,
-                                request,
-                                error
-                        );
-
-
-                        if (request != null &&
-                                request.isForMainFrame()) {
-
-                            webPageVisible =
-                                    true;
-
-                            hideCustomSplash();
-
-                            showOfflinePage();
-                        }
-                    }
-
-
-                    @Override
-                    public void onReceivedError(
-                            WebView view,
-                            int errorCode,
-                            String description,
-                            String failingUrl
-                    ) {
-
-                        super.onReceivedError(
-                                view,
-                                errorCode,
-                                description,
-                                failingUrl
-                        );
-
-
-                        if (android.os.Build.VERSION.SDK_INT < 23) {
-
-                            webPageVisible =
-                                    true;
-
-                            showOfflinePage();
-                        }
-                    }
+            @Override
+            public boolean shouldOverrideUrlLoading(
+                    WebView view,
+                    WebResourceRequest request
+            ) {
+                if (request == null || request.getUrl() == null) {
+                    return false;
                 }
-        );
 
+                String url = request.getUrl().toString();
 
-        /*
-         * =====================================================
-         * CHROME CLIENT
-         * =====================================================
-         */
+                if (showingOfflinePage) {
+                    showingOfflinePage = false;
+                    view.loadUrl(url);
+                    return true;
+                }
 
-        mainWebView.setWebChromeClient(
-                createChromeClient()
-        );
+                if (isTelegramUrl(url)) {
+                    openTelegram(url);
+                    return true;
+                }
 
+                if (isHttpUrl(url)) {
+                    return false;
+                }
 
-        /*
-         * =====================================================
-         * PULL TO REFRESH
-         * =====================================================
-         */
+                openSpecialUrl(url);
+                return true;
+            }
 
-        refreshContainer =
-                new RefreshableWebViewContainer(
-                        this
+            @Override
+            public boolean shouldOverrideUrlLoading(
+                    WebView view,
+                    String url
+            ) {
+                if (url == null || url.trim().isEmpty()) {
+                    return false;
+                }
+
+                if (showingOfflinePage) {
+                    showingOfflinePage = false;
+                    view.loadUrl(url);
+                    return true;
+                }
+
+                if (isTelegramUrl(url)) {
+                    openTelegram(url);
+                    return true;
+                }
+
+                if (isHttpUrl(url)) {
+                    return false;
+                }
+
+                openSpecialUrl(url);
+                return true;
+            }
+
+            @Override
+            public void onPageStarted(
+                    WebView view,
+                    String url,
+                    android.graphics.Bitmap favicon
+            ) {
+                super.onPageStarted(view, url, favicon);
+                view.setBackgroundColor(BG_COLOR);
+            }
+
+            @Override
+            public void onPageCommitVisible(
+                    WebView view,
+                    String url
+            ) {
+                super.onPageCommitVisible(view, url);
+
+                if (!webPageVisible) {
+                    webPageVisible = true;
+                    hideCustomSplash();
+                }
+            }
+
+            @Override
+            public void onPageFinished(
+                    WebView view,
+                    String url
+            ) {
+                super.onPageFinished(view, url);
+
+                if (url != null && url.startsWith(WEBSITE_URL)) {
+                    showingOfflinePage = false;
+                }
+            }
+
+            @Override
+            public void onReceivedError(
+                    WebView view,
+                    WebResourceRequest request,
+                    WebResourceError error
+            ) {
+                super.onReceivedError(view, request, error);
+
+                if (request != null && request.isForMainFrame()) {
+                    webPageVisible = true;
+                    hideCustomSplash();
+                    showOfflinePage();
+                }
+            }
+
+            @Override
+            public void onReceivedError(
+                    WebView view,
+                    int errorCode,
+                    String description,
+                    String failingUrl
+            ) {
+                super.onReceivedError(
+                        view,
+                        errorCode,
+                        description,
+                        failingUrl
                 );
 
-        refreshContainer.setBackgroundColor(
-                BG_COLOR
-        );
-
-        refreshContainer.setWebView(
-                mainWebView
-        );
-
-
-        refreshContainer.setOnRefreshListener(
-                new RefreshableWebViewContainer.OnRefreshListener() {
-
-                    @Override
-                    public void onRefresh() {
-
-                        if (mainWebView == null) {
-
-                            return;
-                        }
-
-
-                        if (showingOfflinePage) {
-
-                            showWebsiteAgain();
-
-                        } else {
-
-                            mainWebView.reload();
-                        }
-
-
-                        new Handler(
-                                Looper.getMainLooper()
-                        ).postDelayed(
-                                new Runnable() {
-
-                                    @Override
-                                    public void run() {
-
-                                        if (refreshContainer != null) {
-
-                                            refreshContainer
-                                                    .stopRefreshing();
-                                        }
-                                    }
-                                },
-                                900
-                        );
-                    }
+                if (android.os.Build.VERSION.SDK_INT < 23) {
+                    webPageVisible = true;
+                    hideCustomSplash();
+                    showOfflinePage();
                 }
-        );
+            }
+        });
 
+        mainWebView.setWebChromeClient(createChromeClient());
 
-        /*
-         * Add WebView.
-         */
+        refreshContainer =
+                new RefreshableWebViewContainer(this);
+
+        refreshContainer.setBackgroundColor(BG_COLOR);
+        refreshContainer.setWebView(mainWebView);
+
+        refreshContainer.setOnRefreshListener(() -> {
+
+            if (mainWebView == null) return;
+
+            if (showingOfflinePage) {
+                showWebsiteAgain();
+            } else {
+                mainWebView.reload();
+            }
+
+            new Handler(Looper.getMainLooper()).postDelayed(
+                    () -> {
+                        if (refreshContainer != null) {
+                            refreshContainer.stopRefreshing();
+                        }
+                    },
+                    900
+            );
+        });
 
         refreshContainer.addView(
                 mainWebView,
@@ -624,11 +325,6 @@ public class MainActivity extends Activity {
                         FrameLayout.LayoutParams.MATCH_PARENT
                 )
         );
-
-
-        /*
-         * Add refresh container.
-         */
 
         rootLayout.addView(
                 refreshContainer,
@@ -639,210 +335,59 @@ public class MainActivity extends Activity {
         );
     }
 
+    private void configureWebView(WebView webView) {
 
-    /*
-     * =========================================================
-     * WEBVIEW SETTINGS
-     * =========================================================
-     */
+        WebSettings settings = webView.getSettings();
 
-    private void configureWebView(
-            WebView webView
-    ) {
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
 
-        WebSettings settings =
-                webView.getSettings();
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setSupportMultipleWindows(true);
 
+        settings.setMediaPlaybackRequiresUserGesture(false);
 
-        /*
-         * JavaScript.
-         */
+        settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
 
-        settings.setJavaScriptEnabled(
-                true
-        );
+        settings.setLoadWithOverviewMode(false);
+        settings.setUseWideViewPort(true);
 
+        settings.setTextZoom(100);
+        settings.setDefaultTextEncodingName("UTF-8");
 
-        /*
-         * DOM.
-         */
-
-        settings.setDomStorageEnabled(
-                true
-        );
-
-        settings.setDatabaseEnabled(
-                true
-        );
-
+        settings.setBuiltInZoomControls(false);
+        settings.setDisplayZoomControls(false);
+        settings.setSupportZoom(false);
 
         /*
-         * Multiple windows.
+         * Use normal browser caching instead of LOAD_NO_CACHE.
          */
-
-        settings.setJavaScriptCanOpenWindowsAutomatically(
-                true
-        );
-
-        settings.setSupportMultipleWindows(
-                true
-        );
-
-
-        /*
-         * Media.
-         */
-
-        settings.setMediaPlaybackRequiresUserGesture(
-                false
-        );
-
-
-        /*
-         * Content access.
-         */
-
-        settings.setAllowFileAccess(
-                true
-        );
-
-        settings.setAllowContentAccess(
-                true
-        );
-
-
-        /*
-         * Zoom controls OFF.
-         */
-
-        settings.setBuiltInZoomControls(
-                false
-        );
-
-        settings.setDisplayZoomControls(
-                false
-        );
-
-
-        /*
-         * =====================================================
-         * IMPORTANT WEB VIEW SCALING
-         * =====================================================
-         *
-         * Do NOT force Android to resize the website.
-         *
-         * The HTML viewport and website CSS control the
-         * responsive layout.
-         */
-
-        settings.setLoadWithOverviewMode(
-                true
-        );
-
-        settings.setUseWideViewPort(
-                true
-        );
-
-
-        /*
-         * Keep website text at its real CSS size.
-         */
-
-        settings.setTextZoom(
-                100
-        );
-
-        settings.setDefaultTextEncodingName(
-                "UTF-8"
-        );
-
-        settings.setSupportZoom(
-                false
-        );
-
-
-        /*
-         * =====================================================
-         * IMPORTANT CACHE SETTING
-         * =====================================================
-         *
-         * This prevents an old style.css or script.js from
-         * remaining in the WebView cache after you update
-         * the GitHub website.
-         */
-
-        settings.setCacheMode(
-                WebSettings.LOAD_NO_CACHE
-        );
-
-
-        /*
-         * =====================================================
-         * MIXED CONTENT
-         * =====================================================
-         */
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
         if (android.os.Build.VERSION.SDK_INT >=
                 android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             settings.setMixedContentMode(
-                    WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                    WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             );
         }
 
-
-        /*
-         * =====================================================
-         * DOWNLOAD SUPPORT
-         * =====================================================
-         */
+        CookieManager cookies = CookieManager.getInstance();
+        cookies.setAcceptCookie(true);
+        cookies.setAcceptThirdPartyCookies(webView, true);
 
         webView.setDownloadListener(
-                new DownloadListener() {
-
-                    @Override
-                    public void onDownloadStart(
-                            String url,
-                            String userAgent,
-                            String contentDisposition,
-                            String mimeType,
-                            long contentLength
-                    ) {
-
+                (url, userAgent, contentDisposition, mimeType, contentLength) ->
                         handleWebDownload(
                                 url,
                                 userAgent,
                                 contentDisposition,
                                 mimeType
-                        );
-                    }
-                }
-        );
-
-
-        /*
-         * Cookies.
-         */
-
-        CookieManager cookieManager =
-                CookieManager.getInstance();
-
-        cookieManager.setAcceptCookie(
-                true
-        );
-
-        cookieManager.setAcceptThirdPartyCookies(
-                webView,
-                true
+                        )
         );
     }
-
-
-    /*
-     * =========================================================
-     * WEB DOWNLOAD
-     * =========================================================
-     */
 
     private void handleWebDownload(
             String url,
@@ -851,78 +396,59 @@ public class MainActivity extends Activity {
             String mimeType
     ) {
 
-        if (url == null ||
-                url.trim().isEmpty()) {
+        if (url == null || url.trim().isEmpty()) return;
 
+        if (isTelegramUrl(url)) {
+            openTelegram(url);
             return;
         }
 
         try {
+            Uri uri = Uri.parse(url);
+            String scheme = uri.getScheme();
 
-            if (isExternalExceptionUrl(url)) {
+            if (scheme == null ||
+                    (!scheme.equalsIgnoreCase("http") &&
+                     !scheme.equalsIgnoreCase("https"))) {
 
-                openExternalUrl(url);
-
+                openSpecialUrl(url);
                 return;
             }
 
             DownloadManager.Request request =
-                    new DownloadManager.Request(
-                            Uri.parse(url)
-                    );
+                    new DownloadManager.Request(uri);
 
-            if (mimeType != null &&
-                    !mimeType.trim().isEmpty()) {
-
+            if (mimeType != null && !mimeType.trim().isEmpty()) {
                 request.setMimeType(mimeType);
             }
 
-            if (userAgent != null &&
-                    !userAgent.trim().isEmpty()) {
-
-                request.addRequestHeader(
-                        "User-Agent",
-                        userAgent
-                );
+            if (userAgent != null && !userAgent.trim().isEmpty()) {
+                request.addRequestHeader("User-Agent", userAgent);
             }
 
-            String cookies =
-                    CookieManager
-                            .getInstance()
-                            .getCookie(url);
+            String cookie =
+                    CookieManager.getInstance().getCookie(url);
 
-            if (cookies != null &&
-                    !cookies.trim().isEmpty()) {
-
-                request.addRequestHeader(
-                        "Cookie",
-                        cookies
-                );
+            if (cookie != null && !cookie.trim().isEmpty()) {
+                request.addRequestHeader("Cookie", cookie);
             }
 
-            request.setDescription(
-                    "Downloading from Deeprowss"
-            );
+            request.setDescription("Downloading from Deeprowss");
 
             request.setNotificationVisibility(
-                    DownloadManager
-                            .Request
+                    DownloadManager.Request
                             .VISIBILITY_VISIBLE_NOTIFY_COMPLETED
             );
 
             String fileName =
-                    android.webkit.URLUtil
-                            .guessFileName(
-                                    url,
-                                    contentDisposition,
-                                    mimeType
-                            );
+                    android.webkit.URLUtil.guessFileName(
+                            url,
+                            contentDisposition,
+                            mimeType
+                    );
 
-            if (fileName == null ||
-                    fileName.trim().isEmpty()) {
-
-                fileName =
-                        "deeprowss_download";
+            if (fileName == null || fileName.trim().isEmpty()) {
+                fileName = "deeprowss_download";
             }
 
             request.setDestinationInExternalPublicDir(
@@ -931,331 +457,51 @@ public class MainActivity extends Activity {
             );
 
             DownloadManager manager =
-                    (DownloadManager)
-                            getSystemService(
-                                    DOWNLOAD_SERVICE
-                            );
+                    (DownloadManager) getSystemService(
+                            DOWNLOAD_SERVICE
+                    );
 
             if (manager != null) {
-
                 manager.enqueue(request);
             }
 
         } catch (Exception ignored) {
-
-            // Do not crash the app if a website uses an unsupported download scheme.
         }
     }
 
+    private boolean isHttpUrl(String url) {
+        if (url == null) return false;
 
-    /*
-     * =========================================================
-     * OFFLINE PAGE
-     * =========================================================
-     */
+        String lower = url.toLowerCase(Locale.US);
 
-    private void showOfflinePage() {
-
-        if (mainWebView == null) {
-
-            return;
-        }
-
-
-        if (showingOfflinePage) {
-
-            return;
-        }
-
-
-        showingOfflinePage =
-                true;
-
-
-        String offlineHtml =
-                "<!DOCTYPE html>" +
-
-                "<html>" +
-
-                "<head>" +
-
-                "<meta charset='UTF-8'>" +
-
-                "<meta name='viewport' " +
-                "content='width=device-width," +
-                "initial-scale=1.0," +
-                "maximum-scale=1.0," +
-                "user-scalable=no'>" +
-
-                "<style>" +
-
-                "html,body{" +
-                "margin:0;" +
-                "padding:0;" +
-                "width:100%;" +
-                "height:100%;" +
-                "background:#07090d;" +
-                "color:#fff;" +
-                "font-family:Arial,sans-serif;" +
-                "overflow:hidden;" +
-                "}" +
-
-                "body{" +
-                "display:flex;" +
-                "align-items:center;" +
-                "justify-content:center;" +
-                "text-align:center;" +
-                "}" +
-
-                ".box{" +
-                "width:88%;" +
-                "max-width:420px;" +
-                "padding:30px 20px;" +
-                "box-sizing:border-box;" +
-                "}" +
-
-                ".logo{" +
-                "width:72px;" +
-                "height:72px;" +
-                "margin:0 auto 22px;" +
-                "border-radius:20px;" +
-                "background:#ff1744;" +
-                "display:flex;" +
-                "align-items:center;" +
-                "justify-content:center;" +
-                "font-size:32px;" +
-                "font-weight:800;" +
-                "color:#fff;" +
-                "}" +
-
-                "h1{" +
-                "font-size:25px;" +
-                "font-weight:700;" +
-                "margin:0 0 12px;" +
-                "}" +
-
-                "p{" +
-                "font-size:15px;" +
-                "line-height:1.6;" +
-                "color:#9299a8;" +
-                "margin:0 0 28px;" +
-                "}" +
-
-                "button{" +
-                "border:0;" +
-                "outline:none;" +
-                "border-radius:12px;" +
-                "background:#ff1744;" +
-                "color:#fff;" +
-                "font-size:15px;" +
-                "font-weight:700;" +
-                "padding:14px 30px;" +
-                "min-width:150px;" +
-                "}" +
-
-                "</style>" +
-
-                "</head>" +
-
-                "<body>" +
-
-                "<div class='box'>" +
-
-                "<div class='logo'>D</div>" +
-
-                "<h1>You're offline</h1>" +
-
-                "<p>" +
-
-                "We couldn't connect to Deeprowss right now." +
-
-                "<br>" +
-
-                "Please check your internet connection " +
-                "and try again." +
-
-                "</p>" +
-
-                "<button " +
-                "onclick='location.href=\"" +
-                WEBSITE_URL +
-                "\"'>" +
-
-                "TRY AGAIN" +
-
-                "</button>" +
-
-                "</div>" +
-
-                "</body>" +
-
-                "</html>";
-
-
-        mainWebView.setBackgroundColor(
-                BG_COLOR
-        );
-
-
-        mainWebView.loadDataWithBaseURL(
-                WEBSITE_URL,
-                offlineHtml,
-                "text/html",
-                "UTF-8",
-                null
-        );
+        return lower.startsWith("http://") ||
+                lower.startsWith("https://");
     }
 
+    private boolean isTelegramUrl(String url) {
 
-    /*
-     * =========================================================
-     * TRY WEBSITE AGAIN
-     * =========================================================
-     */
-
-    private void showWebsiteAgain() {
-
-        showingOfflinePage =
-                false;
-
-
-        if (mainWebView != null) {
-
-            mainWebView.setBackgroundColor(
-                    BG_COLOR
-            );
-
-            mainWebView.loadUrl(
-                    WEBSITE_URL
-            );
-        }
-    }
-
-
-    /*
-     * =========================================================
-     * MAIN NAVIGATION
-     * =========================================================
-     */
-
-    private void handleMainNavigation(
-            String url
-    ) {
-
-        if (url == null ||
-                url.trim().isEmpty()) {
-
-            return;
-        }
-
-
-        /*
-         * =========================================================
-         * EXTERNAL LINK EXCEPTIONS
-         * =========================================================
-         *
-         * These specific links are NOT opened inside the app's
-         * popup WebView. Android handles them externally.
-         *
-         * Everything else keeps the existing behavior.
-         */
-        if (isExternalExceptionUrl(url)) {
-
-            openExternalUrl(url);
-
-            return;
-        }
-
-
-        /*
-         * =========================================================
-         * NORMAL DEEPROWSS NAVIGATION
-         * =========================================================
-         */
-
-        if (url.startsWith(
-                "https://deeprows.github.io/"
-        )) {
-
-            if (mainWebView != null) {
-
-                mainWebView.loadUrl(
-                        url
-                );
-            }
-
-            return;
-        }
-
-
-        /*
-         * All other links keep using the existing
-         * in-app popup WebView.
-         */
-
-        openPopup(
-                url
-        );
-    }
-
-
-    /*
-     * =========================================================
-     * EXTERNAL URL CHECK
-     * =========================================================
-     */
-
-    private boolean isExternalExceptionUrl(
-            String url
-    ) {
-
-        if (url == null ||
-                url.trim().isEmpty()) {
-
-            return false;
-        }
+        if (url == null || url.trim().isEmpty()) return false;
 
         try {
+            Uri uri = Uri.parse(url);
+            String host = uri.getHost();
 
-            Uri uri =
-                    Uri.parse(url);
+            if (host == null) return false;
 
-            String host =
-                    uri.getHost();
-
-            if (host == null) {
-
-                return false;
-            }
-
-            host =
-                    host.toLowerCase(
-                            java.util.Locale.US
-                    );
+            host = host.toLowerCase(Locale.US);
 
             return host.equals("t.me") ||
                     host.equals("telegram.me") ||
                     host.equals("www.telegram.me");
 
         } catch (Exception ignored) {
-
             return false;
         }
     }
 
-
-    /*
-     * =========================================================
-     * OPEN EXTERNAL URL
-     * =========================================================
-     */
-
-    private void openExternalUrl(
-            String url
-    ) {
+    private void openTelegram(String url) {
 
         try {
-
             Intent intent =
                     new Intent(
                             Intent.ACTION_VIEW,
@@ -1267,20 +513,99 @@ public class MainActivity extends Activity {
         } catch (Exception ignored) {
 
             /*
-             * If no external application can handle the URL,
-             * keep the link inside the existing popup WebView
-             * rather than crashing the app.
+             * If Telegram isn't installed, Android may still have a
+             * browser capable of opening the t.me URL.
              */
-            openPopup(url);
+            try {
+                Intent browserIntent =
+                        new Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(url)
+                        );
+
+                startActivity(browserIntent);
+
+            } catch (Exception ignoredAgain) {
+            }
         }
     }
 
+    private void openSpecialUrl(String url) {
 
-    /*
-     * =========================================================
-     * CHROME CLIENT
-     * =========================================================
-     */
+        try {
+            Intent intent =
+                    new Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(url)
+                    );
+
+            startActivity(intent);
+
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void showOfflinePage() {
+
+        if (mainWebView == null || showingOfflinePage) return;
+
+        showingOfflinePage = true;
+
+        String offlineHtml =
+                "<!DOCTYPE html>" +
+                "<html><head>" +
+                "<meta charset='UTF-8'>" +
+                "<meta name='viewport' content='width=device-width," +
+                "initial-scale=1.0,maximum-scale=1.0,user-scalable=no'>" +
+                "<style>" +
+                "html,body{margin:0;padding:0;width:100%;height:100%;" +
+                "background:#07090d;color:#fff;font-family:Arial,sans-serif;" +
+                "overflow:hidden;}" +
+                "body{display:flex;align-items:center;justify-content:center;" +
+                "text-align:center;}" +
+                ".box{width:88%;max-width:420px;padding:30px 20px;" +
+                "box-sizing:border-box;}" +
+                ".logo{width:72px;height:72px;margin:0 auto 22px;" +
+                "border-radius:20px;background:#ff1744;display:flex;" +
+                "align-items:center;justify-content:center;font-size:32px;" +
+                "font-weight:800;color:#fff;}" +
+                "h1{font-size:25px;font-weight:700;margin:0 0 12px;}" +
+                "p{font-size:15px;line-height:1.6;color:#9299a8;" +
+                "margin:0 0 28px;}" +
+                "button{border:0;outline:none;border-radius:12px;" +
+                "background:#ff1744;color:#fff;font-size:15px;" +
+                "font-weight:700;padding:14px 30px;min-width:150px;}" +
+                "</style></head><body>" +
+                "<div class='box'>" +
+                "<div class='logo'>D</div>" +
+                "<h1>You're offline</h1>" +
+                "<p>We couldn't connect to Deeprowss right now." +
+                "<br>Please check your internet connection and try again.</p>" +
+                "<button onclick='location.href=\"" +
+                WEBSITE_URL +
+                "\"'>TRY AGAIN</button>" +
+                "</div></body></html>";
+
+        mainWebView.setBackgroundColor(BG_COLOR);
+
+        mainWebView.loadDataWithBaseURL(
+                WEBSITE_URL,
+                offlineHtml,
+                "text/html",
+                "UTF-8",
+                null
+        );
+    }
+
+    private void showWebsiteAgain() {
+
+        showingOfflinePage = false;
+
+        if (mainWebView != null) {
+            mainWebView.setBackgroundColor(BG_COLOR);
+            mainWebView.loadUrl(WEBSITE_URL);
+        }
+    }
 
     private WebChromeClient createChromeClient() {
 
@@ -1294,54 +619,96 @@ public class MainActivity extends Activity {
                     android.os.Message resultMsg
             ) {
 
-                WebView popup =
-                        createPopupWebView();
-
-
+                /*
+                 * target=_blank and window.open() are handled in the
+                 * SAME WebView. This prevents the old popup-WebView
+                 * behavior that caused secondary pages to stop behaving
+                 * correctly.
+                 */
                 WebView.WebViewTransport transport =
-                        (WebView.WebViewTransport)
-                                resultMsg.obj;
+                        (WebView.WebViewTransport) resultMsg.obj;
 
-
-                transport.setWebView(
-                        popup
-                );
-
-
+                transport.setWebView(view);
                 resultMsg.sendToTarget();
-
 
                 return true;
             }
 
+            @Override
+            public boolean onShowFileChooser(
+                    WebView webView,
+                    ValueCallback<Uri[]> callback,
+                    FileChooserParams params
+            ) {
+
+                if (filePathCallback != null) {
+                    filePathCallback.onReceiveValue(null);
+                }
+
+                filePathCallback = callback;
+
+                try {
+                    Intent intent = params.createIntent();
+
+                    startActivityForResult(
+                            intent,
+                            FILE_CHOOSER_REQUEST
+                    );
+
+                    return true;
+
+                } catch (Exception ignored) {
+                    filePathCallback = null;
+                    return false;
+                }
+            }
 
             @Override
             public void onShowCustomView(
                     View view,
                     CustomViewCallback callback
             ) {
-
-                showVideoFullscreen(
-                        view,
-                        callback
-                );
+                showVideoFullscreen(view, callback);
             }
-
 
             @Override
             public void onHideCustomView() {
-
                 exitVideoFullscreen();
             }
         };
     }
 
+    @Override
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            Intent data
+    ) {
 
-    /*
-     * =========================================================
-     * VIDEO FULLSCREEN
-     * =========================================================
-     */
+        if (requestCode == FILE_CHOOSER_REQUEST) {
+
+            if (filePathCallback != null) {
+
+                Uri[] results =
+                        WebChromeClient.FileChooserParams
+                                .parseResult(
+                                        resultCode,
+                                        data
+                                );
+
+                filePathCallback.onReceiveValue(results);
+                filePathCallback = null;
+            }
+
+            return;
+        }
+
+        super.onActivityResult(
+                requestCode,
+                resultCode,
+                data
+        );
+    }
 
     private void showVideoFullscreen(
             View view,
@@ -1349,35 +716,20 @@ public class MainActivity extends Activity {
     ) {
 
         if (customVideoView != null) {
-
             callback.onCustomViewHidden();
-
             return;
         }
 
-
-        customVideoView =
-                view;
-
-        customViewCallback =
-                callback;
-
+        customVideoView = view;
+        customViewCallback = callback;
 
         if (refreshContainer != null) {
-
-            refreshContainer.setVisibility(
-                    View.GONE
-            );
+            refreshContainer.setVisibility(View.GONE);
         }
-
 
         if (popupContainer != null) {
-
-            popupContainer.setVisibility(
-                    View.GONE
-            );
+            popupContainer.setVisibility(View.GONE);
         }
-
 
         rootLayout.addView(
                 customVideoView,
@@ -1387,379 +739,162 @@ public class MainActivity extends Activity {
                 )
         );
 
-
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         );
 
-
         hideStatusBar();
     }
 
-
     private void exitVideoFullscreen() {
 
-        if (customVideoView == null) {
+        if (customVideoView == null) return;
 
-            return;
-        }
-
-
-        rootLayout.removeView(
-                customVideoView
-        );
-
-
-        customVideoView =
-                null;
-
+        rootLayout.removeView(customVideoView);
+        customVideoView = null;
 
         if (customViewCallback != null) {
-
             customViewCallback.onCustomViewHidden();
-
-            customViewCallback =
-                    null;
+            customViewCallback = null;
         }
-
 
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         );
 
-
         if (popupContainer != null) {
-
-            popupContainer.setVisibility(
-                    View.VISIBLE
-            );
-
+            popupContainer.setVisibility(View.VISIBLE);
         } else if (refreshContainer != null) {
-
-            refreshContainer.setVisibility(
-                    View.VISIBLE
-            );
+            refreshContainer.setVisibility(View.VISIBLE);
         }
-
 
         hideStatusBar();
     }
 
-
     /*
-     * =========================================================
-     * POPUP WEBVIEW
-     * =========================================================
+     * Legacy popup methods retained for compatibility.
+     * Normal browsing no longer routes pages through this popup.
      */
-
     private WebView createPopupWebView() {
 
         if (popupWebView != null) {
 
             try {
-
                 popupWebView.stopLoading();
-
                 popupWebView.destroy();
-
             } catch (Exception ignored) {
             }
 
-            popupWebView =
-                    null;
+            popupWebView = null;
         }
 
+        popupWebView = new WebView(this);
+        popupWebView.setBackgroundColor(Color.BLACK);
+        configureWebView(popupWebView);
+        popupWebView.setWebChromeClient(createChromeClient());
 
-        popupWebView =
-                new WebView(this);
+        popupWebView.setWebViewClient(new WebViewClient() {
 
+            @Override
+            public boolean shouldOverrideUrlLoading(
+                    WebView view,
+                    WebResourceRequest request
+            ) {
 
-        popupWebView.setBackgroundColor(
-                Color.BLACK
-        );
-
-
-        configureWebView(
-                popupWebView
-        );
-
-
-        popupWebView.setWebViewClient(
-                new WebViewClient() {
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(
-                            WebView view,
-                            WebResourceRequest request
-                    ) {
-
-                        if (request == null ||
-                                request.getUrl() == null) {
-
-                            return false;
-                        }
-
-                        String url =
-                                request.getUrl().toString();
-
-                        /*
-                         * IMPORTANT:
-                         * Popup links do not pass through the main
-                         * WebView navigation handler. Therefore Telegram
-                         * and other external exceptions must also be
-                         * checked here.
-                         */
-                        if (isExternalExceptionUrl(url)) {
-
-                            openExternalUrl(url);
-
-                            closePopup();
-
-                            return true;
-                        }
-
-                        return false;
-                    }
-
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(
-                            WebView view,
-                            String url
-                    ) {
-
-                        if (url == null ||
-                                url.trim().isEmpty()) {
-
-                            return false;
-                        }
-
-                        if (isExternalExceptionUrl(url)) {
-
-                            openExternalUrl(url);
-
-                            closePopup();
-
-                            return true;
-                        }
-
-                        return false;
-                    }
+                if (request == null || request.getUrl() == null) {
+                    return false;
                 }
-        );
 
+                String url = request.getUrl().toString();
 
-        popupWebView.setWebChromeClient(
-                createChromeClient()
-        );
+                if (isTelegramUrl(url)) {
+                    openTelegram(url);
+                    return true;
+                }
 
+                return isHttpUrl(url) ? false : openSpecialAndReturn(url);
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(
+                    WebView view,
+                    String url
+            ) {
+
+                if (url == null || url.trim().isEmpty()) {
+                    return false;
+                }
+
+                if (isTelegramUrl(url)) {
+                    openTelegram(url);
+                    return true;
+                }
+
+                return isHttpUrl(url) ? false : openSpecialAndReturn(url);
+            }
+        });
 
         showPopupContainer();
-
 
         return popupWebView;
     }
 
-
-    private void openPopup(
-            String url
-    ) {
-
-        if (url == null ||
-                url.trim().isEmpty()) {
-
-            return;
-        }
-
-
-        WebView popup =
-                createPopupWebView();
-
-
-        popup.loadUrl(
-                url
-        );
+    private boolean openSpecialAndReturn(String url) {
+        openSpecialUrl(url);
+        return true;
     }
 
+    private void openPopup(String url) {
+        if (url == null || url.trim().isEmpty()) return;
 
-    /*
-     * =========================================================
-     * POPUP UI
-     * =========================================================
-     */
+        WebView popup = createPopupWebView();
+        popup.loadUrl(url);
+    }
 
     private void showPopupContainer() {
 
-        if (popupContainer != null) {
+        if (popupContainer != null) return;
 
-            return;
-        }
+        popupContainer = new FrameLayout(this);
+        popupContainer.setBackgroundColor(Color.BLACK);
 
+        LinearLayout topBar = new LinearLayout(this);
+        topBar.setOrientation(LinearLayout.HORIZONTAL);
+        topBar.setGravity(Gravity.CENTER_VERTICAL);
+        topBar.setPadding(dp(4), 0, dp(4), 0);
+        topBar.setBackgroundColor(Color.rgb(15, 18, 24));
 
-        popupContainer =
-                new FrameLayout(this);
+        ImageButton backButton = new ImageButton(this);
+        backButton.setImageResource(android.R.drawable.ic_media_previous);
+        backButton.setBackgroundColor(Color.TRANSPARENT);
+        backButton.setColorFilter(Color.WHITE);
+        backButton.setContentDescription("Back");
 
+        backButton.setOnClickListener(v -> {
+            if (popupWebView != null &&
+                    popupWebView.canGoBack()) {
+                popupWebView.goBack();
+            } else {
+                closePopup();
+            }
+        });
 
-        popupContainer.setBackgroundColor(
-                Color.BLACK
-        );
+        TextView title = new TextView(this);
+        title.setText("Deeprowss");
+        title.setTextColor(Color.WHITE);
+        title.setTextSize(15);
+        title.setGravity(Gravity.CENTER_VERTICAL);
+        title.setSingleLine(true);
+        title.setPadding(dp(8), 0, dp(8), 0);
 
-
-        LinearLayout topBar =
-                new LinearLayout(this);
-
-
-        topBar.setOrientation(
-                LinearLayout.HORIZONTAL
-        );
-
-
-        topBar.setGravity(
-                Gravity.CENTER_VERTICAL
-        );
-
-
-        topBar.setPadding(
-                dp(4),
-                0,
-                dp(4),
-                0
-        );
-
-
-        topBar.setBackgroundColor(
-                Color.rgb(15, 18, 24)
-        );
-
-
-        /*
-         * BACK BUTTON
-         */
-
-        ImageButton backButton =
-                new ImageButton(this);
-
-
-        backButton.setImageResource(
-                android.R.drawable.ic_media_previous
-        );
-
-
-        backButton.setBackgroundColor(
-                Color.TRANSPARENT
-        );
-
-
-        backButton.setColorFilter(
-                Color.WHITE
-        );
-
-
-        backButton.setContentDescription(
-                "Back"
-        );
-
-
-        backButton.setOnClickListener(
-                new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-
-                        if (popupWebView != null &&
-                                popupWebView.canGoBack()) {
-
-                            popupWebView.goBack();
-
-                        } else {
-
-                            closePopup();
-                        }
-                    }
-                }
-        );
-
-
-        /*
-         * TITLE
-         */
-
-        TextView title =
-                new TextView(this);
-
-
-        title.setText(
-                "Deeprowss"
-        );
-
-
-        title.setTextColor(
-                Color.WHITE
-        );
-
-
-        title.setTextSize(
-                15
-        );
-
-
-        title.setGravity(
-                Gravity.CENTER_VERTICAL
-        );
-
-
-        title.setSingleLine(
-                true
-        );
-
-
-        title.setPadding(
-                dp(8),
-                0,
-                dp(8),
-                0
-        );
-
-
-        /*
-         * CLOSE
-         */
-
-        ImageButton closeButton =
-                new ImageButton(this);
-
-
+        ImageButton closeButton = new ImageButton(this);
         closeButton.setImageResource(
                 android.R.drawable.ic_menu_close_clear_cancel
         );
-
-
-        closeButton.setBackgroundColor(
-                Color.TRANSPARENT
-        );
-
-
-        closeButton.setColorFilter(
-                Color.WHITE
-        );
-
-
-        closeButton.setContentDescription(
-                "Close"
-        );
-
-
-        closeButton.setOnClickListener(
-                new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-
-                        closePopup();
-                    }
-                }
-        );
-
+        closeButton.setBackgroundColor(Color.TRANSPARENT);
+        closeButton.setColorFilter(Color.WHITE);
+        closeButton.setContentDescription("Close");
+        closeButton.setOnClickListener(v -> closePopup());
 
         topBar.addView(
                 backButton,
@@ -1768,7 +903,6 @@ public class MainActivity extends Activity {
                         popupBarHeight
                 )
         );
-
 
         topBar.addView(
                 title,
@@ -1779,7 +913,6 @@ public class MainActivity extends Activity {
                 )
         );
 
-
         topBar.addView(
                 closeButton,
                 new LinearLayout.LayoutParams(
@@ -1788,7 +921,6 @@ public class MainActivity extends Activity {
                 )
         );
 
-
         FrameLayout.LayoutParams barParams =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
@@ -1796,12 +928,7 @@ public class MainActivity extends Activity {
                         Gravity.TOP
                 );
 
-
-        popupContainer.addView(
-                topBar,
-                barParams
-        );
-
+        popupContainer.addView(topBar, barParams);
 
         FrameLayout.LayoutParams webParams =
                 new FrameLayout.LayoutParams(
@@ -1809,114 +936,60 @@ public class MainActivity extends Activity {
                         FrameLayout.LayoutParams.MATCH_PARENT
                 );
 
-
-        webParams.topMargin =
-                popupBarHeight;
-
+        webParams.topMargin = popupBarHeight;
 
         if (popupWebView != null) {
-
-            popupContainer.addView(
-                    popupWebView,
-                    webParams
-            );
+            popupContainer.addView(popupWebView, webParams);
         }
-
-
-        FrameLayout.LayoutParams popupParams =
-                new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
-                );
-
 
         rootLayout.addView(
                 popupContainer,
-                popupParams
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
         );
 
-
         if (refreshContainer != null) {
-
-            refreshContainer.setVisibility(
-                    View.INVISIBLE
-            );
+            refreshContainer.setVisibility(View.INVISIBLE);
         }
-
 
         hideStatusBar();
     }
 
-
-    /*
-     * =========================================================
-     * CLOSE POPUP
-     * =========================================================
-     */
-
     private void closePopup() {
 
-        if (popupContainer == null) {
-
-            return;
-        }
-
+        if (popupContainer == null) return;
 
         if (customVideoView != null) {
-
             exitVideoFullscreen();
         }
-
 
         if (popupWebView != null) {
 
             try {
-
                 popupWebView.stopLoading();
-
                 popupWebView.onPause();
-
                 popupWebView.destroy();
-
             } catch (Exception ignored) {
             }
 
-            popupWebView =
-                    null;
+            popupWebView = null;
         }
 
-
-        rootLayout.removeView(
-                popupContainer
-        );
-
-
-        popupContainer =
-                null;
-
+        rootLayout.removeView(popupContainer);
+        popupContainer = null;
 
         if (refreshContainer != null) {
-
-            refreshContainer.setVisibility(
-                    View.VISIBLE
-            );
+            refreshContainer.setVisibility(View.VISIBLE);
         }
-
 
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         );
 
-
         hideStatusBar();
     }
-
-
-    /*
-     * =========================================================
-     * STATUS BAR
-     * =========================================================
-     */
 
     private void hideStatusBar() {
 
@@ -1925,7 +998,6 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
-
         getWindow()
                 .getDecorView()
                 .setSystemUiVisibility(
@@ -1933,39 +1005,25 @@ public class MainActivity extends Activity {
                 );
     }
 
-
-    /*
-     * =========================================================
-     * BACK BUTTON
-     * =========================================================
-     */
-
     @Override
     public void onBackPressed() {
 
         if (customVideoView != null) {
-
             exitVideoFullscreen();
-
             return;
         }
-
 
         if (popupContainer != null) {
 
             if (popupWebView != null &&
                     popupWebView.canGoBack()) {
-
                 popupWebView.goBack();
-
             } else {
-
                 closePopup();
             }
 
             return;
         }
-
 
         if (mainWebView != null &&
                 mainWebView.canGoBack()) {
@@ -1973,205 +1031,127 @@ public class MainActivity extends Activity {
             mainWebView.goBack();
 
         } else {
-
             super.onBackPressed();
         }
     }
-
-
-    /*
-     * =========================================================
-     * LIFECYCLE
-     * =========================================================
-     */
 
     @Override
     protected void onResume() {
 
         super.onResume();
-
         hideStatusBar();
 
-
         if (mainWebView != null) {
-
             mainWebView.onResume();
         }
 
-
         if (popupWebView != null) {
-
             popupWebView.onResume();
         }
     }
-
 
     @Override
     protected void onPause() {
 
         if (mainWebView != null) {
-
             mainWebView.onPause();
         }
 
-
         if (popupWebView != null) {
-
             popupWebView.onPause();
         }
-
 
         super.onPause();
     }
 
-
     @Override
     protected void onDestroy() {
+
+        if (filePathCallback != null) {
+            filePathCallback.onReceiveValue(null);
+            filePathCallback = null;
+        }
 
         if (customSplashView != null) {
 
             try {
-                rootLayout.removeView(
-                        customSplashView
-                );
+                rootLayout.removeView(customSplashView);
             } catch (Exception ignored) {
             }
 
-            customSplashView =
-                    null;
+            customSplashView = null;
         }
-
 
         if (customVideoView != null) {
 
             try {
-
-                rootLayout.removeView(
-                        customVideoView
-                );
-
+                rootLayout.removeView(customVideoView);
             } catch (Exception ignored) {
             }
 
-            customVideoView =
-                    null;
+            customVideoView = null;
         }
-
 
         if (popupWebView != null) {
 
             try {
-
                 popupWebView.stopLoading();
-
                 popupWebView.destroy();
-
             } catch (Exception ignored) {
             }
 
-            popupWebView =
-                    null;
+            popupWebView = null;
         }
-
 
         if (mainWebView != null) {
 
             try {
-
                 mainWebView.stopLoading();
-
                 mainWebView.destroy();
-
             } catch (Exception ignored) {
             }
 
-            mainWebView =
-                    null;
+            mainWebView = null;
         }
-
 
         super.onDestroy();
     }
 
-
-    /*
-     * =========================================================
-     * DP
-     * =========================================================
-     */
-
-    private int dp(
-            int value
-    ) {
+    private int dp(int value) {
 
         float density =
                 getResources()
                         .getDisplayMetrics()
                         .density;
 
-
-        return (int) (
-                value * density + 0.5f
-        );
+        return (int) (value * density + 0.5f);
     }
-
-
-    /*
-     * =========================================================
-     * PULL TO REFRESH
-     * =========================================================
-     */
 
     private static class RefreshableWebViewContainer
             extends FrameLayout {
 
         private WebView webView;
-
         private float startY;
-
         private boolean dragging;
-
         private boolean refreshing;
-
         private ProgressBar progressBar;
-
         private OnRefreshListener listener;
 
-
-        private static final float TRIGGER_DISTANCE =
-                180f;
-
-
-        private static final float MAX_PULL_DISTANCE =
-                300f;
-
+        private static final float TRIGGER_DISTANCE = 180f;
+        private static final float MAX_PULL_DISTANCE = 300f;
 
         interface OnRefreshListener {
-
             void onRefresh();
         }
 
-
-        RefreshableWebViewContainer(
-                Context context
-        ) {
+        RefreshableWebViewContainer(Context context) {
 
             super(context);
 
+            setClipChildren(false);
 
-            setClipChildren(
-                    false
-            );
-
-
-            progressBar =
-                    new ProgressBar(context);
-
-
-            progressBar.setVisibility(
-                    View.GONE
-            );
-
+            progressBar = new ProgressBar(context);
+            progressBar.setVisibility(View.GONE);
 
             LayoutParams progressParams =
                     new LayoutParams(
@@ -2179,60 +1159,35 @@ public class MainActivity extends Activity {
                             dp(context, 42)
                     );
 
-
             progressParams.gravity =
-                    Gravity.TOP |
-                    Gravity.CENTER_HORIZONTAL;
-
+                    Gravity.TOP | Gravity.CENTER_HORIZONTAL;
 
             progressParams.topMargin =
                     dp(context, 16);
 
-
-            addView(
-                    progressBar,
-                    progressParams
-            );
+            addView(progressBar, progressParams);
         }
 
-
-        void setWebView(
-                WebView webView
-        ) {
-
-            this.webView =
-                    webView;
+        void setWebView(WebView webView) {
+            this.webView = webView;
         }
-
 
         void setOnRefreshListener(
                 OnRefreshListener listener
         ) {
-
-            this.listener =
-                    listener;
+            this.listener = listener;
         }
-
 
         void stopRefreshing() {
 
-            refreshing =
-                    false;
-
-            dragging =
-                    false;
-
+            refreshing = false;
+            dragging = false;
 
             if (progressBar != null) {
-
-                progressBar.setVisibility(
-                        View.GONE
-                );
+                progressBar.setVisibility(View.GONE);
             }
 
-
             if (webView != null) {
-
                 webView.animate()
                         .translationY(0)
                         .setDuration(180)
@@ -2240,207 +1195,128 @@ public class MainActivity extends Activity {
             }
         }
 
-
         @Override
         public boolean onInterceptTouchEvent(
                 MotionEvent event
         ) {
 
-            if (webView == null ||
-                    refreshing) {
-
+            if (webView == null || refreshing) {
                 return false;
             }
 
-
-            switch (
-                    event.getActionMasked()
-            ) {
+            switch (event.getActionMasked()) {
 
                 case MotionEvent.ACTION_DOWN:
-
-                    startY =
-                            event.getY();
-
-                    dragging =
-                            false;
-
+                    startY = event.getY();
+                    dragging = false;
                     break;
-
 
                 case MotionEvent.ACTION_MOVE:
 
                     float distance =
-                            event.getY() -
-                            startY;
-
+                            event.getY() - startY;
 
                     if (distance > 0 &&
-                            webView.getScrollY() <= 0) {
+                            webView.getScrollY() <= 0 &&
+                            distance > 15) {
 
-                        if (distance > 15) {
-
-                            dragging =
-                                    true;
-
-                            return true;
-                        }
+                        dragging = true;
+                        return true;
                     }
 
                     break;
 
-
                 case MotionEvent.ACTION_UP:
-
                 case MotionEvent.ACTION_CANCEL:
-
-                    dragging =
-                            false;
-
+                    dragging = false;
                     break;
             }
-
 
             return false;
         }
 
-
         @Override
-        public boolean onTouchEvent(
-                MotionEvent event
-        ) {
+        public boolean onTouchEvent(MotionEvent event) {
 
-            if (webView == null ||
-                    refreshing) {
-
+            if (webView == null || refreshing) {
                 return true;
             }
 
-
-            switch (
-                    event.getActionMasked()
-            ) {
+            switch (event.getActionMasked()) {
 
                 case MotionEvent.ACTION_DOWN:
 
-                    startY =
-                            event.getY();
-
-                    dragging =
-                            true;
-
+                    startY = event.getY();
+                    dragging = true;
                     return true;
-
 
                 case MotionEvent.ACTION_MOVE:
 
                     float distance =
-                            event.getY() -
-                            startY;
+                            event.getY() - startY;
 
+                    if (distance < 0) distance = 0;
 
-                    if (distance < 0) {
-
-                        distance =
-                                0;
+                    if (distance > MAX_PULL_DISTANCE) {
+                        distance = MAX_PULL_DISTANCE;
                     }
-
-
-                    if (distance >
-                            MAX_PULL_DISTANCE) {
-
-                        distance =
-                                MAX_PULL_DISTANCE;
-                    }
-
 
                     if (distance > 0) {
 
-                        float offset =
-                                distance * 0.55f;
+                        float offset = distance * 0.55f;
 
-
-                        webView.setTranslationY(
-                                offset
-                        );
-
+                        webView.setTranslationY(offset);
 
                         if (distance >=
                                 TRIGGER_DISTANCE * 0.55f) {
 
-                            progressBar
-                                    .setVisibility(
-                                            View.VISIBLE
-                                    );
+                            progressBar.setVisibility(
+                                    View.VISIBLE
+                            );
 
                         } else {
 
-                            progressBar
-                                    .setVisibility(
-                                            View.GONE
-                                    );
+                            progressBar.setVisibility(
+                                    View.GONE
+                            );
                         }
                     }
 
-
                     return true;
-
 
                 case MotionEvent.ACTION_UP:
 
                     float finalDistance =
-                            event.getY() -
-                            startY;
+                            event.getY() - startY;
 
-
-                    if (finalDistance >=
-                            TRIGGER_DISTANCE) {
-
+                    if (finalDistance >= TRIGGER_DISTANCE) {
                         startRefreshing();
-
                     } else {
-
                         stopRefreshing();
                     }
 
-
                     return true;
-
 
                 case MotionEvent.ACTION_CANCEL:
 
                     stopRefreshing();
-
                     return true;
             }
-
 
             return true;
         }
 
-
         private void startRefreshing() {
 
-            if (refreshing) {
+            if (refreshing) return;
 
-                return;
-            }
-
-
-            refreshing =
-                    true;
-
+            refreshing = true;
 
             if (progressBar != null) {
-
-                progressBar.setVisibility(
-                        View.VISIBLE
-                );
+                progressBar.setVisibility(View.VISIBLE);
             }
 
-
             if (webView != null) {
-
                 webView.animate()
                         .translationY(
                                 dp(getContext(), 70)
@@ -2449,13 +1325,10 @@ public class MainActivity extends Activity {
                         .start();
             }
 
-
             if (listener != null) {
-
                 listener.onRefresh();
             }
         }
-
 
         private static int dp(
                 Context context,
@@ -2467,10 +1340,7 @@ public class MainActivity extends Activity {
                             .getDisplayMetrics()
                             .density;
 
-
-            return (int) (
-                    value * density + 0.5f
-            );
+            return (int) (value * density + 0.5f);
         }
     }
 }
