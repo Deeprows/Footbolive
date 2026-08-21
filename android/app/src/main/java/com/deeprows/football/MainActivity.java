@@ -16,21 +16,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
-import android.webkit.DownloadListener;
-import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.ValueCallback;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.core.splashscreen.SplashScreen;
 
 import java.util.Locale;
 
@@ -61,18 +58,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        SplashScreen splashScreen =
-                SplashScreen.installSplashScreen(this);
-
-        splashScreen.setKeepOnScreenCondition(
-                () -> !webPageVisible
-        );
-
         super.onCreate(savedInstanceState);
 
         getWindow().setBackgroundDrawable(
                 new android.graphics.drawable.ColorDrawable(BG_COLOR)
         );
+
         getWindow().setNavigationBarColor(BG_COLOR);
         getWindow().setStatusBarColor(BG_COLOR);
 
@@ -82,35 +73,45 @@ public class MainActivity extends Activity {
         );
 
         hideStatusBar();
+
         popupBarHeight = dp(POPUP_BAR_HEIGHT_DP);
 
         rootLayout = new FrameLayout(this);
         rootLayout.setBackgroundColor(BG_COLOR);
+
         setContentView(rootLayout);
 
         showCustomSplash();
+
         createMainWebView();
 
         mainWebView.loadUrl(WEBSITE_URL);
     }
 
     private void showCustomSplash() {
-        if (rootLayout == null || customSplashView != null) return;
+
+        if (rootLayout == null || customSplashView != null) {
+            return;
+        }
 
         android.widget.ImageView splashImage =
                 new android.widget.ImageView(this);
 
-        splashImage.setImageResource(
+        int splashResource =
                 getResources().getIdentifier(
                         "deeprowss_splash",
                         "drawable",
                         getPackageName()
-                )
-        );
+                );
+
+        if (splashResource != 0) {
+            splashImage.setImageResource(splashResource);
+        }
 
         splashImage.setScaleType(
                 android.widget.ImageView.ScaleType.CENTER_INSIDE
         );
+
         splashImage.setAdjustViewBounds(true);
         splashImage.setBackgroundColor(BG_COLOR);
 
@@ -122,15 +123,28 @@ public class MainActivity extends Activity {
                         FrameLayout.LayoutParams.MATCH_PARENT
                 );
 
-        params.setMargins(margin, margin, margin, margin);
+        params.setMargins(
+                margin,
+                margin,
+                margin,
+                margin
+        );
 
         customSplashView = splashImage;
-        rootLayout.addView(customSplashView, params);
+
+        rootLayout.addView(
+                customSplashView,
+                params
+        );
+
         customSplashView.bringToFront();
     }
 
     private void hideCustomSplash() {
-        if (customSplashView == null) return;
+
+        if (customSplashView == null) {
+            return;
+        }
 
         View splash = customSplashView;
         customSplashView = null;
@@ -139,9 +153,11 @@ public class MainActivity extends Activity {
                 .alpha(0f)
                 .setDuration(180)
                 .withEndAction(() -> {
+
                     if (rootLayout != null) {
                         rootLayout.removeView(splash);
                     }
+
                 })
                 .start();
     }
@@ -153,11 +169,6 @@ public class MainActivity extends Activity {
 
         configureWebView(mainWebView);
 
-        /*
-         * IMPORTANT:
-         * Normal HTTP/HTTPS navigation stays inside the SAME WebView.
-         * This makes the app behave much more like Chrome.
-         */
         mainWebView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -165,11 +176,14 @@ public class MainActivity extends Activity {
                     WebView view,
                     WebResourceRequest request
             ) {
-                if (request == null || request.getUrl() == null) {
+
+                if (request == null ||
+                        request.getUrl() == null) {
                     return false;
                 }
 
-                String url = request.getUrl().toString();
+                String url =
+                        request.getUrl().toString();
 
                 if (showingOfflinePage) {
                     showingOfflinePage = false;
@@ -195,7 +209,9 @@ public class MainActivity extends Activity {
                     WebView view,
                     String url
             ) {
-                if (url == null || url.trim().isEmpty()) {
+
+                if (url == null ||
+                        url.trim().isEmpty()) {
                     return false;
                 }
 
@@ -224,7 +240,9 @@ public class MainActivity extends Activity {
                     String url,
                     android.graphics.Bitmap favicon
             ) {
+
                 super.onPageStarted(view, url, favicon);
+
                 view.setBackgroundColor(BG_COLOR);
             }
 
@@ -233,12 +251,12 @@ public class MainActivity extends Activity {
                     WebView view,
                     String url
             ) {
+
                 super.onPageCommitVisible(view, url);
 
-                if (!webPageVisible) {
-                    webPageVisible = true;
-                    hideCustomSplash();
-                }
+                webPageVisible = true;
+
+                hideCustomSplash();
             }
 
             @Override
@@ -246,11 +264,17 @@ public class MainActivity extends Activity {
                     WebView view,
                     String url
             ) {
+
                 super.onPageFinished(view, url);
 
-                if (url != null && url.startsWith(WEBSITE_URL)) {
+                if (url != null &&
+                        url.startsWith(WEBSITE_URL)) {
+
                     showingOfflinePage = false;
                 }
+
+                webPageVisible = true;
+                hideCustomSplash();
             }
 
             @Override
@@ -259,11 +283,20 @@ public class MainActivity extends Activity {
                     WebResourceRequest request,
                     WebResourceError error
             ) {
-                super.onReceivedError(view, request, error);
 
-                if (request != null && request.isForMainFrame()) {
+                super.onReceivedError(
+                        view,
+                        request,
+                        error
+                );
+
+                if (request != null &&
+                        request.isForMainFrame()) {
+
                     webPageVisible = true;
+
                     hideCustomSplash();
+
                     showOfflinePage();
                 }
             }
@@ -275,6 +308,7 @@ public class MainActivity extends Activity {
                     String description,
                     String failingUrl
             ) {
+
                 super.onReceivedError(
                         view,
                         errorCode,
@@ -283,24 +317,32 @@ public class MainActivity extends Activity {
                 );
 
                 if (android.os.Build.VERSION.SDK_INT < 23) {
+
                     webPageVisible = true;
+
                     hideCustomSplash();
+
                     showOfflinePage();
                 }
             }
         });
 
-        mainWebView.setWebChromeClient(createChromeClient());
+        mainWebView.setWebChromeClient(
+                createChromeClient()
+        );
 
         refreshContainer =
                 new RefreshableWebViewContainer(this);
 
         refreshContainer.setBackgroundColor(BG_COLOR);
+
         refreshContainer.setWebView(mainWebView);
 
         refreshContainer.setOnRefreshListener(() -> {
 
-            if (mainWebView == null) return;
+            if (mainWebView == null) {
+                return;
+            }
 
             if (showingOfflinePage) {
                 showWebsiteAgain();
@@ -308,14 +350,17 @@ public class MainActivity extends Activity {
                 mainWebView.reload();
             }
 
-            new Handler(Looper.getMainLooper()).postDelayed(
-                    () -> {
-                        if (refreshContainer != null) {
-                            refreshContainer.stopRefreshing();
-                        }
-                    },
-                    900
-            );
+            new Handler(Looper.getMainLooper())
+                    .postDelayed(
+                            () -> {
+
+                                if (refreshContainer != null) {
+                                    refreshContainer.stopRefreshing();
+                                }
+
+                            },
+                            900
+                    );
         });
 
         refreshContainer.addView(
@@ -337,7 +382,8 @@ public class MainActivity extends Activity {
 
     private void configureWebView(WebView webView) {
 
-        WebSettings settings = webView.getSettings();
+        WebSettings settings =
+                webView.getSettings();
 
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
@@ -361,10 +407,9 @@ public class MainActivity extends Activity {
         settings.setDisplayZoomControls(false);
         settings.setSupportZoom(false);
 
-        /*
-         * Use normal browser caching instead of LOAD_NO_CACHE.
-         */
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setCacheMode(
+                WebSettings.LOAD_DEFAULT
+        );
 
         if (android.os.Build.VERSION.SDK_INT >=
                 android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -374,12 +419,23 @@ public class MainActivity extends Activity {
             );
         }
 
-        CookieManager cookies = CookieManager.getInstance();
+        CookieManager cookies =
+                CookieManager.getInstance();
+
         cookies.setAcceptCookie(true);
-        cookies.setAcceptThirdPartyCookies(webView, true);
+
+        cookies.setAcceptThirdPartyCookies(
+                webView,
+                true
+        );
 
         webView.setDownloadListener(
-                (url, userAgent, contentDisposition, mimeType, contentLength) ->
+                (url,
+                 userAgent,
+                 contentDisposition,
+                 mimeType,
+                 contentLength) ->
+
                         handleWebDownload(
                                 url,
                                 userAgent,
@@ -396,7 +452,10 @@ public class MainActivity extends Activity {
             String mimeType
     ) {
 
-        if (url == null || url.trim().isEmpty()) return;
+        if (url == null ||
+                url.trim().isEmpty()) {
+            return;
+        }
 
         if (isTelegramUrl(url)) {
             openTelegram(url);
@@ -404,7 +463,9 @@ public class MainActivity extends Activity {
         }
 
         try {
+
             Uri uri = Uri.parse(url);
+
             String scheme = uri.getScheme();
 
             if (scheme == null ||
@@ -418,22 +479,38 @@ public class MainActivity extends Activity {
             DownloadManager.Request request =
                     new DownloadManager.Request(uri);
 
-            if (mimeType != null && !mimeType.trim().isEmpty()) {
+            if (mimeType != null &&
+                    !mimeType.trim().isEmpty()) {
+
                 request.setMimeType(mimeType);
             }
 
-            if (userAgent != null && !userAgent.trim().isEmpty()) {
-                request.addRequestHeader("User-Agent", userAgent);
+            if (userAgent != null &&
+                    !userAgent.trim().isEmpty()) {
+
+                request.addRequestHeader(
+                        "User-Agent",
+                        userAgent
+                );
             }
 
             String cookie =
-                    CookieManager.getInstance().getCookie(url);
+                    CookieManager
+                            .getInstance()
+                            .getCookie(url);
 
-            if (cookie != null && !cookie.trim().isEmpty()) {
-                request.addRequestHeader("Cookie", cookie);
+            if (cookie != null &&
+                    !cookie.trim().isEmpty()) {
+
+                request.addRequestHeader(
+                        "Cookie",
+                        cookie
+                );
             }
 
-            request.setDescription("Downloading from Deeprowss");
+            request.setDescription(
+                    "Downloading from Deeprowss"
+            );
 
             request.setNotificationVisibility(
                     DownloadManager.Request
@@ -441,14 +518,18 @@ public class MainActivity extends Activity {
             );
 
             String fileName =
-                    android.webkit.URLUtil.guessFileName(
-                            url,
-                            contentDisposition,
-                            mimeType
-                    );
+                    android.webkit.URLUtil
+                            .guessFileName(
+                                    url,
+                                    contentDisposition,
+                                    mimeType
+                            );
 
-            if (fileName == null || fileName.trim().isEmpty()) {
-                fileName = "deeprowss_download";
+            if (fileName == null ||
+                    fileName.trim().isEmpty()) {
+
+                fileName =
+                        "deeprowss_download";
             }
 
             request.setDestinationInExternalPublicDir(
@@ -457,9 +538,10 @@ public class MainActivity extends Activity {
             );
 
             DownloadManager manager =
-                    (DownloadManager) getSystemService(
-                            DOWNLOAD_SERVICE
-                    );
+                    (DownloadManager)
+                            getSystemService(
+                                    DOWNLOAD_SERVICE
+                            );
 
             if (manager != null) {
                 manager.enqueue(request);
@@ -470,9 +552,13 @@ public class MainActivity extends Activity {
     }
 
     private boolean isHttpUrl(String url) {
-        if (url == null) return false;
 
-        String lower = url.toLowerCase(Locale.US);
+        if (url == null) {
+            return false;
+        }
+
+        String lower =
+                url.toLowerCase(Locale.US);
 
         return lower.startsWith("http://") ||
                 lower.startsWith("https://");
@@ -480,43 +566,55 @@ public class MainActivity extends Activity {
 
     private boolean isTelegramUrl(String url) {
 
-        if (url == null || url.trim().isEmpty()) return false;
+        if (url == null ||
+                url.trim().isEmpty()) {
+            return false;
+        }
 
         try {
+
             Uri uri = Uri.parse(url);
+
             String host = uri.getHost();
 
-            if (host == null) return false;
+            if (host == null) {
+                return false;
+            }
 
-            host = host.toLowerCase(Locale.US);
+            host =
+                    host.toLowerCase(Locale.US);
 
             return host.equals("t.me") ||
                     host.equals("telegram.me") ||
                     host.equals("www.telegram.me");
 
         } catch (Exception ignored) {
+
             return false;
         }
     }
 
     private void openTelegram(String url) {
 
+        if (url == null ||
+                url.trim().isEmpty()) {
+            return;
+        }
+
         try {
-            Intent intent =
+
+            Intent telegramIntent =
                     new Intent(
                             Intent.ACTION_VIEW,
                             Uri.parse(url)
                     );
 
-            startActivity(intent);
+            startActivity(telegramIntent);
 
         } catch (Exception ignored) {
 
-            /*
-             * If Telegram isn't installed, Android may still have a
-             * browser capable of opening the t.me URL.
-             */
             try {
+
                 Intent browserIntent =
                         new Intent(
                                 Intent.ACTION_VIEW,
@@ -532,7 +630,13 @@ public class MainActivity extends Activity {
 
     private void openSpecialUrl(String url) {
 
+        if (url == null ||
+                url.trim().isEmpty()) {
+            return;
+        }
+
         try {
+
             Intent intent =
                     new Intent(
                             Intent.ACTION_VIEW,
@@ -547,7 +651,10 @@ public class MainActivity extends Activity {
 
     private void showOfflinePage() {
 
-        if (mainWebView == null || showingOfflinePage) return;
+        if (mainWebView == null ||
+                showingOfflinePage) {
+            return;
+        }
 
         showingOfflinePage = true;
 
@@ -555,32 +662,57 @@ public class MainActivity extends Activity {
                 "<!DOCTYPE html>" +
                 "<html><head>" +
                 "<meta charset='UTF-8'>" +
-                "<meta name='viewport' content='width=device-width," +
-                "initial-scale=1.0,maximum-scale=1.0,user-scalable=no'>" +
+                "<meta name='viewport' " +
+                "content='width=device-width," +
+                "initial-scale=1.0," +
+                "maximum-scale=1.0," +
+                "user-scalable=no'>" +
                 "<style>" +
-                "html,body{margin:0;padding:0;width:100%;height:100%;" +
-                "background:#07090d;color:#fff;font-family:Arial,sans-serif;" +
+                "html,body{" +
+                "margin:0;padding:0;width:100%;height:100%;" +
+                "background:#07090d;color:#fff;" +
+                "font-family:Arial,sans-serif;" +
                 "overflow:hidden;}" +
-                "body{display:flex;align-items:center;justify-content:center;" +
+                "body{" +
+                "display:flex;" +
+                "align-items:center;" +
+                "justify-content:center;" +
                 "text-align:center;}" +
-                ".box{width:88%;max-width:420px;padding:30px 20px;" +
+                ".box{" +
+                "width:88%;max-width:420px;" +
+                "padding:30px 20px;" +
                 "box-sizing:border-box;}" +
-                ".logo{width:72px;height:72px;margin:0 auto 22px;" +
-                "border-radius:20px;background:#ff1744;display:flex;" +
-                "align-items:center;justify-content:center;font-size:32px;" +
+                ".logo{" +
+                "width:72px;height:72px;" +
+                "margin:0 auto 22px;" +
+                "border-radius:20px;" +
+                "background:#ff1744;" +
+                "display:flex;" +
+                "align-items:center;" +
+                "justify-content:center;" +
+                "font-size:32px;" +
                 "font-weight:800;color:#fff;}" +
-                "h1{font-size:25px;font-weight:700;margin:0 0 12px;}" +
-                "p{font-size:15px;line-height:1.6;color:#9299a8;" +
+                "h1{" +
+                "font-size:25px;font-weight:700;" +
+                "margin:0 0 12px;}" +
+                "p{" +
+                "font-size:15px;line-height:1.6;" +
+                "color:#9299a8;" +
                 "margin:0 0 28px;}" +
-                "button{border:0;outline:none;border-radius:12px;" +
-                "background:#ff1744;color:#fff;font-size:15px;" +
-                "font-weight:700;padding:14px 30px;min-width:150px;}" +
+                "button{" +
+                "border:0;outline:none;" +
+                "border-radius:12px;" +
+                "background:#ff1744;color:#fff;" +
+                "font-size:15px;font-weight:700;" +
+                "padding:14px 30px;" +
+                "min-width:150px;}" +
                 "</style></head><body>" +
                 "<div class='box'>" +
                 "<div class='logo'>D</div>" +
                 "<h1>You're offline</h1>" +
                 "<p>We couldn't connect to Deeprowss right now." +
-                "<br>Please check your internet connection and try again.</p>" +
+                "<br>Please check your internet connection " +
+                "and try again.</p>" +
                 "<button onclick='location.href=\"" +
                 WEBSITE_URL +
                 "\"'>TRY AGAIN</button>" +
@@ -601,9 +733,17 @@ public class MainActivity extends Activity {
 
         showingOfflinePage = false;
 
+        webPageVisible = false;
+
         if (mainWebView != null) {
-            mainWebView.setBackgroundColor(BG_COLOR);
-            mainWebView.loadUrl(WEBSITE_URL);
+
+            mainWebView.setBackgroundColor(
+                    BG_COLOR
+            );
+
+            mainWebView.loadUrl(
+                    WEBSITE_URL
+            );
         }
     }
 
@@ -620,15 +760,15 @@ public class MainActivity extends Activity {
             ) {
 
                 /*
-                 * target=_blank and window.open() are handled in the
-                 * SAME WebView. This prevents the old popup-WebView
-                 * behavior that caused secondary pages to stop behaving
-                 * correctly.
+                 * Keep target=_blank and window.open()
+                 * in the same WebView.
                  */
                 WebView.WebViewTransport transport =
-                        (WebView.WebViewTransport) resultMsg.obj;
+                        (WebView.WebViewTransport)
+                                resultMsg.obj;
 
                 transport.setWebView(view);
+
                 resultMsg.sendToTarget();
 
                 return true;
@@ -642,13 +782,17 @@ public class MainActivity extends Activity {
             ) {
 
                 if (filePathCallback != null) {
-                    filePathCallback.onReceiveValue(null);
+
+                    filePathCallback
+                            .onReceiveValue(null);
                 }
 
                 filePathCallback = callback;
 
                 try {
-                    Intent intent = params.createIntent();
+
+                    Intent intent =
+                            params.createIntent();
 
                     startActivityForResult(
                             intent,
@@ -658,7 +802,9 @@ public class MainActivity extends Activity {
                     return true;
 
                 } catch (Exception ignored) {
+
                     filePathCallback = null;
+
                     return false;
                 }
             }
@@ -668,11 +814,16 @@ public class MainActivity extends Activity {
                     View view,
                     CustomViewCallback callback
             ) {
-                showVideoFullscreen(view, callback);
+
+                showVideoFullscreen(
+                        view,
+                        callback
+                );
             }
 
             @Override
             public void onHideCustomView() {
+
                 exitVideoFullscreen();
             }
         };
@@ -685,18 +836,22 @@ public class MainActivity extends Activity {
             Intent data
     ) {
 
-        if (requestCode == FILE_CHOOSER_REQUEST) {
+        if (requestCode ==
+                FILE_CHOOSER_REQUEST) {
 
             if (filePathCallback != null) {
 
                 Uri[] results =
-                        WebChromeClient.FileChooserParams
+                        WebChromeClient
+                                .FileChooserParams
                                 .parseResult(
                                         resultCode,
                                         data
                                 );
 
-                filePathCallback.onReceiveValue(results);
+                filePathCallback
+                        .onReceiveValue(results);
+
                 filePathCallback = null;
             }
 
@@ -716,19 +871,26 @@ public class MainActivity extends Activity {
     ) {
 
         if (customVideoView != null) {
+
             callback.onCustomViewHidden();
+
             return;
         }
 
         customVideoView = view;
+
         customViewCallback = callback;
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.GONE);
+            refreshContainer.setVisibility(
+                    View.GONE
+            );
         }
 
         if (popupContainer != null) {
-            popupContainer.setVisibility(View.GONE);
+            popupContainer.setVisibility(
+                    View.GONE
+            );
         }
 
         rootLayout.addView(
@@ -740,7 +902,8 @@ public class MainActivity extends Activity {
         );
 
         setRequestedOrientation(
-                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                ActivityInfo
+                        .SCREEN_ORIENTATION_LANDSCAPE
         );
 
         hideStatusBar();
@@ -748,40 +911,59 @@ public class MainActivity extends Activity {
 
     private void exitVideoFullscreen() {
 
-        if (customVideoView == null) return;
+        if (customVideoView == null) {
+            return;
+        }
 
-        rootLayout.removeView(customVideoView);
+        rootLayout.removeView(
+                customVideoView
+        );
+
         customVideoView = null;
 
         if (customViewCallback != null) {
-            customViewCallback.onCustomViewHidden();
+
+            customViewCallback
+                    .onCustomViewHidden();
+
             customViewCallback = null;
         }
 
         setRequestedOrientation(
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                ActivityInfo
+                        .SCREEN_ORIENTATION_PORTRAIT
         );
 
         if (popupContainer != null) {
-            popupContainer.setVisibility(View.VISIBLE);
+
+            popupContainer.setVisibility(
+                    View.VISIBLE
+            );
+
         } else if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.VISIBLE);
+
+            refreshContainer.setVisibility(
+                    View.VISIBLE
+            );
         }
 
         hideStatusBar();
     }
 
     /*
-     * Legacy popup methods retained for compatibility.
-     * Normal browsing no longer routes pages through this popup.
+     * Legacy popup methods retained for
+     * compatibility.
      */
     private WebView createPopupWebView() {
 
         if (popupWebView != null) {
 
             try {
+
                 popupWebView.stopLoading();
+
                 popupWebView.destroy();
+
             } catch (Exception ignored) {
             }
 
@@ -789,112 +971,218 @@ public class MainActivity extends Activity {
         }
 
         popupWebView = new WebView(this);
-        popupWebView.setBackgroundColor(Color.BLACK);
-        configureWebView(popupWebView);
-        popupWebView.setWebChromeClient(createChromeClient());
 
-        popupWebView.setWebViewClient(new WebViewClient() {
+        popupWebView.setBackgroundColor(
+                Color.BLACK
+        );
 
-            @Override
-            public boolean shouldOverrideUrlLoading(
-                    WebView view,
-                    WebResourceRequest request
-            ) {
+        configureWebView(
+                popupWebView
+        );
 
-                if (request == null || request.getUrl() == null) {
-                    return false;
+        popupWebView.setWebChromeClient(
+                createChromeClient()
+        );
+
+        popupWebView.setWebViewClient(
+                new WebViewClient() {
+
+                    @Override
+                    public boolean shouldOverrideUrlLoading(
+                            WebView view,
+                            WebResourceRequest request
+                    ) {
+
+                        if (request == null ||
+                                request.getUrl() == null) {
+                            return false;
+                        }
+
+                        String url =
+                                request.getUrl()
+                                        .toString();
+
+                        if (isTelegramUrl(url)) {
+
+                            openTelegram(url);
+
+                            return true;
+                        }
+
+                        return isHttpUrl(url)
+                                ? false
+                                : openSpecialAndReturn(url);
+                    }
+
+                    @Override
+                    public boolean shouldOverrideUrlLoading(
+                            WebView view,
+                            String url
+                    ) {
+
+                        if (url == null ||
+                                url.trim().isEmpty()) {
+                            return false;
+                        }
+
+                        if (isTelegramUrl(url)) {
+
+                            openTelegram(url);
+
+                            return true;
+                        }
+
+                        return isHttpUrl(url)
+                                ? false
+                                : openSpecialAndReturn(url);
+                    }
                 }
-
-                String url = request.getUrl().toString();
-
-                if (isTelegramUrl(url)) {
-                    openTelegram(url);
-                    return true;
-                }
-
-                return isHttpUrl(url) ? false : openSpecialAndReturn(url);
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(
-                    WebView view,
-                    String url
-            ) {
-
-                if (url == null || url.trim().isEmpty()) {
-                    return false;
-                }
-
-                if (isTelegramUrl(url)) {
-                    openTelegram(url);
-                    return true;
-                }
-
-                return isHttpUrl(url) ? false : openSpecialAndReturn(url);
-            }
-        });
+        );
 
         showPopupContainer();
 
         return popupWebView;
     }
 
-    private boolean openSpecialAndReturn(String url) {
+    private boolean openSpecialAndReturn(
+            String url
+    ) {
+
         openSpecialUrl(url);
+
         return true;
     }
 
     private void openPopup(String url) {
-        if (url == null || url.trim().isEmpty()) return;
 
-        WebView popup = createPopupWebView();
+        if (url == null ||
+                url.trim().isEmpty()) {
+            return;
+        }
+
+        WebView popup =
+                createPopupWebView();
+
         popup.loadUrl(url);
     }
 
     private void showPopupContainer() {
 
-        if (popupContainer != null) return;
+        if (popupContainer != null) {
+            return;
+        }
 
-        popupContainer = new FrameLayout(this);
-        popupContainer.setBackgroundColor(Color.BLACK);
+        popupContainer =
+                new FrameLayout(this);
 
-        LinearLayout topBar = new LinearLayout(this);
-        topBar.setOrientation(LinearLayout.HORIZONTAL);
-        topBar.setGravity(Gravity.CENTER_VERTICAL);
-        topBar.setPadding(dp(4), 0, dp(4), 0);
-        topBar.setBackgroundColor(Color.rgb(15, 18, 24));
-
-        ImageButton backButton = new ImageButton(this);
-        backButton.setImageResource(android.R.drawable.ic_media_previous);
-        backButton.setBackgroundColor(Color.TRANSPARENT);
-        backButton.setColorFilter(Color.WHITE);
-        backButton.setContentDescription("Back");
-
-        backButton.setOnClickListener(v -> {
-            if (popupWebView != null &&
-                    popupWebView.canGoBack()) {
-                popupWebView.goBack();
-            } else {
-                closePopup();
-            }
-        });
-
-        TextView title = new TextView(this);
-        title.setText("Deeprowss");
-        title.setTextColor(Color.WHITE);
-        title.setTextSize(15);
-        title.setGravity(Gravity.CENTER_VERTICAL);
-        title.setSingleLine(true);
-        title.setPadding(dp(8), 0, dp(8), 0);
-
-        ImageButton closeButton = new ImageButton(this);
-        closeButton.setImageResource(
-                android.R.drawable.ic_menu_close_clear_cancel
+        popupContainer.setBackgroundColor(
+                Color.BLACK
         );
-        closeButton.setBackgroundColor(Color.TRANSPARENT);
-        closeButton.setColorFilter(Color.WHITE);
-        closeButton.setContentDescription("Close");
-        closeButton.setOnClickListener(v -> closePopup());
+
+        LinearLayout topBar =
+                new LinearLayout(this);
+
+        topBar.setOrientation(
+                LinearLayout.HORIZONTAL
+        );
+
+        topBar.setGravity(
+                Gravity.CENTER_VERTICAL
+        );
+
+        topBar.setPadding(
+                dp(4),
+                0,
+                dp(4),
+                0
+        );
+
+        topBar.setBackgroundColor(
+                Color.rgb(15, 18, 24)
+        );
+
+        ImageButton backButton =
+                new ImageButton(this);
+
+        backButton.setImageResource(
+                android.R.drawable
+                        .ic_media_previous
+        );
+
+        backButton.setBackgroundColor(
+                Color.TRANSPARENT
+        );
+
+        backButton.setColorFilter(
+                Color.WHITE
+        );
+
+        backButton.setContentDescription(
+                "Back"
+        );
+
+        backButton.setOnClickListener(
+                v -> {
+
+                    if (popupWebView != null &&
+                            popupWebView.canGoBack()) {
+
+                        popupWebView.goBack();
+
+                    } else {
+
+                        closePopup();
+                    }
+                }
+        );
+
+        TextView title =
+                new TextView(this);
+
+        title.setText("Deeprowss");
+
+        title.setTextColor(
+                Color.WHITE
+        );
+
+        title.setTextSize(15);
+
+        title.setGravity(
+                Gravity.CENTER_VERTICAL
+        );
+
+        title.setSingleLine(true);
+
+        title.setPadding(
+                dp(8),
+                0,
+                dp(8),
+                0
+        );
+
+        ImageButton closeButton =
+                new ImageButton(this);
+
+        closeButton.setImageResource(
+                android.R.drawable
+                        .ic_menu_close_clear_cancel
+        );
+
+        closeButton.setBackgroundColor(
+                Color.TRANSPARENT
+        );
+
+        closeButton.setColorFilter(
+                Color.WHITE
+        );
+
+        closeButton.setContentDescription(
+                "Close"
+        );
+
+        closeButton.setOnClickListener(
+                v -> closePopup()
+        );
 
         topBar.addView(
                 backButton,
@@ -928,7 +1216,10 @@ public class MainActivity extends Activity {
                         Gravity.TOP
                 );
 
-        popupContainer.addView(topBar, barParams);
+        popupContainer.addView(
+                topBar,
+                barParams
+        );
 
         FrameLayout.LayoutParams webParams =
                 new FrameLayout.LayoutParams(
@@ -936,10 +1227,15 @@ public class MainActivity extends Activity {
                         FrameLayout.LayoutParams.MATCH_PARENT
                 );
 
-        webParams.topMargin = popupBarHeight;
+        webParams.topMargin =
+                popupBarHeight;
 
         if (popupWebView != null) {
-            popupContainer.addView(popupWebView, webParams);
+
+            popupContainer.addView(
+                    popupWebView,
+                    webParams
+            );
         }
 
         rootLayout.addView(
@@ -951,7 +1247,10 @@ public class MainActivity extends Activity {
         );
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.INVISIBLE);
+
+            refreshContainer.setVisibility(
+                    View.INVISIBLE
+            );
         }
 
         hideStatusBar();
@@ -959,7 +1258,9 @@ public class MainActivity extends Activity {
 
     private void closePopup() {
 
-        if (popupContainer == null) return;
+        if (popupContainer == null) {
+            return;
+        }
 
         if (customVideoView != null) {
             exitVideoFullscreen();
@@ -968,24 +1269,35 @@ public class MainActivity extends Activity {
         if (popupWebView != null) {
 
             try {
+
                 popupWebView.stopLoading();
+
                 popupWebView.onPause();
+
                 popupWebView.destroy();
+
             } catch (Exception ignored) {
             }
 
             popupWebView = null;
         }
 
-        rootLayout.removeView(popupContainer);
+        rootLayout.removeView(
+                popupContainer
+        );
+
         popupContainer = null;
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.VISIBLE);
+
+            refreshContainer.setVisibility(
+                    View.VISIBLE
+            );
         }
 
         setRequestedOrientation(
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                ActivityInfo
+                        .SCREEN_ORIENTATION_PORTRAIT
         );
 
         hideStatusBar();
@@ -1009,7 +1321,9 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
 
         if (customVideoView != null) {
+
             exitVideoFullscreen();
+
             return;
         }
 
@@ -1017,8 +1331,11 @@ public class MainActivity extends Activity {
 
             if (popupWebView != null &&
                     popupWebView.canGoBack()) {
+
                 popupWebView.goBack();
+
             } else {
+
                 closePopup();
             }
 
@@ -1031,6 +1348,7 @@ public class MainActivity extends Activity {
             mainWebView.goBack();
 
         } else {
+
             super.onBackPressed();
         }
     }
@@ -1039,6 +1357,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
 
         super.onResume();
+
         hideStatusBar();
 
         if (mainWebView != null) {
@@ -1068,14 +1387,25 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
 
         if (filePathCallback != null) {
-            filePathCallback.onReceiveValue(null);
+
+            filePathCallback.onReceiveValue(
+                    null
+            );
+
             filePathCallback = null;
         }
 
         if (customSplashView != null) {
 
             try {
-                rootLayout.removeView(customSplashView);
+
+                if (rootLayout != null) {
+
+                    rootLayout.removeView(
+                            customSplashView
+                    );
+                }
+
             } catch (Exception ignored) {
             }
 
@@ -1085,7 +1415,14 @@ public class MainActivity extends Activity {
         if (customVideoView != null) {
 
             try {
-                rootLayout.removeView(customVideoView);
+
+                if (rootLayout != null) {
+
+                    rootLayout.removeView(
+                            customVideoView
+                    );
+                }
+
             } catch (Exception ignored) {
             }
 
@@ -1095,8 +1432,11 @@ public class MainActivity extends Activity {
         if (popupWebView != null) {
 
             try {
+
                 popupWebView.stopLoading();
+
                 popupWebView.destroy();
+
             } catch (Exception ignored) {
             }
 
@@ -1106,8 +1446,11 @@ public class MainActivity extends Activity {
         if (mainWebView != null) {
 
             try {
+
                 mainWebView.stopLoading();
+
                 mainWebView.destroy();
+
             } catch (Exception ignored) {
             }
 
@@ -1124,7 +1467,8 @@ public class MainActivity extends Activity {
                         .getDisplayMetrics()
                         .density;
 
-        return (int) (value * density + 0.5f);
+        return (int)
+                (value * density + 0.5f);
     }
 
     private static class RefreshableWebViewContainer
@@ -1144,14 +1488,20 @@ public class MainActivity extends Activity {
             void onRefresh();
         }
 
-        RefreshableWebViewContainer(Context context) {
+        RefreshableWebViewContainer(
+                Context context
+        ) {
 
             super(context);
 
             setClipChildren(false);
 
-            progressBar = new ProgressBar(context);
-            progressBar.setVisibility(View.GONE);
+            progressBar =
+                    new ProgressBar(context);
+
+            progressBar.setVisibility(
+                    View.GONE
+            );
 
             LayoutParams progressParams =
                     new LayoutParams(
@@ -1160,21 +1510,27 @@ public class MainActivity extends Activity {
                     );
 
             progressParams.gravity =
-                    Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+                    Gravity.TOP |
+                    Gravity.CENTER_HORIZONTAL;
 
             progressParams.topMargin =
                     dp(context, 16);
 
-            addView(progressBar, progressParams);
+            addView(
+                    progressBar,
+                    progressParams
+            );
         }
 
         void setWebView(WebView webView) {
+
             this.webView = webView;
         }
 
         void setOnRefreshListener(
                 OnRefreshListener listener
         ) {
+
             this.listener = listener;
         }
 
@@ -1184,10 +1540,14 @@ public class MainActivity extends Activity {
             dragging = false;
 
             if (progressBar != null) {
-                progressBar.setVisibility(View.GONE);
+
+                progressBar.setVisibility(
+                        View.GONE
+                );
             }
 
             if (webView != null) {
+
                 webView.animate()
                         .translationY(0)
                         .setDuration(180)
@@ -1200,15 +1560,19 @@ public class MainActivity extends Activity {
                 MotionEvent event
         ) {
 
-            if (webView == null || refreshing) {
+            if (webView == null ||
+                    refreshing) {
+
                 return false;
             }
 
             switch (event.getActionMasked()) {
 
                 case MotionEvent.ACTION_DOWN:
+
                     startY = event.getY();
                     dragging = false;
+
                     break;
 
                 case MotionEvent.ACTION_MOVE:
@@ -1221,6 +1585,7 @@ public class MainActivity extends Activity {
                             distance > 15) {
 
                         dragging = true;
+
                         return true;
                     }
 
@@ -1228,7 +1593,9 @@ public class MainActivity extends Activity {
 
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
+
                     dragging = false;
+
                     break;
             }
 
@@ -1236,9 +1603,13 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        public boolean onTouchEvent(MotionEvent event) {
+        public boolean onTouchEvent(
+                MotionEvent event
+        ) {
 
-            if (webView == null || refreshing) {
+            if (webView == null ||
+                    refreshing) {
+
                 return true;
             }
 
@@ -1247,7 +1618,9 @@ public class MainActivity extends Activity {
                 case MotionEvent.ACTION_DOWN:
 
                     startY = event.getY();
+
                     dragging = true;
+
                     return true;
 
                 case MotionEvent.ACTION_MOVE:
@@ -1255,30 +1628,40 @@ public class MainActivity extends Activity {
                     float distance =
                             event.getY() - startY;
 
-                    if (distance < 0) distance = 0;
+                    if (distance < 0) {
+                        distance = 0;
+                    }
 
-                    if (distance > MAX_PULL_DISTANCE) {
-                        distance = MAX_PULL_DISTANCE;
+                    if (distance >
+                            MAX_PULL_DISTANCE) {
+
+                        distance =
+                                MAX_PULL_DISTANCE;
                     }
 
                     if (distance > 0) {
 
-                        float offset = distance * 0.55f;
+                        float offset =
+                                distance * 0.55f;
 
-                        webView.setTranslationY(offset);
+                        webView.setTranslationY(
+                                offset
+                        );
 
                         if (distance >=
                                 TRIGGER_DISTANCE * 0.55f) {
 
-                            progressBar.setVisibility(
-                                    View.VISIBLE
-                            );
+                            progressBar
+                                    .setVisibility(
+                                            View.VISIBLE
+                                    );
 
                         } else {
 
-                            progressBar.setVisibility(
-                                    View.GONE
-                            );
+                            progressBar
+                                    .setVisibility(
+                                            View.GONE
+                                    );
                         }
                     }
 
@@ -1289,9 +1672,13 @@ public class MainActivity extends Activity {
                     float finalDistance =
                             event.getY() - startY;
 
-                    if (finalDistance >= TRIGGER_DISTANCE) {
+                    if (finalDistance >=
+                            TRIGGER_DISTANCE) {
+
                         startRefreshing();
+
                     } else {
+
                         stopRefreshing();
                     }
 
@@ -1300,6 +1687,7 @@ public class MainActivity extends Activity {
                 case MotionEvent.ACTION_CANCEL:
 
                     stopRefreshing();
+
                     return true;
             }
 
@@ -1308,15 +1696,21 @@ public class MainActivity extends Activity {
 
         private void startRefreshing() {
 
-            if (refreshing) return;
+            if (refreshing) {
+                return;
+            }
 
             refreshing = true;
 
             if (progressBar != null) {
-                progressBar.setVisibility(View.VISIBLE);
+
+                progressBar.setVisibility(
+                        View.VISIBLE
+                );
             }
 
             if (webView != null) {
+
                 webView.animate()
                         .translationY(
                                 dp(getContext(), 70)
@@ -1340,7 +1734,8 @@ public class MainActivity extends Activity {
                             .getDisplayMetrics()
                             .density;
 
-            return (int) (value * density + 0.5f);
+            return (int)
+                    (value * density + 0.5f);
         }
     }
 }
