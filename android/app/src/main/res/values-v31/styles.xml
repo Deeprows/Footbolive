@@ -50,6 +50,15 @@
             sans
         </item>
 
+        <!-- Android 12+ Splash Screen -->
+        <item name="android:windowSplashScreenBackground">
+            #07090D
+        </item>
+
+        <item name="android:windowSplashScreenAnimatedIcon">
+            @drawable/deeprowss_splash
+        </item>
+
     </style>
 
 </resources>
