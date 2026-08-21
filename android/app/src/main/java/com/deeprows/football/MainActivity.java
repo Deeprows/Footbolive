@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.content.Intent;
 import android.net.Uri;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -86,6 +87,14 @@ public class MainActivity extends Activity {
      */
     private boolean webPageVisible = false;
 
+    /*
+     * Custom splash overlay.
+     *
+     * The complete deeprowss_splash.png is shown centered at a normal size
+     * instead of being treated as the Android 12 splash icon.
+     */
+    private View customSplashView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +163,18 @@ public class MainActivity extends Activity {
                 rootLayout
         );
 
+        /*
+         * =====================================================
+         * CUSTOM DEEPROWSS SPLASH
+         * =====================================================
+         *
+         * Android 12+ treats windowSplashScreenAnimatedIcon as an icon.
+         * Our deeprowss_splash.png is a complete splash composition, so show
+         * the whole image in a centered ImageView instead.
+         */
+
+        showCustomSplash();
+
 
         /*
          * =====================================================
@@ -182,6 +203,97 @@ public class MainActivity extends Activity {
         mainWebView.loadUrl(
                 WEBSITE_URL
         );
+    }
+
+
+    /*
+     * =========================================================
+     * CUSTOM SPLASH
+     * =========================================================
+     */
+
+    private void showCustomSplash() {
+
+        if (rootLayout == null) {
+            return;
+        }
+
+        if (customSplashView != null) {
+            return;
+        }
+
+        android.widget.ImageView splashImage =
+                new android.widget.ImageView(this);
+
+        splashImage.setImageResource(
+                getResources().getIdentifier(
+                        "deeprowss_splash",
+                        "drawable",
+                        getPackageName()
+                )
+        );
+
+        splashImage.setScaleType(
+                android.widget.ImageView.ScaleType.CENTER_INSIDE
+        );
+
+        splashImage.setAdjustViewBounds(true);
+
+        splashImage.setBackgroundColor(
+                BG_COLOR
+        );
+
+        /*
+         * Keep the complete square splash centered with margins so it
+         * cannot become an oversized full-screen image.
+         */
+        int margin = dp(32);
+
+        FrameLayout.LayoutParams splashParams =
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                );
+
+        splashParams.setMargins(
+                margin,
+                margin,
+                margin,
+                margin
+        );
+
+        customSplashView = splashImage;
+
+        rootLayout.addView(
+                customSplashView,
+                splashParams
+        );
+
+        customSplashView.bringToFront();
+    }
+
+
+    private void hideCustomSplash() {
+
+        if (customSplashView == null) {
+            return;
+        }
+
+        View splash = customSplashView;
+
+        customSplashView = null;
+
+        splash.animate()
+                .alpha(0f)
+                .setDuration(180)
+                .withEndAction(
+                        () -> {
+                            if (rootLayout != null) {
+                                rootLayout.removeView(splash);
+                            }
+                        }
+                )
+                .start();
     }
 
 
@@ -333,6 +445,8 @@ public class MainActivity extends Activity {
 
                             webPageVisible =
                                     true;
+
+                            hideCustomSplash();
                         }
                     }
 
@@ -388,6 +502,8 @@ public class MainActivity extends Activity {
 
                             webPageVisible =
                                     true;
+
+                            hideCustomSplash();
 
                             showOfflinePage();
                         }
@@ -1728,6 +1844,20 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+
+        if (customSplashView != null) {
+
+            try {
+                rootLayout.removeView(
+                        customSplashView
+                );
+            } catch (Exception ignored) {
+            }
+
+            customSplashView =
+                    null;
+        }
+
 
         if (customVideoView != null) {
 
