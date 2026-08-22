@@ -1,3 +1,11 @@
+/*
+ * REQUIRED Gradle dependency:
+ * implementation "androidx.media3:media3-exoplayer:1.8.0"
+ * implementation "androidx.media3:media3-ui:1.8.0"
+ *
+ * Keep the rest of your existing dependencies.
+ */
+
 package com.deeprows.football;
 
 import android.app.Activity;
@@ -28,6 +36,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +86,11 @@ public class MainActivity extends Activity {
     private View customVideoView;
 
     private WebChromeClient.CustomViewCallback customViewCallback;
+
+    /* Native Media3 player for direct video URLs. */
+    private ExoPlayer nativePlayer;
+    private PlayerView nativePlayerView;
+    private boolean nativePlayerFullscreen = false;
 
     private int popupBarHeight;
 
@@ -1307,6 +1325,139 @@ public class MainActivity extends Activity {
 
     /*
      * =========================================================
+     * NATIVE MEDIA3 PLAYER
+     * =========================================================
+     *
+     * Direct MP4/WebM/M3U8 media URLs can be played by Media3.
+     * Ordinary webpages and JavaScript players stay in WebView.
+     */
+
+    private boolean isDirectMediaUrl(String url) {
+
+        if (url == null || url.trim().isEmpty()) {
+            return false;
+        }
+
+        String u = url.toLowerCase(java.util.Locale.US);
+
+        int queryIndex = u.indexOf('?');
+        if (queryIndex >= 0) {
+            u = u.substring(0, queryIndex);
+        }
+
+        return u.endsWith(".mp4") ||
+                u.endsWith(".m4v") ||
+                u.endsWith(".webm") ||
+                u.endsWith(".m3u8") ||
+                u.endsWith(".mpd");
+    }
+
+
+    private void playNativeMedia(String url) {
+
+        if (url == null || url.trim().isEmpty()) {
+            return;
+        }
+
+        releaseNativePlayer();
+
+        nativePlayer = new ExoPlayer.Builder(this).build();
+
+        nativePlayerView = new PlayerView(this);
+        nativePlayerView.setUseController(true);
+        nativePlayerView.setPlayer(nativePlayer);
+        nativePlayerView.setBackgroundColor(Color.BLACK);
+
+        MediaItem mediaItem = MediaItem.fromUri(Uri.parse(url));
+        nativePlayer.setMediaItem(mediaItem);
+        nativePlayer.prepare();
+        nativePlayer.setPlayWhenReady(true);
+
+        nativePlayerFullscreen = true;
+
+        if (refreshContainer != null) {
+            refreshContainer.setVisibility(View.GONE);
+        }
+
+        if (popupContainer != null) {
+            popupContainer.setVisibility(View.GONE);
+        }
+
+        rootLayout.addView(
+                nativePlayerView,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        );
+
+        hideStatusBar();
+
+        nativePlayer.addListener(new Player.Listener() {
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                if (playbackState == Player.STATE_ENDED) {
+                    exitNativeMedia();
+                }
+            }
+        });
+    }
+
+
+    private void exitNativeMedia() {
+
+        if (!nativePlayerFullscreen && nativePlayerView == null) {
+            return;
+        }
+
+        releaseNativePlayer();
+
+        nativePlayerFullscreen = false;
+
+        setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        );
+
+        if (popupContainer != null) {
+            popupContainer.setVisibility(View.VISIBLE);
+        } else if (refreshContainer != null) {
+            refreshContainer.setVisibility(View.VISIBLE);
+        }
+
+        hideStatusBar();
+    }
+
+
+    private void releaseNativePlayer() {
+
+        if (nativePlayer != null) {
+            try {
+                nativePlayer.stop();
+            } catch (Exception ignored) {
+            }
+
+            nativePlayer.release();
+            nativePlayer = null;
+        }
+
+        if (nativePlayerView != null) {
+            try {
+                nativePlayerView.setPlayer(null);
+                rootLayout.removeView(nativePlayerView);
+            } catch (Exception ignored) {
+            }
+
+            nativePlayerView = null;
+        }
+    }
+
+
+    /*
+     * =========================================================
      * CHROME CLIENT
      * =========================================================
      */
@@ -2232,6 +2383,13 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
 
+        if (nativePlayerFullscreen) {
+
+            exitNativeMedia();
+
+            return;
+        }
+
         if (customVideoView != null) {
 
             exitVideoFullscreen();
@@ -2330,6 +2488,8 @@ public class MainActivity extends Activity {
                     null;
         }
 
+
+        releaseNativePlayer();
 
         if (customVideoView != null) {
 
