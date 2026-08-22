@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -15,66 +14,24 @@
     content="Deeprowss Football Live, Highlights, TV Channels and Movies."
   >
 
-  <meta
-    name="theme-color"
-    content="#07090d"
-  >
-
-  <meta
-    name="color-scheme"
-    content="dark"
-  >
-
-  <meta
-    name="mobile-web-app-capable"
-    content="yes"
-  >
-
-  <meta
-    name="apple-mobile-web-app-capable"
-    content="yes"
-  >
-
-  <meta
-    name="apple-mobile-web-app-status-bar-style"
-    content="black-translucent"
-  >
-
-  <meta
-    name="apple-mobile-web-app-title"
-    content="Deeprowss"
-  >
+  <meta name="theme-color" content="#07090d">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Deeprowss">
 
   <title>Deeprowss</title>
 
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-  <!-- =========================================================
-       FAVICON / APP ICON
-       ========================================================= -->
-
-  <link
-    rel="icon"
-    type="image/png"
-    href="icons/icon-192.png"
-  >
-
-  <link
-    rel="apple-touch-icon"
-    href="icons/icon-192.png"
-  >
-
-
-  <!-- =========================================================
-       CRITICAL FIRST-PAINT STYLES
-       ========================================================= -->
-
+  <!-- Critical first-paint styles -->
   <style>
-
     html {
       background: #07090d;
       color-scheme: dark;
     }
-
 
     body {
       margin: 0;
@@ -83,11 +40,10 @@
       width: 100%;
       min-height: 100vh;
       background: #07090d;
-      color: #ffffff;
+      color: #fff;
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
     }
-
 
     *,
     *::before,
@@ -95,18 +51,9 @@
       box-sizing: border-box;
     }
 
-
     .screen-section {
       background: #07090d;
     }
-
-
-    /*
-     * The outer player contains:
-     *
-     * 1. 16:9 video frame
-     * 2. Separate notification underneath
-     */
 
     .screen-player {
       position: relative;
@@ -114,53 +61,32 @@
       background: #07090d;
     }
 
-
-    /*
-     * TRUE 16:9 VIDEO AREA
-     */
-
     .screen-frame-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: #000;
-}
-
-
-    /*
-     * IFRAME MUST ONLY FILL THE 16:9 VIDEO AREA
-     */
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: #000;
+    }
 
     #screenFrame {
       position: absolute;
       inset: 0;
-
       display: block;
-
       width: 100%;
       height: 100%;
-
       border: 0;
       margin: 0;
       padding: 0;
-
       background: #000;
     }
-
-
-    /*
-     * PLACEHOLDER IS INSIDE THE 16:9 FRAME
-     */
 
     .screen-placeholder {
       position: absolute;
       inset: 0;
-
       background: #07090d;
     }
 
-    /* ALT SCREEN BUTTON - FOOTBALL ONLY */
     .alt-screen-button {
       display: inline-flex;
       align-items: center;
@@ -171,11 +97,11 @@
       border: 1px solid #2a2e37;
       border-radius: 14px;
       background: #10131a;
-      color: #ffffff;
+      color: #fff;
       font: inherit;
       font-weight: 700;
       cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      transition: border-color .2s ease, background .2s ease, transform .2s ease;
     }
 
     .alt-screen-button:hover {
@@ -184,24 +110,19 @@
     }
 
     .alt-screen-button:active {
-      transform: scale(0.98);
+      transform: scale(.98);
     }
 
     .alt-screen-button.is-active {
       border-color: #e9003f;
-      background: rgba(233, 0, 63, 0.12);
+      background: rgba(233, 0, 63, .12);
     }
 
     .alt-screen-button:disabled {
-      opacity: 0.55;
+      opacity: .55;
       cursor: not-allowed;
     }
 
-    /*
-     * ALT SCREEN IS FOOTBALL-ONLY.
-     * The button is inside the notification bar, but it must disappear
-     * whenever Football Live is not the active section.
-     */
     .football-app:has(#footballContent[hidden]) .alt-screen-button {
       display: none !important;
     }
@@ -212,7 +133,6 @@
       gap: 10px;
     }
 
-    /* MOVIE DOWNLOAD BUTTON - MOVIES ONLY */
     .movie-download-button {
       display: none;
       align-items: center;
@@ -224,25 +144,15 @@
       border: 1px solid #2a2e37;
       border-radius: 14px;
       background: #10131a;
-      color: #ffffff;
+      color: #fff;
       font: inherit;
       font-weight: 700;
       text-decoration: none;
       cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
-    }
-
-    .movie-download-button:hover {
-      border-color: #e9003f;
-      background: #171a22;
-    }
-
-    .movie-download-button:active {
-      transform: scale(0.98);
     }
 
     .movie-download-button.is-disabled {
-      opacity: 0.55;
+      opacity: .55;
       cursor: not-allowed;
     }
 
@@ -250,14 +160,12 @@
       display: inline-flex;
     }
 
-    /* Keep footer buttons clearly above the mobile navigation */
     .footer {
       position: relative;
       z-index: 100;
       transform: translateY(-34px);
     }
 
-    /* SLIM FOOTER ACTION BUTTONS */
     .footer-wrap {
       display: flex !important;
       flex-direction: row !important;
@@ -286,7 +194,7 @@
       border: 1px solid #2a2e37;
       border-radius: 7px;
       background: #10131a;
-      color: #ffffff;
+      color: #fff;
       font: inherit;
       font-size: 10px;
       font-weight: 700;
@@ -295,64 +203,31 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      transition: border-color 0.2s ease, background 0.2s ease;
     }
-
-    .footer-action:hover {
-      border-color: #e9003f;
-      background: #171a22;
-    }
-
-    .footer-action:active {
-      transform: scale(0.99);
-    }
-
   </style>
 
-
-  <!-- =========================================================
-       MAIN WEBSITE CSS
-       ========================================================= -->
-
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+  <link rel="stylesheet" href="style.css">
 
   <!-- Cloudflare Web Analytics -->
-  <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "235486d7c4de464bbd92e30f09597e20"}'></script>
-  <!-- End Cloudflare Web Analytics -->
-
+  <script
+    type="module"
+    src="https://static.cloudflareinsights.com/beacon.min.js"
+    data-cf-beacon='{"token":"235486d7c4de464bbd92e30f09597e20"}'
+  ></script>
 </head>
 
-
 <body>
-
 
   <!-- =========================================================
        HEADER
        ========================================================= -->
-
   <header class="site-header">
-
     <div class="container nav-wrap">
 
-      <a
-        class="brand"
-        href="index.html"
-        aria-label="Deeprowss Home"
-      >
-
-        <span class="brand-mark">
-          D
-        </span>
-
-        <span>
-          DEE<span>PROWSS</span>
-        </span>
-
+      <a class="brand" href="index.html" aria-label="Deeprowss Home">
+        <span class="brand-mark">D</span>
+        <span>DEE<span>PROWSS</span></span>
       </a>
-
 
       <button
         type="button"
@@ -361,180 +236,62 @@
         aria-label="Open navigation"
         aria-expanded="false"
         aria-controls="mainNav"
-      >
-        ☰
-      </button>
+      >☰</button>
 
-
-      <nav
-        class="main-nav"
-        id="mainNav"
-        aria-label="Main navigation"
-      >
-
-        <a
-          href="#"
-          id="navFootball"
-          class="active"
-        >
-          Football Live
-        </a>
-
-        <a
-          href="#"
-          id="navHighlights"
-        >
-          Highlights
-        </a>
-
-        <a
-          href="#"
-          id="navTV"
-        >
-          TV Channels
-        </a>
-
-        <a
-          href="#"
-          id="navMovies"
-        >
-          Movies
-        </a>
-
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a href="#" id="navFootball" class="active">Football Live</a>
+        <a href="#" id="navHighlights">Highlights</a>
+        <a href="#" id="navTV">TV Channels</a>
+        <a href="#" id="navMovies">Movies</a>
       </nav>
 
     </div>
-
   </header>
-
 
   <!-- =========================================================
        MAIN APP
        ========================================================= -->
-
   <main class="football-app">
 
-
-    <!-- =======================================================
-         SCREEN
-         ======================================================= -->
-
-    <section
-      class="screen-section"
-      id="screenSection"
-    >
-
+    <!-- SCREEN -->
+    <section class="screen-section" id="screenSection">
       <div class="container">
 
-        <div
-          class="screen-player"
-          id="screenPlayer"
-        >
+        <div class="screen-player" id="screenPlayer">
 
-
-          <!-- =================================================
-               TRUE 16:9 VIDEO FRAME
-               ================================================= -->
-
-          <div
-            class="screen-frame-wrap"
-            id="screenFrameWrap"
-          >
-
-
-            <!-- ===============================================
-                 SCREEN STATUS
-                 INSIDE VIDEO AREA
-                 =============================================== -->
+          <div class="screen-frame-wrap" id="screenFrameWrap">
 
             <div class="screen-status">
-
               <span class="screen-live-dot"></span>
-
-              <span id="screenStatus">
-                READY
-              </span>
-
+              <span id="screenStatus">READY</span>
             </div>
 
+            <iframe
+              id="screenFrame"
+              src="https://vsembed.ru/embed/movie/tt22084616"
+              title="The Beginning"
+              loading="eager"
+              allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+              allowfullscreen
+              webkitallowfullscreen
+              mozallowfullscreen
+              referrerpolicy="no-referrer"
+            ></iframe>
 
-            <!-- ===============================================
-                 VIDEO IFRAME
-                 =============================================== -->
-
-  <iframe
-  id="screenFrame"
-  src="https://vsembed.ru/embed/movie/tt22084616"
-  title="The Beginning"
-  loading="eager"
-  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-  allowfullscreen
-  webkitallowfullscreen
-  mozallowfullscreen
-  referrerpolicy="no-referrer"
-></iframe>
-
-
-
-            <!-- ===============================================
-                 SCREEN PLACEHOLDER
-                 INSIDE 16:9 VIDEO AREA
-                 =============================================== -->
-
-            <div
-  class="screen-placeholder"
-  id="screenPlaceholder"
-  hidden
->
-
-              <div class="screen-placeholder-icon">
-                ⚽
-              </div>
-
-              <strong>
-                Welcome
-              </strong>
-
-              <p>
-                Select a category and start watching.
-              </p>
-
+            <div class="screen-placeholder" id="screenPlaceholder" hidden>
+              <div class="screen-placeholder-icon">⚽</div>
+              <strong>Welcome</strong>
+              <p>Select a category and start watching.</p>
             </div>
-
 
           </div>
 
-
-          <!-- =================================================
-               SEPARATE NOTIFICATION / NOW SHOWING CARD
-
-               IMPORTANT:
-               THIS IS OUTSIDE THE 16:9 VIDEO FRAME.
-               ================================================= -->
-
           <div class="screen-bottom">
 
-
-            <!-- ===============================================
-                 NOW SHOWING
-                 =============================================== -->
-
             <div class="now-showing">
-
-              <span>
-                NOW SHOWING
-              </span>
-
-              <strong id="nowShowing">
-                Spiderman: Brand New Day 8.1/10 
-              </strong>
-
+              <span>NOW SHOWING</span>
+              <strong id="nowShowing">Spiderman: Brand New Day 8.1/10</strong>
             </div>
-
-
-            <!-- ===============================================
-                 FOOTBALL ALT SCREEN + FULLSCREEN
-                 =============================================== -->
 
             <div class="screen-bottom-actions">
 
@@ -548,8 +305,6 @@
                 <span id="altScreenButtonText">Alt Screen</span>
               </button>
 
-
-              <!-- MOVIE DOWNLOAD - MOVIES ONLY -->
               <a
                 class="movie-download-button is-disabled"
                 id="movieDownloadButton"
@@ -563,571 +318,267 @@
                 <span>Download</span>
               </a>
 
-
               <button
                 type="button"
                 class="fullscreen-button"
                 id="fullscreenButton"
                 aria-label="Fullscreen"
-              >
-                ⛶
-              </button>
+              >⛶</button>
 
             </div>
-
-
           </div>
 
-
         </div>
-
       </div>
-
     </section>
 
-
-    <!-- =======================================================
-         MAIN APP BUTTONS
-         ======================================================= -->
-
-    <section
-      class="app-menu"
-      id="appMenu"
-    >
-
+    <!-- APP MENU -->
+    <section class="app-menu" id="appMenu">
       <div class="container">
 
         <div class="app-buttons">
-
-
-          <!-- FOOTBALL LIVE -->
 
           <button
             type="button"
             class="app-button football-button active"
             id="footballButton"
           >
-
-            <span class="app-button-icon">
-              ⚽
-            </span>
-
-            <span>
-              Football Live
-            </span>
-
+            <span class="app-button-icon">⚽</span>
+            <span>Football Live</span>
           </button>
-
-
-          <!-- HIGHLIGHTS -->
 
           <button
             type="button"
             class="app-button highlights-button"
             id="highlightsButton"
           >
-
-            <span class="app-button-icon">
-              🎬
-            </span>
-
-            <span>
-              Highlights
-            </span>
-
+            <span class="app-button-icon">🎬</span>
+            <span>Highlights</span>
           </button>
-
-
-          <!-- TV CHANNELS -->
 
           <button
             type="button"
             class="app-button tv-button"
             id="tvButton"
           >
-
-            <span class="app-button-icon">
-              📺
-            </span>
-
-            <span>
-              TV Channels
-            </span>
-
+            <span class="app-button-icon">📺</span>
+            <span>TV Channels</span>
           </button>
-
-
-          <!-- MOVIES -->
 
           <button
             type="button"
             class="app-button movies-button"
             id="moviesButton"
           >
-
-            <span class="app-button-icon">
-              🍿
-            </span>
-
-            <span>
-              Movies
-            </span>
-
+            <span class="app-button-icon">🍿</span>
+            <span>Movies</span>
           </button>
 
-
         </div>
-
       </div>
-
     </section>
-
 
     <!-- =======================================================
          FOOTBALL LIVE
          ======================================================= -->
-
-    <section
-      class="content-section"
-      id="footballContent"
-    >
-
+    <section class="content-section" id="footballContent">
       <div class="container">
 
         <div class="content-heading">
+          <h1>Upcoming &amp; Live Matches</h1>
+          <span class="content-count" id="matchCount">0</span>
+        </div>
 
-          <h1>
-            Upcoming &amp; Live Matches
-          </h1>
+        <div class="match-grid" id="matchList">
 
-          <span
-            class="content-count"
-            id="matchCount"
+          <button
+            type="button"
+            class="match-card"
+            data-name="Hull City vs Manchester United"
+            data-url="https://streamtp-golden1.click/global1.php?stream=espn"
+            data-alt-url="https://streamtp-golden1.click/global1.php?stream=universo_usa"
+            data-kickoff="2026-08-22T12:30:00+01:00"
+            data-duration="96"
           >
-            1
-          </span>
+            <span class="match-status" data-match-status>UPCOMING</span>
+            <span class="match-teams">Hull City vs Manchester United</span>
+            <span class="match-date" data-match-date>Date</span>
+            <span class="match-time" data-match-time>Time</span>
+            <span class="match-countdown" data-match-countdown>Starting soon</span>
+          </button>
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Nottingham Forest vs Leeds United"
+            data-url="https://streamtp-golden1.click/global1.php?stream=max2"
+            data-alt-url="https://streamtp-golden1.click/global1.php?stream=peacock2"
+            data-kickoff="2026-08-22T15:00:00+01:00"
+            data-duration="96"
+          >
+            <span class="match-status" data-match-status>UPCOMING</span>
+            <span class="match-teams">Nottingham Forest vs Leeds United</span>
+            <span class="match-date" data-match-date>Date</span>
+            <span class="match-time" data-match-time>Time</span>
+            <span class="match-countdown" data-match-countdown>Starting soon</span>
+          </button>
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Everton vs Crystal Palace"
+            data-url="https://streamtp-golden1.click/global1.php?stream=espn"
+            data-alt-url="https://streamtp-golden1.click/global1.php?stream=universo_usa"
+            data-kickoff="2026-08-22T15:00:00+01:00"
+            data-duration="96"
+          >
+            <span class="match-status" data-match-status>UPCOMING</span>
+            <span class="match-teams">Everton vs Crystal Palace</span>
+            <span class="match-date" data-match-date>Date</span>
+            <span class="match-time" data-match-time>Time</span>
+            <span class="match-countdown" data-match-countdown>Starting soon</span>
+          </button>
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Ipswich Town vs Sunderland"
+            data-url="https://streamtp-golden1.click/global1.php?stream=max1"
+            data-alt-url="https://streamtp-golden1.click/global1.php?stream=peacock1"
+            data-kickoff="2026-08-22T15:00:00+01:00"
+            data-duration="96"
+          >
+            <span class="match-status" data-match-status>UPCOMING</span>
+            <span class="match-teams">Ipswich Town vs Sunderland</span>
+            <span class="match-date" data-match-date>Date</span>
+            <span class="match-time" data-match-time>Time</span>
+            <span class="match-countdown" data-match-countdown>Starting soon</span>
+          </button>
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Brentford vs Tottenham Hotspur"
+            data-url="https://streamtp-golden1.click/global1.php?stream=espn"
+            data-alt-url="https://streamtp-golden1.click/global1.php?stream=peacock4"
+            data-kickoff="2026-08-22T17:30:00+01:00"
+            data-duration="96"
+          >
+            <span class="match-status" data-match-status>UPCOMING</span>
+            <span class="match-teams">Brentford vs Tottenham Hotspur</span>
+            <span class="match-date" data-match-date>Date</span>
+            <span class="match-time" data-match-time>Time</span>
+            <span class="match-countdown" data-match-countdown>Starting soon</span>
+          </button>
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Athletic Club vs Sevilla"
+            data-url="https://streamtp-golden1.click/global1.php?stream=espnplus1"
+            data-alt-url="https://streamtp-golden1.click/global1.php?stream=espndeportes"
+            data-kickoff="2026-08-22T16:00:00+01:00"
+            data-duration="96"
+          >
+            <span class="match-status" data-match-status>UPCOMING</span>
+            <span class="match-teams">Athletic Club vs Sevilla</span>
+            <span class="match-date" data-match-date>Date</span>
+            <span class="match-time" data-match-time>Time</span>
+            <span class="match-countdown" data-match-countdown>Starting soon</span>
+          </button>
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Valencia vs Celta Vigo"
+            data-url="https://streamtp-golden1.click/global1.php?stream=dsports2"
+            data-alt-url="https://streamtp-golden1.click/global1.php?stream=espndeportes"
+            data-kickoff="2026-08-22T18:30:00+01:00"
+            data-duration="96"
+          >
+            <span class="match-status" data-match-status>UPCOMING</span>
+            <span class="match-teams">Valencia vs Celta Vigo</span>
+            <span class="match-date" data-match-date>Date</span>
+            <span class="match-time" data-match-time>Time</span>
+            <span class="match-countdown" data-match-countdown>Starting soon</span>
+          </button>
+
+          <button
+            type="button"
+            class="match-card"
+            data-name="Espanyol vs Real Madrid"
+            data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
+            data-alt-url="https://streamtp-golden1.click/global1.php?stream=espnplus3"
+            data-kickoff="2026-08-22T20:30:00+01:00"
+            data-duration="96"
+          >
+            <span class="match-status" data-match-status>UPCOMING</span>
+            <span class="match-teams">Espanyol vs Real Madrid</span>
+            <span class="match-date" data-match-date>Date</span>
+            <span class="match-time" data-match-time>Time</span>
+            <span class="match-countdown" data-match-countdown>Starting soon</span>
+          </button>
 
         </div>
 
-
-        <div
-          class="match-grid"
-          id="matchList"
-        >
-
-
-          <!-- =================================================
-               DEPORTIVO VS ELCHE
-               ================================================= -->
-
-         <!-- =========================================================
-     FRIDAY, 21 AUGUST 2026
-     All kickoff times are Nigeria time (WAT / UTC+1)
-     ========================================================= -->
-
-<!-- Premier League -->
-
-<!-- =========================================================
-     SATURDAY, 22 AUGUST 2026
-     All kickoff times are Nigeria time (WAT / UTC+1)
-     ========================================================= -->
-
-<!-- Premier League -->
-
-<button
-  type="button"
-  class="match-card"
-  data-name="Hull City vs Manchester United"
-  data-url="https://streamtp-golden1.click/global1.php?stream=espn"
-  data-alt-url="https://streamtp-golden1.click/global1.php?stream=universo_usa"
-  data-kickoff="2026-08-22T12:30:00+01:00"
-  data-duration="96"
->
-  <span class="match-status" data-match-status>
-    UPCOMING
-  </span>
-
-  <span class="match-teams">
-    Hull City vs Manchester United
-  </span>
-
-  <span class="match-date" data-match-date>
-    Date
-  </span>
-
-  <span class="match-time" data-match-time>
-    Time
-  </span>
-
-  <span class="match-countdown" data-match-countdown>
-    Starting soon
-  </span>
-</button>
-
-
-<button
-  type="button"
-  class="match-card"
-  data-name="Nottingham Forest vs Leeds United"
-  data-url="https://streamtp-golden1.click/global1.php?stream=max2"
-  data-alt-url="https://streamtp-golden1.click/global1.php?stream=peacock2"
-  data-kickoff="2026-08-22T15:00:00+01:00"
-  data-duration="96"
->
-  <span class="match-status" data-match-status>
-    UPCOMING
-  </span>
-
-  <span class="match-teams">
-    Nottingham Forest vs Leeds United
-  </span>
-
-  <span class="match-date" data-match-date>
-    Date
-  </span>
-
-  <span class="match-time" data-match-time>
-    Time
-  </span>
-
-  <span class="match-countdown" data-match-countdown>
-    Starting soon
-  </span>
-</button>
-
-
-<button
-  type="button"
-  class="match-card"
-  data-name="Everton vs Crystal Palace"
-  data-url="https://streamtp-golden1.click/global1.php?stream=espn"
-  data-alt-url="https://streamtp-golden1.click/global1.php?stream=universo_usa"
-  data-kickoff="2026-08-22T15:00:00+01:00"
-  data-duration="96"
->
-  <span class="match-status" data-match-status>
-    UPCOMING
-  </span>
-
-  <span class="match-teams">
-    Everton vs Crystal Palace
-  </span>
-
-  <span class="match-date" data-match-date>
-    Date
-  </span>
-
-  <span class="match-time" data-match-time>
-    Time
-  </span>
-
-  <span class="match-countdown" data-match-countdown>
-    Starting soon
-  </span>
-</button>
-
-
-<button
-  type="button"
-  class="match-card"
-  data-name="Ipswich Town vs Sunderland"
-  data-url="https://streamtp-golden1.click/global1.php?stream=max1"
-  data-alt-url="https://streamtp-golden1.click/global1.php?stream=peacock1"
-  data-kickoff="2026-08-22T15:00:00+01:00"
-  data-duration="96"
->
-  <span class="match-status" data-match-status>
-    UPCOMING
-  </span>
-
-  <span class="match-teams">
-    Ipswich Town vs Sunderland
-  </span>
-
-  <span class="match-date" data-match-date>
-    Date
-  </span>
-
-  <span class="match-time" data-match-time>
-    Time
-  </span>
-
-  <span class="match-countdown" data-match-countdown>
-    Starting soon
-  </span>
-</button>
-
-
-<button
-  type="button"
-  class="match-card"
-  data-name="Brentford vs Tottenham Hotspur"
-  data-url="https://streamtp-golden1.click/global1.php?stream=espn"
-  data-alt-url="https://streamtp-golden1.click/global1.php?stream=peacock4"
-  data-kickoff="2026-08-22T17:30:00+01:00"
-  data-duration="96"
->
-  <span class="match-status" data-match-status>
-    UPCOMING
-  </span>
-
-  <span class="match-teams">
-    Brentford vs Tottenham Hotspur
-  </span>
-
-  <span class="match-date" data-match-date>
-    Date
-  </span>
-
-  <span class="match-time" data-match-time>
-    Time
-  </span>
-
-  <span class="match-countdown" data-match-countdown>
-    Starting soon
-  </span>
-</button>
-
-
-
-<!-- LaLiga -->
-
-<button
-  type="button"
-  class="match-card"
-  data-name="Athletic Club vs Sevilla"
-  data-url="https://streamtp-golden1.click/global1.php?stream=espnplus1"
-  data-alt-url="https://streamtp-golden1.click/global1.php?stream=espndeportes"
-  data-kickoff="2026-08-22T16:00:00+01:00"
-  data-duration="96"
->
-  <span class="match-status" data-match-status>
-    UPCOMING
-  </span>
-
-  <span class="match-teams">
-    Athletic Club vs Sevilla
-  </span>
-
-  <span class="match-date" data-match-date>
-    Date
-  </span>
-
-  <span class="match-time" data-match-time>
-    Time
-  </span>
-
-  <span class="match-countdown" data-match-countdown>
-    Starting soon
-  </span>
-</button>
-
-
-<button
-  type="button"
-  class="match-card"
-  data-name="Valencia vs Celta Vigo"
-  data-url="https://streamtp-golden1.click/global1.php?stream=dsports2"
-  data-alt-url="https://streamtp-golden1.click/global1.php?stream=espndeportes"
-  data-kickoff="2026-08-22T18:30:00+01:00"
-  data-duration="96"
->
-  <span class="match-status" data-match-status>
-    UPCOMING
-  </span>
-
-  <span class="match-teams">
-    Valencia vs Celta Vigo
-  </span>
-
-  <span class="match-date" data-match-date>
-    Date
-  </span>
-
-  <span class="match-time" data-match-time>
-    Time
-  </span>
-
-  <span class="match-countdown" data-match-countdown>
-    Starting soon
-  </span>
-</button>
-
-
-<button
-  type="button"
-  class="match-card"
-  data-name="Espanyol vs Real Madrid"
-  data-url="https://streamtp-golden1.click/global1.php?stream=dsports"
-  data-alt-url="https://streamtp-golden1.click/global1.php?stream=espnplus3"
-  data-kickoff="2026-08-22T20:30:00+01:00"
-  data-duration="96"
->
-  <span class="match-status" data-match-status>
-    UPCOMING
-  </span>
-
-  <span class="match-teams">
-    Espanyol vs Real Madrid
-  </span>
-
-  <span class="match-date" data-match-date>
-    Date
-  </span>
-
-  <span class="match-time" data-match-time>
-    Time
-  </span>
-
-  <span class="match-countdown" data-match-countdown>
-    Starting soon
-  </span>
-</button>
-
-        </div>
-
-
-        <div
-          class="empty-state"
-          id="footballEmpty"
-          hidden
-        >
+        <div class="empty-state" id="footballEmpty" hidden>
           No matches available.
         </div>
 
-
       </div>
-
     </section>
-
 
     <!-- =======================================================
          HIGHLIGHTS
-         ======================================================= -->
 
+         IMPORTANT:
+         Highlights are loaded from Highlights.json.
+         The cards intentionally use .match-card so they have
+         the same layout/appearance as Upcoming & Live Matches.
+         ======================================================= -->
     <section
       class="content-section highlights-content"
       id="highlightsContent"
       hidden
     >
-
       <div class="container">
 
         <div class="content-heading">
-
-          <h1>
-            Football Highlights
-          </h1>
-
-          <span
-            class="content-count"
-            id="highlightCount"
-          >
-            1
-          </span>
-
+          <h1>Football Highlights</h1>
+          <span class="content-count" id="highlightCount">0</span>
         </div>
 
-
         <div
-          class="highlight-grid"
+          class="match-grid highlight-match-grid"
           id="highlightList"
+          data-source="Highlights.json"
         >
-
-
-          <!-- CHELSEA VS REAL SOCIEDAD -->
-
-          <button
-            type="button"
-            class="highlight-card"
-            data-name="Chelsea vs Real Sociedad Highlights"
-            data-url="https://filemoon.org/en/E1x3AqDe3yk6/embed"
-            data-date="2026-08-17"
-          >
-
-            <div class="highlight-thumbnail">
-
-              <span>
-                ▶
-              </span>
-
-            </div>
-
-            <strong>
-              Chelsea vs Real Sociedad
-            </strong>
-
-            <small>
-              Highlights
-            </small>
-
-          </button>
-
-
+          <!-- Highlights.json is rendered here by script.js / loader below. -->
         </div>
 
-
-        <div
-          class="empty-state"
-          id="highlightEmpty"
-          hidden
-        >
+        <div class="empty-state" id="highlightEmpty" hidden>
           No highlights available.
         </div>
 
-
       </div>
-
     </section>
-
 
     <!-- =======================================================
          TV CHANNELS
          ======================================================= -->
-
-    <section
-      class="content-section tv-content"
-      id="tvContent"
-      hidden
-    >
-
+    <section class="content-section tv-content" id="tvContent" hidden>
       <div class="container">
 
-
         <div class="content-heading">
-
-          <h1>
-            TV Channels
-          </h1>
-
-          <span class="content-count" id="tvCount">
-            4
-          </span>
-
+          <h1>TV Channels</h1>
+          <span class="content-count" id="tvCount">0</span>
         </div>
 
-
-        <!-- ===================================================
-             SPORTS
-             =================================================== -->
-
-        <div
-          class="tv-category"
-          data-tv-category
-        >
-
+        <div class="tv-category" data-tv-category>
           <div class="tv-category-heading">
-
-            <h2>
-              ⚽ Sports
-            </h2>
-
-            <span>
-              Live Sports
-            </span>
-
+            <h2>⚽ Sports</h2>
+            <span>Live Sports</span>
           </div>
-
 
           <div class="tv-channel-grid">
 
@@ -1137,111 +588,50 @@
               data-name="Bahrain Sports"
               data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/chunklist_w1526827686_b978000.m3u8"
             >
-
-              <span class="tv-channel-icon">
-                ⚽
-              </span>
-
+              <span class="tv-channel-icon">⚽</span>
               <span class="tv-channel-info">
-
-                <strong>
-                  Bahrain Sports
-                </strong>
-
-                <small>
-                  Sports
-                </small>
-
+                <strong>Bahrain Sports</strong>
+                <small>Sports</small>
               </span>
-
-              <span class="tv-channel-status">
-                LIVE
-              </span>
-
+              <span class="tv-channel-status">LIVE</span>
             </button>
-           <button
-  type="button"
-  class="tv-channel"
-  data-name="Fight 24"
-  data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://d3d85c7qkywguj.cloudfront.net/scheduler/scheduleMaster/263/variant/22099681.m3u8"
->
 
-  <span class="tv-channel-icon">
-    ⚽
-  </span>
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="Fight 24"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://d3d85c7qkywguj.cloudfront.net/scheduler/scheduleMaster/263/variant/22099681.m3u8"
+            >
+              <span class="tv-channel-icon">⚽</span>
+              <span class="tv-channel-info">
+                <strong>Fight 24</strong>
+                <small>Sports</small>
+              </span>
+              <span class="tv-channel-status">LIVE</span>
+            </button>
 
-  <span class="tv-channel-info">
+            <button
+              type="button"
+              class="tv-channel"
+              data-name="Talk Sports"
+              data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://af7a8b4e.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctZ2JfdGFsa1NQT1JUX0hMUw/playlist.m3u8"
+            >
+              <span class="tv-channel-icon">⚽</span>
+              <span class="tv-channel-info">
+                <strong>Talk Sports</strong>
+                <small>Sports</small>
+              </span>
+              <span class="tv-channel-status">LIVE</span>
+            </button>
 
-    <strong>
-     Fight 24
-    </strong>
-
-    <small>
-      Sports
-    </small>
-
-  </span>
-
-  <span class="tv-channel-status">
-    LIVE
-  </span>
-
-</button> 
-     </button>
-           <button
-  type="button"
-  class="tv-channel"
-  data-name="TalkSports"
-  data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://af7a8b4e.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctZ2JfdGFsa1NQT1JUX0hMUw/playlist.m3u8"
->
-
-  <span class="tv-channel-icon">
-    ⚽
-  </span>
-
-  <span class="tv-channel-info">
-
-    <strong>
-      Talk Sports
-    </strong>
-
-    <small>
-      Sports
-    </small>
-
-  </span>
-
-  <span class="tv-channel-status">
-    LIVE
-  </span>
-
-</button> 
           </div>
-
         </div>
 
-
-        <!-- ===================================================
-             MOVIES / FILM
-             =================================================== -->
-
-        <div
-          class="tv-category"
-          data-tv-category
-        >
-
+        <div class="tv-category" data-tv-category>
           <div class="tv-category-heading">
-
-            <h2>
-              🎬 Movies
-            </h2>
-
-            <span>
-              Movie Channels
-            </span>
-
+            <h2>🎬 Movies</h2>
+            <span>Movie Channels</span>
           </div>
-
 
           <div class="tv-channel-grid">
 
@@ -1251,55 +641,22 @@
               data-name="FilmBox"
               data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://iptv.prosto.tv/ch63/tracks-v1a1/mono.m3u8"
             >
-
-              <span class="tv-channel-icon">
-                🎬
-              </span>
-
+              <span class="tv-channel-icon">🎬</span>
               <span class="tv-channel-info">
-
-                <strong>
-                  FilmBox
-                </strong>
-
-                <small>
-                  Movies
-                </small>
-
+                <strong>FilmBox</strong>
+                <small>Movies</small>
               </span>
-
-              <span class="tv-channel-status">
-                LIVE
-              </span>
-
+              <span class="tv-channel-status">LIVE</span>
             </button>
 
           </div>
-
         </div>
 
-
-        <!-- ===================================================
-             MUSIC
-             =================================================== -->
-
-        <div
-          class="tv-category"
-          data-tv-category
-        >
-
+        <div class="tv-category" data-tv-category>
           <div class="tv-category-heading">
-
-            <h2>
-              🎵 Music
-            </h2>
-
-            <span>
-              Music Channels
-            </span>
-
+            <h2>🎵 Music</h2>
+            <span>Music Channels</span>
           </div>
-
 
           <div class="tv-channel-grid">
 
@@ -1309,55 +666,22 @@
               data-name="Afrobeat TV"
               data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://stream.ecable.tv/afrobeats/index.m3u8"
             >
-
-              <span class="tv-channel-icon">
-                🎵
-              </span>
-
+              <span class="tv-channel-icon">🎵</span>
               <span class="tv-channel-info">
-
-                <strong>
-                  Afrobeat TV
-                </strong>
-
-                <small>
-                  African Music
-                </small>
-
+                <strong>Afrobeat TV</strong>
+                <small>African Music</small>
               </span>
-
-              <span class="tv-channel-status">
-                LIVE
-              </span>
-
+              <span class="tv-channel-status">LIVE</span>
             </button>
 
           </div>
-
         </div>
 
-
-        <!-- ===================================================
-             NEWS
-             =================================================== -->
-
-        <div
-          class="tv-category"
-          data-tv-category
-        >
-
+        <div class="tv-category" data-tv-category>
           <div class="tv-category-heading">
-
-            <h2>
-              📰 News
-            </h2>
-
-            <span>
-              News Channels
-            </span>
-
+            <h2>📰 News</h2>
+            <span>News Channels</span>
           </div>
-
 
           <div class="tv-channel-grid">
 
@@ -1367,87 +691,36 @@
               data-name="ABC News"
               data-url="https://bharadwajpro.github.io/m3u8-player/player/#https://abcnews-streams.akamaized.net/hls/live/2023560-b/abcnewshudson1/master_400.m3u8"
             >
-
-              <span class="tv-channel-icon">
-                📰
-              </span>
-
+              <span class="tv-channel-icon">📰</span>
               <span class="tv-channel-info">
-
-                <strong>
-                  ABC News
-                </strong>
-
-                <small>
-                  World News
-                </small>
-
+                <strong>ABC News</strong>
+                <small>World News</small>
               </span>
-
-              <span class="tv-channel-status">
-                LIVE
-              </span>
-
+              <span class="tv-channel-status">LIVE</span>
             </button>
 
           </div>
-
         </div>
 
-
-        <div
-          class="empty-state"
-          id="tvEmpty"
-          hidden
-        >
+        <div class="empty-state" id="tvEmpty" hidden>
           No TV channels available.
         </div>
 
-
       </div>
-
     </section>
-
 
     <!-- =======================================================
          MOVIES
          ======================================================= -->
-
-    <section
-      class="content-section movies-content"
-      id="moviesContent"
-      hidden
-    >
-
+    <section class="content-section movies-content" id="moviesContent" hidden>
       <div class="container">
 
-
         <div class="content-heading">
-
-          <h1>
-            Movies
-          </h1>
-
-          <span class="content-count" id="movieCount">
-            1
-          </span>
-
+          <h1>Movies</h1>
+          <span class="content-count" id="movieCount">0</span>
         </div>
 
-
-        <div
-          class="movie-grid"
-          id="movieList"
-        >
-
-
-          <!--
-               Each movie can have its own download URL:
-               data-download-url="https://example.com/movie-file.mp4"
-               The Download button appears only in the Movies section.
-               -->
-
-          <!-- HOUSEMAID -->
+        <div class="movie-grid" id="movieList">
 
           <button
             type="button"
@@ -1457,26 +730,13 @@
             data-download-url="https://meetdownload.com/4a487c6d2bb9413ead201852c0b85345/housemaid-2026-34197-mkv"
             data-date="2026-08-17"
           >
-
-            <span class="movie-status">
-              MOVIE
-            </span>
-
-            <span class="movie-icon">
-              🎬
-            </span>
-
-            <span class="movie-title">
-              Housemaid (2026)
-            </span>
-
-            <span class="movie-rating">
-              IMDb 5.1/10
-            </span>
-
+            <span class="movie-status">MOVIE</span>
+            <span class="movie-icon">🎬</span>
+            <span class="movie-title">Housemaid (2026)</span>
+            <span class="movie-rating">IMDb 5.1/10</span>
           </button>
 
- <button
+          <button
             type="button"
             class="movie-card"
             data-name="Toy Story 5 (2026)"
@@ -1484,23 +744,10 @@
             data-download-url="https://meetdownload.com/dcd9e909ed6440e0a6ab50a5ed49a7c5/toy-story-5-2026-34832-mkv"
             data-date="2026-08-19"
           >
-
-            <span class="movie-status">
-              MOVIE
-            </span>
-
-            <span class="movie-icon">
-              🎬
-            </span>
-
-            <span class="movie-title">
-              Toy Story 5 (2026)
-            </span>
-
-            <span class="movie-rating">
-              IMDb 7.4/10
-            </span>
-
+            <span class="movie-status">MOVIE</span>
+            <span class="movie-icon">🎬</span>
+            <span class="movie-title">Toy Story 5 (2026)</span>
+            <span class="movie-rating">IMDb 7.4/10</span>
           </button>
 
           <button
@@ -1511,23 +758,10 @@
             data-download-url="https://meetdownload.com/171057b6ea0b4766a24046e68ef530c6/feed-2026-34788-mkv"
             data-date="2026-08-19"
           >
-
-            <span class="movie-status">
-              MOVIE
-            </span>
-
-            <span class="movie-icon">
-              🎬
-            </span>
-
-            <span class="movie-title">
-              Feed (2026)
-            </span>
-
-            <span class="movie-rating">
-              IMDb 3.6/10
-            </span>
-
+            <span class="movie-status">MOVIE</span>
+            <span class="movie-icon">🎬</span>
+            <span class="movie-title">Feed (2026)</span>
+            <span class="movie-rating">IMDb 3.6/10</span>
           </button>
 
           <button
@@ -1538,26 +772,11 @@
             data-download-url="https://meetdownload.com/fbf28708c565484c8eb6be8737283be6/hellcat-2025-34724-mkv"
             data-date="2026-08-19"
           >
-
-            <span class="movie-status">
-              MOVIE
-            </span>
-
-            <span class="movie-icon">
-              🎬
-            </span>
-
-            <span class="movie-title">
-              Hellcat (2025)
-            </span>
-
-            <span class="movie-rating">
-              IMDb 4.7/10
-            </span>
-
+            <span class="movie-status">MOVIE</span>
+            <span class="movie-icon">🎬</span>
+            <span class="movie-title">Hellcat (2025)</span>
+            <span class="movie-rating">IMDb 4.7/10</span>
           </button>
-
-          <!-- SPIDERMAN -->
 
           <button
             type="button"
@@ -1567,52 +786,27 @@
             data-download-url=""
             data-date="2026-08-18"
           >
-
-            <span class="movie-status">
-              MOVIE
-            </span>
-
-            <span class="movie-icon">
-              🎬
-            </span>
-
-            <span class="movie-title">
-              Spiderman: Brand New Day (2026)
-            </span>
-
-            <span class="movie-rating">
-              IMDb 8.1/10
-            </span>
-
+            <span class="movie-status">MOVIE</span>
+            <span class="movie-icon">🎬</span>
+            <span class="movie-title">Spiderman: Brand New Day (2026)</span>
+            <span class="movie-rating">IMDb 8.1/10</span>
           </button>
-
 
         </div>
 
-
-        <div
-          class="empty-state"
-          id="movieEmpty"
-          hidden
-        >
+        <div class="empty-state" id="movieEmpty" hidden>
           No movies available.
         </div>
 
-
       </div>
-
     </section>
 
-
   </main>
-
 
   <!-- =========================================================
        FOOTER
        ========================================================= -->
-
   <footer class="footer">
-
     <div class="container footer-wrap">
 
       <a
@@ -1636,29 +830,317 @@
       </a>
 
     </div>
-
   </footer>
-
 
   <!-- =========================================================
        MAIN JAVASCRIPT
        ========================================================= -->
-
   <script src="script.js"></script>
 
+  <!-- =========================================================
+       HIGHLIGHTS.JSON LOADER
+
+       This makes Highlights.json the source of the Highlights
+       section. It supports:
+
+       1. An array:
+          [
+            {
+              "name": "Chelsea vs Real Sociedad",
+              "url": "...",
+              "date": "2026-08-17"
+            }
+          ]
+
+       2. An object containing:
+          { "highlights": [ ... ] }
+
+       It also accepts common aliases such as title/link/embed.
+       ========================================================= -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const highlightList = document.getElementById("highlightList");
+      const highlightCount = document.getElementById("highlightCount");
+      const highlightEmpty = document.getElementById("highlightEmpty");
+
+      if (!highlightList) return;
+
+      function firstValue(item, keys) {
+        for (const key of keys) {
+          if (
+            item &&
+            item[key] !== undefined &&
+            item[key] !== null &&
+            String(item[key]).trim() !== ""
+          ) {
+            return String(item[key]).trim();
+          }
+        }
+        return "";
+      }
+
+      function normalizeHighlights(payload) {
+
+        if (Array.isArray(payload)) {
+          return payload;
+        }
+
+        if (payload && Array.isArray(payload.highlights)) {
+          return payload.highlights;
+        }
+
+        if (payload && Array.isArray(payload.data)) {
+          return payload.data;
+        }
+
+        if (payload && Array.isArray(payload.items)) {
+          return payload.items;
+        }
+
+        return [];
+      }
+
+      function escapeText(value) {
+        return String(value ?? "");
+      }
+
+      function createHighlightCard(item) {
+
+        const name = firstValue(item, [
+          "name",
+          "title",
+          "match",
+          "fixture",
+          "team"
+        ]) || "Football Highlights";
+
+        const url = firstValue(item, [
+          "url",
+          "link",
+          "embed",
+          "embedUrl",
+          "video",
+          "videoUrl"
+        ]);
+
+        const altUrl = firstValue(item, [
+          "altUrl",
+          "alt_url",
+          "alternativeUrl",
+          "alternative_url"
+        ]);
+
+        const date = firstValue(item, [
+          "date",
+          "matchDate",
+          "match_date",
+          "published",
+          "publishedDate"
+        ]);
+
+        const duration = firstValue(item, [
+          "duration"
+        ]) || "120";
+
+        const card = document.createElement("button");
+
+        card.type = "button";
+
+        /*
+         * IMPORTANT:
+         * Use match-card instead of the old highlight-card.
+         * This gives Highlights the same card structure as
+         * Upcoming & Live Matches.
+         */
+        card.className = "match-card highlight-match-card";
+
+        card.dataset.name = name;
+        card.dataset.url = url;
+        card.dataset.duration = duration;
+
+        if (altUrl) {
+          card.dataset.altUrl = altUrl;
+        }
+
+        if (date) {
+          card.dataset.highlightDate = date;
+        }
+
+        const status = document.createElement("span");
+        status.className = "match-status highlight-status";
+        status.textContent = "HIGHLIGHT";
+
+        const teams = document.createElement("span");
+        teams.className = "match-teams";
+        teams.textContent = escapeText(name);
+
+        const dateElement = document.createElement("span");
+        dateElement.className = "match-date";
+        dateElement.textContent = date
+          ? formatHighlightDate(date)
+          : "Football Highlights";
+
+        const timeElement = document.createElement("span");
+        timeElement.className = "match-time";
+        timeElement.textContent = "WATCH NOW";
+
+        const actionElement = document.createElement("span");
+        actionElement.className = "match-countdown";
+        actionElement.textContent = url
+          ? "Tap to watch highlights"
+          : "Video unavailable";
+
+        card.appendChild(status);
+        card.appendChild(teams);
+        card.appendChild(dateElement);
+        card.appendChild(timeElement);
+        card.appendChild(actionElement);
+
+        if (!url) {
+          card.disabled = true;
+        }
+
+        return card;
+      }
+
+      function formatHighlightDate(value) {
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+          return String(value);
+        }
+
+        return new Intl.DateTimeFormat(undefined, {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        }).format(date);
+      }
+
+      function sortHighlightItems(items) {
+
+        return items.sort(function (a, b) {
+
+          const dateA = firstValue(a, [
+            "date",
+            "matchDate",
+            "match_date",
+            "published",
+            "publishedDate"
+          ]);
+
+          const dateB = firstValue(b, [
+            "date",
+            "matchDate",
+            "match_date",
+            "published",
+            "publishedDate"
+          ]);
+
+          const timeA = dateA
+            ? new Date(dateA).getTime()
+            : 0;
+
+          const timeB = dateB
+            ? new Date(dateB).getTime()
+            : 0;
+
+          return timeB - timeA;
+        });
+      }
+
+      async function loadHighlights() {
+
+        try {
+
+          const response = await fetch(
+            highlightList.dataset.source || "Highlights.json",
+            {
+              cache: "no-store"
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(
+              "Highlights.json returned HTTP " +
+              response.status
+            );
+          }
+
+          const payload = await response.json();
+
+          const items = sortHighlightItems(
+            normalizeHighlights(payload)
+          );
+
+          highlightList.innerHTML = "";
+
+          items.forEach(function (item) {
+            highlightList.appendChild(
+              createHighlightCard(item)
+            );
+          });
+
+          if (highlightCount) {
+            highlightCount.textContent = items.length;
+          }
+
+          if (highlightEmpty) {
+            highlightEmpty.hidden = items.length !== 0;
+          }
+
+          /*
+           * Let script.js know that the cards have been added.
+           */
+          highlightList.dispatchEvent(
+            new CustomEvent("highlightsloaded", {
+              detail: {
+                items: items
+              }
+            })
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Deeprowss Highlights.json loading failed:",
+            error
+          );
+
+          highlightList.innerHTML = "";
+
+          if (highlightCount) {
+            highlightCount.textContent = "0";
+          }
+
+          if (highlightEmpty) {
+            highlightEmpty.hidden = false;
+          }
+        }
+      }
+
+      loadHighlights();
+
+    });
+  </script>
 
   <!-- =========================================================
        FIREBASE PUSH NOTIFICATIONS
        ========================================================= -->
-
   <script type="module">
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
     import {
       getMessaging,
       getToken,
       onMessage
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-messaging.js";
+    } from
+      "https://www.gstatic.com/firebasejs/12.1.0/firebase-messaging.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBs9eSquNu2drJjM3vqFGDX1QU-VE1_F7U",
@@ -1679,27 +1161,26 @@
       const app = initializeApp(firebaseConfig);
       const messaging = getMessaging(app);
 
-      /*
-       * Register the Firebase messaging service worker.
-       * The file must be placed in the root of the GitHub Pages site.
-       */
-      if ("serviceWorker" in navigator && "Notification" in window) {
+      if (
+        "serviceWorker" in navigator &&
+        "Notification" in window
+      ) {
 
         const registration =
           await navigator.serviceWorker.register(
             "./firebase-messaging-sw.js"
           );
 
-        /*
-         * Create the notification permission button only when
-         * browser notifications are supported.
-         */
         const notificationButton =
           document.createElement("button");
 
         notificationButton.type = "button";
-        notificationButton.id = "enableNotificationsButton";
-        notificationButton.textContent = "🔔 Enable Notifications";
+        notificationButton.id =
+          "enableNotificationsButton";
+
+        notificationButton.textContent =
+          "🔔 Enable Notifications";
+
         notificationButton.setAttribute(
           "aria-label",
           "Enable Deeprowss push notifications"
@@ -1722,17 +1203,23 @@
           "box-shadow:0 8px 24px rgba(0,0,0,.35)"
         ].join(";");
 
-        document.body.appendChild(notificationButton);
+        document.body.appendChild(
+          notificationButton
+        );
 
         if (Notification.permission === "granted") {
-  notificationButton.remove();
-}
+          notificationButton.remove();
+        }
 
         if (Notification.permission === "denied") {
-          notificationButton.textContent = "🔔 Notifications Blocked";
+
+          notificationButton.textContent =
+            "🔔 Notifications Blocked";
+
           notificationButton.disabled = true;
           notificationButton.style.opacity = "0.55";
-          notificationButton.style.cursor = "not-allowed";
+          notificationButton.style.cursor =
+            "not-allowed";
         }
 
         notificationButton.addEventListener(
@@ -1757,68 +1244,54 @@
                   messaging,
                   {
                     vapidKey: vapidKey,
-                    serviceWorkerRegistration: registration
+                    serviceWorkerRegistration:
+                      registration
                   }
                 );
 
               if (token) {
 
-                /*
-                 * The FCM token identifies this browser.
-                 * Copy it from the browser console if you need
-                 * to send targeted messages through an API later.
-                 */
                 console.log(
-  "Deeprowss FCM registration token:",
-  token
-);
+                  "Deeprowss FCM registration token:",
+                  token
+                );
 
-/*
- * Register this browser with the Deeprowss
- * notification topic.
- *
- * IMPORTANT:
- * Replace the URL below after your
- * Firebase Function has been deployed.
- */
-const registrationResponse = await fetch(
-  "YOUR_FIREBASE_FUNCTION_URL",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      token: token
-    })
-  }
-);
+                const registrationResponse =
+                  await fetch(
+                    "YOUR_FIREBASE_FUNCTION_URL",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type":
+                          "application/json"
+                      },
+                      body: JSON.stringify({
+                        token: token
+                      })
+                    }
+                  );
 
-if (!registrationResponse.ok) {
+                if (!registrationResponse.ok) {
+                  throw new Error(
+                    "Notification subscription registration failed."
+                  );
+                }
 
-  throw new Error(
-    "Notification subscription registration failed."
-  );
+                const registrationResult =
+                  await registrationResponse.json();
 
-}
+                if (!registrationResult.success) {
+                  throw new Error(
+                    "Firebase notification subscription failed."
+                  );
+                }
 
-const registrationResult =
-  await registrationResponse.json();
+                console.log(
+                  "Deeprowss notifications subscribed:",
+                  registrationResult.topic
+                );
 
-if (!registrationResult.success) {
-
-  throw new Error(
-    "Firebase notification subscription failed."
-  );
-
-}
-
-console.log(
-  "Deeprowss notifications subscribed:",
-  registrationResult.topic
-);
-
-notificationButton.remove();
+                notificationButton.remove();
 
               } else {
 
@@ -1841,16 +1314,10 @@ notificationButton.remove();
               alert(
                 "Notifications could not be enabled. Please make sure this site is using HTTPS and try again."
               );
-
             }
-
           }
         );
 
-        /*
-         * Foreground notification handling.
-         * When the site is open, FCM messages arrive here.
-         */
         onMessage(
           messaging,
           function (payload) {
@@ -1880,12 +1347,9 @@ notificationButton.remove();
                   badge: "icons/icon-192.png"
                 }
               );
-
             }
-
           }
         );
-
       }
 
     } catch (error) {
@@ -1894,1335 +1358,9 @@ notificationButton.remove();
         "Firebase push notification initialization failed:",
         error
       );
-
     }
 
   </script>
 
-
-  <!-- =========================================================
-       FOOTBALL MATCH DATE / TIME SYSTEM
-       ========================================================= -->
-
-  <script>
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      function () {
-
-        const matchList =
-          document.getElementById("matchList");
-
-        const highlightList =
-          document.getElementById("highlightList");
-
-        const movieList =
-          document.getElementById("movieList");
-
-        const screenFrame =
-          document.getElementById("screenFrame");
-
-        const screenStatus =
-          document.getElementById("screenStatus");
-
-        const altScreenButton =
-          document.getElementById("altScreenButton");
-
-        const altScreenButtonText =
-          document.getElementById("altScreenButtonText");
-
-        const footballContent =
-          document.getElementById("footballContent");
-
-        const moviesContent =
-          document.getElementById("moviesContent");
-
-        const movieDownloadButton =
-          document.getElementById("movieDownloadButton");
-
-        let currentMatchCard = null;
-        let currentMovieCard = null;
-        let altScreenActive = false;
-
-
-        /* =====================================================
-           FOOTBALL ALT SCREEN
-           ===================================================== */
-
-        function getAlternativeUrl(card) {
-
-          if (!card) {
-            return "";
-          }
-
-          return (
-            card.dataset.altUrl ||
-            card.getAttribute("data-alt-url") ||
-            ""
-          ).trim();
-
-        }
-
-
-        function updateAltScreenVisibility() {
-
-          if (!altScreenButton) {
-            return;
-          }
-
-          const footballActive =
-            Boolean(
-              footballContent &&
-              !footballContent.hidden
-            );
-
-          altScreenButton.style.display =
-            footballActive
-              ? "inline-flex"
-              : "none";
-
-          altScreenButton.setAttribute(
-            "aria-hidden",
-            footballActive
-              ? "false"
-              : "true"
-          );
-
-          if (!footballActive) {
-            altScreenActive = false;
-            currentMatchCard = null;
-          }
-
-        }
-
-
-        function updateAltScreenButton() {
-
-          if (!altScreenButton) {
-            return;
-          }
-
-          updateAltScreenVisibility();
-
-          const altUrl =
-            getAlternativeUrl(currentMatchCard);
-
-          const available =
-            Boolean(altUrl);
-
-          altScreenButton.disabled =
-            !available;
-
-          altScreenButton.classList.toggle(
-            "is-active",
-            altScreenActive && available
-          );
-
-          altScreenButton.setAttribute(
-            "aria-pressed",
-            altScreenActive && available
-              ? "true"
-              : "false"
-          );
-
-          if (altScreenButtonText) {
-            altScreenButtonText.textContent =
-              altScreenActive && available
-                ? "Main Screen"
-                : "Alt Screen";
-          }
-
-        }
-
-
-        function switchFootballScreen() {
-
-          if (!currentMatchCard || !screenFrame) {
-            return;
-          }
-
-          const mainUrl =
-            (
-              currentMatchCard.dataset.url ||
-              ""
-            ).trim();
-
-          const altUrl =
-            getAlternativeUrl(
-              currentMatchCard
-            );
-
-          if (!altUrl) {
-            return;
-          }
-
-          if (!altScreenActive) {
-
-            screenFrame.src = altUrl;
-            altScreenActive = true;
-
-            if (screenStatus) {
-              screenStatus.textContent =
-                "ALT SCREEN";
-            }
-
-          } else {
-
-            screenFrame.src = mainUrl;
-            altScreenActive = false;
-
-            if (screenStatus) {
-              screenStatus.textContent =
-                "LIVE";
-            }
-
-          }
-
-          updateAltScreenButton();
-
-        }
-
-
-        /*
-         * Keep Alt Screen synchronized with the active Football section.
-         * This also catches section changes made by script.js.
-         */
-        updateAltScreenVisibility();
-
-        if (footballContent) {
-          const footballSectionObserver =
-            new MutationObserver(
-              function () {
-                updateAltScreenVisibility();
-              }
-            );
-
-          footballSectionObserver.observe(
-            footballContent,
-            {
-              attributes: true,
-              attributeFilter: ["hidden"]
-            }
-          );
-        }
-
-        ["footballButton", "navFootball"].forEach(
-          function (buttonId) {
-
-            const button =
-              document.getElementById(buttonId);
-
-            if (!button) {
-              return;
-            }
-
-            button.addEventListener(
-              "click",
-              function () {
-                setTimeout(
-                  updateAltScreenVisibility,
-                  0
-                );
-              },
-              true
-            );
-
-          }
-        );
-
-        ["highlightsButton", "tvButton", "moviesButton",
-         "navHighlights", "navTV", "navMovies"].forEach(
-          function (buttonId) {
-
-            const button =
-              document.getElementById(buttonId);
-
-            if (!button) {
-              return;
-            }
-
-            button.addEventListener(
-              "click",
-              function () {
-                setTimeout(
-                  updateAltScreenVisibility,
-                  0
-                );
-              },
-              true
-            );
-
-          }
-        );
-
-
-        /* =====================================================
-           MOVIE DOWNLOAD
-           ===================================================== */
-
-        function getMovieDownloadUrl(card) {
-
-          if (!card) {
-            return "";
-          }
-
-          return (
-            card.dataset.downloadUrl ||
-            card.getAttribute("data-download-url") ||
-            ""
-          ).trim();
-
-        }
-
-
-        function updateMovieDownloadButton() {
-
-          if (!movieDownloadButton) {
-            return;
-          }
-
-          const moviesActive =
-            Boolean(
-              moviesContent &&
-              !moviesContent.hidden
-            );
-
-          const downloadUrl =
-            getMovieDownloadUrl(currentMovieCard);
-
-          const available =
-            moviesActive &&
-            Boolean(downloadUrl);
-
-          movieDownloadButton.style.display =
-            moviesActive
-              ? "inline-flex"
-              : "none";
-
-          movieDownloadButton.setAttribute(
-            "aria-hidden",
-            moviesActive
-              ? "false"
-              : "true"
-          );
-
-          movieDownloadButton.setAttribute(
-            "aria-disabled",
-            available
-              ? "false"
-              : "true"
-          );
-
-          movieDownloadButton.classList.toggle(
-            "is-disabled",
-            !available
-          );
-
-          if (available) {
-            movieDownloadButton.href = downloadUrl;
-            movieDownloadButton.setAttribute(
-              "download",
-              ""
-            );
-          } else {
-            movieDownloadButton.href = "#";
-          }
-        }
-
-
-        if (movieList) {
-
-          movieList.addEventListener(
-            "click",
-            function (event) {
-
-              const card =
-                event.target.closest(
-                  ".movie-card[data-url]"
-                );
-
-              if (!card) {
-                return;
-              }
-
-              currentMovieCard = card;
-
-              updateMovieDownloadButton();
-
-            },
-            true
-          );
-
-        }
-
-
-        if (movieDownloadButton) {
-
-          movieDownloadButton.addEventListener(
-            "click",
-            function (event) {
-
-              const downloadUrl =
-                getMovieDownloadUrl(currentMovieCard);
-
-              const moviesActive =
-                Boolean(
-                  moviesContent &&
-                  !moviesContent.hidden
-                );
-
-              if (!moviesActive || !downloadUrl) {
-                event.preventDefault();
-              }
-
-            }
-          );
-
-        }
-
-
-        updateMovieDownloadButton();
-
-        if (moviesContent) {
-
-          const movieSectionObserver =
-            new MutationObserver(
-              function () {
-
-                if (moviesContent.hidden) {
-                  currentMovieCard = null;
-                }
-
-                updateMovieDownloadButton();
-
-              }
-            );
-
-          movieSectionObserver.observe(
-            moviesContent,
-            {
-              attributes: true,
-              attributeFilter: ["hidden"]
-            }
-          );
-
-        }
-
-
-        ["moviesButton", "navMovies"].forEach(
-          function (buttonId) {
-
-            const button =
-              document.getElementById(buttonId);
-
-            if (!button) {
-              return;
-            }
-
-            button.addEventListener(
-              "click",
-              function () {
-                setTimeout(
-                  updateMovieDownloadButton,
-                  0
-                );
-              },
-              true
-            );
-
-          }
-        );
-
-
-        ["footballButton", "navFootball",
-         "highlightsButton", "navHighlights",
-         "tvButton", "navTV"].forEach(
-          function (buttonId) {
-
-            const button =
-              document.getElementById(buttonId);
-
-            if (!button) {
-              return;
-            }
-
-            button.addEventListener(
-              "click",
-              function () {
-
-                setTimeout(
-                  function () {
-                    currentMovieCard = null;
-                    updateMovieDownloadButton();
-                  },
-                  0
-                );
-
-              },
-              true
-            );
-
-          }
-        );
-
-
-        if (matchList) {
-
-          matchList.addEventListener(
-            "click",
-            function (event) {
-
-              const card =
-                event.target.closest(
-                  ".match-card[data-url]"
-                );
-
-              if (!card) {
-                return;
-              }
-
-              currentMatchCard = card;
-              altScreenActive = false;
-
-              updateAltScreenButton();
-
-            },
-            true
-          );
-
-        }
-
-
-        if (altScreenButton) {
-
-          altScreenButton.addEventListener(
-            "click",
-            function () {
-              switchFootballScreen();
-            }
-          );
-
-        }
-
-
-        ["highlightsButton", "tvButton", "moviesButton"].forEach(
-          function (buttonId) {
-
-            const button =
-              document.getElementById(buttonId);
-
-            if (!button) {
-              return;
-            }
-
-            button.addEventListener(
-              "click",
-              function () {
-
-                altScreenActive = false;
-                currentMatchCard = null;
-                currentMovieCard = null;
-                updateAltScreenButton();
-                updateMovieDownloadButton();
-
-              },
-              true
-            );
-
-          }
-        );
-
-
-        const matchCards =
-          matchList
-            ? Array.from(
-                matchList.querySelectorAll(
-                  ".match-card[data-kickoff]"
-                )
-              )
-            : [];
-
-
-        const DEFAULT_MATCH_DURATION = 96;
-
-
-        /* =====================================================
-           DATE
-           ===================================================== */
-
-        function formatLocalDate(date) {
-
-          return new Intl.DateTimeFormat(
-            undefined,
-            {
-              weekday: "short",
-              day: "numeric",
-              month: "short",
-              year: "numeric"
-            }
-          ).format(date);
-
-        }
-
-
-        /* =====================================================
-           TIME
-           ===================================================== */
-
-        function formatLocalTime(date) {
-
-          return new Intl.DateTimeFormat(
-            undefined,
-            {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-              timeZoneName: "short"
-            }
-          ).format(date);
-
-        }
-
-
-        /* =====================================================
-           COUNTDOWN
-           ===================================================== */
-
-        function formatCountdown(milliseconds) {
-
-          if (milliseconds <= 0) {
-
-            return "00:00:00";
-
-          }
-
-
-          let totalSeconds =
-            Math.floor(
-              milliseconds / 1000
-            );
-
-
-          const days =
-            Math.floor(
-              totalSeconds / 86400
-            );
-
-
-          totalSeconds %= 86400;
-
-
-          const hours =
-            Math.floor(
-              totalSeconds / 3600
-            );
-
-
-          totalSeconds %= 3600;
-
-
-          const minutes =
-            Math.floor(
-              totalSeconds / 60
-            );
-
-
-          const seconds =
-            totalSeconds % 60;
-
-
-          const hh =
-            String(hours).padStart(
-              2,
-              "0"
-            );
-
-
-          const mm =
-            String(minutes).padStart(
-              2,
-              "0"
-            );
-
-
-          const ss =
-            String(seconds).padStart(
-              2,
-              "0"
-            );
-
-
-          if (days > 0) {
-
-            return (
-              days +
-              "d " +
-              hh +
-              ":" +
-              mm +
-              ":" +
-              ss
-            );
-
-          }
-
-
-          return (
-            hh +
-            ":" +
-            mm +
-            ":" +
-            ss
-          );
-
-        }
-
-
-        /* =====================================================
-           MATCH STATUS
-           ===================================================== */
-
-        function getMatchStatus(
-          card,
-          now
-        ) {
-
-          const kickoffString =
-            card.dataset.kickoff;
-
-
-          if (!kickoffString) {
-
-            return null;
-
-          }
-
-
-          const kickoff =
-            new Date(
-              kickoffString
-            );
-
-
-          if (
-            Number.isNaN(
-              kickoff.getTime()
-            )
-          ) {
-
-            return null;
-
-          }
-
-
-          const duration =
-            Number(
-              card.dataset.duration
-            ) ||
-            DEFAULT_MATCH_DURATION;
-
-
-          const endTime =
-            new Date(
-              kickoff.getTime() +
-              duration *
-              60 *
-              1000
-            );
-
-
-          if (now < kickoff) {
-
-            return {
-              status: "upcoming",
-              kickoff: kickoff,
-              endTime: endTime
-            };
-
-          }
-
-
-          if (
-            now >= kickoff &&
-            now < endTime
-          ) {
-
-            return {
-              status: "live",
-              kickoff: kickoff,
-              endTime: endTime
-            };
-
-          }
-
-
-          return {
-            status: "ended",
-            kickoff: kickoff,
-            endTime: endTime
-          };
-
-        }
-
-
-        /* =====================================================
-           SORT FOOTBALL MATCHES
-           ===================================================== */
-
-        function sortFootballMatches(
-          now
-        ) {
-
-          if (!matchList) {
-
-            return;
-
-          }
-
-
-          const cards =
-            Array.from(
-              matchList.querySelectorAll(
-                ".match-card[data-kickoff]"
-              )
-            );
-
-
-          cards.sort(
-            function (a, b) {
-
-              const aData =
-                getMatchStatus(
-                  a,
-                  now
-                );
-
-
-              const bData =
-                getMatchStatus(
-                  b,
-                  now
-                );
-
-
-              if (
-                !aData &&
-                !bData
-              ) {
-
-                return 0;
-
-              }
-
-
-              if (!aData) {
-
-                return 1;
-
-              }
-
-
-              if (!bData) {
-
-                return -1;
-
-              }
-
-
-              if (
-                aData.status === "live" &&
-                bData.status !== "live"
-              ) {
-
-                return -1;
-
-              }
-
-
-              if (
-                aData.status !== "live" &&
-                bData.status === "live"
-              ) {
-
-                return 1;
-
-              }
-
-
-              if (
-                aData.status === "live" &&
-                bData.status === "live"
-              ) {
-
-                return (
-                  aData.kickoff.getTime() -
-                  bData.kickoff.getTime()
-                );
-
-              }
-
-
-              if (
-                aData.status === "upcoming" &&
-                bData.status === "ended"
-              ) {
-
-                return -1;
-
-              }
-
-
-              if (
-                aData.status === "ended" &&
-                bData.status === "upcoming"
-              ) {
-
-                return 1;
-
-              }
-
-
-              if (
-                aData.status === "upcoming" &&
-                bData.status === "upcoming"
-              ) {
-
-                return (
-                  aData.kickoff.getTime() -
-                  bData.kickoff.getTime()
-                );
-
-              }
-
-
-              if (
-                aData.status === "ended" &&
-                bData.status === "ended"
-              ) {
-
-                return (
-                  bData.kickoff.getTime() -
-                  aData.kickoff.getTime()
-                );
-
-              }
-
-
-              return 0;
-
-            }
-          );
-
-
-          cards.forEach(
-            function (card) {
-
-              matchList.appendChild(
-                card
-              );
-
-            }
-          );
-
-        }
-
-
-        /* =====================================================
-           UPDATE MATCH
-           ===================================================== */
-
-        function updateMatch(
-          card
-        ) {
-
-          const kickoffString =
-            card.dataset.kickoff;
-
-
-          if (!kickoffString) {
-
-            return;
-
-          }
-
-
-          const kickoff =
-            new Date(
-              kickoffString
-            );
-
-
-          if (
-            Number.isNaN(
-              kickoff.getTime()
-            )
-          ) {
-
-            return;
-
-          }
-
-
-          const duration =
-            Number(
-              card.dataset.duration
-            ) ||
-            DEFAULT_MATCH_DURATION;
-
-
-          const endTime =
-            new Date(
-              kickoff.getTime() +
-              duration *
-              60 *
-              1000
-            );
-
-
-          const now =
-            new Date();
-
-
-          const status =
-            card.querySelector(
-              "[data-match-status]"
-            );
-
-
-          const dateElement =
-            card.querySelector(
-              "[data-match-date]"
-            );
-
-
-          const timeElement =
-            card.querySelector(
-              "[data-match-time]"
-            );
-
-
-          const countdownElement =
-            card.querySelector(
-              "[data-match-countdown]"
-            );
-
-
-          if (dateElement) {
-
-            dateElement.textContent =
-              formatLocalDate(
-                kickoff
-              );
-
-          }
-
-
-          if (timeElement) {
-
-            timeElement.textContent =
-              formatLocalTime(
-                kickoff
-              );
-
-          }
-
-
-          /* ===================================================
-             UPCOMING
-             =================================================== */
-
-          if (now < kickoff) {
-
-            card.classList.remove(
-              "is-live",
-              "is-ended"
-            );
-
-            card.classList.add(
-              "is-upcoming"
-            );
-
-
-            if (status) {
-
-              status.textContent =
-                "UPCOMING";
-
-              status.className =
-                "match-status upcoming";
-
-            }
-
-
-            if (
-              countdownElement
-            ) {
-
-              countdownElement.textContent =
-                "Starts in " +
-                formatCountdown(
-                  kickoff.getTime() -
-                  now.getTime()
-                );
-
-            }
-
-
-            return;
-
-          }
-
-
-          /* ===================================================
-             LIVE
-             =================================================== */
-
-          if (
-            now >= kickoff &&
-            now < endTime
-          ) {
-
-            card.classList.remove(
-              "is-upcoming",
-              "is-ended"
-            );
-
-            card.classList.add(
-              "is-live"
-            );
-
-
-            if (status) {
-
-              status.textContent =
-                "● LIVE";
-
-              status.className =
-                "match-status live";
-
-            }
-
-
-            if (
-              countdownElement
-            ) {
-
-              countdownElement.textContent =
-                "LIVE NOW";
-
-            }
-
-
-            return;
-
-          }
-
-
-          /* ===================================================
-             ENDED
-             =================================================== */
-
-          card.classList.remove(
-            "is-upcoming",
-            "is-live"
-          );
-
-          card.classList.add(
-            "is-ended"
-          );
-
-
-          if (status) {
-
-            status.textContent =
-              "ENDED";
-
-            status.className =
-              "match-status ended";
-
-          }
-
-
-          if (
-            countdownElement
-          ) {
-
-            countdownElement.textContent =
-              "Match ended";
-
-          }
-
-        }
-
-
-        /* =====================================================
-           SORT HIGHLIGHTS
-           ===================================================== */
-
-        function sortHighlights() {
-
-          if (!highlightList) {
-
-            return;
-
-          }
-
-
-          const cards =
-            Array.from(
-              highlightList.querySelectorAll(
-                ".highlight-card[data-date]"
-              )
-            );
-
-
-          cards.sort(
-            function (a, b) {
-
-              const dateA =
-                new Date(
-                  a.dataset.date +
-                  "T00:00:00"
-                ).getTime();
-
-
-              const dateB =
-                new Date(
-                  b.dataset.date +
-                  "T00:00:00"
-                ).getTime();
-
-
-              return dateB - dateA;
-
-            }
-          );
-
-
-          cards.forEach(
-            function (card) {
-
-              highlightList.appendChild(
-                card
-              );
-
-            }
-          );
-
-        }
-
-
-        /* =====================================================
-           SORT MOVIES
-           ===================================================== */
-
-        function sortMovies() {
-
-          if (!movieList) {
-
-            return;
-
-          }
-
-
-          const cards =
-            Array.from(
-              movieList.querySelectorAll(
-                ".movie-card[data-date]"
-              )
-            );
-
-
-          cards.sort(
-            function (a, b) {
-
-              const dateA =
-                new Date(
-                  a.dataset.date +
-                  "T00:00:00"
-                ).getTime();
-
-
-              const dateB =
-                new Date(
-                  b.dataset.date +
-                  "T00:00:00"
-                ).getTime();
-
-
-              return dateB - dateA;
-
-            }
-          );
-
-
-          cards.forEach(
-            function (card) {
-
-              movieList.appendChild(
-                card
-              );
-
-            }
-          );
-
-        }
-
-
-        /* =====================================================
-           INITIAL UPDATE
-           ===================================================== */
-
-        const initialNow =
-          new Date();
-
-
-        matchCards.forEach(
-          updateMatch
-        );
-
-
-        sortFootballMatches(
-          initialNow
-        );
-
-
-        sortHighlights();
-
-
-        sortMovies();
-
-
-        /* =====================================================
-           UPDATE EVERY SECOND
-           ===================================================== */
-
-        setInterval(
-          function () {
-
-            const now =
-              new Date();
-
-
-            matchCards.forEach(
-              updateMatch
-            );
-
-
-            sortFootballMatches(
-              now
-            );
-
-          },
-          1000
-        );
-
-      }
-    );
-
-  </script>
-
-
 </body>
-
 </html>
