@@ -1,10 +1,5 @@
 package com.deeprows.football;
 
-import android.app.DownloadManager;
-import android.net.Uri;
-import android.os.Environment;
-import android.webkit.URLUtil;
-import android.widget.Toast;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -332,114 +327,6 @@ public class MainActivity extends Activity {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
-        /*
- * =========================================================
- * DOWNLOADS
- * =========================================================
- *
- * Any normal webpage download link is handled by Android's
- * DownloadManager and saved to the Downloads folder.
- */
-webView.setDownloadListener(
-        new android.webkit.DownloadListener() {
-
-            @Override
-            public void onDownloadStart(
-                    String url,
-                    String userAgent,
-                    String contentDisposition,
-                    String mimeType,
-                    long contentLength
-            ) {
-
-                if (url == null || url.trim().isEmpty()) {
-                    return;
-                }
-
-                try {
-
-                    String fileName =
-                            URLUtil.guessFileName(
-                                    url,
-                                    contentDisposition,
-                                    mimeType
-                            );
-
-                    DownloadManager.Request request =
-                            new DownloadManager.Request(
-                                    Uri.parse(url)
-                            );
-
-                    request.setMimeType(
-                            mimeType
-                    );
-
-                    request.addRequestHeader(
-                            "User-Agent",
-                            userAgent
-                    );
-
-                    String cookies =
-                            CookieManager
-                                    .getInstance()
-                                    .getCookie(url);
-
-                    if (cookies != null) {
-
-                        request.addRequestHeader(
-                                "Cookie",
-                                cookies
-                        );
-                    }
-
-                    request.setTitle(
-                            fileName
-                    );
-
-                    request.setDescription(
-                            "Downloading from Deeprowss"
-                    );
-
-                    request.setNotificationVisibility(
-                            DownloadManager.Request
-                                    .VISIBILITY_VISIBLE_NOTIFY_COMPLETED
-                    );
-
-                    request.setDestinationInExternalPublicDir(
-                            Environment.DIRECTORY_DOWNLOADS,
-                            fileName
-                    );
-
-                    DownloadManager downloadManager =
-                            (DownloadManager)
-                                    getSystemService(
-                                            Context.DOWNLOAD_SERVICE
-                                    );
-
-                    if (downloadManager != null) {
-
-                        downloadManager.enqueue(
-                                request
-                        );
-
-                        Toast.makeText(
-                                MainActivity.this,
-                                "Download started",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                    }
-
-                } catch (Exception e) {
-
-                    Toast.makeText(
-                            MainActivity.this,
-                            "Download failed",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                }
-            }
-        }
-);
 
         /*
          * Keep WebView navigation fully interactive.
@@ -1004,10 +891,6 @@ webView.setDownloadListener(
         }
 
         popupWebView = new WebView(this);
-        popupWebView.setClickable(true);
-popupWebView.setFocusable(true);
-popupWebView.setFocusableInTouchMode(true);
-popupWebView.setEnabled(true);
         popupWebView.setBackgroundColor(Color.BLACK);
 
         configureWebView(popupWebView);
@@ -1226,24 +1109,14 @@ popupWebView.setEnabled(true);
         popupContainer = null;
 
         if (refreshContainer != null) {
-    refreshContainer.setVisibility(View.GONE);
-}
+            refreshContainer.setVisibility(View.VISIBLE);
+        }
 
-popupContainer.setClickable(true);
-popupContainer.setFocusable(true);
-popupContainer.setFocusableInTouchMode(true);
-popupContainer.bringToFront();
+        setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        );
 
-if (popupWebView != null) {
-    popupWebView.setClickable(true);
-    popupWebView.setFocusable(true);
-    popupWebView.setFocusableInTouchMode(true);
-    popupWebView.setEnabled(true);
-    popupWebView.bringToFront();
-    popupWebView.requestFocus();
-}
-
-hideStatusBar();
+        hideStatusBar();
     }
 
     private void hideStatusBar() {
