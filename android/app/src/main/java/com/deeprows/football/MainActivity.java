@@ -1004,6 +1004,10 @@ webView.setDownloadListener(
         }
 
         popupWebView = new WebView(this);
+        popupWebView.setClickable(true);
+popupWebView.setFocusable(true);
+popupWebView.setFocusableInTouchMode(true);
+popupWebView.setEnabled(true);
         popupWebView.setBackgroundColor(Color.BLACK);
 
         configureWebView(popupWebView);
