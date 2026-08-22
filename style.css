@@ -340,7 +340,169 @@ font-size:24px;line-height:1;position:relative;z-index:2;
 display:block;width:100%;min-width:0;overflow:hidden;padding:9px 5px 0 0;color:#fff;
 font-size:14px;font-weight:900;line-height:1.2;text-overflow:ellipsis;white-space:nowrap;position:relative;z-index:2;
 }
-.highlight-card small{display:block;width:100%;padding:5px 5px 0 0;color:#9aa3b2;font-size:10px;line-height:1.2;position:relative;z-index:2}
+/* =========================================================
+   HIGHLIGHTS — SAME STYLE AS MATCH CARDS
+   ========================================================= */
+
+.highlight-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+
+.highlight-card{
+  position:relative;
+  min-width:0;
+  min-height:112px;
+  height:auto;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+
+  padding:12px 14px;
+  overflow:hidden;
+
+  border:1px solid rgba(255,23,68,.28);
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
+
+  color:#fff;
+  text-align:center;
+
+  cursor:pointer;
+
+  transition:
+    transform .2s ease,
+    border-color .3s ease,
+    box-shadow .3s ease,
+    background .3s ease;
+
+  touch-action:manipulation;
+}
+
+/* Red highlight card glow */
+
+.highlight-card.is-upcoming{
+  border-color:rgba(255,23,68,.30);
+
+  background:
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
+}
+
+.highlight-card.is-upcoming:hover{
+  transform:translateY(-2px);
+
+  border-color:
+    rgba(255,23,68,.60);
+
+  box-shadow:
+    0 8px 24px
+    rgba(255,23,68,.10);
+}
+
+/* Highlight pill */
+
+.highlight-card .match-status.upcoming{
+  color:#fff;
+
+  background:
+    var(--accent);
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  box-shadow:
+    0 0 12px
+    rgba(255,23,68,.25);
+
+  font-weight:950;
+}
+
+/* Highlight title */
+
+.highlight-card .match-teams{
+  display:block;
+
+  width:100%;
+
+  overflow:hidden;
+
+  color:#fff;
+
+  font-size:16px;
+  font-weight:900;
+
+  line-height:1.2;
+
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* Highlight date */
+
+.highlight-card .match-date{
+  display:inline-block;
+
+  color:#aeb6c3;
+
+  font-size:10px;
+  font-weight:700;
+
+  line-height:1.2;
+
+  margin-top:1px;
+}
+
+/* Bottom action */
+
+.highlight-card .match-countdown{
+  display:block;
+
+  margin-top:3px;
+
+  color:#ff637d;
+
+  font-size:10px;
+  font-weight:950;
+
+  line-height:1.2;
+
+  letter-spacing:.1px;
+}
+
+/* Selected highlight */
+
+.highlight-card.active{
+  border-color:
+    rgba(255,23,68,.65);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,23,68,.13),
+      #10141b
+    );
+
+  box-shadow:
+    0 0 0 1px
+    rgba(255,23,68,.10),
+    0 0 22px
+    rgba(255,23,68,.12);
+}
 
 .tv-content{padding-top:20px}
 .tv-category{padding-top:22px}
