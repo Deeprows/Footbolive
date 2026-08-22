@@ -1,4 +1,4 @@
-package com.deeprows.football;
+,package com.deeprows.football;
 
 import android.app.DownloadManager;
 import android.net.Uri;
@@ -1226,14 +1226,24 @@ popupWebView.setEnabled(true);
         popupContainer = null;
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.VISIBLE);
-        }
+    refreshContainer.setVisibility(View.GONE);
+}
 
-        setRequestedOrientation(
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        );
+popupContainer.setClickable(true);
+popupContainer.setFocusable(true);
+popupContainer.setFocusableInTouchMode(true);
+popupContainer.bringToFront();
 
-        hideStatusBar();
+if (popupWebView != null) {
+    popupWebView.setClickable(true);
+    popupWebView.setFocusable(true);
+    popupWebView.setFocusableInTouchMode(true);
+    popupWebView.setEnabled(true);
+    popupWebView.bringToFront();
+    popupWebView.requestFocus();
+}
+
+hideStatusBar();
     }
 
     private void hideStatusBar() {
