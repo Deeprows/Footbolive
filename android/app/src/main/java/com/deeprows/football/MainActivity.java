@@ -1,4 +1,4 @@
-,package com.deeprows.football;
+package com.deeprows.football;
 
 import android.app.DownloadManager;
 import android.net.Uri;
