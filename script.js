@@ -468,43 +468,105 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  function createHighlightCard(post) {
+  function formatHighlightDate(value) {
 
-    const name =
-      getPostName(post, "Football Highlight");
+  if (!value) {
+    return "";
+  }
 
-    const url =
-      getPostUrl(post);
+  const raw =
+    String(value).trim();
 
-    const date =
-      getPostDate(post);
+  const date =
+    /^\d{4}-\d{2}-\d{2}$/.test(raw)
+      ? new Date(raw + "T00:00:00")
+      : new Date(raw);
 
-    const card =
-      document.createElement("button");
+  if (Number.isNaN(date.getTime())) {
+    return raw;
+  }
 
-    card.type = "button";
-    card.className = "highlight-card";
+  return new Intl.DateTimeFormat(
+    undefined,
+    {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    }
+  ).format(date);
 
-    card.dataset.name = name;
-    card.dataset.url = url;
+}
 
-    if (date) {
-      card.dataset.date = date;
+
+function createHighlightCard(post) {
+
+  const name =
+    getPostName(
+      post,
+      "Football Highlight"
+    );
+
+  const url =
+    getPostUrl(post);
+
+  const date =
+    getPostDate(post);
+
+  const card =
+    document.createElement("button");
+
+  card.type = "button";
+
+  /*
+   * Use the same base card as
+   * Upcoming & Live Matches.
+   */
+  card.className =
+    "match-card highlight-card is-upcoming";
+
+  card.dataset.name =
+    name;
+
+  card.dataset.url =
+    url;
+
+  if (date) {
+    card.dataset.date =
+      date;
+  }
+
+  card.innerHTML = `
+
+    <span class="match-status upcoming">
+      HIGHLIGHT
+    </span>
+
+    <span class="match-teams">
+      ${escapeHtml(name)}
+    </span>
+
+    ${
+      date
+        ? `
+          <span class="match-date">
+            ${escapeHtml(
+              formatHighlightDate(date)
+            )}
+          </span>
+        `
+        : ""
     }
 
-    card.innerHTML = `
-      <span class="highlight-status">
-        HIGHLIGHT
-      </span>
+    <span class="match-countdown">
+      WATCH HIGHLIGHT
+    </span>
 
-      <strong>
-        ${escapeHtml(name)}
-      </strong>
-    `;
+  `;
 
-    return card;
+  return card;
 
-  }
+}
 
 
   function createTVCard(post) {
