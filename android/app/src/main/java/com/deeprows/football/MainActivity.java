@@ -1477,6 +1477,45 @@ public class MainActivity extends Activity {
 
     /*
      * =========================================================
+     * OPEN POPUP / BROWSER WINDOW
+     * =========================================================
+     *
+     * This method is intentionally kept as the single entry point
+     * for opening a normal URL inside the app browser.
+     *
+     * It creates a NEW WebView window and loads the URL into it.
+     * The existing browser windows are NOT destroyed.
+     */
+    private void openPopup(String url) {
+
+        if (url == null || url.trim().isEmpty()) {
+            return;
+        }
+
+        String targetUrl = url.trim();
+
+        /*
+         * Do not try to render Android-only schemes as webpages.
+         * Let Android handle them instead.
+         */
+        if (!isHttpUrl(targetUrl)) {
+            openExternalUrl(targetUrl);
+            return;
+        }
+
+        WebView browserWindow = createPopupWebView();
+
+        /*
+         * IMPORTANT:
+         * createPopupWebView() attaches the window to the browser
+         * container and makes it the active/focused window.
+         */
+        browserWindow.loadUrl(targetUrl);
+    }
+
+
+    /*
+     * =========================================================
      * POPUP WEBVIEW
      * =========================================================
      */
