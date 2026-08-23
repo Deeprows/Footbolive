@@ -820,16 +820,16 @@ function createHighlightCard(post) {
 
     if (highlightsContent) {
 
-      prependPosts(
-        highlightsContent.querySelector(
-          ".highlights-grid, .content-grid"
-        ) || highlightsContent,
-        highlightPosts.map(
-          createHighlightCard
-        )
-      );
+  prependPosts(
+    highlightsContent.querySelector(
+      ".highlight-grid, .highlights-grid, .content-grid"
+    ) || highlightsContent,
+    highlightPosts.map(
+      createHighlightCard
+    )
+  );
 
-    }
+}
 
 
     if (tvContent) {
