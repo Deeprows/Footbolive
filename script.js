@@ -296,6 +296,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentAltUrl = "";
   let screenLoadTimer = null;
 
+  // Direct M3U8/HLS player state
+  let hlsVideo = null;
+  let hlsInstance = null;
+  let hlsUnmuteButton = null;
+  let hlsLibraryPromise = null;
+
 
   /* =========================================================
      HELPERS
@@ -1463,6 +1469,465 @@ function createHighlightCard(post) {
 
 
   /* =========================================================
+     DIRECT M3U8 / HLS PLAYER
+     ========================================================= */
+
+  function isM3U8Url(url) {
+    return /\\.m3u8(?:$|[?#])/i.test(
+      String(url || "").trim()
+    );
+  }
+
+
+  function destroyM3U8Player() {
+
+    if (hlsInstance) {
+      try {
+        hlsInstance.destroy();
+      }
+      catch (error) {
+        console.log(
+          "HLS cleanup failed:",
+          error
+        );
+      }
+
+      hlsInstance = null;
+    }
+
+    if (hlsVideo) {
+      try {
+        hlsVideo.pause();
+        hlsVideo.removeAttribute("src");
+        hlsVideo.load();
+        hlsVideo.remove();
+      }
+      catch (error) {
+        console.log(
+          "Video cleanup failed:",
+          error
+        );
+      }
+
+      hlsVideo = null;
+    }
+
+    if (hlsUnmuteButton) {
+      hlsUnmuteButton.remove();
+      hlsUnmuteButton = null;
+    }
+  }
+
+
+  function loadHlsLibrary() {
+
+    if (window.Hls) {
+      return Promise.resolve(window.Hls);
+    }
+
+    if (hlsLibraryPromise) {
+      return hlsLibraryPromise;
+    }
+
+    hlsLibraryPromise = new Promise(
+      function (resolve, reject) {
+
+        const existing =
+          document.querySelector(
+            'script[data-deeprowss-hls="true"]'
+          );
+
+        if (existing) {
+
+          existing.addEventListener(
+            "load",
+            function () {
+              if (window.Hls) {
+                resolve(window.Hls);
+              }
+              else {
+                reject(
+                  new Error(
+                    "HLS library loaded without Hls."
+                  )
+                );
+              }
+            },
+            { once: true }
+          );
+
+          existing.addEventListener(
+            "error",
+            function () {
+              reject(
+                new Error(
+                  "Could not load HLS library."
+                )
+              );
+            },
+            { once: true }
+          );
+
+          return;
+        }
+
+        const script =
+          document.createElement("script");
+
+        script.src =
+          "https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js";
+
+        script.async = true;
+        script.dataset.deeprowssHls =
+          "true";
+
+        script.onload =
+          function () {
+
+            if (window.Hls) {
+              resolve(window.Hls);
+            }
+            else {
+              reject(
+                new Error(
+                  "HLS library loaded without Hls."
+                )
+              );
+            }
+
+          };
+
+        script.onerror =
+          function () {
+            reject(
+              new Error(
+                "Could not load HLS library."
+              )
+            );
+          };
+
+        document.head.appendChild(script);
+
+      }
+    );
+
+    return hlsLibraryPromise;
+  }
+
+
+  function createM3U8Player(url) {
+
+    if (!screenPlayer) {
+      return;
+    }
+
+    destroyM3U8Player();
+
+    if (screenFrame) {
+      screenFrame.src =
+        "about:blank";
+
+      screenFrame.style.display =
+        "none";
+    }
+
+    const video =
+      document.createElement("video");
+
+    video.className =
+      "deeprowss-hls-video";
+
+    video.setAttribute(
+      "playsinline",
+      ""
+    );
+
+    video.setAttribute(
+      "webkit-playsinline",
+      ""
+    );
+
+    video.setAttribute(
+      "controls",
+      ""
+    );
+
+    video.autoplay = true;
+
+    // IMPORTANT:
+    // Start muted so browsers allow autoplay.
+    // User can click the unmute button.
+    video.muted = true;
+    video.volume = 0;
+
+    video.style.width =
+      "100%";
+
+    video.style.height =
+      "100%";
+
+    video.style.display =
+      "block";
+
+    video.style.objectFit =
+      "contain";
+
+    video.style.background =
+      "#000";
+
+    screenPlayer.appendChild(
+      video
+    );
+
+    hlsVideo = video;
+
+    const unmuteButton =
+      document.createElement("button");
+
+    unmuteButton.type =
+      "button";
+
+    unmuteButton.className =
+      "deeprowss-hls-unmute";
+
+    unmuteButton.textContent =
+      "🔇 Unmute";
+
+    unmuteButton.setAttribute(
+      "aria-label",
+      "Unmute video"
+    );
+
+    unmuteButton.setAttribute(
+      "title",
+      "Click to unmute"
+    );
+
+    unmuteButton.style.position =
+      "absolute";
+
+    unmuteButton.style.left =
+      "50%";
+
+    unmuteButton.style.bottom =
+      "18px";
+
+    unmuteButton.style.transform =
+      "translateX(-50%)";
+
+    unmuteButton.style.zIndex =
+      "9999";
+
+    unmuteButton.style.padding =
+      "10px 18px";
+
+    unmuteButton.style.border =
+      "0";
+
+    unmuteButton.style.borderRadius =
+      "999px";
+
+    unmuteButton.style.cursor =
+      "pointer";
+
+    unmuteButton.style.fontWeight =
+      "700";
+
+    unmuteButton.style.fontSize =
+      "14px";
+
+    unmuteButton.style.background =
+      "rgba(0,0,0,.85)";
+
+    unmuteButton.style.color =
+      "#fff";
+
+    unmuteButton.style.boxShadow =
+      "0 3px 12px rgba(0,0,0,.45)";
+
+    unmuteButton.addEventListener(
+      "click",
+      function () {
+
+        video.muted = false;
+        video.volume = 1;
+
+        const playResult =
+          video.play();
+
+        if (
+          playResult &&
+          typeof playResult.then === "function"
+        ) {
+          playResult.catch(
+            function (error) {
+              console.log(
+                "Audio playback could not start:",
+                error
+              );
+            }
+          );
+        }
+
+        unmuteButton.textContent =
+          "🔊 Sound On";
+
+        unmuteButton.setAttribute(
+          "aria-label",
+          "Sound is on"
+        );
+
+        setTimeout(
+          function () {
+            if (hlsUnmuteButton) {
+              hlsUnmuteButton.style.display =
+                "none";
+            }
+          },
+          1200
+        );
+
+      }
+    );
+
+    screenPlayer.appendChild(
+      unmuteButton
+    );
+
+    hlsUnmuteButton =
+      unmuteButton;
+
+    function startNativeHls() {
+
+      video.src = url;
+
+      video.addEventListener(
+        "loadedmetadata",
+        function () {
+
+          const playResult =
+            video.play();
+
+          if (
+            playResult &&
+            typeof playResult.then === "function"
+          ) {
+            playResult.catch(
+              function (error) {
+                console.log(
+                  "Muted autoplay was blocked:",
+                  error
+                );
+              }
+            );
+          }
+
+        },
+        { once: true }
+      );
+
+      video.load();
+    }
+
+
+    // Safari/iOS and browsers with native HLS support.
+    if (
+      video.canPlayType(
+        "application/vnd.apple.mpegurl"
+      )
+    ) {
+      startNativeHls();
+      return;
+    }
+
+
+    // Chrome, Edge, Firefox and other browsers use hls.js.
+    loadHlsLibrary()
+      .then(
+        function (Hls) {
+
+          if (!hlsVideo) {
+            return;
+          }
+
+          if (!Hls.isSupported()) {
+
+            console.log(
+              "This browser does not support HLS."
+            );
+
+            return;
+          }
+
+          hlsInstance =
+            new Hls({
+              enableWorker: true
+            });
+
+          hlsInstance.loadSource(url);
+          hlsInstance.attachMedia(
+            video
+          );
+
+          hlsInstance.on(
+            Hls.Events.MANIFEST_PARSED,
+            function () {
+
+              const playResult =
+                video.play();
+
+              if (
+                playResult &&
+                typeof playResult.then === "function"
+              ) {
+                playResult.catch(
+                  function (error) {
+                    console.log(
+                      "Muted autoplay was blocked:",
+                      error
+                    );
+                  }
+                );
+              }
+
+            }
+          );
+
+          hlsInstance.on(
+            Hls.Events.ERROR,
+            function (
+              event,
+              data
+            ) {
+
+              if (
+                data &&
+                data.fatal
+              ) {
+                console.log(
+                  "HLS playback error:",
+                  data
+                );
+              }
+
+            }
+          );
+
+        }
+      )
+      .catch(
+        function (error) {
+          console.log(
+            "Could not start HLS player:",
+            error
+          );
+        }
+      );
+
+  }
+
+
+  /* =========================================================
      LOAD SCREEN
      ========================================================= */
 
@@ -1473,7 +1938,7 @@ function createHighlightCard(post) {
     keepMatchState
   ) {
 
-    if (!screenFrame || !url) {
+    if ((!screenFrame && !screenPlayer) || !url) {
       return;
     }
 
@@ -1515,31 +1980,54 @@ function createHighlightCard(post) {
       );
     }
 
-    screenFrame.style.opacity =
-      "0.25";
+    if (isM3U8Url(url)) {
 
-    screenFrame.src =
-      "about:blank";
+      createM3U8Player(url);
 
-    screenLoadTimer =
-      setTimeout(
-        function () {
+      requestAnimationFrame(
+        updateStickyPositions
+      );
 
-          screenFrame.src =
-            url;
+    }
 
-          screenFrame.style.opacity =
-            "1";
+    else {
 
-          screenLoadTimer = null;
+      destroyM3U8Player();
 
-          requestAnimationFrame(
-            updateStickyPositions
+      if (screenFrame) {
+
+        screenFrame.style.display =
+          "";
+
+        screenFrame.style.opacity =
+          "0.25";
+
+        screenFrame.src =
+          "about:blank";
+
+        screenLoadTimer =
+          setTimeout(
+            function () {
+
+              screenFrame.src =
+                url;
+
+              screenFrame.style.opacity =
+                "1";
+
+              screenLoadTimer = null;
+
+              requestAnimationFrame(
+                updateStickyPositions
+              );
+
+            },
+            150
           );
 
-        },
-        150
-      );
+      }
+
+    }
 
 
     if (screenStatus) {
@@ -2327,6 +2815,12 @@ function createHighlightCard(post) {
     function () {
 
       hideAltScreen();
+
+      destroyM3U8Player();
+
+      if (screenFrame) {
+        screenFrame.style.display = "";
+      }
 
       if (screenPlayer) {
 
