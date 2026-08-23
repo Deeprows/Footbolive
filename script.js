@@ -1,43 +1,33 @@
 /* =========================================================
    DEEPROWSS SCRIPT.JS
+   Corrected version:
+   - Keeps one main screen/iframe
+   - Fixes shared links
+   - Fixes escaped/broken JavaScript syntax
+   - Keeps JSON loading and existing card behavior
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
-
   "use strict";
 
   console.log("Deeprowss app loaded");
 
-
   /* =========================================================
-   SITE-WIDE POPUNDER
-   ========================================================= */
+     SITE-WIDE POPUNDER
+     ========================================================= */
+  (function () {
+    const popunderScript =
+      "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
 
-(function () {
-
-  const popunderScript =
-    "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
-
-  const script =
-    document.createElement("script");
-
-  script.src =
-    popunderScript;
-
-  script.async = true;
-
-  document.body.appendChild(script);
-
-})();
-
+    const script = document.createElement("script");
+    script.src = popunderScript;
+    script.async = true;
+    document.body.appendChild(script);
+  })();
 
   /* =========================================================
      CONTENT JSON FILES
-     New JSON posts are inserted into the existing sections.
-     Existing posts in index.html remain untouched.
-     Newest posts are placed first.
      ========================================================= */
-
   const CONTENT_FILES = {
     football: "content/football/matches.json",
     highlights: "content/highlights/highlights.json",
@@ -45,313 +35,145 @@ document.addEventListener("DOMContentLoaded", function () {
     movies: "content/movies/movies.json"
   };
 
-
   /* =========================================================
      ZOOM / GESTURE PROTECTION
      ========================================================= */
+  document.addEventListener("gesturestart", e => e.preventDefault(), { passive: false });
+  document.addEventListener("gesturechange", e => e.preventDefault(), { passive: false });
+  document.addEventListener("gestureend", e => e.preventDefault(), { passive: false });
 
-  document.addEventListener(
-    "gesturestart",
-    function (event) {
-      event.preventDefault();
-    },
-    { passive: false }
-  );
+  document.addEventListener("wheel", function (event) {
+    if (event.ctrlKey) event.preventDefault();
+  }, { passive: false });
 
-  document.addEventListener(
-    "gesturechange",
-    function (event) {
-      event.preventDefault();
-    },
-    { passive: false }
-  );
-
-  document.addEventListener(
-    "gestureend",
-    function (event) {
-      event.preventDefault();
-    },
-    { passive: false }
-  );
-
-  document.addEventListener(
-    "wheel",
-    function (event) {
-      if (event.ctrlKey) {
-        event.preventDefault();
-      }
-    },
-    { passive: false }
-  );
-
-  document.addEventListener(
-    "keydown",
-    function (event) {
-
-      if (!event.ctrlKey) {
-        return;
-      }
-
-      const key = event.key;
-
-      if (
-        key === "+" ||
-        key === "=" ||
-        key === "-" ||
-        key === "0"
-      ) {
-        event.preventDefault();
-      }
-
-    }
-  );
-
+  document.addEventListener("keydown", function (event) {
+    if (!event.ctrlKey) return;
+    if (["+", "=", "-", "0"].includes(event.key)) event.preventDefault();
+  });
 
   /* =========================================================
      DEVELOPER TOOLS / RIGHT-CLICK PROTECTION
      ========================================================= */
+  document.addEventListener("contextmenu", e => e.preventDefault());
 
-  // Disable right-click context menu
-  document.addEventListener(
-    "contextmenu",
-    function (event) {
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "F12") {
       event.preventDefault();
+      return false;
     }
-  );
 
-  // Block common browser developer-tool shortcuts
-  document.addEventListener(
-    "keydown",
-    function (event) {
-
-      // F12
-      if (event.key === "F12") {
-        event.preventDefault();
-        return false;
-      }
-
-      // Ctrl + Shift + I / J / C
-      if (
-        event.ctrlKey &&
-        event.shiftKey &&
-        ["I", "J", "C"].includes(
-          event.key.toUpperCase()
-        )
-      ) {
-        event.preventDefault();
-        return false;
-      }
-
-      // Ctrl + U (View Source)
-      if (
-        event.ctrlKey &&
-        event.key.toUpperCase() === "U"
-      ) {
-        event.preventDefault();
-        return false;
-      }
-
-      // Ctrl + S (Save Page)
-      if (
-        event.ctrlKey &&
-        event.key.toUpperCase() === "S"
-      ) {
-        event.preventDefault();
-        return false;
-      }
-
+    if (
+      event.ctrlKey &&
+      event.shiftKey &&
+      ["I", "J", "C"].includes(event.key.toUpperCase())
+    ) {
+      event.preventDefault();
+      return false;
     }
-  );
 
+    if (event.ctrlKey && ["U", "S"].includes(event.key.toUpperCase())) {
+      event.preventDefault();
+      return false;
+    }
+  });
 
   /* =========================================================
      ELEMENTS
      ========================================================= */
-
-  const siteHeader =
-    document.querySelector(".site-header");
-
-  const screenSection =
-    document.querySelector(".screen-section");
-
-  const screenFrame =
-    document.getElementById("screenFrame");
-
-  const screenPlaceholder =
-    document.getElementById("screenPlaceholder");
-
-  const screenStatus =
-    document.getElementById("screenStatus");
-
-  const nowShowing =
-    document.getElementById("nowShowing");
-
-  const fullscreenButton =
-    document.getElementById("fullscreenButton");
-
-  const screenPlayer =
-    document.getElementById("screenPlayer");
-
-
-  /* =========================================================
-     FOOTBALL SCREEN CONTROLS
-     ========================================================= */
+  const siteHeader = document.querySelector(".site-header");
+  const screenSection = document.querySelector(".screen-section");
+  const screenFrame = document.getElementById("screenFrame");
+  const screenPlaceholder = document.getElementById("screenPlaceholder");
+  const screenStatus = document.getElementById("screenStatus");
+  const nowShowing = document.getElementById("nowShowing");
+  const fullscreenButton = document.getElementById("fullscreenButton");
+  const screenPlayer = document.getElementById("screenPlayer");
 
   const footballScreenControls =
     document.getElementById("footballScreenControls");
-
   const mainScreenButton =
     document.getElementById("mainScreenButton");
-
   const altScreenButton =
     document.getElementById("altScreenButton");
 
-
-  /* =========================================================
-     ALTERNATIVE FOOTBALL SCREEN
-     ========================================================= */
-
   const altScreenOverlay =
     document.getElementById("altScreenOverlay");
-
   const altScreenFrame =
     document.getElementById("altScreenFrame");
-
   const altScreenMatch =
     document.getElementById("altScreenMatch");
-
   const closeAltScreen =
     document.getElementById("closeAltScreen");
 
-
-  /* =========================================================
-     APP BUTTONS
-     ========================================================= */
-
   const footballButton =
     document.getElementById("footballButton");
-
   const highlightsButton =
     document.getElementById("highlightsButton");
-
   const tvButton =
     document.getElementById("tvButton");
-
   const moviesButton =
     document.getElementById("moviesButton");
 
-
-  /* =========================================================
-     CONTENT SECTIONS
-     ========================================================= */
-
   const footballContent =
     document.getElementById("footballContent");
-
   const highlightsContent =
     document.getElementById("highlightsContent");
-
   const tvContent =
     document.getElementById("tvContent");
-
   const moviesContent =
     document.getElementById("moviesContent");
 
-
-  /* =========================================================
-     NAVIGATION
-     ========================================================= */
-
   const navFootball =
     document.getElementById("navFootball");
-
   const navHighlights =
     document.getElementById("navHighlights");
-
   const navTV =
     document.getElementById("navTV");
-
   const navMovies =
     document.getElementById("navMovies");
 
-
-  /* =========================================================
-     MOBILE MENU
-     ========================================================= */
-
   const menuToggle =
     document.getElementById("menuToggle");
-
   const mainNav =
     document.getElementById("mainNav");
-
 
   /* =========================================================
      CURRENT SCREEN STATE
      ========================================================= */
-
   let currentScreenType = "";
   let currentMatchCard = null;
   let currentMainUrl = "";
   let currentAltUrl = "";
   let screenLoadTimer = null;
 
-  // Direct M3U8/HLS player state
   let hlsVideo = null;
   let hlsInstance = null;
   let hlsUnmuteButton = null;
   let hlsLibraryPromise = null;
 
-
   /* =========================================================
      HELPERS
      ========================================================= */
-
   function escapeHtml(value) {
-
     return String(value ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
-
   }
-
 
   function normalizePosts(data) {
-
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    if (data && Array.isArray(data.posts)) {
-      return data.posts;
-    }
-
-    if (data && Array.isArray(data.matches)) {
-      return data.matches;
-    }
-
-    if (data && Array.isArray(data.highlights)) {
-      return data.highlights;
-    }
-
-    if (data && Array.isArray(data.channels)) {
-      return data.channels;
-    }
-
-    if (data && Array.isArray(data.movies)) {
-      return data.movies;
-    }
-
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.posts)) return data.posts;
+    if (data && Array.isArray(data.matches)) return data.matches;
+    if (data && Array.isArray(data.highlights)) return data.highlights;
+    if (data && Array.isArray(data.channels)) return data.channels;
+    if (data && Array.isArray(data.movies)) return data.movies;
     return [];
-
   }
 
-
   function getPostDate(post) {
-
     return (
       post.date ||
       post.postDate ||
@@ -360,54 +182,25 @@ document.addEventListener("DOMContentLoaded", function () {
       post.createdAt ||
       ""
     );
-
   }
-
 
   function dateValue(post) {
+    const value = getPostDate(post);
+    if (!value) return 0;
 
-    const value =
-      getPostDate(post);
-
-    if (!value) {
-      return 0;
-    }
-
-    const time =
-      new Date(value).getTime();
-
-    return Number.isNaN(time)
-      ? 0
-      : time;
-
+    const time = new Date(value).getTime();
+    return Number.isNaN(time) ? 0 : time;
   }
-
 
   function sortNewestFirst(posts) {
-
-    return posts.slice().sort(
-      function (a, b) {
-        return dateValue(b) - dateValue(a);
-      }
-    );
-
+    return posts.slice().sort((a, b) => dateValue(b) - dateValue(a));
   }
-
 
   function getPostName(post, fallback) {
-
-    return (
-      post.name ||
-      post.title ||
-      post.matchName ||
-      fallback
-    );
-
+    return post.name || post.title || post.matchName || fallback;
   }
 
-
   function getPostUrl(post) {
-
     return (
       post.url ||
       post.embedUrl ||
@@ -415,34 +208,23 @@ document.addEventListener("DOMContentLoaded", function () {
       post.streamUrl ||
       ""
     );
-
   }
 
-
   function getAltUrl(post) {
-
     return (
       post.altUrl ||
       post.alternativeUrl ||
       post.altURL ||
       ""
     );
-
   }
 
-
   function hasValidAltUrl(url) {
+    if (!url) return false;
 
-    if (!url) {
-      return false;
-    }
+    const normalized = String(url).trim();
 
-    const normalized =
-      String(url).trim();
-
-    if (!normalized) {
-      return false;
-    }
+    if (!normalized) return false;
 
     if (
       normalized.indexOf("PASTE-") === 0 ||
@@ -452,16 +234,492 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     return true;
-
   }
 
+  /* =========================================================
+     SHARE LINK
+     ========================================================= */
+  function getSharePageUrl(card, type) {
+    if (!card) return window.location.href;
+
+    const explicitShareUrl =
+      card.dataset.shareUrl ||
+      card.dataset.share ||
+      "";
+
+    if (explicitShareUrl) return explicitShareUrl;
+
+    const name =
+      card.dataset.name || "Deeprowss";
+
+    const contentUrl =
+      card.dataset.url || "";
+
+    const cleanUrl =
+      window.location.href
+        .split("#")[0]
+        .split("?")[0];
+
+    const params = new URLSearchParams();
+
+    params.set("type", type || "content");
+
+    if (contentUrl) {
+      params.set("url", contentUrl);
+    }
+
+    params.set("name", String(name).trim());
+
+    return cleanUrl + "#share=" + params.toString();
+  }
+
+  function getShareTitle(card, type) {
+    const name =
+      card?.dataset?.name || "Deeprowss";
+
+    const labels = {
+      match: "Football Live",
+      tv: "TV Channel",
+      highlight: "Football Highlight",
+      movie: "Movie"
+    };
+
+    return (
+      name +
+      " - " +
+      (labels[type] || "Content") +
+      " | Deeprowss"
+    );
+  }
+
+  function getShareText(card, type) {
+    const name =
+      card?.dataset?.name || "Deeprowss";
+
+    const labels = {
+      match: "football match",
+      tv: "TV channel",
+      highlight: "football highlight",
+      movie: "movie"
+    };
+
+    return (
+      "Watch " +
+      name +
+      " on Deeprowss. Shared " +
+      (labels[type] || "content") +
+      " from Deeprowss."
+    );
+  }
 
   /* =========================================================
-     CREATE JSON POSTS
+     READ SHARED LINK
      ========================================================= */
+  function getSharedContentData() {
+    const hash =
+      window.location.hash || "";
 
+    if (!hash.startsWith("#share=")) {
+      return null;
+    }
+
+    try {
+      const query =
+        hash.substring("#share=".length);
+
+      const params =
+        new URLSearchParams(query);
+
+      const type =
+        params.get("type") || "";
+
+      const url =
+        params.get("url") || "";
+
+      const name =
+        params.get("name") || "";
+
+      if (!type && !url && !name) {
+        return null;
+      }
+
+      return {
+        type,
+        url,
+        name
+      };
+    } catch (error) {
+      console.log(
+        "Could not read shared content link:",
+        error
+      );
+      return null;
+    }
+  }
+
+  function findSharedCard(data) {
+    if (!data) return null;
+
+    const type =
+      String(data.type || "").toLowerCase();
+
+    const url =
+      String(data.url || "").trim();
+
+    const name =
+      String(data.name || "").trim();
+
+    let selector =
+      ".match-card, .tv-channel, .movie-card";
+
+    if (type === "match") {
+      selector =
+        ".match-card:not(.highlight-card)";
+    } else if (type === "highlight") {
+      selector =
+        ".highlight-card";
+    } else if (type === "tv") {
+      selector =
+        ".tv-channel";
+    } else if (type === "movie") {
+      selector =
+        ".movie-card";
+    }
+
+    const cards =
+      document.querySelectorAll(selector);
+
+    if (url) {
+      for (const card of cards) {
+        if (
+          String(card.dataset.url || "").trim() === url
+        ) {
+          return card;
+        }
+      }
+    }
+
+    if (name) {
+      const normalizedName =
+        name.toLowerCase();
+
+      for (const card of cards) {
+        const cardName =
+          String(
+            card.dataset.name || ""
+          ).trim().toLowerCase();
+
+        if (cardName === normalizedName) {
+          return card;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  let sharedContentResolveTimer = null;
+
+  function resolveSharedContent(attempt) {
+    const data =
+      getSharedContentData();
+
+    if (!data) return;
+
+    const card =
+      findSharedCard(data);
+
+    if (card) {
+      if (sharedContentResolveTimer) {
+        clearTimeout(sharedContentResolveTimer);
+        sharedContentResolveTimer = null;
+      }
+
+      const type =
+        String(data.type || "").toLowerCase();
+
+      if (type === "match") {
+        openFootball();
+      } else if (type === "highlight") {
+        openHighlights();
+      } else if (type === "tv") {
+        openTV();
+      } else if (type === "movie") {
+        openMovies();
+      }
+
+      /*
+       * IMPORTANT:
+       * Use the existing card click handler.
+       * No new iframe/screen is created.
+       */
+      setTimeout(function () {
+        if (document.body.contains(card)) {
+          card.click();
+        }
+      }, 150);
+
+      return;
+    }
+
+    const nextAttempt =
+      Number(attempt || 0) + 1;
+
+    if (nextAttempt <= 80) {
+      sharedContentResolveTimer =
+        setTimeout(function () {
+          resolveSharedContent(nextAttempt);
+        }, 150);
+    }
+  }
+
+  function handleSharedContentHash() {
+    if (sharedContentResolveTimer) {
+      clearTimeout(sharedContentResolveTimer);
+      sharedContentResolveTimer = null;
+    }
+
+    resolveSharedContent(0);
+  }
+
+  window.addEventListener(
+    "hashchange",
+    handleSharedContentHash
+  );
+
+  /* =========================================================
+     SHARE ACTION
+     ========================================================= */
+  async function copyShareUrl(url) {
+    try {
+      if (
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(url);
+        alert("Share link copied.");
+        return true;
+      }
+    } catch (error) {
+      console.log(
+        "Clipboard API failed:",
+        error
+      );
+    }
+
+    try {
+      const textarea =
+        document.createElement("textarea");
+
+      textarea.value = url;
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "0";
+
+      document.body.appendChild(textarea);
+
+      textarea.focus();
+      textarea.select();
+
+      const copied =
+        document.execCommand("copy");
+
+      textarea.remove();
+
+      if (copied) {
+        alert("Share link copied.");
+        return true;
+      }
+    } catch (error) {
+      console.log(
+        "Fallback copy failed:",
+        error
+      );
+    }
+
+    return false;
+  }
+
+  async function shareContent(card, type) {
+    if (!card) return;
+
+    const url =
+      getSharePageUrl(card, type);
+
+    const title =
+      getShareTitle(card, type);
+
+    const text =
+      getShareText(card, type);
+
+    if (
+      navigator.share &&
+      typeof navigator.share === "function"
+    ) {
+      try {
+        await navigator.share({
+          title,
+          text,
+          url
+        });
+
+        return;
+      } catch (error) {
+        if (
+          error &&
+          error.name === "AbortError"
+        ) {
+          return;
+        }
+
+        console.log(
+          "Native share failed:",
+          error
+        );
+      }
+    }
+
+    await copyShareUrl(url);
+  }
+
+  function createShareButton(card, type) {
+    if (!card) return null;
+
+    const existing =
+      card.querySelector(
+        ".deeprowss-share-button"
+      );
+
+    if (existing) return existing;
+
+    const shareButton =
+      document.createElement("span");
+
+    shareButton.className =
+      "deeprowss-share-button";
+
+    shareButton.setAttribute(
+      "role",
+      "button"
+    );
+
+    shareButton.setAttribute(
+      "tabindex",
+      "0"
+    );
+
+    shareButton.setAttribute(
+      "aria-label",
+      "Share " +
+      (card.dataset.name || "content")
+    );
+
+    shareButton.setAttribute(
+      "title",
+      "Share"
+    );
+
+    shareButton.textContent = "↗";
+
+    Object.assign(
+      shareButton.style,
+      {
+        position: "absolute",
+        top: "8px",
+        right: "8px",
+        width: "34px",
+        height: "34px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: "20",
+        borderRadius: "50%",
+        background: "rgba(0,0,0,.72)",
+        color: "#fff",
+        fontSize: "20px",
+        fontWeight: "700",
+        lineHeight: "1",
+        cursor: "pointer",
+        userSelect: "none",
+        WebkitTapHighlightColor: "transparent"
+      }
+    );
+
+    shareButton.addEventListener(
+      "click",
+      function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        shareContent(
+          card,
+          type
+        );
+      }
+    );
+
+    shareButton.addEventListener(
+      "keydown",
+      function (event) {
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          shareContent(
+            card,
+            type
+          );
+        }
+      }
+    );
+
+    if (
+      window.getComputedStyle(card).position ===
+      "static"
+    ) {
+      card.style.position = "relative";
+    }
+
+    card.appendChild(shareButton);
+
+    return shareButton;
+  }
+
+  function addShareButtons() {
+    document
+      .querySelectorAll(
+        ".match-card:not(.highlight-card)"
+      )
+      .forEach(function (card) {
+        createShareButton(card, "match");
+      });
+
+    document
+      .querySelectorAll(".highlight-card")
+      .forEach(function (card) {
+        createShareButton(card, "highlight");
+      });
+
+    document
+      .querySelectorAll(".tv-channel")
+      .forEach(function (card) {
+        createShareButton(card, "tv");
+      });
+
+    document
+      .querySelectorAll(".movie-card")
+      .forEach(function (card) {
+        createShareButton(card, "movie");
+      });
+  }
+
+  /* =========================================================
+     JSON CARD CREATION
+     ========================================================= */
   function createMovieCard(post) {
-
     const name =
       getPostName(post, "Movie");
 
@@ -515,127 +773,113 @@ document.addEventListener("DOMContentLoaded", function () {
 
       ${
         rating
-          ? `<span class="movie-rating">
-               ${escapeHtml(
-                 String(rating).toLowerCase().includes("imdb")
-                   ? rating
-                   : "IMDb " + rating
-               )}
-             </span>`
+          ? `
+            <span class="movie-rating">
+              ${escapeHtml(
+                String(rating)
+                  .toLowerCase()
+                  .includes("imdb")
+                  ? rating
+                  : "IMDb " + rating
+              )}
+            </span>
+          `
           : ""
       }
     `;
 
     return button;
-
   }
-
 
   function formatHighlightDate(value) {
+    if (!value) return "";
 
-  if (!value) {
-    return "";
-  }
+    const raw =
+      String(value).trim();
 
-  const raw =
-    String(value).trim();
+    const date =
+      /^\d{4}-\d{2}-\d{2}$/.test(raw)
+        ? new Date(raw + "T00:00:00")
+        : new Date(raw);
 
-  const date =
-    /^\d{4}-\d{2}-\d{2}$/.test(raw)
-      ? new Date(raw + "T00:00:00")
-      : new Date(raw);
-
-  if (Number.isNaN(date.getTime())) {
-    return raw;
-  }
-
-  return new Intl.DateTimeFormat(
-    undefined,
-    {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    }
-  ).format(date);
-
-}
-
-
-function createHighlightCard(post) {
-
-  const name =
-    getPostName(
-      post,
-      "Football Highlight"
-    );
-
-  const url =
-    getPostUrl(post);
-
-  const date =
-    getPostDate(post);
-
-  const card =
-    document.createElement("button");
-
-  card.type = "button";
-
-  /*
-   * Use the same base card as
-   * Upcoming & Live Matches.
-   */
-  card.className =
-    "match-card highlight-card is-upcoming";
-
-  card.dataset.name =
-    name;
-
-  card.dataset.url =
-    url;
-
-  if (date) {
-    card.dataset.date =
-      date;
-  }
-
-  card.innerHTML = `
-
-    <span class="match-status upcoming">
-      HIGHLIGHT
-    </span>
-
-    <span class="match-teams">
-      ${escapeHtml(name)}
-    </span>
-
-    ${
-      date
-        ? `
-          <span class="match-date">
-            ${escapeHtml(
-              formatHighlightDate(date)
-            )}
-          </span>
-        `
-        : ""
+    if (Number.isNaN(date.getTime())) {
+      return raw;
     }
 
-    <span class="match-countdown">
-      WATCH HIGHLIGHT
-    </span>
+    return new Intl.DateTimeFormat(
+      undefined,
+      {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      }
+    ).format(date);
+  }
 
-  `;
+  function createHighlightCard(post) {
+    const name =
+      getPostName(
+        post,
+        "Football Highlight"
+      );
 
-  return card;
+    const url =
+      getPostUrl(post);
 
-}
+    const date =
+      getPostDate(post);
 
+    const card =
+      document.createElement("button");
+
+    card.type = "button";
+
+    card.className =
+      "match-card highlight-card is-upcoming";
+
+    card.dataset.name = name;
+    card.dataset.url = url;
+
+    if (date) {
+      card.dataset.date = date;
+    }
+
+    card.innerHTML = `
+      <span class="match-status upcoming">
+        HIGHLIGHT
+      </span>
+
+      <span class="match-teams">
+        ${escapeHtml(name)}
+      </span>
+
+      ${
+        date
+          ? `
+            <span class="match-date">
+              ${escapeHtml(
+                formatHighlightDate(date)
+              )}
+            </span>
+          `
+          : ""
+      }
+
+      <span class="match-countdown">
+        WATCH HIGHLIGHT
+      </span>
+    `;
+
+    return card;
+  }
 
   function createTVCard(post) {
-
     const name =
-      getPostName(post, "TV Channel");
+      getPostName(
+        post,
+        "TV Channel"
+      );
 
     const url =
       getPostUrl(post);
@@ -679,14 +923,14 @@ function createHighlightCard(post) {
     `;
 
     return card;
-
   }
 
-
   function createMatchCard(post) {
-
     const name =
-      getPostName(post, "Football Match");
+      getPostName(
+        post,
+        "Football Match"
+      );
 
     const url =
       getPostUrl(post);
@@ -715,15 +959,18 @@ function createHighlightCard(post) {
     card.dataset.url = url;
 
     if (altUrl) {
-      card.dataset.altUrl = altUrl;
+      card.dataset.altUrl =
+        altUrl;
     }
 
     if (kickoff) {
-      card.dataset.kickoff = kickoff;
+      card.dataset.kickoff =
+        kickoff;
     }
 
     if (date) {
-      card.dataset.date = date;
+      card.dataset.date =
+        date;
     }
 
     if (post.duration) {
@@ -738,26 +985,23 @@ function createHighlightCard(post) {
 
       ${
         kickoff
-          ? `<span class="match-time">
-               ${escapeHtml(kickoff)}
-             </span>`
+          ? `
+            <span class="match-time">
+              ${escapeHtml(kickoff)}
+            </span>
+          `
           : ""
       }
     `;
 
     return card;
-
   }
-
 
   /* =========================================================
      JSON LOADING
      ========================================================= */
-
   async function loadJsonFile(path) {
-
     try {
-
       const response =
         await fetch(
           path + "?v=" + Date.now(),
@@ -773,11 +1017,7 @@ function createHighlightCard(post) {
       }
 
       return await response.json();
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
       console.error(
         "Could not load JSON:",
         path,
@@ -785,45 +1025,31 @@ function createHighlightCard(post) {
       );
 
       return [];
-
     }
-
   }
-
-
-  /* =========================================================
-     INSERT NEW POSTS BEFORE OLD POSTS
-     ========================================================= */
 
   function prependPosts(
     container,
     cards
   ) {
-
-    if (!container || !cards.length) {
+    if (
+      !container ||
+      !cards.length
+    ) {
       return;
     }
 
     const fragment =
       document.createDocumentFragment();
 
-    cards.forEach(
-      function (card) {
-        fragment.appendChild(card);
-      }
-    );
+    cards.forEach(function (card) {
+      fragment.appendChild(card);
+    });
 
     container.prepend(fragment);
-
   }
 
-
-  /* =========================================================
-     LOAD NEW CONTENT FROM JSON FILES
-     ========================================================= */
-
   async function loadExternalContent() {
-
     const results =
       await Promise.all([
         loadJsonFile(
@@ -839,7 +1065,6 @@ function createHighlightCard(post) {
           CONTENT_FILES.movies
         )
       ]);
-
 
     const footballPosts =
       sortNewestFirst(
@@ -861,14 +1086,7 @@ function createHighlightCard(post) {
         normalizePosts(results[3])
       );
 
-
-    /*
-     * New JSON content is inserted BEFORE
-     * the existing index.html content.
-     */
-
     if (footballContent) {
-
       prependPosts(
         footballContent.querySelector(
           ".matches-grid, .football-grid, .content-grid"
@@ -877,26 +1095,20 @@ function createHighlightCard(post) {
           createMatchCard
         )
       );
-
     }
 
-
     if (highlightsContent) {
-
-  prependPosts(
-    highlightsContent.querySelector(
-      ".highlight-grid, .highlights-grid, .content-grid"
-    ) || highlightsContent,
-    highlightPosts.map(
-      createHighlightCard
-    )
-  );
-
-}
-
+      prependPosts(
+        highlightsContent.querySelector(
+          ".highlight-grid, .highlights-grid, .content-grid"
+        ) || highlightsContent,
+        highlightPosts.map(
+          createHighlightCard
+        )
+      );
+    }
 
     if (tvContent) {
-
       prependPosts(
         tvContent.querySelector(
           ".tv-grid, .tv-channels-grid, .content-grid"
@@ -905,12 +1117,9 @@ function createHighlightCard(post) {
           createTVCard
         )
       );
-
     }
 
-
     if (moviesContent) {
-
       prependPosts(
         moviesContent.querySelector(
           ".movies-grid, .movie-grid, .content-grid"
@@ -919,13 +1128,7 @@ function createHighlightCard(post) {
           createMovieCard
         )
       );
-
     }
-
-
-    /*
-     * Re-bind cards after JSON content has been added.
-     */
 
     bindContentCards();
 
@@ -933,18 +1136,21 @@ function createHighlightCard(post) {
       updateStickyPositions
     );
 
+    /*
+     * Critical for shared links:
+     * JSON cards may not exist during the first attempt.
+     * Retry once the JSON content has been inserted.
+     */
+    if (getSharedContentData()) {
+      handleSharedContentHash();
+    }
   }
 
-
   /* =========================================================
-     STICKY LAYOUT CALCULATION
+     STICKY LAYOUT
      ========================================================= */
-
   function updateStickyPositions() {
-
-    if (!screenSection) {
-      return;
-    }
+    if (!screenSection) return;
 
     const root =
       document.documentElement;
@@ -974,72 +1180,60 @@ function createHighlightCard(post) {
         screenHeight
       ) + "px"
     );
-
   }
-
 
   /* =========================================================
      ACTIVE APP BUTTON
      ========================================================= */
-
   function setActiveButton(button) {
-
     [
       footballButton,
       highlightsButton,
       tvButton,
       moviesButton
-    ].forEach(
-      function (item) {
-
-        if (item) {
-          item.classList.remove("active");
-        }
-
+    ].forEach(function (item) {
+      if (item) {
+        item.classList.remove(
+          "active"
+        );
       }
-    );
+    });
 
     if (button) {
-      button.classList.add("active");
+      button.classList.add(
+        "active"
+      );
     }
-
   }
-
 
   /* =========================================================
      ACTIVE NAV
      ========================================================= */
-
   function setActiveNav(link) {
-
     [
       navFootball,
       navHighlights,
       navTV,
       navMovies
-    ].forEach(
-      function (item) {
-
-        if (item) {
-          item.classList.remove("active");
-        }
-
+    ].forEach(function (item) {
+      if (item) {
+        item.classList.remove(
+          "active"
+        );
       }
-    );
+    });
 
     if (link) {
-      link.classList.add("active");
+      link.classList.add(
+        "active"
+      );
     }
-
   }
-
 
   /* =========================================================
      SHOW CONTENT
      ========================================================= */
-
   function showContent(section) {
-
     if (footballContent) {
       footballContent.hidden =
         section !== "football";
@@ -1067,160 +1261,92 @@ function createHighlightCard(post) {
     requestAnimationFrame(
       updateStickyPositions
     );
-
   }
-
 
   /* =========================================================
      OPEN SECTIONS
      ========================================================= */
-
   function openFootball() {
-
     showContent("football");
-
-    setActiveButton(
-      footballButton
-    );
-
-    setActiveNav(
-      navFootball
-    );
-
+    setActiveButton(footballButton);
+    setActiveNav(navFootball);
     updateFootballControls();
-
   }
-
 
   function openHighlights() {
-
     showContent("highlights");
-
-    setActiveButton(
-      highlightsButton
-    );
-
-    setActiveNav(
-      navHighlights
-    );
-
+    setActiveButton(highlightsButton);
+    setActiveNav(navHighlights);
   }
-
 
   function openTV() {
-
     showContent("tv");
-
-    setActiveButton(
-      tvButton
-    );
-
-    setActiveNav(
-      navTV
-    );
-
+    setActiveButton(tvButton);
+    setActiveNav(navTV);
   }
-
 
   function openMovies() {
-
     showContent("movies");
-
-    setActiveButton(
-      moviesButton
-    );
-
-    setActiveNav(
-      navMovies
-    );
-
+    setActiveButton(moviesButton);
+    setActiveNav(navMovies);
   }
 
+  footballButton?.addEventListener(
+    "click",
+    openFootball
+  );
+
+  highlightsButton?.addEventListener(
+    "click",
+    openHighlights
+  );
+
+  tvButton?.addEventListener(
+    "click",
+    openTV
+  );
+
+  moviesButton?.addEventListener(
+    "click",
+    openMovies
+  );
+
+  navFootball?.addEventListener(
+    "click",
+    function (event) {
+      event.preventDefault();
+      openFootball();
+    }
+  );
+
+  navHighlights?.addEventListener(
+    "click",
+    function (event) {
+      event.preventDefault();
+      openHighlights();
+    }
+  );
+
+  navTV?.addEventListener(
+    "click",
+    function (event) {
+      event.preventDefault();
+      openTV();
+    }
+  );
+
+  navMovies?.addEventListener(
+    "click",
+    function (event) {
+      event.preventDefault();
+      openMovies();
+    }
+  );
 
   /* =========================================================
-     APP BUTTON EVENTS
+     FOOTBALL CONTROLS
      ========================================================= */
-
-  if (footballButton) {
-    footballButton.addEventListener(
-      "click",
-      openFootball
-    );
-  }
-
-  if (highlightsButton) {
-    highlightsButton.addEventListener(
-      "click",
-      openHighlights
-    );
-  }
-
-  if (tvButton) {
-    tvButton.addEventListener(
-      "click",
-      openTV
-    );
-  }
-
-  if (moviesButton) {
-    moviesButton.addEventListener(
-      "click",
-      openMovies
-    );
-  }
-
-
-  /* =========================================================
-     NAVIGATION EVENTS
-     ========================================================= */
-
-  if (navFootball) {
-    navFootball.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        openFootball();
-      }
-    );
-  }
-
-  if (navHighlights) {
-    navHighlights.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        openHighlights();
-      }
-    );
-  }
-
-  if (navTV) {
-    navTV.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        openTV();
-      }
-    );
-  }
-
-  if (navMovies) {
-    navMovies.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        openMovies();
-      }
-    );
-  }
-
-
-  /* =========================================================
-     UPDATE FOOTBALL CONTROLS
-     ========================================================= */
-
   function updateFootballControls() {
-
     if (!footballScreenControls) {
       return;
     }
@@ -1233,36 +1359,38 @@ function createHighlightCard(post) {
       !shouldShow;
 
     if (!shouldShow) {
-
       if (mainScreenButton) {
-        mainScreenButton.classList.remove("active");
+        mainScreenButton.classList.remove(
+          "active"
+        );
       }
 
       if (altScreenButton) {
-        altScreenButton.classList.remove("active");
+        altScreenButton.classList.remove(
+          "active"
+        );
       }
 
       return;
-
     }
 
     if (mainScreenButton) {
-      mainScreenButton.classList.add("active");
+      mainScreenButton.classList.add(
+        "active"
+      );
     }
 
     if (altScreenButton) {
-      altScreenButton.classList.remove("active");
+      altScreenButton.classList.remove(
+        "active"
+      );
     }
-
   }
 
-
   /* =========================================================
-     HIDE ALT SCREEN
+     ALT SCREEN
      ========================================================= */
-
   function hideAltScreen() {
-
     if (altScreenFrame) {
       altScreenFrame.src =
         "about:blank";
@@ -1278,22 +1406,19 @@ function createHighlightCard(post) {
     );
 
     if (mainScreenButton) {
-      mainScreenButton.classList.add("active");
+      mainScreenButton.classList.add(
+        "active"
+      );
     }
 
     if (altScreenButton) {
-      altScreenButton.classList.remove("active");
+      altScreenButton.classList.remove(
+        "active"
+      );
     }
-
   }
 
-
-  /* =========================================================
-     OPEN ALT SCREEN
-     ========================================================= */
-
   function openAltScreen() {
-
     if (
       currentScreenType !== "match" ||
       !currentMatchCard
@@ -1302,13 +1427,10 @@ function createHighlightCard(post) {
     }
 
     if (!hasValidAltUrl(currentAltUrl)) {
-
       alert(
         "No alternative screen has been added for this match yet."
       );
-
       return;
-
     }
 
     const matchName =
@@ -1324,25 +1446,18 @@ function createHighlightCard(post) {
     }
 
     if (altScreenFrame) {
-
       altScreenFrame.src =
         "about:blank";
 
-      setTimeout(
-        function () {
-
-          if (
-            currentScreenType === "match" &&
-            hasValidAltUrl(currentAltUrl)
-          ) {
-            altScreenFrame.src =
-              currentAltUrl;
-          }
-
-        },
-        80
-      );
-
+      setTimeout(function () {
+        if (
+          currentScreenType === "match" &&
+          hasValidAltUrl(currentAltUrl)
+        ) {
+          altScreenFrame.src =
+            currentAltUrl;
+        }
+      }, 80);
     }
 
     if (altScreenOverlay) {
@@ -1355,107 +1470,64 @@ function createHighlightCard(post) {
     );
 
     if (mainScreenButton) {
-      mainScreenButton.classList.remove("active");
+      mainScreenButton.classList.remove(
+        "active"
+      );
     }
 
     if (altScreenButton) {
-      altScreenButton.classList.add("active");
+      altScreenButton.classList.add(
+        "active"
+      );
     }
-
   }
 
+  mainScreenButton?.addEventListener(
+    "click",
+    function () {
+      if (
+        currentScreenType !== "match" ||
+        !currentMainUrl
+      ) {
+        return;
+      }
 
-  /* =========================================================
-     MAIN SCREEN BUTTON
-     ========================================================= */
+      hideAltScreen();
 
-  if (mainScreenButton) {
-
-    mainScreenButton.addEventListener(
-      "click",
-      function () {
-
-        if (
-          currentScreenType !== "match" ||
-          !currentMainUrl
-        ) {
-          return;
-        }
-
-        hideAltScreen();
-
-        loadScreen(
-          currentMainUrl,
-          currentMatchCard?.dataset.name ||
+      loadScreen(
+        currentMainUrl,
+        currentMatchCard?.dataset.name ||
           "Football Match",
-          "match",
-          true
-        );
+        "match",
+        true
+      );
+    }
+  );
 
-      }
-    );
+  altScreenButton?.addEventListener(
+    "click",
+    openAltScreen
+  );
 
-  }
+  closeAltScreen?.addEventListener(
+    "click",
+    hideAltScreen
+  );
 
-
-  /* =========================================================
-     ALT SCREEN BUTTON
-     ========================================================= */
-
-  if (altScreenButton) {
-
-    altScreenButton.addEventListener(
-      "click",
-      function () {
-        openAltScreen();
-      }
-    );
-
-  }
-
-
-  /* =========================================================
-     CLOSE ALT SCREEN
-     ========================================================= */
-
-  if (closeAltScreen) {
-
-    closeAltScreen.addEventListener(
-      "click",
-      function () {
+  altScreenOverlay?.addEventListener(
+    "click",
+    function (event) {
+      if (
+        event.target === altScreenOverlay
+      ) {
         hideAltScreen();
       }
-    );
-
-  }
-
-
-  if (altScreenOverlay) {
-
-    altScreenOverlay.addEventListener(
-      "click",
-      function (event) {
-
-        if (
-          event.target === altScreenOverlay
-        ) {
-          hideAltScreen();
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =========================================================
-     ESC KEY
-     ========================================================= */
+    }
+  );
 
   document.addEventListener(
     "keydown",
     function (event) {
-
       if (
         event.key === "Escape" &&
         altScreenOverlay &&
@@ -1463,29 +1535,23 @@ function createHighlightCard(post) {
       ) {
         hideAltScreen();
       }
-
     }
   );
 
-
   /* =========================================================
-     DIRECT M3U8 / HLS PLAYER
+     HLS
      ========================================================= */
-
   function isM3U8Url(url) {
-    return /\\.m3u8(?:$|[?#])/i.test(
+    return /\.m3u8(?:$|[?#])/i.test(
       String(url || "").trim()
     );
   }
 
-
   function destroyM3U8Player() {
-
     if (hlsInstance) {
       try {
         hlsInstance.destroy();
-      }
-      catch (error) {
+      } catch (error) {
         console.log(
           "HLS cleanup failed:",
           error
@@ -1498,11 +1564,12 @@ function createHighlightCard(post) {
     if (hlsVideo) {
       try {
         hlsVideo.pause();
-        hlsVideo.removeAttribute("src");
+        hlsVideo.removeAttribute(
+          "src"
+        );
         hlsVideo.load();
         hlsVideo.remove();
-      }
-      catch (error) {
+      } catch (error) {
         console.log(
           "Video cleanup failed:",
           error
@@ -1518,105 +1585,106 @@ function createHighlightCard(post) {
     }
   }
 
-
   function loadHlsLibrary() {
-
     if (window.Hls) {
-      return Promise.resolve(window.Hls);
+      return Promise.resolve(
+        window.Hls
+      );
     }
 
     if (hlsLibraryPromise) {
       return hlsLibraryPromise;
     }
 
-    hlsLibraryPromise = new Promise(
-      function (resolve, reject) {
+    hlsLibraryPromise =
+      new Promise(
+        function (resolve, reject) {
+          const existing =
+            document.querySelector(
+              'script[data-deeprowss-hls="true"]'
+            );
 
-        const existing =
-          document.querySelector(
-            'script[data-deeprowss-hls="true"]'
-          );
+          if (existing) {
+            existing.addEventListener(
+              "load",
+              function () {
+                if (window.Hls) {
+                  resolve(
+                    window.Hls
+                  );
+                } else {
+                  reject(
+                    new Error(
+                      "HLS library loaded without Hls."
+                    )
+                  );
+                }
+              },
+              { once: true }
+            );
 
-        if (existing) {
+            existing.addEventListener(
+              "error",
+              function () {
+                reject(
+                  new Error(
+                    "Could not load HLS library."
+                  )
+                );
+              },
+              { once: true }
+            );
 
-          existing.addEventListener(
-            "load",
+            return;
+          }
+
+          const script =
+            document.createElement(
+              "script"
+            );
+
+          script.src =
+            "https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js";
+
+          script.async = true;
+
+          script.dataset.deeprowssHls =
+            "true";
+
+          script.onload =
             function () {
               if (window.Hls) {
-                resolve(window.Hls);
-              }
-              else {
+                resolve(
+                  window.Hls
+                );
+              } else {
                 reject(
                   new Error(
                     "HLS library loaded without Hls."
                   )
                 );
               }
-            },
-            { once: true }
-          );
+            };
 
-          existing.addEventListener(
-            "error",
+          script.onerror =
             function () {
               reject(
                 new Error(
                   "Could not load HLS library."
                 )
               );
-            },
-            { once: true }
+            };
+
+          document.head.appendChild(
+            script
           );
-
-          return;
         }
-
-        const script =
-          document.createElement("script");
-
-        script.src =
-          "https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js";
-
-        script.async = true;
-        script.dataset.deeprowssHls =
-          "true";
-
-        script.onload =
-          function () {
-
-            if (window.Hls) {
-              resolve(window.Hls);
-            }
-            else {
-              reject(
-                new Error(
-                  "HLS library loaded without Hls."
-                )
-              );
-            }
-
-          };
-
-        script.onerror =
-          function () {
-            reject(
-              new Error(
-                "Could not load HLS library."
-              )
-            );
-          };
-
-        document.head.appendChild(script);
-
-      }
-    );
+      );
 
     return hlsLibraryPromise;
   }
 
-
   function createM3U8Player(url) {
-
     if (!screenPlayer) {
       return;
     }
@@ -1632,7 +1700,9 @@ function createHighlightCard(post) {
     }
 
     const video =
-      document.createElement("video");
+      document.createElement(
+        "video"
+      );
 
     video.className =
       "deeprowss-hls-video";
@@ -1653,27 +1723,19 @@ function createHighlightCard(post) {
     );
 
     video.autoplay = true;
-
-    // IMPORTANT:
-    // Start muted so browsers allow autoplay.
-    // User can click the unmute button.
     video.muted = true;
     video.volume = 0;
 
-    video.style.width =
-      "100%";
-
-    video.style.height =
-      "100%";
-
-    video.style.display =
-      "block";
-
-    video.style.objectFit =
-      "contain";
-
-    video.style.background =
-      "#000";
+    Object.assign(
+      video.style,
+      {
+        width: "100%",
+        height: "100%",
+        display: "block",
+        objectFit: "contain",
+        background: "#000"
+      }
+    );
 
     screenPlayer.appendChild(
       video
@@ -1682,7 +1744,9 @@ function createHighlightCard(post) {
     hlsVideo = video;
 
     const unmuteButton =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
     unmuteButton.type =
       "button";
@@ -1703,52 +1767,29 @@ function createHighlightCard(post) {
       "Click to unmute"
     );
 
-    unmuteButton.style.position =
-      "absolute";
-
-    unmuteButton.style.left =
-      "50%";
-
-    unmuteButton.style.bottom =
-      "18px";
-
-    unmuteButton.style.transform =
-      "translateX(-50%)";
-
-    unmuteButton.style.zIndex =
-      "9999";
-
-    unmuteButton.style.padding =
-      "10px 18px";
-
-    unmuteButton.style.border =
-      "0";
-
-    unmuteButton.style.borderRadius =
-      "999px";
-
-    unmuteButton.style.cursor =
-      "pointer";
-
-    unmuteButton.style.fontWeight =
-      "700";
-
-    unmuteButton.style.fontSize =
-      "14px";
-
-    unmuteButton.style.background =
-      "rgba(0,0,0,.85)";
-
-    unmuteButton.style.color =
-      "#fff";
-
-    unmuteButton.style.boxShadow =
-      "0 3px 12px rgba(0,0,0,.45)";
+    Object.assign(
+      unmuteButton.style,
+      {
+        position: "absolute",
+        left: "50%",
+        bottom: "18px",
+        transform: "translateX(-50%)",
+        zIndex: "9999",
+        padding: "10px 18px",
+        border: "0",
+        borderRadius: "999px",
+        cursor: "pointer",
+        fontWeight: "700",
+        fontSize: "14px",
+        background: "rgba(0,0,0,.85)",
+        color: "#fff",
+        boxShadow: "0 3px 12px rgba(0,0,0,.45)"
+      }
+    );
 
     unmuteButton.addEventListener(
       "click",
       function () {
-
         video.muted = false;
         video.volume = 1;
 
@@ -1772,11 +1813,6 @@ function createHighlightCard(post) {
         unmuteButton.textContent =
           "🔊 Sound On";
 
-        unmuteButton.setAttribute(
-          "aria-label",
-          "Sound is on"
-        );
-
         setTimeout(
           function () {
             if (hlsUnmuteButton) {
@@ -1786,7 +1822,6 @@ function createHighlightCard(post) {
           },
           1200
         );
-
       }
     );
 
@@ -1798,13 +1833,11 @@ function createHighlightCard(post) {
       unmuteButton;
 
     function startNativeHls() {
-
       video.src = url;
 
       video.addEventListener(
         "loadedmetadata",
         function () {
-
           const playResult =
             video.play();
 
@@ -1821,7 +1854,6 @@ function createHighlightCard(post) {
               }
             );
           }
-
         },
         { once: true }
       );
@@ -1829,8 +1861,6 @@ function createHighlightCard(post) {
       video.load();
     }
 
-
-    // Safari/iOS and browsers with native HLS support.
     if (
       video.canPlayType(
         "application/vnd.apple.mpegurl"
@@ -1840,22 +1870,17 @@ function createHighlightCard(post) {
       return;
     }
 
-
-    // Chrome, Edge, Firefox and other browsers use hls.js.
     loadHlsLibrary()
       .then(
         function (Hls) {
-
           if (!hlsVideo) {
             return;
           }
 
           if (!Hls.isSupported()) {
-
             console.log(
               "This browser does not support HLS."
             );
-
             return;
           }
 
@@ -1864,7 +1889,10 @@ function createHighlightCard(post) {
               enableWorker: true
             });
 
-          hlsInstance.loadSource(url);
+          hlsInstance.loadSource(
+            url
+          );
+
           hlsInstance.attachMedia(
             video
           );
@@ -1872,7 +1900,6 @@ function createHighlightCard(post) {
           hlsInstance.on(
             Hls.Events.MANIFEST_PARSED,
             function () {
-
               const playResult =
                 video.play();
 
@@ -1889,7 +1916,6 @@ function createHighlightCard(post) {
                   }
                 );
               }
-
             }
           );
 
@@ -1899,7 +1925,6 @@ function createHighlightCard(post) {
               event,
               data
             ) {
-
               if (
                 data &&
                 data.fatal
@@ -1909,10 +1934,8 @@ function createHighlightCard(post) {
                   data
                 );
               }
-
             }
           );
-
         }
       )
       .catch(
@@ -1923,33 +1946,29 @@ function createHighlightCard(post) {
           );
         }
       );
-
   }
-
 
   /* =========================================================
      LOAD SCREEN
      ========================================================= */
-
   function loadScreen(
     url,
     name,
     type,
     keepMatchState
   ) {
-
-    if ((!screenFrame && !screenPlayer) || !url) {
+    if (
+      (!screenFrame && !screenPlayer) ||
+      !url
+    ) {
       return;
     }
 
     if (screenLoadTimer) {
-
       clearTimeout(
         screenLoadTimer
       );
-
       screenLoadTimer = null;
-
     }
 
     hideAltScreen();
@@ -1957,16 +1976,13 @@ function createHighlightCard(post) {
     currentScreenType =
       type || "";
 
-    if (!keepMatchState) {
-
-      if (type !== "match") {
-
-        currentMatchCard = null;
-        currentMainUrl = "";
-        currentAltUrl = "";
-
-      }
-
+    if (
+      !keepMatchState &&
+      type !== "match"
+    ) {
+      currentMatchCard = null;
+      currentMainUrl = "";
+      currentAltUrl = "";
     }
 
     if (nowShowing) {
@@ -1980,22 +1996,19 @@ function createHighlightCard(post) {
       );
     }
 
+    /*
+     * CRITICAL FIX:
+     * There is only ONE main player.
+     * M3U8 creates one video INSIDE screenPlayer.
+     * Normal URLs use the existing screenFrame.
+     * No second iframe is ever created.
+     */
     if (isM3U8Url(url)) {
-
       createM3U8Player(url);
-
-      requestAnimationFrame(
-        updateStickyPositions
-      );
-
-    }
-
-    else {
-
+    } else {
       destroyM3U8Player();
 
       if (screenFrame) {
-
         screenFrame.style.display =
           "";
 
@@ -2008,56 +2021,43 @@ function createHighlightCard(post) {
         screenLoadTimer =
           setTimeout(
             function () {
-
               screenFrame.src =
                 url;
 
               screenFrame.style.opacity =
                 "1";
 
-              screenLoadTimer = null;
-
-              requestAnimationFrame(
-                updateStickyPositions
-              );
-
+              screenLoadTimer =
+                null;
             },
             150
           );
-
       }
-
     }
 
-
     if (screenStatus) {
-
       if (type === "tv") {
         screenStatus.textContent =
           "LIVE TV";
-      }
-
-      else if (type === "highlight") {
+      } else if (type === "highlight") {
         screenStatus.textContent =
           "HIGHLIGHT";
-      }
-
-      else if (type === "movie") {
+      } else if (type === "movie") {
         screenStatus.textContent =
           "MOVIE";
-      }
-
-      else {
+      } else {
         screenStatus.textContent =
           "LIVE";
       }
-
     }
 
     updateFootballControls();
 
-    if (screenPlayer) {
+    requestAnimationFrame(
+      updateStickyPositions
+    );
 
+    if (screenPlayer) {
       const rect =
         screenPlayer.getBoundingClientRect();
 
@@ -2066,34 +2066,29 @@ function createHighlightCard(post) {
           ? siteHeader.getBoundingClientRect().height
           : 66;
 
-      if (rect.top < headerHeight) {
-
+      if (
+        rect.top <
+        headerHeight
+      ) {
         window.scrollBy({
           top:
             rect.top -
             headerHeight -
             10,
-          behavior:
-            "smooth"
+          behavior: "smooth"
         });
-
       }
-
     }
-
   }
-
 
   /* =========================================================
      BIND CONTENT CARDS
      ========================================================= */
-
   function bindContentCards() {
-
     const matchCards =
-  document.querySelectorAll(
-    ".match-card:not(.highlight-card)"
-  );
+      document.querySelectorAll(
+        ".match-card:not(.highlight-card)"
+      );
 
     const highlightCards =
       document.querySelectorAll(
@@ -2110,29 +2105,29 @@ function createHighlightCard(post) {
         ".movie-card"
       );
 
-
-    /* =======================================================
-       MATCH CLICK
-       ======================================================= */
-
+    /* MATCH */
     matchCards.forEach(
       function (card) {
-
-        if (card.dataset.bound === "true") {
+        if (
+          card.dataset.bound ===
+          "true"
+        ) {
           return;
         }
 
-        card.dataset.bound = "true";
+        card.dataset.bound =
+          "true";
 
         card.addEventListener(
           "click",
           function () {
-
             const url =
-              this.dataset.url;
+              this.dataset.url ||
+              "";
 
             const altUrl =
-              this.dataset.altUrl || "";
+              this.dataset.altUrl ||
+              "";
 
             const name =
               this.dataset.name ||
@@ -2145,10 +2140,10 @@ function createHighlightCard(post) {
               this;
 
             currentMainUrl =
-              url || "";
+              url;
 
             currentAltUrl =
-              altUrl || "";
+              altUrl;
 
             currentScreenType =
               "match";
@@ -2169,46 +2164,48 @@ function createHighlightCard(post) {
 
             hideAltScreen();
 
+            /*
+             * IMPORTANT:
+             * Open the section first, then load the URL
+             * into the existing screenFrame/screenPlayer.
+             */
+            openFootball();
+
             loadScreen(
               url,
               name,
               "match",
               true
             );
-
-            openFootball();
-
           }
         );
-
       }
     );
 
-
-    /* =======================================================
-       HIGHLIGHT CLICK
-       ======================================================= */
-
+    /* HIGHLIGHTS */
     highlightCards.forEach(
       function (card) {
-
-        if (card.dataset.bound === "true") {
+        if (
+          card.dataset.bound ===
+          "true"
+        ) {
           return;
         }
 
-        card.dataset.bound = "true";
+        card.dataset.bound =
+          "true";
 
         card.addEventListener(
           "click",
           function () {
-
             const url =
-              this.dataset.url;
+              this.dataset.url ||
+              "";
 
             const name =
               this.dataset.name ||
               this.querySelector(
-                "strong"
+                ".match-teams"
               )?.textContent?.trim() ||
               "Football Highlight";
 
@@ -2224,44 +2221,47 @@ function createHighlightCard(post) {
               "active"
             );
 
-            currentMatchCard = null;
-            currentMainUrl = "";
-            currentAltUrl = "";
+            currentMatchCard =
+              null;
+
+            currentMainUrl =
+              "";
+
+            currentAltUrl =
+              "";
+
+            openHighlights();
 
             loadScreen(
               url,
               name,
-              "highlight"
+              "highlight",
+              false
             );
-
-            openHighlights();
-
           }
         );
-
       }
     );
 
-
-    /* =======================================================
-       TV CHANNEL CLICK
-       ======================================================= */
-
+    /* TV */
     tvChannels.forEach(
       function (channel) {
-
-        if (channel.dataset.bound === "true") {
+        if (
+          channel.dataset.bound ===
+          "true"
+        ) {
           return;
         }
 
-        channel.dataset.bound = "true";
+        channel.dataset.bound =
+          "true";
 
         channel.addEventListener(
           "click",
           function () {
-
             const url =
-              this.dataset.url;
+              this.dataset.url ||
+              "";
 
             const name =
               this.dataset.name ||
@@ -2282,44 +2282,47 @@ function createHighlightCard(post) {
               "active"
             );
 
-            currentMatchCard = null;
-            currentMainUrl = "";
-            currentAltUrl = "";
+            currentMatchCard =
+              null;
+
+            currentMainUrl =
+              "";
+
+            currentAltUrl =
+              "";
+
+            openTV();
 
             loadScreen(
               url,
               name,
-              "tv"
+              "tv",
+              false
             );
-
-            openTV();
-
           }
         );
-
       }
     );
 
-
-    /* =======================================================
-       MOVIE CLICK
-       ======================================================= */
-
+    /* MOVIES */
     movieCards.forEach(
       function (movie) {
-
-        if (movie.dataset.bound === "true") {
+        if (
+          movie.dataset.bound ===
+          "true"
+        ) {
           return;
         }
 
-        movie.dataset.bound = "true";
+        movie.dataset.bound =
+          "true";
 
         movie.addEventListener(
           "click",
           function () {
-
             const url =
-              this.dataset.url;
+              this.dataset.url ||
+              "";
 
             const name =
               this.dataset.name ||
@@ -2340,33 +2343,39 @@ function createHighlightCard(post) {
               "active"
             );
 
-            currentMatchCard = null;
-            currentMainUrl = "";
-            currentAltUrl = "";
+            currentMatchCard =
+              null;
+
+            currentMainUrl =
+              "";
+
+            currentAltUrl =
+              "";
+
+            openMovies();
 
             loadScreen(
               url,
               name,
-              "movie"
+              "movie",
+              false
             );
-
-            openMovies();
-
           }
         );
-
       }
     );
 
+    /*
+     * Share buttons are added only after normal
+     * card click handlers exist.
+     */
+    addShareButtons();
   }
-
 
   /* =========================================================
      FULLSCREEN
      ========================================================= */
-
   function enterScreenFullscreen() {
-
     if (!screenPlayer) {
       return;
     }
@@ -2382,21 +2391,13 @@ function createHighlightCard(post) {
       screenPlayer.msRequestFullscreen;
 
     if (!requestFullscreen) {
-
       screenPlayer.classList.remove(
         "fullscreen-active"
       );
-
-      console.log(
-        "Fullscreen API is not available."
-      );
-
       return;
-
     }
 
     try {
-
       const result =
         requestFullscreen.call(
           screenPlayer,
@@ -2407,12 +2408,11 @@ function createHighlightCard(post) {
 
       if (
         result &&
-        typeof result.then === "function"
+        typeof result.then ===
+          "function"
       ) {
-
         result.catch(
           function (error) {
-
             console.log(
               "Fullscreen request failed:",
               error
@@ -2421,16 +2421,10 @@ function createHighlightCard(post) {
             screenPlayer.classList.remove(
               "fullscreen-active"
             );
-
           }
         );
-
       }
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
       console.log(
         "Fullscreen request failed:",
         error
@@ -2439,32 +2433,22 @@ function createHighlightCard(post) {
       screenPlayer.classList.remove(
         "fullscreen-active"
       );
-
     }
-
   }
 
-
   function exitScreenFullscreen() {
-
     if (
       screen.orientation &&
       screen.orientation.unlock
     ) {
-
       try {
         screen.orientation.unlock();
-      }
-
-      catch (error) {
-
+      } catch (error) {
         console.log(
           "Orientation unlock unavailable:",
           error
         );
-
       }
-
     }
 
     const exitFullscreen =
@@ -2474,7 +2458,6 @@ function createHighlightCard(post) {
       document.msExitFullscreen;
 
     if (!exitFullscreen) {
-
       if (screenPlayer) {
         screenPlayer.classList.remove(
           "fullscreen-active"
@@ -2482,11 +2465,9 @@ function createHighlightCard(post) {
       }
 
       return;
-
     }
 
     try {
-
       const result =
         exitFullscreen.call(
           document
@@ -2494,42 +2475,30 @@ function createHighlightCard(post) {
 
       if (
         result &&
-        typeof result.then === "function"
+        typeof result.then ===
+          "function"
       ) {
-
         result.catch(
           function (error) {
-
             console.log(
               "Fullscreen exit failed:",
               error
             );
-
           }
         );
-
       }
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
       console.log(
         "Fullscreen exit failed:",
         error
       );
-
     }
-
   }
 
-
   if (fullscreenButton) {
-
     fullscreenButton.addEventListener(
       "click",
       function () {
-
         const activeFullscreen =
           document.fullscreenElement ||
           document.webkitFullscreenElement ||
@@ -2538,23 +2507,17 @@ function createHighlightCard(post) {
 
         if (activeFullscreen) {
           exitScreenFullscreen();
-          return;
+        } else {
+          enterScreenFullscreen();
         }
-
-        enterScreenFullscreen();
-
       }
     );
-
   }
-
 
   /* =========================================================
      FULLSCREEN CHANGE
      ========================================================= */
-
   function handleFullscreenChange() {
-
     if (!fullscreenButton) {
       return;
     }
@@ -2566,7 +2529,6 @@ function createHighlightCard(post) {
       document.msFullscreenElement;
 
     if (activeFullscreen) {
-
       if (screenPlayer) {
         screenPlayer.classList.add(
           "fullscreen-active"
@@ -2590,9 +2552,7 @@ function createHighlightCard(post) {
         screen.orientation &&
         screen.orientation.lock
       ) {
-
         try {
-
           const lockResult =
             screen.orientation.lock(
               "landscape"
@@ -2600,9 +2560,9 @@ function createHighlightCard(post) {
 
           if (
             lockResult &&
-            typeof lockResult.catch === "function"
+            typeof lockResult.catch ===
+              "function"
           ) {
-
             lockResult.catch(
               function (error) {
                 console.log(
@@ -2611,26 +2571,15 @@ function createHighlightCard(post) {
                 );
               }
             );
-
           }
-
-        }
-
-        catch (error) {
-
+        } catch (error) {
           console.log(
             "Landscape lock unavailable:",
             error
           );
-
         }
-
       }
-
-    }
-
-    else {
-
+    } else {
       if (screenPlayer) {
         screenPlayer.classList.remove(
           "fullscreen-active"
@@ -2654,32 +2603,21 @@ function createHighlightCard(post) {
         screen.orientation &&
         screen.orientation.unlock
       ) {
-
         try {
           screen.orientation.unlock();
-        }
-
-        catch (error) {
-
+        } catch (error) {
           console.log(
             "Orientation unlock unavailable:",
             error
           );
-
         }
-
       }
-
     }
 
     requestAnimationFrame(
-      function () {
-        updateStickyPositions();
-      }
+      updateStickyPositions
     );
-
   }
-
 
   document.addEventListener(
     "fullscreenchange",
@@ -2701,16 +2639,10 @@ function createHighlightCard(post) {
     handleFullscreenChange
   );
 
-
-  /* =========================================================
-     FULLSCREEN / ORIENTATION RESIZE
-     ========================================================= */
-
   let fullscreenResizeTimer =
     null;
 
   function handleFullscreenResize() {
-
     if (fullscreenResizeTimer) {
       clearTimeout(
         fullscreenResizeTimer
@@ -2720,17 +2652,12 @@ function createHighlightCard(post) {
     fullscreenResizeTimer =
       setTimeout(
         function () {
-
           requestAnimationFrame(
-            function () {
-              updateStickyPositions();
-            }
+            updateStickyPositions
           );
-
         },
         80
       );
-
   }
 
   window.addEventListener(
@@ -2742,28 +2669,22 @@ function createHighlightCard(post) {
     screen.orientation &&
     screen.orientation.addEventListener
   ) {
-
     screen.orientation.addEventListener(
       "change",
       handleFullscreenResize
     );
-
   }
-
 
   /* =========================================================
      MOBILE MENU
      ========================================================= */
-
   if (
     menuToggle &&
     mainNav
   ) {
-
     menuToggle.addEventListener(
       "click",
       function () {
-
         const isOpen =
           mainNav.classList.toggle(
             "open"
@@ -2775,7 +2696,6 @@ function createHighlightCard(post) {
             ? "true"
             : "false"
         );
-
       }
     );
 
@@ -2783,11 +2703,9 @@ function createHighlightCard(post) {
       .querySelectorAll("a")
       .forEach(
         function (link) {
-
           link.addEventListener(
             "click",
             function () {
-
               mainNav.classList.remove(
                 "open"
               );
@@ -2796,48 +2714,37 @@ function createHighlightCard(post) {
                 "aria-expanded",
                 "false"
               );
-
             }
           );
-
         }
       );
-
   }
 
-
   /* =========================================================
-     ALT SCREEN PAGE SAFETY
+     PAGE SAFETY
      ========================================================= */
-
   window.addEventListener(
     "pagehide",
     function () {
-
       hideAltScreen();
-
       destroyM3U8Player();
 
       if (screenFrame) {
-        screenFrame.style.display = "";
+        screenFrame.style.display =
+          "";
       }
 
       if (screenPlayer) {
-
         screenPlayer.classList.remove(
           "fullscreen-active"
         );
-
       }
-
     }
   );
-
 
   /* =========================================================
      INITIAL STATE
      ========================================================= */
-
   updateStickyPositions();
 
   openFootball();
@@ -2846,10 +2753,15 @@ function createHighlightCard(post) {
 
   loadExternalContent();
 
+  /*
+   * Resolve existing index.html cards immediately.
+   * JSON cards are resolved again after JSON loads.
+   */
+  handleSharedContentHash();
+
   requestAnimationFrame(
     function () {
       updateStickyPositions();
     }
   );
-
 });
