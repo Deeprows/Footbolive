@@ -1546,9 +1546,9 @@ function createHighlightCard(post) {
   function bindContentCards() {
 
     const matchCards =
-      document.querySelectorAll(
-        ".match-card"
-      );
+  document.querySelectorAll(
+    ".match-card:not(.highlight-card)"
+  );
 
     const highlightCards =
       document.querySelectorAll(
