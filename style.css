@@ -536,17 +536,89 @@ transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shad
 touch-action:manipulation;
 }
 
-/* Smaller TV channel buttons/cards only */
+/* TV CHANNELS — SAME COMPACT STYLE AS HIGHLIGHTS */
+
 .tv-channel{
-width:150px;
-max-width:150px;
-min-height:100px;
-padding:14px;
+  width:100%;
+  max-width:none;
+  min-height:112px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+
+  padding:12px 14px;
+
+  border:1px solid rgba(255,23,68,.28);
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #11151c,
+      #0b0e14
+    );
+
+  color:#fff;
+  text-align:center;
 }
-.tv-channel-icon{width:64px;height:64px;font-size:32px}
-.tv-channel-info strong{font-size:16px}
-.tv-channel-info small{font-size:13px}
-.tv-channel-status{font-size:11px;padding:6px 9px}
+
+.tv-channel-icon{
+  width:45px;
+  height:45px;
+  border-radius:12px;
+  font-size:23px;
+}
+
+.tv-channel-info{
+  width:100%;
+  min-width:0;
+  padding:0;
+  text-align:center;
+}
+
+.tv-channel-info strong{
+  display:block;
+  width:100%;
+  overflow:hidden;
+  margin:0;
+
+  color:#fff;
+  font-size:13px;
+  font-weight:900;
+  line-height:1.2;
+
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.tv-channel-info small{
+  display:block;
+  margin-top:3px;
+  color:#9aa3b2;
+  font-size:9px;
+  line-height:1.2;
+}
+
+.tv-channel-status{
+  position:absolute;
+  top:10px;
+  right:10px;
+
+  min-height:22px;
+  padding:4px 7px;
+
+  border-radius:999px;
+
+  background:rgba(255,23,68,.13);
+  color:#ff5b78;
+
+  font-size:7px;
+  font-weight:950;
+  letter-spacing:.8px;
+}
 
 .tv-channel:hover{transform:translateY(-3px);border-color:rgba(255,23,68,.4);box-shadow:0 10px 25px rgba(0,0,0,.28)}
 .tv-channel.active{
@@ -678,10 +750,39 @@ box-shadow:0 15px 30px rgba(0,0,0,.3);
 
 /* Smaller TV channel cards on mobile */
 .tv-channel{
-width:150px;
-max-width:150px;
-min-height:100px;
-padding:12px;
+  width:100%;
+  max-width:none;
+  min-height:112px;
+  padding:12px 10px;
+  border-radius:14px;
+}
+
+.tv-channel-icon{
+  width:45px;
+  height:45px;
+  border-radius:12px;
+  font-size:23px;
+}
+
+.tv-channel-info{
+  padding:0;
+  text-align:center;
+}
+
+.tv-channel-info strong{
+  font-size:12px;
+}
+
+.tv-channel-info small{
+  font-size:9px;
+}
+
+.tv-channel-status{
+  top:9px;
+  right:9px;
+  min-height:22px;
+  padding:4px 7px;
+  font-size:7px;
 }
 .tv-channel-icon{width:52px;height:52px;border-radius:13px;font-size:26px}
 .tv-channel-status{top:11px;right:11px;min-height:27px;padding:5px 7px;font-size:7px;letter-spacing:.8px}
