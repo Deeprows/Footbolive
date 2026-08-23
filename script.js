@@ -471,10 +471,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
-     * Prefer an explicit share URL if one is supplied.
-     * Otherwise share the current Deeprowss page with a
-     * content-specific hash. This avoids exposing the
-     * direct stream/embed URL.
+     * IMPORTANT:
+     * The shared URL points back to Deeprowss itself.
+     * The fragment contains the content type + the exact
+     * content URL + the content name. When another browser
+     * opens the link, resolveSharedContent() reads this data,
+     * finds the matching card, switches to the correct
+     * category and opens that exact content.
+     *
+     * The fragment is not sent to the server, so the actual
+     * stream/embed URL stays in the browser URL only.
      */
     const explicitShareUrl =
       card.dataset.shareUrl ||
@@ -489,27 +495,46 @@ document.addEventListener("DOMContentLoaded", function () {
       card.dataset.name ||
       "Deeprowss";
 
-    const encodedName =
-      encodeURIComponent(
-        String(name).trim()
-      );
+    const contentUrl =
+      card.dataset.url ||
+      "";
 
-    const currentUrl =
-      window.location.href.split("#")[0];
+    const currentLocation =
+      window.location.href;
+
+    const baseUrl =
+      currentLocation.split("#")[0];
 
     const cleanUrl =
-      currentUrl.split("?")[0];
+      baseUrl.split("?")[0];
+
+    const params =
+      new URLSearchParams();
+
+    params.set(
+      "type",
+      type || "content"
+    );
+
+    if (contentUrl) {
+      params.set(
+        "url",
+        contentUrl
+      );
+    }
+
+    params.set(
+      "name",
+      String(name).trim()
+    );
 
     return (
       cleanUrl +
       "#share=" +
-      encodeURIComponent(type || "content") +
-      "&name=" +
-      encodedName
+      params.toString()
     );
 
   }
-
 
   function getShareTitle(card, type) {
 
@@ -565,6 +590,301 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
   }
+
+
+  /* =========================================================
+     RESOLVE SHARED CONTENT LINK
+     ========================================================= */
+
+  function getSharedContentData() {
+
+    const hash =
+      window.location.hash || "";
+
+    if (
+      !hash ||
+      hash.indexOf("#share=") !== 0
+    ) {
+      return null;
+    }
+
+    try {
+
+      const query =
+        hash.substring(
+          "#share=".length
+        );
+
+      const params =
+        new URLSearchParams(
+          query
+        );
+
+      const type =
+        params.get("type") || "";
+
+      const url =
+        params.get("url") || "";
+
+      const name =
+        params.get("name") || "";
+
+      if (!type && !url && !name) {
+        return null;
+      }
+
+      return {
+        type: type,
+        url: url,
+        name: name
+      };
+
+    }
+
+    catch (error) {
+
+      console.log(
+        "Could not read shared content link:",
+        error
+      );
+
+      return null;
+
+    }
+
+  }
+
+
+  function findSharedCard(data) {
+
+    if (!data) {
+      return null;
+    }
+
+    const type =
+      String(data.type || "").toLowerCase();
+
+    const url =
+      String(data.url || "").trim();
+
+    const name =
+      String(data.name || "").trim();
+
+    let selector = "";
+
+    if (type === "match") {
+      selector =
+        ".match-card:not(.highlight-card)";
+    }
+
+    else if (type === "highlight") {
+      selector =
+        ".highlight-card";
+    }
+
+    else if (type === "tv") {
+      selector =
+        ".tv-channel";
+    }
+
+    else if (type === "movie") {
+      selector =
+        ".movie-card";
+    }
+
+    else {
+      selector =
+        ".match-card, .tv-channel, .movie-card";
+    }
+
+    const cards =
+      document.querySelectorAll(
+        selector
+      );
+
+    /*
+     * URL is the strongest identifier.
+     */
+    if (url) {
+
+      for (
+        let i = 0;
+        i < cards.length;
+        i++
+      ) {
+
+        const card =
+          cards[i];
+
+        if (
+          String(
+            card.dataset.url || ""
+          ).trim() === url
+        ) {
+          return card;
+        }
+
+      }
+
+    }
+
+    /*
+     * Name is the fallback for older share links.
+     */
+    if (name) {
+
+      const normalizedName =
+        name.toLowerCase();
+
+      for (
+        let i = 0;
+        i < cards.length;
+        i++
+      ) {
+
+        const card =
+          cards[i];
+
+        const cardName =
+          String(
+            card.dataset.name ||
+            ""
+          ).trim().toLowerCase();
+
+        if (
+          cardName === normalizedName
+        ) {
+          return card;
+        }
+
+      }
+
+    }
+
+    return null;
+
+  }
+
+
+  let sharedContentResolveTimer =
+    null;
+
+  function resolveSharedContent(attempt) {
+
+    const data =
+      getSharedContentData();
+
+    if (!data) {
+      return;
+    }
+
+    const maxAttempts = 80;
+
+    const card =
+      findSharedCard(data);
+
+    if (card) {
+
+      if (sharedContentResolveTimer) {
+        clearTimeout(
+          sharedContentResolveTimer
+        );
+
+        sharedContentResolveTimer =
+          null;
+      }
+
+      const type =
+        String(
+          data.type || ""
+        ).toLowerCase();
+
+      /*
+       * Switch to the correct category first.
+       */
+      if (type === "match") {
+        openFootball();
+      }
+
+      else if (type === "highlight") {
+        openHighlights();
+      }
+
+      else if (type === "tv") {
+        openTV();
+      }
+
+      else if (type === "movie") {
+        openMovies();
+      }
+
+      /*
+       * Then use the existing card click handler.
+       * This preserves all current playback behavior.
+       */
+      setTimeout(
+        function () {
+
+          if (
+            document.body.contains(card)
+          ) {
+            card.click();
+          }
+
+        },
+        80
+      );
+
+      return;
+
+    }
+
+    /*
+     * JSON content may still be loading.
+     * Try again until all JSON files have had time
+     * to create their cards.
+     */
+    const nextAttempt =
+      Number(attempt || 0) + 1;
+
+    if (
+      nextAttempt <= maxAttempts
+    ) {
+
+      sharedContentResolveTimer =
+        setTimeout(
+          function () {
+            resolveSharedContent(
+              nextAttempt
+            );
+          },
+          150
+        );
+
+    }
+
+  }
+
+
+  function handleSharedContentHash() {
+
+    if (
+      sharedContentResolveTimer
+    ) {
+      clearTimeout(
+        sharedContentResolveTimer
+      );
+    }
+
+    resolveSharedContent(0);
+
+  }
+
+
+  window.addEventListener(
+    "hashchange",
+    handleSharedContentHash
+  );
 
 
   async function copyShareUrl(url) {
@@ -3366,6 +3686,13 @@ function createHighlightCard(post) {
   bindContentCards();
 
   loadExternalContent();
+
+  /*
+   * Also resolve shared links for content already present
+   * in index.html (Football Live and TV Channels).
+   * JSON content will be resolved again after it loads.
+   */
+  handleSharedContentHash();
 
   requestAnimationFrame(
     function () {
