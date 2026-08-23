@@ -108,6 +108,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     DEVELOPER TOOLS / RIGHT-CLICK PROTECTION
+     ========================================================= */
+
+  // Disable right-click context menu
+  document.addEventListener(
+    "contextmenu",
+    function (event) {
+      event.preventDefault();
+    }
+  );
+
+  // Block common browser developer-tool shortcuts
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      // F12
+      if (event.key === "F12") {
+        event.preventDefault();
+        return false;
+      }
+
+      // Ctrl + Shift + I / J / C
+      if (
+        event.ctrlKey &&
+        event.shiftKey &&
+        ["I", "J", "C"].includes(
+          event.key.toUpperCase()
+        )
+      ) {
+        event.preventDefault();
+        return false;
+      }
+
+      // Ctrl + U (View Source)
+      if (
+        event.ctrlKey &&
+        event.key.toUpperCase() === "U"
+      ) {
+        event.preventDefault();
+        return false;
+      }
+
+      // Ctrl + S (Save Page)
+      if (
+        event.ctrlKey &&
+        event.key.toUpperCase() === "S"
+      ) {
+        event.preventDefault();
+        return false;
+      }
+
+    }
+  );
+
+
+  /* =========================================================
      ELEMENTS
      ========================================================= */
 
