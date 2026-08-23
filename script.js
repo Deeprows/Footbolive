@@ -457,837 +457,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
-     NATIVE SHARE
-     Adds a share icon to every content card.
-     Football Live and TV Channels can come from index.html.
-     Highlights and Movies can come from JSON.
-     The original card click remains untouched.
-     ========================================================= */
-
-  function getSharePageUrl(card, type) {
-
-    if (!card) {
-      return window.location.href;
-    }
-
-    /*
-     * IMPORTANT:
-     * The shared URL points back to Deeprowss itself.
-     * The fragment contains the content type + the exact
-     * content URL + the content name. When another browser
-     * opens the link, resolveSharedContent() reads this data,
-     * finds the matching card, switches to the correct
-     * category and opens that exact content.
-     *
-     * The fragment is not sent to the server, so the actual
-     * stream/embed URL stays in the browser URL only.
-     */
-    const explicitShareUrl =
-      card.dataset.shareUrl ||
-      card.dataset.share ||
-      "";
-
-    if (explicitShareUrl) {
-      return explicitShareUrl;
-    }
-
-    const name =
-      card.dataset.name ||
-      "Deeprowss";
-
-    const contentUrl =
-      card.dataset.url ||
-      "";
-
-    const currentLocation =
-      window.location.href;
-
-    const baseUrl =
-      currentLocation.split("#")[0];
-
-    const cleanUrl =
-      baseUrl.split("?")[0];
-
-    const params =
-      new URLSearchParams();
-
-    params.set(
-      "type",
-      type || "content"
-    );
-
-    if (contentUrl) {
-      params.set(
-        "url",
-        contentUrl
-      );
-    }
-
-    params.set(
-      "name",
-      String(name).trim()
-    );
-
-    return (
-      cleanUrl +
-      "#share=" +
-      params.toString()
-    );
-
-  }
-
-  function getShareTitle(card, type) {
-
-    const name =
-      card?.dataset?.name ||
-      "Deeprowss";
-
-    const labels = {
-      match: "Football Live",
-      tv: "TV Channel",
-      highlight: "Football Highlight",
-      movie: "Movie"
-    };
-
-    const label =
-      labels[type] ||
-      "Content";
-
-    return (
-      name +
-      " - " +
-      label +
-      " | Deeprowss"
-    );
-
-  }
-
-
-  function getShareText(card, type) {
-
-    const name =
-      card?.dataset?.name ||
-      "Deeprowss";
-
-    const labels = {
-      match: "football match",
-      tv: "TV channel",
-      highlight: "football highlight",
-      movie: "movie"
-    };
-
-    const label =
-      labels[type] ||
-      "content";
-
-    return (
-      "Watch " +
-      name +
-      " on Deeprowss. " +
-      "Shared " +
-      label +
-      " from Deeprowss."
-    );
-
-  }
-
-
-  /* =========================================================
-     RESOLVE SHARED CONTENT LINK
-     ========================================================= */
-
-  function getSharedContentData() {
-
-    const hash =
-      window.location.hash || "";
-
-    if (
-      !hash ||
-      hash.indexOf("#share=") !== 0
-    ) {
-      return null;
-    }
-
-    try {
-
-      const query =
-        hash.substring(
-          "#share=".length
-        );
-
-      const params =
-        new URLSearchParams(
-          query
-        );
-
-      const type =
-        params.get("type") || "";
-
-      const url =
-        params.get("url") || "";
-
-      const name =
-        params.get("name") || "";
-
-      if (!type && !url && !name) {
-        return null;
-      }
-
-      return {
-        type: type,
-        url: url,
-        name: name
-      };
-
-    }
-
-    catch (error) {
-
-      console.log(
-        "Could not read shared content link:",
-        error
-      );
-
-      return null;
-
-    }
-
-  }
-
-
-  function findSharedCard(data) {
-
-    if (!data) {
-      return null;
-    }
-
-    const type =
-      String(data.type || "").toLowerCase();
-
-    const url =
-      String(data.url || "").trim();
-
-    const name =
-      String(data.name || "").trim();
-
-    let selector = "";
-
-    if (type === "match") {
-      selector =
-        ".match-card:not(.highlight-card)";
-    }
-
-    else if (type === "highlight") {
-      selector =
-        ".highlight-card";
-    }
-
-    else if (type === "tv") {
-      selector =
-        ".tv-channel";
-    }
-
-    else if (type === "movie") {
-      selector =
-        ".movie-card";
-    }
-
-    else {
-      selector =
-        ".match-card, .tv-channel, .movie-card";
-    }
-
-    const cards =
-      document.querySelectorAll(
-        selector
-      );
-
-    /*
-     * URL is the strongest identifier.
-     */
-    if (url) {
-
-      for (
-        let i = 0;
-        i < cards.length;
-        i++
-      ) {
-
-        const card =
-          cards[i];
-
-        if (
-          String(
-            card.dataset.url || ""
-          ).trim() === url
-        ) {
-          return card;
-        }
-
-      }
-
-    }
-
-    /*
-     * Name is the fallback for older share links.
-     */
-    if (name) {
-
-      const normalizedName =
-        name.toLowerCase();
-
-      for (
-        let i = 0;
-        i < cards.length;
-        i++
-      ) {
-
-        const card =
-          cards[i];
-
-        const cardName =
-          String(
-            card.dataset.name ||
-            ""
-          ).trim().toLowerCase();
-
-        if (
-          cardName === normalizedName
-        ) {
-          return card;
-        }
-
-      }
-
-    }
-
-    return null;
-
-  }
-
-
-  let sharedContentResolveTimer =
-    null;
-
-  function resolveSharedContent(attempt) {
-
-    const data =
-      getSharedContentData();
-
-    if (!data) {
-      return;
-    }
-
-    const maxAttempts = 80;
-
-    const card =
-      findSharedCard(data);
-
-    if (card) {
-
-      if (sharedContentResolveTimer) {
-        clearTimeout(
-          sharedContentResolveTimer
-        );
-
-        sharedContentResolveTimer =
-          null;
-      }
-
-      const type =
-        String(
-          data.type || ""
-        ).toLowerCase();
-
-      /*
-       * Switch to the correct category first.
-       */
-      if (type === "match") {
-        openFootball();
-      }
-
-      else if (type === "highlight") {
-        openHighlights();
-      }
-
-      else if (type === "tv") {
-        openTV();
-      }
-
-      else if (type === "movie") {
-        openMovies();
-      }
-
-      /*
-       * Then use the existing card click handler.
-       * This preserves all current playback behavior.
-       */
-      setTimeout(
-        function () {
-
-          if (
-            document.body.contains(card)
-          ) {
-            card.click();
-          }
-
-        },
-        80
-      );
-
-      return;
-
-    }
-
-    /*
-     * JSON content may still be loading.
-     * Try again until all JSON files have had time
-     * to create their cards.
-     */
-    const nextAttempt =
-      Number(attempt || 0) + 1;
-
-    if (
-      nextAttempt <= maxAttempts
-    ) {
-
-      sharedContentResolveTimer =
-        setTimeout(
-          function () {
-            resolveSharedContent(
-              nextAttempt
-            );
-          },
-          150
-        );
-
-    }
-
-  }
-
-
-  function handleSharedContentHash() {
-
-    if (
-      sharedContentResolveTimer
-    ) {
-      clearTimeout(
-        sharedContentResolveTimer
-      );
-    }
-
-    resolveSharedContent(0);
-
-  }
-
-
-  window.addEventListener(
-    "hashchange",
-    handleSharedContentHash
-  );
-
-
-  async function copyShareUrl(url) {
-
-    try {
-
-      if (
-        navigator.clipboard &&
-        typeof navigator.clipboard.writeText === "function"
-      ) {
-
-        await navigator.clipboard.writeText(url);
-
-        alert(
-          "Share link copied."
-        );
-
-        return true;
-
-      }
-
-    }
-
-    catch (error) {
-
-      console.log(
-        "Clipboard API failed:",
-        error
-      );
-
-    }
-
-    try {
-
-      const textarea =
-        document.createElement("textarea");
-
-      textarea.value =
-        url;
-
-      textarea.style.position =
-        "fixed";
-
-      textarea.style.left =
-        "-9999px";
-
-      textarea.style.top =
-        "0";
-
-      document.body.appendChild(
-        textarea
-      );
-
-      textarea.focus();
-      textarea.select();
-
-      const copied =
-        document.execCommand(
-          "copy"
-        );
-
-      textarea.remove();
-
-      if (copied) {
-
-        alert(
-          "Share link copied."
-        );
-
-        return true;
-
-      }
-
-    }
-
-    catch (error) {
-
-      console.log(
-        "Fallback copy failed:",
-        error
-      );
-
-    }
-
-    return false;
-
-  }
-
-
-  async function shareContent(card, type) {
-
-    if (!card) {
-      return;
-    }
-
-    const url =
-      getSharePageUrl(
-        card,
-        type
-      );
-
-    const title =
-      getShareTitle(
-        card,
-        type
-      );
-
-    const text =
-      getShareText(
-        card,
-        type
-      );
-
-    /*
-     * Use the browser/Android native share sheet
-     * whenever Web Share API is available.
-     */
-    if (
-      navigator.share &&
-      typeof navigator.share === "function"
-    ) {
-
-      try {
-
-        await navigator.share({
-          title: title,
-          text: text,
-          url: url
-        });
-
-        return;
-
-      }
-
-      catch (error) {
-
-        /*
-         * Abort/cancel is normal when the user closes
-         * the native share sheet. Do not show an error.
-         */
-        if (
-          error &&
-          error.name === "AbortError"
-        ) {
-          return;
-        }
-
-        console.log(
-          "Native share failed:",
-          error
-        );
-
-      }
-
-    }
-
-    /*
-     * Desktop/unsupported-browser fallback.
-     */
-    await copyShareUrl(url);
-
-  }
-
-
-  function createShareButton(card, type) {
-
-    if (!card) {
-      return null;
-    }
-
-    if (
-      card.querySelector(
-        ".deeprowss-share-button"
-      )
-    ) {
-      return card.querySelector(
-        ".deeprowss-share-button"
-      );
-    }
-
-    const shareButton =
-      document.createElement("span");
-
-    shareButton.className =
-      "deeprowss-share-button";
-
-    shareButton.setAttribute(
-      "role",
-      "button"
-    );
-
-    shareButton.setAttribute(
-      "tabindex",
-      "0"
-    );
-
-    shareButton.setAttribute(
-      "aria-label",
-      "Share " +
-      (
-        card.dataset.name ||
-        "content"
-      )
-    );
-
-    shareButton.setAttribute(
-      "title",
-      "Share"
-    );
-
-    shareButton.textContent =
-      "↗";
-
-    /*
-     * Inline styles make the share icon work without
-     * requiring changes to style.css.
-     */
-    shareButton.style.position =
-      "absolute";
-
-    shareButton.style.top =
-      "8px";
-
-    shareButton.style.right =
-      "8px";
-
-    shareButton.style.width =
-      "34px";
-
-    shareButton.style.height =
-      "34px";
-
-    shareButton.style.display =
-      "flex";
-
-    shareButton.style.alignItems =
-      "center";
-
-    shareButton.style.justifyContent =
-      "center";
-
-    shareButton.style.zIndex =
-      "20";
-
-    shareButton.style.borderRadius =
-      "50%";
-
-    shareButton.style.background =
-      "rgba(0,0,0,.72)";
-
-    shareButton.style.color =
-      "#fff";
-
-    shareButton.style.fontSize =
-      "20px";
-
-    shareButton.style.fontWeight =
-      "700";
-
-    shareButton.style.lineHeight =
-      "1";
-
-    shareButton.style.cursor =
-      "pointer";
-
-    shareButton.style.userSelect =
-      "none";
-
-    shareButton.style.webkitTapHighlightColor =
-      "transparent";
-
-    shareButton.addEventListener(
-      "click",
-      function (event) {
-
-        /*
-         * IMPORTANT:
-         * Stop the parent card button from opening
-         * the content when the share icon is tapped.
-         */
-        event.preventDefault();
-        event.stopPropagation();
-
-        shareContent(
-          card,
-          type
-        );
-
-      }
-    );
-
-    shareButton.addEventListener(
-      "keydown",
-      function (event) {
-
-        if (
-          event.key === "Enter" ||
-          event.key === " "
-        ) {
-
-          event.preventDefault();
-          event.stopPropagation();
-
-          shareContent(
-            card,
-            type
-          );
-
-        }
-
-      }
-    );
-
-    /*
-     * Cards are buttons. We keep the card itself intact
-     * and use a span for the share control so we do not
-     * create a nested button.
-     */
-    const computedPosition =
-      window.getComputedStyle(card).position;
-
-    if (
-      computedPosition === "static"
-    ) {
-      card.style.position =
-        "relative";
-    }
-
-    card.appendChild(
-      shareButton
-    );
-
-    return shareButton;
-
-  }
-
-
-  function addShareButtons() {
-
-    document
-      .querySelectorAll(
-        ".match-card:not(.highlight-card)"
-      )
-      .forEach(
-        function (card) {
-
-          createShareButton(
-            card,
-            "match"
-          );
-
-        }
-      );
-
-    document
-      .querySelectorAll(
-        ".highlight-card"
-      )
-      .forEach(
-        function (card) {
-
-          createShareButton(
-            card,
-            "highlight"
-          );
-
-        }
-      );
-
-    document
-      .querySelectorAll(
-        ".tv-channel"
-      )
-      .forEach(
-        function (card) {
-
-          createShareButton(
-            card,
-            "tv"
-          );
-
-        }
-      );
-
-    document
-      .querySelectorAll(
-        ".movie-card"
-      )
-      .forEach(
-        function (card) {
-
-          createShareButton(
-            card,
-            "movie"
-          );
-
-        }
-      );
-
-  }
-
-
-  /* =========================================================
      CREATE JSON POSTS
      ========================================================= */
 
@@ -2304,7 +1473,7 @@ function createHighlightCard(post) {
      ========================================================= */
 
   function isM3U8Url(url) {
-    return /\.m3u8(?:$|[?#])/i.test(
+    return /\\.m3u8(?:$|[?#])/i.test(
       String(url || "").trim()
     );
   }
@@ -2406,1276 +1575,1266 @@ function createHighlightCard(post) {
           document.createElement("script");
 
         script.src =
-          "https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"; 
+          "https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js";
 
-        script.async = true; 
+        script.async = true;
+        script.dataset.deeprowssHls =
+          "true";
 
-        script.dataset.deeprowssHls = 
-          "true"; 
+        script.onload =
+          function () {
 
-        script.onload = 
-          function () { 
+            if (window.Hls) {
+              resolve(window.Hls);
+            }
+            else {
+              reject(
+                new Error(
+                  "HLS library loaded without Hls."
+                )
+              );
+            }
 
-            if (window.Hls) { 
-              resolve(window.Hls); 
-            } 
-            else { 
-              reject( 
-                new Error( 
-                  "HLS library loaded without Hls." 
-                ) 
-              ); 
-            } 
+          };
 
-          }; 
+        script.onerror =
+          function () {
+            reject(
+              new Error(
+                "Could not load HLS library."
+              )
+            );
+          };
 
-        script.onerror = 
-          function () { 
-            reject( 
-              new Error( 
-                "Could not load HLS library." 
-              ) 
-            ); 
-          }; 
+        document.head.appendChild(script);
 
-        document.head.appendChild(script); 
+      }
+    );
 
-      } 
-    ); 
+    return hlsLibraryPromise;
+  }
 
-    return hlsLibraryPromise; 
-  } 
 
+  function createM3U8Player(url) {
 
-  function createM3U8Player(url) { 
+    if (!screenPlayer) {
+      return;
+    }
 
-    if (!screenPlayer) { 
-      return; 
-    } 
+    destroyM3U8Player();
 
-    destroyM3U8Player(); 
+    if (screenFrame) {
+      screenFrame.src =
+        "about:blank";
 
-    if (screenFrame) { 
-      screenFrame.src = 
-        "about:blank"; 
+      screenFrame.style.display =
+        "none";
+    }
 
-      screenFrame.style.display = 
-        "none"; 
-    } 
+    const video =
+      document.createElement("video");
 
-    const video = 
-      document.createElement("video"); 
+    video.className =
+      "deeprowss-hls-video";
 
-    video.className = 
-      "deeprowss-hls-video"; 
+    video.setAttribute(
+      "playsinline",
+      ""
+    );
 
-    video.setAttribute( 
-      "playsinline", 
-      "" 
-    ); 
+    video.setAttribute(
+      "webkit-playsinline",
+      ""
+    );
 
-    video.setAttribute( 
-      "webkit-playsinline", 
-      "" 
-    ); 
+    video.setAttribute(
+      "controls",
+      ""
+    );
 
-    video.setAttribute( 
-      "controls", 
-      "" 
-    ); 
+    video.autoplay = true;
 
-    video.autoplay = true; 
+    // IMPORTANT:
+    // Start muted so browsers allow autoplay.
+    // User can click the unmute button.
+    video.muted = true;
+    video.volume = 0;
 
-    // IMPORTANT: 
-    // Start muted so browsers allow autoplay. 
-    // User can click the unmute button. 
-    video.muted = true; 
-    video.volume = 0; 
+    video.style.width =
+      "100%";
 
-    video.style.width = 
-      "100%"; 
+    video.style.height =
+      "100%";
 
-    video.style.height = 
-      "100%"; 
+    video.style.display =
+      "block";
 
-    video.style.display = 
-      "block"; 
+    video.style.objectFit =
+      "contain";
 
-    video.style.objectFit = 
-      "contain"; 
+    video.style.background =
+      "#000";
 
-    video.style.background = 
-      "#000"; 
+    screenPlayer.appendChild(
+      video
+    );
 
-    screenPlayer.appendChild( 
-      video 
-    ); 
+    hlsVideo = video;
 
-    hlsVideo = video; 
+    const unmuteButton =
+      document.createElement("button");
 
-    const unmuteButton = 
-      document.createElement("button"); 
+    unmuteButton.type =
+      "button";
 
-    unmuteButton.type = 
-      "button"; 
+    unmuteButton.className =
+      "deeprowss-hls-unmute";
 
-    unmuteButton.className = 
-      "deeprowss-hls-unmute"; 
+    unmuteButton.textContent =
+      "🔇 Unmute";
 
-    unmuteButton.textContent = 
-      "🔇 Unmute"; 
+    unmuteButton.setAttribute(
+      "aria-label",
+      "Unmute video"
+    );
 
-    unmuteButton.setAttribute( 
-      "aria-label", 
-      "Unmute video" 
-    ); 
+    unmuteButton.setAttribute(
+      "title",
+      "Click to unmute"
+    );
 
-    unmuteButton.setAttribute( 
-      "title", 
-      "Click to unmute" 
-    ); 
+    unmuteButton.style.position =
+      "absolute";
 
-    unmuteButton.style.position = 
-      "absolute"; 
+    unmuteButton.style.left =
+      "50%";
 
-    unmuteButton.style.left = 
-      "50%"; 
+    unmuteButton.style.bottom =
+      "18px";
 
-    unmuteButton.style.bottom = 
-      "18px"; 
+    unmuteButton.style.transform =
+      "translateX(-50%)";
 
-    unmuteButton.style.transform = 
-      "translateX(-50%)"; 
+    unmuteButton.style.zIndex =
+      "9999";
 
-    unmuteButton.style.zIndex = 
-      "9999"; 
+    unmuteButton.style.padding =
+      "10px 18px";
+
+    unmuteButton.style.border =
+      "0";
 
-    unmuteButton.style.padding = 
-      "10px 18px"; 
+    unmuteButton.style.borderRadius =
+      "999px";
 
-    unmuteButton.style.border = 
-      "0"; 
+    unmuteButton.style.cursor =
+      "pointer";
 
-    unmuteButton.style.borderRadius = 
-      "999px"; 
+    unmuteButton.style.fontWeight =
+      "700";
 
-    unmuteButton.style.cursor = 
-      "pointer"; 
+    unmuteButton.style.fontSize =
+      "14px";
 
-    unmuteButton.style.fontWeight = 
-      "700"; 
+    unmuteButton.style.background =
+      "rgba(0,0,0,.85)";
+
+    unmuteButton.style.color =
+      "#fff";
 
-    unmuteButton.style.fontSize = 
-      "14px"; 
+    unmuteButton.style.boxShadow =
+      "0 3px 12px rgba(0,0,0,.45)";
+
+    unmuteButton.addEventListener(
+      "click",
+      function () {
+
+        video.muted = false;
+        video.volume = 1;
 
-    unmuteButton.style.background = 
-      "rgba(0,0,0,.85)"; 
+        const playResult =
+          video.play();
 
-    unmuteButton.style.color = 
-      "#fff"; 
+        if (
+          playResult &&
+          typeof playResult.then === "function"
+        ) {
+          playResult.catch(
+            function (error) {
+              console.log(
+                "Audio playback could not start:",
+                error
+              );
+            }
+          );
+        }
+
+        unmuteButton.textContent =
+          "🔊 Sound On";
 
-    unmuteButton.style.boxShadow = 
-      "0 3px 12px rgba(0,0,0,.45)"; 
+        unmuteButton.setAttribute(
+          "aria-label",
+          "Sound is on"
+        );
 
-    unmuteButton.addEventListener( 
-      "click", 
-      function () { 
+        setTimeout(
+          function () {
+            if (hlsUnmuteButton) {
+              hlsUnmuteButton.style.display =
+                "none";
+            }
+          },
+          1200
+        );
+
+      }
+    );
+
+    screenPlayer.appendChild(
+      unmuteButton
+    );
+
+    hlsUnmuteButton =
+      unmuteButton;
+
+    function startNativeHls() {
+
+      video.src = url;
+
+      video.addEventListener(
+        "loadedmetadata",
+        function () {
+
+          const playResult =
+            video.play();
+
+          if (
+            playResult &&
+            typeof playResult.then === "function"
+          ) {
+            playResult.catch(
+              function (error) {
+                console.log(
+                  "Muted autoplay was blocked:",
+                  error
+                );
+              }
+            );
+          }
+
+        },
+        { once: true }
+      );
+
+      video.load();
+    }
+
+
+    // Safari/iOS and browsers with native HLS support.
+    if (
+      video.canPlayType(
+        "application/vnd.apple.mpegurl"
+      )
+    ) {
+      startNativeHls();
+      return;
+    }
+
+
+    // Chrome, Edge, Firefox and other browsers use hls.js.
+    loadHlsLibrary()
+      .then(
+        function (Hls) {
+
+          if (!hlsVideo) {
+            return;
+          }
+
+          if (!Hls.isSupported()) {
+
+            console.log(
+              "This browser does not support HLS."
+            );
+
+            return;
+          }
+
+          hlsInstance =
+            new Hls({
+              enableWorker: true
+            });
+
+          hlsInstance.loadSource(url);
+          hlsInstance.attachMedia(
+            video
+          );
+
+          hlsInstance.on(
+            Hls.Events.MANIFEST_PARSED,
+            function () {
+
+              const playResult =
+                video.play();
+
+              if (
+                playResult &&
+                typeof playResult.then === "function"
+              ) {
+                playResult.catch(
+                  function (error) {
+                    console.log(
+                      "Muted autoplay was blocked:",
+                      error
+                    );
+                  }
+                );
+              }
+
+            }
+          );
 
-        video.muted = false; 
-        video.volume = 1; 
+          hlsInstance.on(
+            Hls.Events.ERROR,
+            function (
+              event,
+              data
+            ) {
 
-        const playResult = 
-          video.play(); 
+              if (
+                data &&
+                data.fatal
+              ) {
+                console.log(
+                  "HLS playback error:",
+                  data
+                );
+              }
 
-        if ( 
-          playResult && 
-          typeof playResult.then === "function" 
-        ) { 
-          playResult.catch( 
-            function (error) { 
-              console.log( 
-                "Audio playback could not start:", 
-                error 
-              ); 
-            } 
-          ); 
-        } 
+            }
+          );
 
-        unmuteButton.textContent = 
-          "🔊 Sound On"; 
+        }
+      )
+      .catch(
+        function (error) {
+          console.log(
+            "Could not start HLS player:",
+            error
+          );
+        }
+      );
 
-        unmuteButton.setAttribute( 
-          "aria-label", 
-          "Sound is on" 
-        ); 
+  }
 
-        setTimeout( 
-          function () { 
-            if (hlsUnmuteButton) { 
-              hlsUnmuteButton.style.display = 
-                "none"; 
-            } 
-          }, 
-          1200 
-        ); 
-
-      } 
-    ); 
-
-    screenPlayer.appendChild( 
-      unmuteButton 
-    ); 
-
-    hlsUnmuteButton = 
-      unmuteButton; 
-
-    function startNativeHls() { 
-
-      video.src = url; 
-
-      video.addEventListener( 
-        "loadedmetadata", 
-        function () { 
-
-          const playResult = 
-            video.play(); 
-
-          if ( 
-            playResult && 
-            typeof playResult.then === "function" 
-          ) { 
-            playResult.catch( 
-              function (error) { 
-                console.log( 
-                  "Muted autoplay was blocked:", 
-                  error 
-                ); 
-              } 
-            ); 
-          } 
-
-        }, 
-        { once: true } 
-      ); 
-
-      video.load(); 
-    } 
-
-
-    // Safari/iOS and browsers with native HLS support. 
-    if ( 
-      video.canPlayType( 
-        "application/vnd.apple.mpegurl" 
-      ) 
-    ) { 
-      startNativeHls(); 
-      return; 
-    } 
-
-
-    // Chrome, Edge, Firefox and other browsers use hls.js. 
-    loadHlsLibrary() 
-      .then( 
-        function (Hls) { 
-
-          if (!hlsVideo) { 
-            return; 
-          } 
-
-          if (!Hls.isSupported()) { 
-
-            console.log( 
-              "This browser does not support HLS." 
-            ); 
-
-            return; 
-          } 
-
-          hlsInstance = 
-            new Hls({ 
-              enableWorker: true 
-            }); 
-
-          hlsInstance.loadSource(url); 
-          hlsInstance.attachMedia( 
-            video 
-          ); 
 
-          hlsInstance.on( 
-            Hls.Events.MANIFEST_PARSED, 
-            function () { 
+  /* =========================================================
+     LOAD SCREEN
+     ========================================================= */
 
-              const playResult = 
-                video.play(); 
+  function loadScreen(
+    url,
+    name,
+    type,
+    keepMatchState
+  ) {
 
-              if ( 
-                playResult && 
-                typeof playResult.then === "function" 
-              ) { 
-                playResult.catch( 
-                  function (error) { 
-                    console.log( 
-                      "Muted autoplay was blocked:", 
-                      error 
-                    ); 
-                  } 
-                ); 
-              } 
+    if ((!screenFrame && !screenPlayer) || !url) {
+      return;
+    }
 
-            } 
-          ); 
+    if (screenLoadTimer) {
 
-          hlsInstance.on( 
-            Hls.Events.ERROR, 
-            function ( 
-              event, 
-              data 
-            ) { 
+      clearTimeout(
+        screenLoadTimer
+      );
 
-              if ( 
-                data && 
-                data.fatal 
-              ) { 
-                console.log( 
-                  "HLS playback error:", 
-                  data 
-                ); 
-              } 
+      screenLoadTimer = null;
 
-            } 
+    }
 
-          ); 
+    hideAltScreen();
 
-        } 
-      ) 
-      .catch( 
-        function (error) { 
-          console.log( 
-            "Could not start HLS player:", 
-            error 
-          ); 
-        } 
-      ); 
+    currentScreenType =
+      type || "";
 
-  } 
+    if (!keepMatchState) {
 
+      if (type !== "match") {
 
-  /* ========================================================= 
-     LOAD SCREEN 
-     ========================================================= */ 
+        currentMatchCard = null;
+        currentMainUrl = "";
+        currentAltUrl = "";
 
-  function loadScreen( 
-    url, 
-    name, 
-    type, 
-    keepMatchState 
-  ) { 
+      }
 
-    if ((!screenFrame && !screenPlayer) || !url) { 
-      return; 
-    } 
+    }
 
-    if (screenLoadTimer) { 
+    if (nowShowing) {
+      nowShowing.textContent =
+        name || "Now Playing";
+    }
 
-      clearTimeout( 
-        screenLoadTimer 
-      ); 
+    if (screenPlaceholder) {
+      screenPlaceholder.classList.add(
+        "hidden"
+      );
+    }
 
-      screenLoadTimer = null; 
+    if (isM3U8Url(url)) {
 
-    } 
+      createM3U8Player(url);
 
-    hideAltScreen(); 
+      requestAnimationFrame(
+        updateStickyPositions
+      );
 
-    currentScreenType = 
-      type || ""; 
+    }
 
-    if (!keepMatchState) { 
+    else {
 
-      if (type !== "match") { 
+      destroyM3U8Player();
 
-        currentMatchCard = null; 
-        currentMainUrl = ""; 
-        currentAltUrl = ""; 
+      if (screenFrame) {
 
-      } 
+        screenFrame.style.display =
+          "";
 
-    } 
+        screenFrame.style.opacity =
+          "0.25";
 
-    if (nowShowing) { 
-      nowShowing.textContent = 
-        name || "Now Playing"; 
-    } 
+        screenFrame.src =
+          "about:blank";
 
-    if (screenPlaceholder) { 
-      screenPlaceholder.classList.add( 
-        "hidden" 
-      ); 
-    } 
+        screenLoadTimer =
+          setTimeout(
+            function () {
 
-    if (isM3U8Url(url)) { 
+              screenFrame.src =
+                url;
 
-      createM3U8Player(url); 
+              screenFrame.style.opacity =
+                "1";
 
-      requestAnimationFrame( 
-        updateStickyPositions 
-      ); 
+              screenLoadTimer = null;
 
-    } 
+              requestAnimationFrame(
+                updateStickyPositions
+              );
 
-    else { 
+            },
+            150
+          );
 
-      destroyM3U8Player(); 
+      }
 
-      if (screenFrame) { 
+    }
 
-        screenFrame.style.display = 
-          ""; 
 
-        screenFrame.style.opacity = 
-          "0.25"; 
+    if (screenStatus) {
 
-        screenFrame.src = 
-          "about:blank"; 
+      if (type === "tv") {
+        screenStatus.textContent =
+          "LIVE TV";
+      }
 
-        screenLoadTimer = 
-          setTimeout( 
-            function () { 
+      else if (type === "highlight") {
+        screenStatus.textContent =
+          "HIGHLIGHT";
+      }
 
-              screenFrame.src = 
-                url; 
+      else if (type === "movie") {
+        screenStatus.textContent =
+          "MOVIE";
+      }
 
-              screenFrame.style.opacity = 
-                "1"; 
+      else {
+        screenStatus.textContent =
+          "LIVE";
+      }
 
-              screenLoadTimer = null; 
+    }
 
-              requestAnimationFrame( 
-                updateStickyPositions 
-              ); 
+    updateFootballControls();
 
-            }, 
-            150 
-          ); 
+    if (screenPlayer) {
 
-      } 
+      const rect =
+        screenPlayer.getBoundingClientRect();
 
-    } 
+      const headerHeight =
+        siteHeader
+          ? siteHeader.getBoundingClientRect().height
+          : 66;
 
+      if (rect.top < headerHeight) {
 
-    if (screenStatus) { 
+        window.scrollBy({
+          top:
+            rect.top -
+            headerHeight -
+            10,
+          behavior:
+            "smooth"
+        });
 
-      if (type === "tv") { 
-        screenStatus.textContent = 
-          "LIVE TV"; 
-      } 
+      }
 
-      else if (type === "highlight") { 
-        screenStatus.textContent = 
-          "HIGHLIGHT"; 
-      } 
+    }
 
-      else if (type === "movie") { 
-        screenStatus.textContent = 
-          "MOVIE"; 
-      } 
+  }
 
-      else { 
-        screenStatus.textContent = 
-          "LIVE"; 
-      } 
 
-    } 
+  /* =========================================================
+     BIND CONTENT CARDS
+     ========================================================= */
 
-    updateFootballControls(); 
+  function bindContentCards() {
 
-    if (screenPlayer) { 
+    const matchCards =
+  document.querySelectorAll(
+    ".match-card:not(.highlight-card)"
+  );
 
-      const rect = 
-        screenPlayer.getBoundingClientRect(); 
+    const highlightCards =
+      document.querySelectorAll(
+        ".highlight-card"
+      );
 
-      const headerHeight = 
-        siteHeader 
-          ? siteHeader.getBoundingClientRect().height 
-          : 66; 
+    const tvChannels =
+      document.querySelectorAll(
+        ".tv-channel"
+      );
 
-      if (rect.top < headerHeight) { 
+    const movieCards =
+      document.querySelectorAll(
+        ".movie-card"
+      );
 
-        window.scrollBy({ 
-          top: 
-            rect.top - 
-            headerHeight - 
-            10, 
-          behavior: 
-            "smooth" 
-        }); 
 
-      } 
+    /* =======================================================
+       MATCH CLICK
+       ======================================================= */
 
-    } 
+    matchCards.forEach(
+      function (card) {
 
-  } 
+        if (card.dataset.bound === "true") {
+          return;
+        }
 
+        card.dataset.bound = "true";
 
-  /* ========================================================= 
-     BIND CONTENT CARDS 
-     ========================================================= */ 
+        card.addEventListener(
+          "click",
+          function () {
 
-  function bindContentCards() { 
+            const url =
+              this.dataset.url;
 
-    const matchCards = 
-  document.querySelectorAll( 
-    ".match-card:not(.highlight-card)" 
-  ); 
+            const altUrl =
+              this.dataset.altUrl || "";
 
-    const highlightCards = 
-      document.querySelectorAll( 
-        ".highlight-card" 
-      ); 
+            const name =
+              this.dataset.name ||
+              this.querySelector(
+                ".match-teams"
+              )?.textContent?.trim() ||
+              "Football Match";
 
-    const tvChannels = 
-      document.querySelectorAll( 
-        ".tv-channel" 
-      ); 
+            currentMatchCard =
+              this;
 
-    const movieCards = 
-      document.querySelectorAll( 
-        ".movie-card" 
-      ); 
+            currentMainUrl =
+              url || "";
 
+            currentAltUrl =
+              altUrl || "";
 
-    /* ======================================================= 
-       MATCH CLICK 
-       ======================================================= */ 
+            currentScreenType =
+              "match";
 
-    matchCards.forEach( 
-      function (card) { 
+            matchCards.forEach(
+              function (item) {
+                item.classList.remove(
+                  "active",
+                  "selected"
+                );
+              }
+            );
 
-        if (card.dataset.bound === "true") { 
-          return; 
-        } 
+            this.classList.add(
+              "active",
+              "selected"
+            );
 
-        card.dataset.bound = "true"; 
+            hideAltScreen();
 
-        card.addEventListener( 
-          "click", 
-          function () { 
+            loadScreen(
+              url,
+              name,
+              "match",
+              true
+            );
 
-            const url = 
-              this.dataset.url; 
+            openFootball();
 
-            const altUrl = 
-              this.dataset.altUrl || ""; 
+          }
+        );
 
-            const name = 
-              this.dataset.name || 
-              this.querySelector( 
-                ".match-teams" 
-              )?.textContent?.trim() || 
-              "Football Match"; 
+      }
+    );
 
-            currentMatchCard = 
-              this; 
 
-            currentMainUrl = 
-              url || ""; 
+    /* =======================================================
+       HIGHLIGHT CLICK
+       ======================================================= */
 
-            currentAltUrl = 
-              altUrl || ""; 
+    highlightCards.forEach(
+      function (card) {
 
-            currentScreenType = 
-              "match"; 
+        if (card.dataset.bound === "true") {
+          return;
+        }
 
-            matchCards.forEach( 
-              function (item) { 
-                item.classList.remove( 
-                  "active", 
-                  "selected" 
-                ); 
-              } 
-            ); 
+        card.dataset.bound = "true";
 
-            this.classList.add( 
-              "active", 
-              "selected" 
-            ); 
+        card.addEventListener(
+          "click",
+          function () {
 
-            hideAltScreen(); 
+            const url =
+              this.dataset.url;
 
-            loadScreen( 
-              url, 
-              name, 
-              "match", 
-              true 
-            ); 
+            const name =
+              this.dataset.name ||
+              this.querySelector(
+                "strong"
+              )?.textContent?.trim() ||
+              "Football Highlight";
 
-            openFootball(); 
+            highlightCards.forEach(
+              function (item) {
+                item.classList.remove(
+                  "active"
+                );
+              }
+            );
 
-          } 
-        ); 
+            this.classList.add(
+              "active"
+            );
 
-      } 
-    ); 
+            currentMatchCard = null;
+            currentMainUrl = "";
+            currentAltUrl = "";
 
+            loadScreen(
+              url,
+              name,
+              "highlight"
+            );
 
-    /* ======================================================= 
-       HIGHLIGHT CLICK 
-       ======================================================= */ 
+            openHighlights();
 
-    highlightCards.forEach( 
-      function (card) { 
+          }
+        );
 
-        if (card.dataset.bound === "true") { 
-          return; 
-        } 
+      }
+    );
 
-        card.dataset.bound = "true"; 
 
-        card.addEventListener( 
-          "click", 
-          function () { 
+    /* =======================================================
+       TV CHANNEL CLICK
+       ======================================================= */
 
-            const url = 
-              this.dataset.url; 
+    tvChannels.forEach(
+      function (channel) {
 
-            const name = 
-              this.dataset.name || 
-              this.querySelector( 
-                "strong" 
-              )?.textContent?.trim() || 
-              "Football Highlight"; 
+        if (channel.dataset.bound === "true") {
+          return;
+        }
 
-            highlightCards.forEach( 
-              function (item) { 
-                item.classList.remove( 
-                  "active" 
-                ); 
-              } 
-            ); 
+        channel.dataset.bound = "true";
 
-            this.classList.add( 
-              "active" 
-            ); 
+        channel.addEventListener(
+          "click",
+          function () {
 
-            currentMatchCard = null; 
-            currentMainUrl = ""; 
-            currentAltUrl = ""; 
+            const url =
+              this.dataset.url;
 
-            loadScreen( 
-              url, 
-              name, 
-              "highlight" 
-            ); 
+            const name =
+              this.dataset.name ||
+              this.querySelector(
+                ".tv-channel-info strong"
+              )?.textContent?.trim() ||
+              "TV Channel";
 
-            openHighlights(); 
+            tvChannels.forEach(
+              function (item) {
+                item.classList.remove(
+                  "active"
+                );
+              }
+            );
 
-          } 
-        ); 
+            this.classList.add(
+              "active"
+            );
 
-      } 
-    ); 
+            currentMatchCard = null;
+            currentMainUrl = "";
+            currentAltUrl = "";
 
+            loadScreen(
+              url,
+              name,
+              "tv"
+            );
 
-    /* ======================================================= 
-       TV CHANNEL CLICK 
-       ======================================================= */ 
+            openTV();
 
-    tvChannels.forEach( 
-      function (channel) { 
+          }
+        );
 
-        if (channel.dataset.bound === "true") { 
-          return; 
-        } 
+      }
+    );
 
-        channel.dataset.bound = "true"; 
 
-        channel.addEventListener( 
-          "click", 
-          function () { 
+    /* =======================================================
+       MOVIE CLICK
+       ======================================================= */
 
-            const url = 
-              this.dataset.url; 
+    movieCards.forEach(
+      function (movie) {
 
-            const name = 
-              this.dataset.name || 
-              this.querySelector( 
-                ".tv-channel-info strong" 
-              )?.textContent?.trim() || 
-              "TV Channel"; 
+        if (movie.dataset.bound === "true") {
+          return;
+        }
 
-            tvChannels.forEach( 
-              function (item) { 
-                item.classList.remove( 
-                  "active" 
-                ); 
-              } 
-            ); 
+        movie.dataset.bound = "true";
 
-            this.classList.add( 
-              "active" 
-            ); 
+        movie.addEventListener(
+          "click",
+          function () {
 
-            currentMatchCard = null; 
-            currentMainUrl = ""; 
-            currentAltUrl = ""; 
+            const url =
+              this.dataset.url;
 
-            loadScreen( 
-              url, 
-              name, 
-              "tv" 
-            ); 
+            const name =
+              this.dataset.name ||
+              this.querySelector(
+                ".movie-title"
+              )?.textContent?.trim() ||
+              "Movie";
 
-            openTV(); 
+            movieCards.forEach(
+              function (item) {
+                item.classList.remove(
+                  "active"
+                );
+              }
+            );
 
-          } 
-        ); 
+            this.classList.add(
+              "active"
+            );
 
-      } 
-    ); 
+            currentMatchCard = null;
+            currentMainUrl = "";
+            currentAltUrl = "";
 
+            loadScreen(
+              url,
+              name,
+              "movie"
+            );
 
-    /* ======================================================= 
-       MOVIE CLICK 
-       ======================================================= */ 
+            openMovies();
 
-    movieCards.forEach( 
-      function (movie) { 
+          }
+        );
 
-        if (movie.dataset.bound === "true") { 
-          return; 
-        } 
+      }
+    );
 
-        movie.dataset.bound = "true"; 
+  }
 
-        movie.addEventListener( 
-          "click", 
-          function () { 
 
-            const url = 
-              this.dataset.url; 
+  /* =========================================================
+     FULLSCREEN
+     ========================================================= */
 
-            const name = 
-              this.dataset.name || 
-              this.querySelector( 
-                ".movie-title" 
-              )?.textContent?.trim() || 
-              "Movie"; 
+  function enterScreenFullscreen() {
 
-            movieCards.forEach( 
-              function (item) { 
-                item.classList.remove( 
-                  "active" 
-                ); 
-              } 
-            ); 
+    if (!screenPlayer) {
+      return;
+    }
 
-            this.classList.add( 
-              "active" 
-            ); 
+    screenPlayer.classList.add(
+      "fullscreen-active"
+    );
 
-            currentMatchCard = null; 
-            currentMainUrl = ""; 
-            currentAltUrl = ""; 
+    const requestFullscreen =
+      screenPlayer.requestFullscreen ||
+      screenPlayer.webkitRequestFullscreen ||
+      screenPlayer.mozRequestFullScreen ||
+      screenPlayer.msRequestFullscreen;
 
-            loadScreen( 
-              url, 
-              name, 
-              "movie" 
-            ); 
+    if (!requestFullscreen) {
 
-            openMovies(); 
+      screenPlayer.classList.remove(
+        "fullscreen-active"
+      );
 
-          } 
-        ); 
+      console.log(
+        "Fullscreen API is not available."
+      );
 
-      } 
-    ); 
+      return;
 
-    /*
-     * Add the share icon AFTER the normal card click
-     * handlers have been attached.
-     */
-    addShareButtons();
+    }
 
-  } 
+    try {
 
+      const result =
+        requestFullscreen.call(
+          screenPlayer,
+          {
+            navigationUI: "hide"
+          }
+        );
 
-  /* ========================================================= 
-     FULLSCREEN 
-     ========================================================= */ 
+      if (
+        result &&
+        typeof result.then === "function"
+      ) {
 
-  function enterScreenFullscreen() { 
+        result.catch(
+          function (error) {
 
-    if (!screenPlayer) { 
-      return; 
-    } 
+            console.log(
+              "Fullscreen request failed:",
+              error
+            );
 
-    screenPlayer.classList.add( 
-      "fullscreen-active" 
-    ); 
+            screenPlayer.classList.remove(
+              "fullscreen-active"
+            );
 
-    const requestFullscreen = 
-      screenPlayer.requestFullscreen || 
-      screenPlayer.webkitRequestFullscreen || 
-      screenPlayer.mozRequestFullScreen || 
-      screenPlayer.msRequestFullscreen; 
+          }
+        );
 
-    if (!requestFullscreen) { 
+      }
 
-      screenPlayer.classList.remove( 
-        "fullscreen-active" 
-      ); 
+    }
 
-      console.log( 
-        "Fullscreen API is not available." 
-      ); 
+    catch (error) {
 
-      return; 
+      console.log(
+        "Fullscreen request failed:",
+        error
+      );
 
-    } 
+      screenPlayer.classList.remove(
+        "fullscreen-active"
+      );
 
-    try { 
+    }
 
-      const result = 
-        requestFullscreen.call( 
-          screenPlayer, 
-          { 
-            navigationUI: "hide" 
-          } 
-        ); 
+  }
 
-      if ( 
-        result && 
-        typeof result.then === "function" 
-      ) { 
 
-        result.catch( 
-          function (error) { 
+  function exitScreenFullscreen() {
 
-            console.log( 
-              "Fullscreen request failed:", 
-              error 
-            ); 
+    if (
+      screen.orientation &&
+      screen.orientation.unlock
+    ) {
 
-            screenPlayer.classList.remove( 
-              "fullscreen-active" 
-            ); 
+      try {
+        screen.orientation.unlock();
+      }
 
-          } 
+      catch (error) {
 
-        ); 
+        console.log(
+          "Orientation unlock unavailable:",
+          error
+        );
 
-      } 
+      }
 
-    } 
+    }
 
-    catch (error) { 
+    const exitFullscreen =
+      document.exitFullscreen ||
+      document.webkitExitFullscreen ||
+      document.mozCancelFullScreen ||
+      document.msExitFullscreen;
 
-      console.log( 
-        "Fullscreen request failed:", 
-        error 
-      ); 
+    if (!exitFullscreen) {
 
-      screenPlayer.classList.remove( 
-        "fullscreen-active" 
-      ); 
+      if (screenPlayer) {
+        screenPlayer.classList.remove(
+          "fullscreen-active"
+        );
+      }
 
-    } 
+      return;
 
-  } 
+    }
 
+    try {
 
-  function exitScreenFullscreen() { 
+      const result =
+        exitFullscreen.call(
+          document
+        );
 
-    if ( 
-      screen.orientation && 
-      screen.orientation.unlock 
-    ) { 
+      if (
+        result &&
+        typeof result.then === "function"
+      ) {
 
-      try { 
-        screen.orientation.unlock(); 
-      } 
+        result.catch(
+          function (error) {
 
-      catch (error) { 
+            console.log(
+              "Fullscreen exit failed:",
+              error
+            );
 
-        console.log( 
-          "Orientation unlock unavailable:", 
-          error 
-        ); 
+          }
+        );
 
-      } 
+      }
 
-    } 
+    }
 
-    const exitFullscreen = 
-      document.exitFullscreen || 
-      document.webkitExitFullscreen || 
-      document.mozCancelFullScreen || 
-      document.msExitFullscreen; 
+    catch (error) {
 
-    if (!exitFullscreen) { 
+      console.log(
+        "Fullscreen exit failed:",
+        error
+      );
 
-      if (screenPlayer) { 
-        screenPlayer.classList.remove( 
-          "fullscreen-active" 
-        ); 
-      } 
+    }
 
-      return; 
+  }
 
-    } 
 
-    try { 
+  if (fullscreenButton) {
 
-      const result = 
-        exitFullscreen.call( 
-          document 
-        ); 
+    fullscreenButton.addEventListener(
+      "click",
+      function () {
 
-      if ( 
-        result && 
-        typeof result.then === "function" 
-      ) { 
+        const activeFullscreen =
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement;
 
-        result.catch( 
-          function (error) { 
+        if (activeFullscreen) {
+          exitScreenFullscreen();
+          return;
+        }
 
-            console.log( 
-              "Fullscreen exit failed:", 
-              error 
-            ); 
+        enterScreenFullscreen();
 
-          } 
+      }
+    );
 
-        ); 
+  }
 
-      } 
 
-    } 
+  /* =========================================================
+     FULLSCREEN CHANGE
+     ========================================================= */
 
-    catch (error) { 
+  function handleFullscreenChange() {
 
-      console.log( 
-        "Fullscreen exit failed:", 
-        error 
-      ); 
+    if (!fullscreenButton) {
+      return;
+    }
 
-    } 
+    const activeFullscreen =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
 
-  } 
+    if (activeFullscreen) {
 
+      if (screenPlayer) {
+        screenPlayer.classList.add(
+          "fullscreen-active"
+        );
+      }
 
-  if (fullscreenButton) { 
+      fullscreenButton.textContent =
+        "×";
 
-    fullscreenButton.addEventListener( 
-      "click", 
-      function () { 
+      fullscreenButton.setAttribute(
+        "aria-label",
+        "Exit fullscreen"
+      );
 
-        const activeFullscreen = 
-          document.fullscreenElement || 
-          document.webkitFullscreenElement || 
-          document.mozFullScreenElement || 
-          document.msFullscreenElement; 
+      fullscreenButton.setAttribute(
+        "title",
+        "Exit fullscreen"
+      );
 
-        if (activeFullscreen) { 
-          exitScreenFullscreen(); 
-          return; 
-        } 
+      if (
+        screen.orientation &&
+        screen.orientation.lock
+      ) {
 
-        enterScreenFullscreen(); 
+        try {
 
-      } 
-    ); 
+          const lockResult =
+            screen.orientation.lock(
+              "landscape"
+            );
 
-  } 
+          if (
+            lockResult &&
+            typeof lockResult.catch === "function"
+          ) {
 
+            lockResult.catch(
+              function (error) {
+                console.log(
+                  "Landscape lock unavailable:",
+                  error
+                );
+              }
+            );
 
-  /* ========================================================= 
-     FULLSCREEN CHANGE 
-     ========================================================= */ 
+          }
 
-  function handleFullscreenChange() { 
+        }
 
-    if (!fullscreenButton) { 
-      return; 
-    } 
+        catch (error) {
 
-    const activeFullscreen = 
-      document.fullscreenElement || 
-      document.webkitFullscreenElement || 
-      document.mozFullScreenElement || 
-      document.msFullscreenElement; 
+          console.log(
+            "Landscape lock unavailable:",
+            error
+          );
 
-    if (activeFullscreen) { 
+        }
 
-      if (screenPlayer) { 
-        screenPlayer.classList.add( 
-          "fullscreen-active" 
-        ); 
-      } 
+      }
 
-      fullscreenButton.textContent = 
-        "×"; 
+    }
 
-      fullscreenButton.setAttribute( 
-        "aria-label", 
-        "Exit fullscreen" 
-      ); 
+    else {
 
-      fullscreenButton.setAttribute( 
-        "title", 
-        "Exit fullscreen" 
-      ); 
+      if (screenPlayer) {
+        screenPlayer.classList.remove(
+          "fullscreen-active"
+        );
+      }
 
-      if ( 
-        screen.orientation && 
-        screen.orientation.lock 
-      ) { 
+      fullscreenButton.textContent =
+        "⛶";
 
-        try { 
+      fullscreenButton.setAttribute(
+        "aria-label",
+        "Enter fullscreen"
+      );
 
-          const lockResult = 
-            screen.orientation.lock( 
-              "landscape" 
-            ); 
+      fullscreenButton.setAttribute(
+        "title",
+        "Enter fullscreen"
+      );
 
-          if ( 
-            lockResult && 
-            typeof lockResult.catch === "function" 
-          ) { 
+      if (
+        screen.orientation &&
+        screen.orientation.unlock
+      ) {
 
-            lockResult.catch( 
-              function (error) { 
-                console.log( 
-                  "Landscape lock unavailable:", 
-                  error 
-                ); 
-              } 
-            ); 
+        try {
+          screen.orientation.unlock();
+        }
 
-          } 
+        catch (error) {
 
-        } 
+          console.log(
+            "Orientation unlock unavailable:",
+            error
+          );
 
-        catch (error) { 
+        }
 
-          console.log( 
-            "Landscape lock unavailable:", 
-            error 
-          ); 
+      }
 
-        } 
+    }
 
-      } 
+    requestAnimationFrame(
+      function () {
+        updateStickyPositions();
+      }
+    );
 
-    } 
+  }
 
-    else { 
 
-      if (screenPlayer) { 
-        screenPlayer.classList.remove( 
-          "fullscreen-active" 
-        ); 
-      } 
+  document.addEventListener(
+    "fullscreenchange",
+    handleFullscreenChange
+  );
 
-      fullscreenButton.textContent = 
-        "⛶"; 
+  document.addEventListener(
+    "webkitfullscreenchange",
+    handleFullscreenChange
+  );
 
-      fullscreenButton.setAttribute( 
-        "aria-label", 
-        "Enter fullscreen" 
-      ); 
+  document.addEventListener(
+    "mozfullscreenchange",
+    handleFullscreenChange
+  );
 
-      fullscreenButton.setAttribute( 
-        "title", 
-        "Enter fullscreen" 
-      ); 
+  document.addEventListener(
+    "MSFullscreenChange",
+    handleFullscreenChange
+  );
 
-      if ( 
-        screen.orientation && 
-        screen.orientation.unlock 
-      ) { 
 
-        try { 
-          screen.orientation.unlock(); 
-        } 
+  /* =========================================================
+     FULLSCREEN / ORIENTATION RESIZE
+     ========================================================= */
 
-        catch (error) { 
+  let fullscreenResizeTimer =
+    null;
 
-          console.log( 
-            "Orientation unlock unavailable:", 
-            error 
-          ); 
+  function handleFullscreenResize() {
 
-        } 
+    if (fullscreenResizeTimer) {
+      clearTimeout(
+        fullscreenResizeTimer
+      );
+    }
 
-      } 
+    fullscreenResizeTimer =
+      setTimeout(
+        function () {
 
-    } 
+          requestAnimationFrame(
+            function () {
+              updateStickyPositions();
+            }
+          );
 
-    requestAnimationFrame( 
-      function () { 
-        updateStickyPositions(); 
-      } 
-    ); 
+        },
+        80
+      );
 
-  } 
+  }
 
+  window.addEventListener(
+    "resize",
+    handleFullscreenResize
+  );
 
-  document.addEventListener( 
-    "fullscreenchange", 
-    handleFullscreenChange 
-  ); 
+  if (
+    screen.orientation &&
+    screen.orientation.addEventListener
+  ) {
 
-  document.addEventListener( 
-    "webkitfullscreenchange", 
-    handleFullscreenChange 
-  ); 
+    screen.orientation.addEventListener(
+      "change",
+      handleFullscreenResize
+    );
 
-  document.addEventListener( 
-    "mozfullscreenchange", 
-    handleFullscreenChange 
-  ); 
+  }
 
-  document.addEventListener( 
-    "MSFullscreenChange", 
-    handleFullscreenChange 
-  ); 
 
+  /* =========================================================
+     MOBILE MENU
+     ========================================================= */
 
-  /* ========================================================= 
-     FULLSCREEN / ORIENTATION RESIZE 
-     ========================================================= */ 
+  if (
+    menuToggle &&
+    mainNav
+  ) {
 
-  let fullscreenResizeTimer = 
-    null; 
+    menuToggle.addEventListener(
+      "click",
+      function () {
 
-  function handleFullscreenResize() { 
+        const isOpen =
+          mainNav.classList.toggle(
+            "open"
+          );
 
-    if (fullscreenResizeTimer) { 
-      clearTimeout( 
-        fullscreenResizeTimer 
-      ); 
-    } 
+        menuToggle.setAttribute(
+          "aria-expanded",
+          isOpen
+            ? "true"
+            : "false"
+        );
 
-    fullscreenResizeTimer = 
-      setTimeout( 
-        function () { 
+      }
+    );
 
-          requestAnimationFrame( 
-            function () { 
-              updateStickyPositions(); 
-            } 
-          ); 
+    mainNav
+      .querySelectorAll("a")
+      .forEach(
+        function (link) {
 
-        }, 
-        80 
-      ); 
+          link.addEventListener(
+            "click",
+            function () {
 
-  } 
+              mainNav.classList.remove(
+                "open"
+              );
 
-  window.addEventListener( 
-    "resize", 
-    handleFullscreenResize 
-  ); 
+              menuToggle.setAttribute(
+                "aria-expanded",
+                "false"
+              );
 
-  if ( 
-    screen.orientation && 
-    screen.orientation.addEventListener 
-  ) { 
+            }
+          );
 
-    screen.orientation.addEventListener( 
-      "change", 
-      handleFullscreenResize 
-    ); 
+        }
+      );
 
-  } 
+  }
 
 
-  /* ========================================================= 
-     MOBILE MENU 
-     ========================================================= */ 
+  /* =========================================================
+     ALT SCREEN PAGE SAFETY
+     ========================================================= */
 
-  if ( 
-    menuToggle && 
-    mainNav 
-  ) { 
+  window.addEventListener(
+    "pagehide",
+    function () {
 
-    menuToggle.addEventListener( 
-      "click", 
-      function () { 
+      hideAltScreen();
 
-        const isOpen = 
-          mainNav.classList.toggle( 
-            "open" 
-          ); 
+      destroyM3U8Player();
 
-        menuToggle.setAttribute( 
-          "aria-expanded", 
-          isOpen 
-            ? "true" 
-            : "false" 
-        ); 
+      if (screenFrame) {
+        screenFrame.style.display = "";
+      }
 
-      } 
-    ); 
+      if (screenPlayer) {
 
-    mainNav 
-      .querySelectorAll("a") 
-      .forEach( 
-        function (link) { 
+        screenPlayer.classList.remove(
+          "fullscreen-active"
+        );
 
-          link.addEventListener( 
-            "click", 
-            function () { 
+      }
 
-              mainNav.classList.remove( 
-                "open" 
-              ); 
+    }
+  );
 
-              menuToggle.setAttribute( 
-                "aria-expanded", 
-                "false" 
-              ); 
 
-            } 
-          ); 
-
-        } 
-      ); 
-
-  } 
-
-
-  /* ========================================================= 
-     ALT SCREEN PAGE SAFETY 
-     ========================================================= */ 
-
-  window.addEventListener( 
-    "pagehide", 
-    function () { 
-
-      hideAltScreen(); 
-
-      destroyM3U8Player(); 
-
-      if (screenFrame) { 
-        screenFrame.style.display = ""; 
-      } 
-
-      if (screenPlayer) { 
-
-        screenPlayer.classList.remove( 
-          "fullscreen-active" 
-        ); 
-
-      } 
-
-    } 
-  ); 
-
-
-  /* ========================================================= 
+  /* =========================================================
      INITIAL STATE
      ========================================================= */
 
@@ -3686,13 +2845,6 @@ function createHighlightCard(post) {
   bindContentCards();
 
   loadExternalContent();
-
-  /*
-   * Also resolve shared links for content already present
-   * in index.html (Football Live and TV Channels).
-   * JSON content will be resolved again after it loads.
-   */
-  handleSharedContentHash();
 
   requestAnimationFrame(
     function () {
