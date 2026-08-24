@@ -505,91 +505,9 @@ document.addEventListener("DOMContentLoaded", function () {
         MOVIE
       </span>
 
-      function createMovieCard(post) {
-
-  const name =
-    getPostName(post, "Movie");
-
-  const url =
-    getPostUrl(post);
-
-  const downloadUrl =
-    post.downloadUrl ||
-    post.downloadURL ||
-    "";
-
-  const rating =
-    post.rating ||
-    post.imdb ||
-    post.imdbRating ||
-    "";
-
-  const date =
-    getPostDate(post);
-
-  const thumbnail =
-    post.thumbnail ||
-    post.poster ||
-    post.posterUrl ||
-    post.image ||
-    "";
-
-  const button =
-    document.createElement("button");
-
-  button.type = "button";
-  button.className = "movie-card";
-
-  button.dataset.name = name;
-  button.dataset.url = url;
-
-  if (downloadUrl) {
-    button.dataset.downloadUrl =
-      downloadUrl;
-  }
-
-  if (date) {
-    button.dataset.date = date;
-  }
-
-  button.innerHTML = `
-    <span class="movie-status">
-      MOVIE
-    </span>
-
-    ${
-      thumbnail
-        ? `
-          <img
-            class="movie-thumbnail"
-            src="${escapeHtml(thumbnail)}"
-            alt="${escapeHtml(name)}"
-            loading="lazy"
-            onerror="this.style.display='none';"
-          >
-        `
-        : ""
-    }
-
-    <span class="movie-title">
-      ${escapeHtml(name)}
-    </span>
-
-    ${
-      rating
-        ? `<span class="movie-rating">
-             ${escapeHtml(
-               String(rating).toLowerCase().includes("imdb")
-                 ? rating
-                 : "IMDb " + rating
-             )}
-           </span>`
-        : ""
-    }
-  `;
-
-  return button;
-}
+      <span class="movie-icon">
+        🎬
+      </span>
 
       <span class="movie-title">
         ${escapeHtml(name)}
