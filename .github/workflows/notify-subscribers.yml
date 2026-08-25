@@ -1,0 +1,19 @@
+name: Notify subscribers
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'content/football/matches.json'
+      - 'content/highlights/highlights.json'
+      - 'content/movies/movies.json'
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send push notification
+        run: |
+          curl -s -X POST "https://us-central1-deeprows-4d37c.cloudfunctions.net/sendNotification" \
+            -H "Content-Type: application/json" \
+            -H "x-send-secret: ${{ secrets.SEND_SECRET }}" \
+            -d '{"title":"New content on Deeprowss","body":"Check out the latest update!","url":"https://deeprows.github.io/Footbolive/"}'
