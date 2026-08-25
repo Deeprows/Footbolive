@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     appId: "1:227439941748:web:dc00e8a6e620db2279921"
   };
 
-  const VAPID_KEY = "PASTE_YOUR_VAPID_PUBLIC_KEY_HERE"; // Firebase console > Project settings > Cloud Messaging > Web Push certificates
+  const VAPID_KEY = "BO43ZTu_blj75M-mPQnoixa4vMKPLUkwz3qMJ4gclv2nury_qL4TCPAoAL0NxZhGKzArPRqqwiF-A1ndg9S6lts"; // Firebase console > Project settings > Cloud Messaging > Web Push certificates
 
   const enableBtn = document.getElementById("enableNotifications"); // add this button in your HTML
 
