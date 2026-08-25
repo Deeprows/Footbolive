@@ -23,4 +23,4 @@ jobs:
       - name: Send push notification
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        run: node scripts/send-notification.js "New content on Deeprowss" "Check out the latest update!" "https://deeprows.github.io/Footbolive/"
+        run: node scripts/send-notification.js "New content on Deeprowss" "Check out the latest update!" "https://deeprowss.com"
