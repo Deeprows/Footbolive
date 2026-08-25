@@ -1,92 +1,56 @@
-/* =========================================================
-   DEEPROWSS SCRIPT.JS
-   ========================================================= */
+/* ========================================================= DEEPROWSS
+SCRIPT.JS ========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(“DOMContentLoaded”, function () {
 
-  "use strict";
+“use strict”;
 
-  console.log("Deeprowss app loaded");
+console.log(“Deeprowss app loaded”);
 
-
-  /* =========================================================
-   SITE-WIDE POPUNDER
-   ========================================================= */
+/* ========================================================= SITE-WIDE
+POPUNDER ========================================================= */
 
 (function () {
 
-  const popunderScript =
-    "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
+const popunderScript =
+“https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js”;
 
-  const script =
-    document.createElement("script");
+const script = document.createElement(“script”);
 
-  script.src =
-    popunderScript;
+script.src = popunderScript;
 
-  script.async = true;
+script.async = true;
 
-  document.body.appendChild(script);
+document.body.appendChild(script);
 
 })();
 
+/* ========================================================= CONTENT
+JSON FILES New JSON posts are inserted into the existing sections.
+Existing posts in index.html remain untouched. Newest posts are placed
+first. ========================================================= */
 
-  /* =========================================================
-     CONTENT JSON FILES
-     New JSON posts are inserted into the existing sections.
-     Existing posts in index.html remain untouched.
-     Newest posts are placed first.
-     ========================================================= */
+const CONTENT_FILES = { football: “content/football/matches.json”,
+highlights: “content/highlights/highlights.json”, tv:
+“content/tv/channels.json”, movies: “content/movies/movies.json” };
 
-  const CONTENT_FILES = {
-    football: "content/football/matches.json",
-    highlights: "content/highlights/highlights.json",
-    tv: "content/tv/channels.json",
-    movies: "content/movies/movies.json"
-  };
+/* ========================================================= ZOOM /
+GESTURE PROTECTION
+========================================================= */
 
+document.addEventListener( “gesturestart”, function (event) {
+event.preventDefault(); }, { passive: false } );
 
-  /* =========================================================
-     ZOOM / GESTURE PROTECTION
-     ========================================================= */
+document.addEventListener( “gesturechange”, function (event) {
+event.preventDefault(); }, { passive: false } );
 
-  document.addEventListener(
-    "gesturestart",
-    function (event) {
-      event.preventDefault();
-    },
-    { passive: false }
-  );
+document.addEventListener( “gestureend”, function (event) {
+event.preventDefault(); }, { passive: false } );
 
-  document.addEventListener(
-    "gesturechange",
-    function (event) {
-      event.preventDefault();
-    },
-    { passive: false }
-  );
+document.addEventListener( “wheel”, function (event) { if
+(event.ctrlKey) { event.preventDefault(); } }, { passive: false } );
 
-  document.addEventListener(
-    "gestureend",
-    function (event) {
-      event.preventDefault();
-    },
-    { passive: false }
-  );
-
-  document.addEventListener(
-    "wheel",
-    function (event) {
-      if (event.ctrlKey) {
-        event.preventDefault();
-      }
-    },
-    { passive: false }
-  );
-
-  document.addEventListener(
-    "keydown",
-    function (event) {
+document.addEventListener( “keydown”, function (event) {
 
       if (!event.ctrlKey) {
         return;
@@ -104,25 +68,18 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
     }
-  );
 
+);
 
-  /* =========================================================
-     DEVELOPER TOOLS / RIGHT-CLICK PROTECTION
-     ========================================================= */
+/* ========================================================= DEVELOPER
+TOOLS / RIGHT-CLICK PROTECTION
+========================================================= */
 
-  // Disable right-click context menu
-  document.addEventListener(
-    "contextmenu",
-    function (event) {
-      event.preventDefault();
-    }
-  );
+// Disable right-click context menu document.addEventListener(
+“contextmenu”, function (event) { event.preventDefault(); } );
 
-  // Block common browser developer-tool shortcuts
-  document.addEventListener(
-    "keydown",
-    function (event) {
+// Block common browser developer-tool shortcuts
+document.addEventListener( “keydown”, function (event) {
 
       // F12
       if (event.key === "F12") {
@@ -161,153 +118,105 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
     }
-  );
 
+);
 
-  /* =========================================================
-     ELEMENTS
-     ========================================================= */
+/* ========================================================= ELEMENTS
+========================================================= */
 
-  const siteHeader =
-    document.querySelector(".site-header");
+const siteHeader = document.querySelector(“.site-header”);
 
-  const screenSection =
-    document.querySelector(".screen-section");
+const screenSection = document.querySelector(“.screen-section”);
 
-  const screenFrame =
-    document.getElementById("screenFrame");
+const screenFrame = document.getElementById(“screenFrame”);
 
-  const screenPlaceholder =
-    document.getElementById("screenPlaceholder");
+const screenPlaceholder = document.getElementById(“screenPlaceholder”);
 
-  const screenStatus =
-    document.getElementById("screenStatus");
+const screenStatus = document.getElementById(“screenStatus”);
 
-  const nowShowing =
-    document.getElementById("nowShowing");
+const nowShowing = document.getElementById(“nowShowing”);
 
-  const fullscreenButton =
-    document.getElementById("fullscreenButton");
+const fullscreenButton = document.getElementById(“fullscreenButton”);
 
-  const screenPlayer =
-    document.getElementById("screenPlayer");
+const screenPlayer = document.getElementById(“screenPlayer”);
 
+/* ========================================================= FOOTBALL
+SCREEN CONTROLS
+========================================================= */
 
-  /* =========================================================
-     FOOTBALL SCREEN CONTROLS
-     ========================================================= */
+const footballScreenControls =
+document.getElementById(“footballScreenControls”);
 
-  const footballScreenControls =
-    document.getElementById("footballScreenControls");
+const mainScreenButton = document.getElementById(“mainScreenButton”);
 
-  const mainScreenButton =
-    document.getElementById("mainScreenButton");
+const altScreenButton = document.getElementById(“altScreenButton”);
 
-  const altScreenButton =
-    document.getElementById("altScreenButton");
+/* ========================================================= ALTERNATIVE
+FOOTBALL SCREEN
+========================================================= */
 
+const altScreenOverlay = document.getElementById(“altScreenOverlay”);
 
-  /* =========================================================
-     ALTERNATIVE FOOTBALL SCREEN
-     ========================================================= */
+const altScreenFrame = document.getElementById(“altScreenFrame”);
 
-  const altScreenOverlay =
-    document.getElementById("altScreenOverlay");
+const altScreenMatch = document.getElementById(“altScreenMatch”);
 
-  const altScreenFrame =
-    document.getElementById("altScreenFrame");
+const closeAltScreen = document.getElementById(“closeAltScreen”);
 
-  const altScreenMatch =
-    document.getElementById("altScreenMatch");
+/* ========================================================= APP BUTTONS
+========================================================= */
 
-  const closeAltScreen =
-    document.getElementById("closeAltScreen");
+const footballButton = document.getElementById(“footballButton”);
 
+const highlightsButton = document.getElementById(“highlightsButton”);
 
-  /* =========================================================
-     APP BUTTONS
-     ========================================================= */
+const tvButton = document.getElementById(“tvButton”);
 
-  const footballButton =
-    document.getElementById("footballButton");
+const moviesButton = document.getElementById(“moviesButton”);
 
-  const highlightsButton =
-    document.getElementById("highlightsButton");
+/* ========================================================= CONTENT
+SECTIONS ========================================================= */
 
-  const tvButton =
-    document.getElementById("tvButton");
+const footballContent = document.getElementById(“footballContent”);
 
-  const moviesButton =
-    document.getElementById("moviesButton");
+const highlightsContent = document.getElementById(“highlightsContent”);
 
+const tvContent = document.getElementById(“tvContent”);
 
-  /* =========================================================
-     CONTENT SECTIONS
-     ========================================================= */
+const moviesContent = document.getElementById(“moviesContent”);
 
-  const footballContent =
-    document.getElementById("footballContent");
+/* ========================================================= NAVIGATION
+========================================================= */
 
-  const highlightsContent =
-    document.getElementById("highlightsContent");
+const navFootball = document.getElementById(“navFootball”);
 
-  const tvContent =
-    document.getElementById("tvContent");
+const navHighlights = document.getElementById(“navHighlights”);
 
-  const moviesContent =
-    document.getElementById("moviesContent");
+const navTV = document.getElementById(“navTV”);
 
+const navMovies = document.getElementById(“navMovies”);
 
-  /* =========================================================
-     NAVIGATION
-     ========================================================= */
+/* ========================================================= MOBILE MENU
+========================================================= */
 
-  const navFootball =
-    document.getElementById("navFootball");
+const menuToggle = document.getElementById(“menuToggle”);
 
-  const navHighlights =
-    document.getElementById("navHighlights");
+const mainNav = document.getElementById(“mainNav”);
 
-  const navTV =
-    document.getElementById("navTV");
+/* ========================================================= CURRENT
+SCREEN STATE =========================================================
+*/
 
-  const navMovies =
-    document.getElementById("navMovies");
+let currentScreenType = ““; let currentMatchCard = null; let
+currentMainUrl =”“; let currentAltUrl =”“; let screenLoadTimer = null;
 
+// Direct M3U8/HLS player state let hlsVideo = null; let hlsInstance =
+null; let hlsUnmuteButton = null; let hlsLibraryPromise = null;
 
-  /* =========================================================
-     MOBILE MENU
-     ========================================================= */
+/* ========================================================= HELPERS
+========================================================= */
 
-  const menuToggle =
-    document.getElementById("menuToggle");
-
-  const mainNav =
-    document.getElementById("mainNav");
-
-
-  /* =========================================================
-     CURRENT SCREEN STATE
-     ========================================================= */
-
-  let currentScreenType = "";
-  let currentMatchCard = null;
-  let currentMainUrl = "";
-  let currentAltUrl = "";
-  let screenLoadTimer = null;
-
-  // Direct M3U8/HLS player state
-  let hlsVideo = null;
-  let hlsInstance = null;
-  let hlsUnmuteButton = null;
-  let hlsLibraryPromise = null;
-
-
-  /* =========================================================
-     HELPERS
-     ========================================================= */
-
-  function escapeHtml(value) {
+function escapeHtml(value) {
 
     return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -316,10 +225,9 @@ document.addEventListener("DOMContentLoaded", function () {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
 
-  }
+}
 
-
-  function normalizePosts(data) {
+function normalizePosts(data) {
 
     if (Array.isArray(data)) {
       return data;
@@ -347,10 +255,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return [];
 
-  }
+}
 
-
-  function getPostDate(post) {
+function getPostDate(post) {
 
     return (
       post.date ||
@@ -361,10 +268,9 @@ document.addEventListener("DOMContentLoaded", function () {
       ""
     );
 
-  }
+}
 
-
-  function dateValue(post) {
+function dateValue(post) {
 
     const value =
       getPostDate(post);
@@ -380,10 +286,9 @@ document.addEventListener("DOMContentLoaded", function () {
       ? 0
       : time;
 
-  }
+}
 
-
-  function sortNewestFirst(posts) {
+function sortNewestFirst(posts) {
 
     return posts.slice().sort(
       function (a, b) {
@@ -391,10 +296,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     );
 
-  }
+}
 
-
-  function getPostName(post, fallback) {
+function getPostName(post, fallback) {
 
     return (
       post.name ||
@@ -403,10 +307,9 @@ document.addEventListener("DOMContentLoaded", function () {
       fallback
     );
 
-  }
+}
 
-
-  function getPostUrl(post) {
+function getPostUrl(post) {
 
     return (
       post.url ||
@@ -416,10 +319,9 @@ document.addEventListener("DOMContentLoaded", function () {
       ""
     );
 
-  }
+}
 
-
-  function getAltUrl(post) {
+function getAltUrl(post) {
 
     return (
       post.altUrl ||
@@ -428,10 +330,9 @@ document.addEventListener("DOMContentLoaded", function () {
       ""
     );
 
-  }
+}
 
-
-  function hasValidAltUrl(url) {
+function hasValidAltUrl(url) {
 
     if (!url) {
       return false;
@@ -453,14 +354,439 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return true;
 
-  }
+}
 
+/* ========================================================= SHARE /
+UNIQUE CONTENT LINKS
+========================================================= */
 
-  /* =========================================================
-     CREATE JSON POSTS
-     ========================================================= */
+function createContentId(type, name, url) {
 
-  function createMovieCard(post) {
+    const raw =
+      String(type || "") +
+      "|" +
+      String(name || "") +
+      "|" +
+      String(url || "");
+
+    let hash = 0;
+
+    for (let i = 0; i < raw.length; i++) {
+      hash =
+        ((hash << 5) - hash) +
+        raw.charCodeAt(i);
+
+      hash |= 0;
+    }
+
+    const safeName =
+      String(name || "content")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .substring(0, 45) ||
+      "content";
+
+    const hashPart =
+      Math.abs(hash)
+        .toString(36);
+
+    return (
+      "content-" +
+      safeName +
+      "-" +
+      hashPart
+    );
+
+}
+
+function getCardContentType(card) {
+
+    if (!card) {
+      return "";
+    }
+
+    if (
+      card.classList.contains(
+        "highlight-card"
+      )
+    ) {
+      return "highlight";
+    }
+
+    if (
+      card.classList.contains(
+        "tv-channel"
+      )
+    ) {
+      return "tv";
+    }
+
+    if (
+      card.classList.contains(
+        "movie-card"
+      )
+    ) {
+      return "movie";
+    }
+
+    if (
+      card.classList.contains(
+        "match-card"
+      )
+    ) {
+      return "match";
+    }
+
+    return "";
+
+}
+
+function getCardContentId(card) {
+
+    if (!card) {
+      return "";
+    }
+
+    const type =
+      getCardContentType(card);
+
+    const name =
+      card.dataset.name ||
+      "";
+
+    const url =
+      card.dataset.url ||
+      "";
+
+    if (!type || !name) {
+      return "";
+    }
+
+    if (!card.dataset.contentId) {
+      card.dataset.contentId =
+        createContentId(
+          type,
+          name,
+          url
+        );
+    }
+
+    return card.dataset.contentId;
+
+}
+
+function getCardShareUrl(card) {
+
+    const contentId =
+      getCardContentId(card);
+
+    if (!contentId) {
+      return window.location.href;
+    }
+
+    return (
+      window.location.origin +
+      window.location.pathname +
+      "#" +
+      contentId
+    );
+
+}
+
+function addShareControl(card) {
+
+    if (!card || card.dataset.shareBound === "true") {
+      return;
+    }
+
+    const contentId =
+      getCardContentId(card);
+
+    if (!contentId) {
+      return;
+    }
+
+    card.dataset.shareBound =
+      "true";
+
+    const shareControl =
+      document.createElement("span");
+
+    shareControl.className =
+      "content-share-button";
+
+    shareControl.setAttribute(
+      "role",
+      "button"
+    );
+
+    shareControl.setAttribute(
+      "tabindex",
+      "0"
+    );
+
+    shareControl.setAttribute(
+      "aria-label",
+      "Share " +
+      (
+        card.dataset.name ||
+        "content"
+      )
+    );
+
+    shareControl.setAttribute(
+      "title",
+      "Share"
+    );
+
+    shareControl.innerHTML =
+      "↗";
+
+    function shareContent(event) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const shareUrl =
+        getCardShareUrl(card);
+
+      const shareTitle =
+        card.dataset.name ||
+        "Deeprows";
+
+      if (
+        navigator.share
+      ) {
+
+        navigator.share({
+          title:
+            shareTitle,
+          text:
+            shareTitle,
+          url:
+            shareUrl
+        })
+        .catch(
+          function (error) {
+
+            if (
+              error &&
+              error.name ===
+              "AbortError"
+            ) {
+              return;
+            }
+
+            copyShareLink(
+              shareUrl
+            );
+
+          }
+        );
+
+        return;
+      }
+
+      copyShareLink(
+        shareUrl
+      );
+
+    }
+
+    shareControl.addEventListener(
+      "click",
+      shareContent
+    );
+
+    shareControl.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          shareContent(event);
+        }
+
+      }
+    );
+
+    card.appendChild(
+      shareControl
+    );
+
+}
+
+function copyShareLink(url) {
+
+    if (
+      navigator.clipboard &&
+      window.isSecureContext
+    ) {
+
+      navigator.clipboard.writeText(
+        url
+      )
+      .then(
+        function () {
+          alert(
+            "Content link copied."
+          );
+        }
+      )
+      .catch(
+        function () {
+          fallbackCopyShareLink(
+            url
+          );
+        }
+      );
+
+      return;
+    }
+
+    fallbackCopyShareLink(
+      url
+    );
+
+}
+
+function fallbackCopyShareLink(url) {
+
+    const textarea =
+      document.createElement("textarea");
+
+    textarea.value =
+      url;
+
+    textarea.style.position =
+      "fixed";
+
+    textarea.style.left =
+      "-9999px";
+
+    document.body.appendChild(
+      textarea
+    );
+
+    textarea.focus();
+    textarea.select();
+
+    try {
+
+      document.execCommand(
+        "copy"
+      );
+
+      alert(
+        "Content link copied."
+      );
+
+    }
+
+    catch (error) {
+
+      window.prompt(
+        "Copy this content link:",
+        url
+      );
+
+    }
+
+    textarea.remove();
+
+}
+
+function addShareControlsToCards() {
+
+    document
+      .querySelectorAll(
+        ".match-card, .tv-channel, .movie-card"
+      )
+      .forEach(
+        function (card) {
+          addShareControl(card);
+        }
+      );
+
+}
+
+function updateContentHash(card) {
+
+    const contentId =
+      getCardContentId(card);
+
+    if (!contentId) {
+      return;
+    }
+
+    const newUrl =
+      window.location.origin +
+      window.location.pathname +
+      "#" +
+      contentId;
+
+    window.history.pushState(
+      {
+        contentId:
+          contentId
+      },
+      "",
+      newUrl
+    );
+
+}
+
+function openContentFromHash() {
+
+    const hash =
+      window.location.hash
+        .replace(/^#/, "")
+        .trim();
+
+    if (!hash) {
+      return false;
+    }
+
+    const card =
+      document.querySelector(
+        '[data-content-id="' +
+        CSS.escape(hash) +
+        '"]'
+      );
+
+    if (!card) {
+      return false;
+    }
+
+    card.click();
+
+    setTimeout(
+      function () {
+
+        card.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+      },
+      120
+    );
+
+    return true;
+
+}
+
+window.addEventListener( “hashchange”, function () {
+openContentFromHash(); } );
+
+/* ========================================================= CREATE JSON
+POSTS ========================================================= */
+
+function createMovieCard(post) {
 
     const name =
       getPostName(post, "Movie");
@@ -528,78 +854,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return button;
 
-  }
+}
 
+function formatHighlightDate(value) {
 
-  function formatHighlightDate(value) {
+if (!value) { return ““; }
 
-  if (!value) {
-    return "";
-  }
+const raw = String(value).trim();
 
-  const raw =
-    String(value).trim();
+const date = /^--$/.test(raw) ? new Date(raw + “T00:00:00”) : new
+Date(raw);
 
-  const date =
-    /^\d{4}-\d{2}-\d{2}$/.test(raw)
-      ? new Date(raw + "T00:00:00")
-      : new Date(raw);
+if (Number.isNaN(date.getTime())) { return raw; }
 
-  if (Number.isNaN(date.getTime())) {
-    return raw;
-  }
-
-  return new Intl.DateTimeFormat(
-    undefined,
-    {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    }
-  ).format(date);
+return new Intl.DateTimeFormat( undefined, { weekday: “short”, day:
+“numeric”, month: “short”, year: “numeric” } ).format(date);
 
 }
 
-
 function createHighlightCard(post) {
 
-  const name =
-    getPostName(
-      post,
-      "Football Highlight"
-    );
+const name = getPostName( post, “Football Highlight” );
 
-  const url =
-    getPostUrl(post);
+const url = getPostUrl(post);
 
-  const date =
-    getPostDate(post);
+const date = getPostDate(post);
 
-  const card =
-    document.createElement("button");
+const card = document.createElement(“button”);
 
-  card.type = "button";
+card.type = “button”;
 
-  /*
-   * Use the same base card as
-   * Upcoming & Live Matches.
-   */
-  card.className =
-    "match-card highlight-card is-upcoming";
+/ Use the same base card as * Upcoming & Live Matches. */ card.className
+= “match-card highlight-card is-upcoming”;
 
-  card.dataset.name =
-    name;
+card.dataset.name = name;
 
-  card.dataset.url =
-    url;
+card.dataset.url = url;
 
-  if (date) {
-    card.dataset.date =
-      date;
-  }
+if (date) { card.dataset.date = date; }
 
-  card.innerHTML = `
+card.innerHTML = `
 
     <span class="match-status upcoming">
       HIGHLIGHT
@@ -625,14 +919,13 @@ function createHighlightCard(post) {
       WATCH HIGHLIGHT
     </span>
 
-  `;
+`;
 
-  return card;
+return card;
 
 }
 
-
-  function createTVCard(post) {
+function createTVCard(post) {
 
     const name =
       getPostName(post, "TV Channel");
@@ -680,10 +973,9 @@ function createHighlightCard(post) {
 
     return card;
 
-  }
+}
 
-
-  function createMatchCard(post) {
+function createMatchCard(post) {
 
     const name =
       getPostName(post, "Football Match");
@@ -747,14 +1039,12 @@ function createHighlightCard(post) {
 
     return card;
 
-  }
+}
 
+/* ========================================================= JSON
+LOADING ========================================================= */
 
-  /* =========================================================
-     JSON LOADING
-     ========================================================= */
-
-  async function loadJsonFile(path) {
+async function loadJsonFile(path) {
 
     try {
 
@@ -788,17 +1078,13 @@ function createHighlightCard(post) {
 
     }
 
-  }
+}
 
+/* ========================================================= INSERT NEW
+POSTS BEFORE OLD POSTS
+========================================================= */
 
-  /* =========================================================
-     INSERT NEW POSTS BEFORE OLD POSTS
-     ========================================================= */
-
-  function prependPosts(
-    container,
-    cards
-  ) {
+function prependPosts( container, cards ) {
 
     if (!container || !cards.length) {
       return;
@@ -815,14 +1101,13 @@ function createHighlightCard(post) {
 
     container.prepend(fragment);
 
-  }
+}
 
+/* ========================================================= LOAD NEW
+CONTENT FROM JSON FILES
+========================================================= */
 
-  /* =========================================================
-     LOAD NEW CONTENT FROM JSON FILES
-     ========================================================= */
-
-  async function loadExternalContent() {
+async function loadExternalContent() {
 
     const results =
       await Promise.all([
@@ -883,17 +1168,11 @@ function createHighlightCard(post) {
 
     if (highlightsContent) {
 
-  prependPosts(
-    highlightsContent.querySelector(
-      ".highlight-grid, .highlights-grid, .content-grid"
-    ) || highlightsContent,
-    highlightPosts.map(
-      createHighlightCard
-    )
-  );
+prependPosts( highlightsContent.querySelector( “.highlight-grid,
+.highlights-grid, .content-grid” ) || highlightsContent,
+highlightPosts.map( createHighlightCard ) );
 
 }
-
 
     if (tvContent) {
 
@@ -933,14 +1212,15 @@ function createHighlightCard(post) {
       updateStickyPositions
     );
 
-  }
+    openContentFromHash();
 
+}
 
-  /* =========================================================
-     STICKY LAYOUT CALCULATION
-     ========================================================= */
+/* ========================================================= STICKY
+LAYOUT CALCULATION
+========================================================= */
 
-  function updateStickyPositions() {
+function updateStickyPositions() {
 
     if (!screenSection) {
       return;
@@ -975,14 +1255,12 @@ function createHighlightCard(post) {
       ) + "px"
     );
 
-  }
+}
 
+/* ========================================================= ACTIVE APP
+BUTTON ========================================================= */
 
-  /* =========================================================
-     ACTIVE APP BUTTON
-     ========================================================= */
-
-  function setActiveButton(button) {
+function setActiveButton(button) {
 
     [
       footballButton,
@@ -1003,14 +1281,12 @@ function createHighlightCard(post) {
       button.classList.add("active");
     }
 
-  }
+}
 
+/* ========================================================= ACTIVE NAV
+========================================================= */
 
-  /* =========================================================
-     ACTIVE NAV
-     ========================================================= */
-
-  function setActiveNav(link) {
+function setActiveNav(link) {
 
     [
       navFootball,
@@ -1031,14 +1307,12 @@ function createHighlightCard(post) {
       link.classList.add("active");
     }
 
-  }
+}
 
+/* ========================================================= SHOW
+CONTENT ========================================================= */
 
-  /* =========================================================
-     SHOW CONTENT
-     ========================================================= */
-
-  function showContent(section) {
+function showContent(section) {
 
     if (footballContent) {
       footballContent.hidden =
@@ -1068,14 +1342,12 @@ function createHighlightCard(post) {
       updateStickyPositions
     );
 
-  }
+}
 
+/* ========================================================= OPEN
+SECTIONS ========================================================= */
 
-  /* =========================================================
-     OPEN SECTIONS
-     ========================================================= */
-
-  function openFootball() {
+function openFootball() {
 
     showContent("football");
 
@@ -1089,10 +1361,9 @@ function createHighlightCard(post) {
 
     updateFootballControls();
 
-  }
+}
 
-
-  function openHighlights() {
+function openHighlights() {
 
     showContent("highlights");
 
@@ -1104,10 +1375,9 @@ function createHighlightCard(post) {
       navHighlights
     );
 
-  }
+}
 
-
-  function openTV() {
+function openTV() {
 
     showContent("tv");
 
@@ -1119,10 +1389,9 @@ function createHighlightCard(post) {
       navTV
     );
 
-  }
+}
 
-
-  function openMovies() {
+function openMovies() {
 
     showContent("movies");
 
@@ -1134,92 +1403,42 @@ function createHighlightCard(post) {
       navMovies
     );
 
-  }
+}
 
+/* ========================================================= APP BUTTON
+EVENTS ========================================================= */
 
-  /* =========================================================
-     APP BUTTON EVENTS
-     ========================================================= */
+if (footballButton) { footballButton.addEventListener( “click”,
+openFootball ); }
 
-  if (footballButton) {
-    footballButton.addEventListener(
-      "click",
-      openFootball
-    );
-  }
+if (highlightsButton) { highlightsButton.addEventListener( “click”,
+openHighlights ); }
 
-  if (highlightsButton) {
-    highlightsButton.addEventListener(
-      "click",
-      openHighlights
-    );
-  }
+if (tvButton) { tvButton.addEventListener( “click”, openTV ); }
 
-  if (tvButton) {
-    tvButton.addEventListener(
-      "click",
-      openTV
-    );
-  }
+if (moviesButton) { moviesButton.addEventListener( “click”, openMovies
+); }
 
-  if (moviesButton) {
-    moviesButton.addEventListener(
-      "click",
-      openMovies
-    );
-  }
+/* ========================================================= NAVIGATION
+EVENTS ========================================================= */
 
+if (navFootball) { navFootball.addEventListener( “click”, function
+(event) { event.preventDefault(); openFootball(); } ); }
 
-  /* =========================================================
-     NAVIGATION EVENTS
-     ========================================================= */
+if (navHighlights) { navHighlights.addEventListener( “click”, function
+(event) { event.preventDefault(); openHighlights(); } ); }
 
-  if (navFootball) {
-    navFootball.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        openFootball();
-      }
-    );
-  }
+if (navTV) { navTV.addEventListener( “click”, function (event) {
+event.preventDefault(); openTV(); } ); }
 
-  if (navHighlights) {
-    navHighlights.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        openHighlights();
-      }
-    );
-  }
+if (navMovies) { navMovies.addEventListener( “click”, function (event) {
+event.preventDefault(); openMovies(); } ); }
 
-  if (navTV) {
-    navTV.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        openTV();
-      }
-    );
-  }
+/* ========================================================= UPDATE
+FOOTBALL CONTROLS
+========================================================= */
 
-  if (navMovies) {
-    navMovies.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        openMovies();
-      }
-    );
-  }
-
-
-  /* =========================================================
-     UPDATE FOOTBALL CONTROLS
-     ========================================================= */
-
-  function updateFootballControls() {
+function updateFootballControls() {
 
     if (!footballScreenControls) {
       return;
@@ -1254,14 +1473,12 @@ function createHighlightCard(post) {
       altScreenButton.classList.remove("active");
     }
 
-  }
+}
 
+/* ========================================================= HIDE ALT
+SCREEN ========================================================= */
 
-  /* =========================================================
-     HIDE ALT SCREEN
-     ========================================================= */
-
-  function hideAltScreen() {
+function hideAltScreen() {
 
     if (altScreenFrame) {
       altScreenFrame.src =
@@ -1285,14 +1502,12 @@ function createHighlightCard(post) {
       altScreenButton.classList.remove("active");
     }
 
-  }
+}
 
+/* ========================================================= OPEN ALT
+SCREEN ========================================================= */
 
-  /* =========================================================
-     OPEN ALT SCREEN
-     ========================================================= */
-
-  function openAltScreen() {
+function openAltScreen() {
 
     if (
       currentScreenType !== "match" ||
@@ -1362,14 +1577,12 @@ function createHighlightCard(post) {
       altScreenButton.classList.add("active");
     }
 
-  }
+}
 
+/* ========================================================= MAIN SCREEN
+BUTTON ========================================================= */
 
-  /* =========================================================
-     MAIN SCREEN BUTTON
-     ========================================================= */
-
-  if (mainScreenButton) {
+if (mainScreenButton) {
 
     mainScreenButton.addEventListener(
       "click",
@@ -1395,14 +1608,12 @@ function createHighlightCard(post) {
       }
     );
 
-  }
+}
 
+/* ========================================================= ALT SCREEN
+BUTTON ========================================================= */
 
-  /* =========================================================
-     ALT SCREEN BUTTON
-     ========================================================= */
-
-  if (altScreenButton) {
+if (altScreenButton) {
 
     altScreenButton.addEventListener(
       "click",
@@ -1411,14 +1622,12 @@ function createHighlightCard(post) {
       }
     );
 
-  }
+}
 
+/* ========================================================= CLOSE ALT
+SCREEN ========================================================= */
 
-  /* =========================================================
-     CLOSE ALT SCREEN
-     ========================================================= */
-
-  if (closeAltScreen) {
+if (closeAltScreen) {
 
     closeAltScreen.addEventListener(
       "click",
@@ -1427,10 +1636,9 @@ function createHighlightCard(post) {
       }
     );
 
-  }
+}
 
-
-  if (altScreenOverlay) {
+if (altScreenOverlay) {
 
     altScreenOverlay.addEventListener(
       "click",
@@ -1445,16 +1653,12 @@ function createHighlightCard(post) {
       }
     );
 
-  }
+}
 
+/* ========================================================= ESC KEY
+========================================================= */
 
-  /* =========================================================
-     ESC KEY
-     ========================================================= */
-
-  document.addEventListener(
-    "keydown",
-    function (event) {
+document.addEventListener( “keydown”, function (event) {
 
       if (
         event.key === "Escape" &&
@@ -1465,21 +1669,17 @@ function createHighlightCard(post) {
       }
 
     }
-  );
 
+);
 
-  /* =========================================================
-     DIRECT M3U8 / HLS PLAYER
-     ========================================================= */
+/* ========================================================= DIRECT M3U8
+/ HLS PLAYER =========================================================
+*/
 
-  function isM3U8Url(url) {
-    return /\\.m3u8(?:$|[?#])/i.test(
-      String(url || "").trim()
-    );
-  }
+function isM3U8Url(url) { return /.m3u8(?:$|[?#])/i.test( String(url ||
+““).trim() ); }
 
-
-  function destroyM3U8Player() {
+function destroyM3U8Player() {
 
     if (hlsInstance) {
       try {
@@ -1516,10 +1716,10 @@ function createHighlightCard(post) {
       hlsUnmuteButton.remove();
       hlsUnmuteButton = null;
     }
-  }
 
+}
 
-  function loadHlsLibrary() {
+function loadHlsLibrary() {
 
     if (window.Hls) {
       return Promise.resolve(window.Hls);
@@ -1606,16 +1806,18 @@ function createHighlightCard(post) {
             );
           };
 
-        document.head.appendChild(script);
+        document.head.appendChild(
+          script
+        );
 
       }
     );
 
     return hlsLibraryPromise;
-  }
 
+}
 
-  function createM3U8Player(url) {
+function createM3U8Player(url) {
 
     if (!screenPlayer) {
       return;
@@ -1924,176 +2126,164 @@ function createHighlightCard(post) {
         }
       );
 
-  }
+}
 
+/* ========================================================= LOAD SCREEN
+IMPORTANT: All card content loads into the existing main screen. Cards
+never receive their own iframe/player.
+========================================================= */
 
-  /* =========================================================
-     LOAD SCREEN
-     ========================================================= */
-
-  function loadScreen(
-    url,
-    name,
-    type,
-    keepMatchState
-  ) {
+function loadScreen( url, name, type, keepMatchState ) {
 
     if ((!screenFrame && !screenPlayer) || !url) {
       return;
     }
 
     if (screenLoadTimer) {
-
-      clearTimeout(
-        screenLoadTimer
-      );
-
+      clearTimeout(screenLoadTimer);
       screenLoadTimer = null;
-
     }
 
     hideAltScreen();
 
-    currentScreenType =
-      type || "";
+    currentScreenType = type || "";
 
-    if (!keepMatchState) {
-
-      if (type !== "match") {
-
-        currentMatchCard = null;
-        currentMainUrl = "";
-        currentAltUrl = "";
-
-      }
-
+    if (!keepMatchState && type !== "match") {
+      currentMatchCard = null;
+      currentMainUrl = "";
+      currentAltUrl = "";
     }
 
     if (nowShowing) {
-      nowShowing.textContent =
-        name || "Now Playing";
+      nowShowing.textContent = name || "Now Playing";
     }
 
     if (screenPlaceholder) {
-      screenPlaceholder.classList.add(
-        "hidden"
-      );
+      screenPlaceholder.classList.add("hidden");
     }
+
+    /* =======================================================
+       DIRECT M3U8 / HLS
+       ======================================================= */
 
     if (isM3U8Url(url)) {
 
-      createM3U8Player(url);
+      if (screenFrame) {
+        screenFrame.src = "about:blank";
+        screenFrame.style.display = "none";
+      }
 
-      requestAnimationFrame(
-        updateStickyPositions
-      );
+      if (screenPlayer) {
+        createM3U8Player(url);
+      }
+
+      requestAnimationFrame(updateStickyPositions);
 
     }
+
+    /* =======================================================
+       NORMAL IFRAME / EMBED URL
+       ======================================================= */
 
     else {
 
       destroyM3U8Player();
 
+      /*
+       * IMPORTANT:
+       * This is the existing main #screenFrame.
+       * Nothing is created inside the clicked card.
+       */
       if (screenFrame) {
 
-        screenFrame.style.display =
-          "";
+        screenFrame.style.display = "";
+        screenFrame.style.opacity = "0.25";
+        screenFrame.src = "about:blank";
 
-        screenFrame.style.opacity =
-          "0.25";
+        screenLoadTimer = setTimeout(
+          function () {
 
-        screenFrame.src =
-          "about:blank";
+            if (!screenFrame) {
+              return;
+            }
 
-        screenLoadTimer =
-          setTimeout(
-            function () {
+            screenFrame.src = url;
+            screenFrame.style.display = "";
+            screenFrame.style.opacity = "1";
+            screenLoadTimer = null;
 
-              screenFrame.src =
-                url;
+            requestAnimationFrame(updateStickyPositions);
 
-              screenFrame.style.opacity =
-                "1";
-
-              screenLoadTimer = null;
-
-              requestAnimationFrame(
-                updateStickyPositions
-              );
-
-            },
-            150
-          );
+          },
+          150
+        );
 
       }
 
     }
 
-
     if (screenStatus) {
 
       if (type === "tv") {
-        screenStatus.textContent =
-          "LIVE TV";
+        screenStatus.textContent = "LIVE TV";
       }
-
       else if (type === "highlight") {
-        screenStatus.textContent =
-          "HIGHLIGHT";
+        screenStatus.textContent = "HIGHLIGHT";
       }
-
       else if (type === "movie") {
-        screenStatus.textContent =
-          "MOVIE";
+        screenStatus.textContent = "MOVIE";
       }
-
       else {
-        screenStatus.textContent =
-          "LIVE";
+        screenStatus.textContent = "LIVE";
       }
 
     }
 
     updateFootballControls();
 
+    /*
+     * Keep the existing main player visible instead of moving
+     * the clicked card or placing a player above the card.
+     */
     if (screenPlayer) {
 
-      const rect =
-        screenPlayer.getBoundingClientRect();
+      requestAnimationFrame(
+        function () {
 
-      const headerHeight =
-        siteHeader
-          ? siteHeader.getBoundingClientRect().height
-          : 66;
+          const rect =
+            screenPlayer.getBoundingClientRect();
 
-      if (rect.top < headerHeight) {
+          const headerHeight =
+            siteHeader
+              ? siteHeader.getBoundingClientRect().height
+              : 66;
 
-        window.scrollBy({
-          top:
-            rect.top -
-            headerHeight -
-            10,
-          behavior:
-            "smooth"
-        });
+          if (rect.top < headerHeight) {
 
-      }
+            window.scrollBy({
+              top: rect.top - headerHeight - 10,
+              behavior: "smooth"
+            });
+
+          }
+
+        }
+      );
 
     }
 
-  }
+}
 
+/* ========================================================= BIND
+CONTENT CARDS =========================================================
+*/
 
-  /* =========================================================
-     BIND CONTENT CARDS
-     ========================================================= */
-
-  function bindContentCards() {
+function bindContentCards() {
 
     const matchCards =
-  document.querySelectorAll(
-    ".match-card:not(.highlight-card)"
-  );
+      document.querySelectorAll(
+        ".match-card:not(.highlight-card)"
+      );
 
     const highlightCards =
       document.querySelectorAll(
@@ -2126,10 +2316,13 @@ function createHighlightCard(post) {
 
         card.addEventListener(
           "click",
-          function () {
+          function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
 
             const url =
-              this.dataset.url;
+              this.dataset.url || "";
 
             const altUrl =
               this.dataset.altUrl || "";
@@ -2141,26 +2334,23 @@ function createHighlightCard(post) {
               )?.textContent?.trim() ||
               "Football Match";
 
-            currentMatchCard =
-              this;
+            currentMatchCard = this;
+            currentMainUrl = url;
+            currentAltUrl = altUrl;
+            currentScreenType = "match";
 
-            currentMainUrl =
-              url || "";
-
-            currentAltUrl =
-              altUrl || "";
-
-            currentScreenType =
-              "match";
-
-            matchCards.forEach(
-              function (item) {
-                item.classList.remove(
-                  "active",
-                  "selected"
-                );
-              }
-            );
+            document
+              .querySelectorAll(
+                ".match-card:not(.highlight-card)"
+              )
+              .forEach(
+                function (item) {
+                  item.classList.remove(
+                    "active",
+                    "selected"
+                  );
+                }
+              );
 
             this.classList.add(
               "active",
@@ -2169,6 +2359,7 @@ function createHighlightCard(post) {
 
             hideAltScreen();
 
+            /* Load into the EXISTING main screen. */
             loadScreen(
               url,
               name,
@@ -2200,34 +2391,41 @@ function createHighlightCard(post) {
 
         card.addEventListener(
           "click",
-          function () {
+          function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
 
             const url =
-              this.dataset.url;
+              this.dataset.url || "";
 
             const name =
               this.dataset.name ||
               this.querySelector(
-                "strong"
+                ".match-teams"
+              )?.textContent?.trim() ||
+              this.querySelector(
+                ".highlight-title"
               )?.textContent?.trim() ||
               "Football Highlight";
 
-            highlightCards.forEach(
-              function (item) {
-                item.classList.remove(
-                  "active"
-                );
-              }
-            );
+            document
+              .querySelectorAll(
+                ".highlight-card"
+              )
+              .forEach(
+                function (item) {
+                  item.classList.remove("active");
+                }
+              );
 
-            this.classList.add(
-              "active"
-            );
+            this.classList.add("active");
 
             currentMatchCard = null;
             currentMainUrl = "";
             currentAltUrl = "";
 
+            /* Load into the EXISTING main screen. */
             loadScreen(
               url,
               name,
@@ -2258,10 +2456,13 @@ function createHighlightCard(post) {
 
         channel.addEventListener(
           "click",
-          function () {
+          function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
 
             const url =
-              this.dataset.url;
+              this.dataset.url || "";
 
             const name =
               this.dataset.name ||
@@ -2270,22 +2471,23 @@ function createHighlightCard(post) {
               )?.textContent?.trim() ||
               "TV Channel";
 
-            tvChannels.forEach(
-              function (item) {
-                item.classList.remove(
-                  "active"
-                );
-              }
-            );
+            document
+              .querySelectorAll(
+                ".tv-channel"
+              )
+              .forEach(
+                function (item) {
+                  item.classList.remove("active");
+                }
+              );
 
-            this.classList.add(
-              "active"
-            );
+            this.classList.add("active");
 
             currentMatchCard = null;
             currentMainUrl = "";
             currentAltUrl = "";
 
+            /* Load into the EXISTING main screen. */
             loadScreen(
               url,
               name,
@@ -2316,10 +2518,13 @@ function createHighlightCard(post) {
 
         movie.addEventListener(
           "click",
-          function () {
+          function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
 
             const url =
-              this.dataset.url;
+              this.dataset.url || "";
 
             const name =
               this.dataset.name ||
@@ -2328,22 +2533,23 @@ function createHighlightCard(post) {
               )?.textContent?.trim() ||
               "Movie";
 
-            movieCards.forEach(
-              function (item) {
-                item.classList.remove(
-                  "active"
-                );
-              }
-            );
+            document
+              .querySelectorAll(
+                ".movie-card"
+              )
+              .forEach(
+                function (item) {
+                  item.classList.remove("active");
+                }
+              );
 
-            this.classList.add(
-              "active"
-            );
+            this.classList.add("active");
 
             currentMatchCard = null;
             currentMainUrl = "";
             currentAltUrl = "";
 
+            /* Load into the EXISTING main screen. */
             loadScreen(
               url,
               name,
@@ -2358,14 +2564,14 @@ function createHighlightCard(post) {
       }
     );
 
-  }
+    addShareControlsToCards();
 
+}
 
-  /* =========================================================
-     FULLSCREEN
-     ========================================================= */
+/* ========================================================= FULLSCREEN
+========================================================= */
 
-  function enterScreenFullscreen() {
+function enterScreenFullscreen() {
 
     if (!screenPlayer) {
       return;
@@ -2442,10 +2648,9 @@ function createHighlightCard(post) {
 
     }
 
-  }
+}
 
-
-  function exitScreenFullscreen() {
+function exitScreenFullscreen() {
 
     if (
       screen.orientation &&
@@ -2521,10 +2726,9 @@ function createHighlightCard(post) {
 
     }
 
-  }
+}
 
-
-  if (fullscreenButton) {
+if (fullscreenButton) {
 
     fullscreenButton.addEventListener(
       "click",
@@ -2546,14 +2750,12 @@ function createHighlightCard(post) {
       }
     );
 
-  }
+}
 
+/* ========================================================= FULLSCREEN
+CHANGE ========================================================= */
 
-  /* =========================================================
-     FULLSCREEN CHANGE
-     ========================================================= */
-
-  function handleFullscreenChange() {
+function handleFullscreenChange() {
 
     if (!fullscreenButton) {
       return;
@@ -2678,38 +2880,26 @@ function createHighlightCard(post) {
       }
     );
 
-  }
+}
 
+document.addEventListener( “fullscreenchange”, handleFullscreenChange );
 
-  document.addEventListener(
-    "fullscreenchange",
-    handleFullscreenChange
-  );
+document.addEventListener( “webkitfullscreenchange”,
+handleFullscreenChange );
 
-  document.addEventListener(
-    "webkitfullscreenchange",
-    handleFullscreenChange
-  );
+document.addEventListener( “mozfullscreenchange”, handleFullscreenChange
+);
 
-  document.addEventListener(
-    "mozfullscreenchange",
-    handleFullscreenChange
-  );
+document.addEventListener( “MSFullscreenChange”, handleFullscreenChange
+);
 
-  document.addEventListener(
-    "MSFullscreenChange",
-    handleFullscreenChange
-  );
+/* ========================================================= FULLSCREEN
+/ ORIENTATION RESIZE
+========================================================= */
 
+let fullscreenResizeTimer = null;
 
-  /* =========================================================
-     FULLSCREEN / ORIENTATION RESIZE
-     ========================================================= */
-
-  let fullscreenResizeTimer =
-    null;
-
-  function handleFullscreenResize() {
+function handleFullscreenResize() {
 
     if (fullscreenResizeTimer) {
       clearTimeout(
@@ -2731,34 +2921,23 @@ function createHighlightCard(post) {
         80
       );
 
-  }
+}
 
-  window.addEventListener(
-    "resize",
-    handleFullscreenResize
-  );
+window.addEventListener( “resize”, handleFullscreenResize );
 
-  if (
-    screen.orientation &&
-    screen.orientation.addEventListener
-  ) {
+if ( screen.orientation && screen.orientation.addEventListener ) {
 
     screen.orientation.addEventListener(
       "change",
       handleFullscreenResize
     );
 
-  }
+}
 
+/* ========================================================= MOBILE MENU
+========================================================= */
 
-  /* =========================================================
-     MOBILE MENU
-     ========================================================= */
-
-  if (
-    menuToggle &&
-    mainNav
-  ) {
+if ( menuToggle && mainNav ) {
 
     menuToggle.addEventListener(
       "click",
@@ -2803,16 +2982,12 @@ function createHighlightCard(post) {
         }
       );
 
-  }
+}
 
+/* ========================================================= ALT SCREEN
+PAGE SAFETY ========================================================= */
 
-  /* =========================================================
-     ALT SCREEN PAGE SAFETY
-     ========================================================= */
-
-  window.addEventListener(
-    "pagehide",
-    function () {
+window.addEventListener( “pagehide”, function () {
 
       hideAltScreen();
 
@@ -2831,25 +3006,20 @@ function createHighlightCard(post) {
       }
 
     }
-  );
 
+);
 
-  /* =========================================================
-     INITIAL STATE
-     ========================================================= */
+/* ========================================================= INITIAL
+STATE ========================================================= */
 
-  updateStickyPositions();
+updateStickyPositions();
 
-  openFootball();
+openFootball();
 
-  bindContentCards();
+bindContentCards();
 
-  loadExternalContent();
+loadExternalContent();
 
-  requestAnimationFrame(
-    function () {
-      updateStickyPositions();
-    }
-  );
+requestAnimationFrame( function () { updateStickyPositions(); } );
 
 });
