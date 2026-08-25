@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
    PUSH NOTIFICATIONS
    ========================================================= */
 (function () {
-
   const firebaseConfig = {
     apiKey: "AIzaSyBs9eSquNu2drJjM3vqFGDX1QU-VE1_F7U",
     authDomain: "deeprows-4d37c.firebaseapp.com",
@@ -45,7 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const VAPID_KEY = "PASTE_YOUR_VAPID_PUBLIC_KEY_HERE"; // Firebase console > Project settings > Cloud Messaging > Web Push certificates
-  const REGISTER_ENDPOINT = "https://us-central1-deeprows-4d37c.cloudfunctions.net/registerNotificationToken";
 
   const enableBtn = document.getElementById("enableNotifications"); // add this button in your HTML
 
@@ -60,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const app = firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging(app);
+    const db = firebase.firestore(app);
 
     const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
 
@@ -70,10 +69,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!token) return;
 
-    await fetch(REGISTER_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token })
+    await db.collection("push_tokens").add({
+      token: token,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     // Foreground messages (tab is open and focused)
@@ -91,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (enableBtn) {
     enableBtn.addEventListener("click", subscribeToPush);
   }
-
 })();
 
   /* =========================================================
