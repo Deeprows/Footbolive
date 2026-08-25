@@ -137,7 +137,7 @@ self.addEventListener(
 
             if (
               client.url.includes(
-                "deeprows.github.io"
+                "deeprowss.com"
               ) &&
               "focus" in client
             ) {

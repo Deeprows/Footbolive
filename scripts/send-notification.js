@@ -12,7 +12,7 @@ const db = getFirestore();
 
 const title = process.argv[2] || "New content on Deeprowss";
 const body = process.argv[3] || "Check out the latest update!";
-const url = process.argv[4] || "https://deeprows.github.io/Footbolive/";
+const url = process.argv[4] || "https://deeprowss.com";
 
 async function main() {
 
