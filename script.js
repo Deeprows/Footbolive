@@ -1,56 +1,92 @@
-/* ========================================================= DEEPROWSS
-SCRIPT.JS ========================================================= */
+/* =========================================================
+   DEEPROWSS SCRIPT.JS
+   ========================================================= */
 
-document.addEventListener(“DOMContentLoaded”, function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-“use strict”;
+  "use strict";
 
-console.log(“Deeprowss app loaded”);
+  console.log("Deeprowss app loaded");
 
-/* ========================================================= SITE-WIDE
-POPUNDER ========================================================= */
+
+  /* =========================================================
+   SITE-WIDE POPUNDER
+   ========================================================= */
 
 (function () {
 
-const popunderScript =
-“https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js”;
+  const popunderScript =
+    "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
 
-const script = document.createElement(“script”);
+  const script =
+    document.createElement("script");
 
-script.src = popunderScript;
+  script.src =
+    popunderScript;
 
-script.async = true;
+  script.async = true;
 
-document.body.appendChild(script);
+  document.body.appendChild(script);
 
 })();
 
-/* ========================================================= CONTENT
-JSON FILES New JSON posts are inserted into the existing sections.
-Existing posts in index.html remain untouched. Newest posts are placed
-first. ========================================================= */
 
-const CONTENT_FILES = { football: “content/football/matches.json”,
-highlights: “content/highlights/highlights.json”, tv:
-“content/tv/channels.json”, movies: “content/movies/movies.json” };
+  /* =========================================================
+     CONTENT JSON FILES
+     New JSON posts are inserted into the existing sections.
+     Existing posts in index.html remain untouched.
+     Newest posts are placed first.
+     ========================================================= */
 
-/* ========================================================= ZOOM /
-GESTURE PROTECTION
-========================================================= */
+  const CONTENT_FILES = {
+    football: "content/football/matches.json",
+    highlights: "content/highlights/highlights.json",
+    tv: "content/tv/channels.json",
+    movies: "content/movies/movies.json"
+  };
 
-document.addEventListener( “gesturestart”, function (event) {
-event.preventDefault(); }, { passive: false } );
 
-document.addEventListener( “gesturechange”, function (event) {
-event.preventDefault(); }, { passive: false } );
+  /* =========================================================
+     ZOOM / GESTURE PROTECTION
+     ========================================================= */
 
-document.addEventListener( “gestureend”, function (event) {
-event.preventDefault(); }, { passive: false } );
+  document.addEventListener(
+    "gesturestart",
+    function (event) {
+      event.preventDefault();
+    },
+    { passive: false }
+  );
 
-document.addEventListener( “wheel”, function (event) { if
-(event.ctrlKey) { event.preventDefault(); } }, { passive: false } );
+  document.addEventListener(
+    "gesturechange",
+    function (event) {
+      event.preventDefault();
+    },
+    { passive: false }
+  );
 
-document.addEventListener( “keydown”, function (event) {
+  document.addEventListener(
+    "gestureend",
+    function (event) {
+      event.preventDefault();
+    },
+    { passive: false }
+  );
+
+  document.addEventListener(
+    "wheel",
+    function (event) {
+      if (event.ctrlKey) {
+        event.preventDefault();
+      }
+    },
+    { passive: false }
+  );
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
 
       if (!event.ctrlKey) {
         return;
@@ -68,18 +104,25 @@ document.addEventListener( “keydown”, function (event) {
       }
 
     }
+  );
 
-);
 
-/* ========================================================= DEVELOPER
-TOOLS / RIGHT-CLICK PROTECTION
-========================================================= */
+  /* =========================================================
+     DEVELOPER TOOLS / RIGHT-CLICK PROTECTION
+     ========================================================= */
 
-// Disable right-click context menu document.addEventListener(
-“contextmenu”, function (event) { event.preventDefault(); } );
+  // Disable right-click context menu
+  document.addEventListener(
+    "contextmenu",
+    function (event) {
+      event.preventDefault();
+    }
+  );
 
-// Block common browser developer-tool shortcuts
-document.addEventListener( “keydown”, function (event) {
+  // Block common browser developer-tool shortcuts
+  document.addEventListener(
+    "keydown",
+    function (event) {
 
       // F12
       if (event.key === "F12") {
@@ -118,105 +161,153 @@ document.addEventListener( “keydown”, function (event) {
       }
 
     }
+  );
 
-);
 
-/* ========================================================= ELEMENTS
-========================================================= */
+  /* =========================================================
+     ELEMENTS
+     ========================================================= */
 
-const siteHeader = document.querySelector(“.site-header”);
+  const siteHeader =
+    document.querySelector(".site-header");
 
-const screenSection = document.querySelector(“.screen-section”);
+  const screenSection =
+    document.querySelector(".screen-section");
 
-const screenFrame = document.getElementById(“screenFrame”);
+  const screenFrame =
+    document.getElementById("screenFrame");
 
-const screenPlaceholder = document.getElementById(“screenPlaceholder”);
+  const screenPlaceholder =
+    document.getElementById("screenPlaceholder");
 
-const screenStatus = document.getElementById(“screenStatus”);
+  const screenStatus =
+    document.getElementById("screenStatus");
 
-const nowShowing = document.getElementById(“nowShowing”);
+  const nowShowing =
+    document.getElementById("nowShowing");
 
-const fullscreenButton = document.getElementById(“fullscreenButton”);
+  const fullscreenButton =
+    document.getElementById("fullscreenButton");
 
-const screenPlayer = document.getElementById(“screenPlayer”);
+  const screenPlayer =
+    document.getElementById("screenPlayer");
 
-/* ========================================================= FOOTBALL
-SCREEN CONTROLS
-========================================================= */
 
-const footballScreenControls =
-document.getElementById(“footballScreenControls”);
+  /* =========================================================
+     FOOTBALL SCREEN CONTROLS
+     ========================================================= */
 
-const mainScreenButton = document.getElementById(“mainScreenButton”);
+  const footballScreenControls =
+    document.getElementById("footballScreenControls");
 
-const altScreenButton = document.getElementById(“altScreenButton”);
+  const mainScreenButton =
+    document.getElementById("mainScreenButton");
 
-/* ========================================================= ALTERNATIVE
-FOOTBALL SCREEN
-========================================================= */
+  const altScreenButton =
+    document.getElementById("altScreenButton");
 
-const altScreenOverlay = document.getElementById(“altScreenOverlay”);
 
-const altScreenFrame = document.getElementById(“altScreenFrame”);
+  /* =========================================================
+     ALTERNATIVE FOOTBALL SCREEN
+     ========================================================= */
 
-const altScreenMatch = document.getElementById(“altScreenMatch”);
+  const altScreenOverlay =
+    document.getElementById("altScreenOverlay");
 
-const closeAltScreen = document.getElementById(“closeAltScreen”);
+  const altScreenFrame =
+    document.getElementById("altScreenFrame");
 
-/* ========================================================= APP BUTTONS
-========================================================= */
+  const altScreenMatch =
+    document.getElementById("altScreenMatch");
 
-const footballButton = document.getElementById(“footballButton”);
+  const closeAltScreen =
+    document.getElementById("closeAltScreen");
 
-const highlightsButton = document.getElementById(“highlightsButton”);
 
-const tvButton = document.getElementById(“tvButton”);
+  /* =========================================================
+     APP BUTTONS
+     ========================================================= */
 
-const moviesButton = document.getElementById(“moviesButton”);
+  const footballButton =
+    document.getElementById("footballButton");
 
-/* ========================================================= CONTENT
-SECTIONS ========================================================= */
+  const highlightsButton =
+    document.getElementById("highlightsButton");
 
-const footballContent = document.getElementById(“footballContent”);
+  const tvButton =
+    document.getElementById("tvButton");
 
-const highlightsContent = document.getElementById(“highlightsContent”);
+  const moviesButton =
+    document.getElementById("moviesButton");
 
-const tvContent = document.getElementById(“tvContent”);
 
-const moviesContent = document.getElementById(“moviesContent”);
+  /* =========================================================
+     CONTENT SECTIONS
+     ========================================================= */
 
-/* ========================================================= NAVIGATION
-========================================================= */
+  const footballContent =
+    document.getElementById("footballContent");
 
-const navFootball = document.getElementById(“navFootball”);
+  const highlightsContent =
+    document.getElementById("highlightsContent");
 
-const navHighlights = document.getElementById(“navHighlights”);
+  const tvContent =
+    document.getElementById("tvContent");
 
-const navTV = document.getElementById(“navTV”);
+  const moviesContent =
+    document.getElementById("moviesContent");
 
-const navMovies = document.getElementById(“navMovies”);
 
-/* ========================================================= MOBILE MENU
-========================================================= */
+  /* =========================================================
+     NAVIGATION
+     ========================================================= */
 
-const menuToggle = document.getElementById(“menuToggle”);
+  const navFootball =
+    document.getElementById("navFootball");
 
-const mainNav = document.getElementById(“mainNav”);
+  const navHighlights =
+    document.getElementById("navHighlights");
 
-/* ========================================================= CURRENT
-SCREEN STATE =========================================================
-*/
+  const navTV =
+    document.getElementById("navTV");
 
-let currentScreenType = ““; let currentMatchCard = null; let
-currentMainUrl =”“; let currentAltUrl =”“; let screenLoadTimer = null;
+  const navMovies =
+    document.getElementById("navMovies");
 
-// Direct M3U8/HLS player state let hlsVideo = null; let hlsInstance =
-null; let hlsUnmuteButton = null; let hlsLibraryPromise = null;
 
-/* ========================================================= HELPERS
-========================================================= */
+  /* =========================================================
+     MOBILE MENU
+     ========================================================= */
 
-function escapeHtml(value) {
+  const menuToggle =
+    document.getElementById("menuToggle");
+
+  const mainNav =
+    document.getElementById("mainNav");
+
+
+  /* =========================================================
+     CURRENT SCREEN STATE
+     ========================================================= */
+
+  let currentScreenType = "";
+  let currentMatchCard = null;
+  let currentMainUrl = "";
+  let currentAltUrl = "";
+  let screenLoadTimer = null;
+
+  // Direct M3U8/HLS player state
+  let hlsVideo = null;
+  let hlsInstance = null;
+  let hlsUnmuteButton = null;
+  let hlsLibraryPromise = null;
+
+
+  /* =========================================================
+     HELPERS
+     ========================================================= */
+
+  function escapeHtml(value) {
 
     return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -225,9 +316,10 @@ function escapeHtml(value) {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
 
-}
+  }
 
-function normalizePosts(data) {
+
+  function normalizePosts(data) {
 
     if (Array.isArray(data)) {
       return data;
@@ -255,9 +347,10 @@ function normalizePosts(data) {
 
     return [];
 
-}
+  }
 
-function getPostDate(post) {
+
+  function getPostDate(post) {
 
     return (
       post.date ||
@@ -268,9 +361,10 @@ function getPostDate(post) {
       ""
     );
 
-}
+  }
 
-function dateValue(post) {
+
+  function dateValue(post) {
 
     const value =
       getPostDate(post);
@@ -286,9 +380,10 @@ function dateValue(post) {
       ? 0
       : time;
 
-}
+  }
 
-function sortNewestFirst(posts) {
+
+  function sortNewestFirst(posts) {
 
     return posts.slice().sort(
       function (a, b) {
@@ -296,9 +391,10 @@ function sortNewestFirst(posts) {
       }
     );
 
-}
+  }
 
-function getPostName(post, fallback) {
+
+  function getPostName(post, fallback) {
 
     return (
       post.name ||
@@ -307,9 +403,10 @@ function getPostName(post, fallback) {
       fallback
     );
 
-}
+  }
 
-function getPostUrl(post) {
+
+  function getPostUrl(post) {
 
     return (
       post.url ||
@@ -319,9 +416,10 @@ function getPostUrl(post) {
       ""
     );
 
-}
+  }
 
-function getAltUrl(post) {
+
+  function getAltUrl(post) {
 
     return (
       post.altUrl ||
@@ -330,9 +428,10 @@ function getAltUrl(post) {
       ""
     );
 
-}
+  }
 
-function hasValidAltUrl(url) {
+
+  function hasValidAltUrl(url) {
 
     if (!url) {
       return false;
@@ -354,439 +453,14 @@ function hasValidAltUrl(url) {
 
     return true;
 
-}
+  }
 
-/* ========================================================= SHARE /
-UNIQUE CONTENT LINKS
-========================================================= */
 
-function createContentId(type, name, url) {
+  /* =========================================================
+     CREATE JSON POSTS
+     ========================================================= */
 
-    const raw =
-      String(type || "") +
-      "|" +
-      String(name || "") +
-      "|" +
-      String(url || "");
-
-    let hash = 0;
-
-    for (let i = 0; i < raw.length; i++) {
-      hash =
-        ((hash << 5) - hash) +
-        raw.charCodeAt(i);
-
-      hash |= 0;
-    }
-
-    const safeName =
-      String(name || "content")
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-        .substring(0, 45) ||
-      "content";
-
-    const hashPart =
-      Math.abs(hash)
-        .toString(36);
-
-    return (
-      "content-" +
-      safeName +
-      "-" +
-      hashPart
-    );
-
-}
-
-function getCardContentType(card) {
-
-    if (!card) {
-      return "";
-    }
-
-    if (
-      card.classList.contains(
-        "highlight-card"
-      )
-    ) {
-      return "highlight";
-    }
-
-    if (
-      card.classList.contains(
-        "tv-channel"
-      )
-    ) {
-      return "tv";
-    }
-
-    if (
-      card.classList.contains(
-        "movie-card"
-      )
-    ) {
-      return "movie";
-    }
-
-    if (
-      card.classList.contains(
-        "match-card"
-      )
-    ) {
-      return "match";
-    }
-
-    return "";
-
-}
-
-function getCardContentId(card) {
-
-    if (!card) {
-      return "";
-    }
-
-    const type =
-      getCardContentType(card);
-
-    const name =
-      card.dataset.name ||
-      "";
-
-    const url =
-      card.dataset.url ||
-      "";
-
-    if (!type || !name) {
-      return "";
-    }
-
-    if (!card.dataset.contentId) {
-      card.dataset.contentId =
-        createContentId(
-          type,
-          name,
-          url
-        );
-    }
-
-    return card.dataset.contentId;
-
-}
-
-function getCardShareUrl(card) {
-
-    const contentId =
-      getCardContentId(card);
-
-    if (!contentId) {
-      return window.location.href;
-    }
-
-    return (
-      window.location.origin +
-      window.location.pathname +
-      "#" +
-      contentId
-    );
-
-}
-
-function addShareControl(card) {
-
-    if (!card || card.dataset.shareBound === "true") {
-      return;
-    }
-
-    const contentId =
-      getCardContentId(card);
-
-    if (!contentId) {
-      return;
-    }
-
-    card.dataset.shareBound =
-      "true";
-
-    const shareControl =
-      document.createElement("span");
-
-    shareControl.className =
-      "content-share-button";
-
-    shareControl.setAttribute(
-      "role",
-      "button"
-    );
-
-    shareControl.setAttribute(
-      "tabindex",
-      "0"
-    );
-
-    shareControl.setAttribute(
-      "aria-label",
-      "Share " +
-      (
-        card.dataset.name ||
-        "content"
-      )
-    );
-
-    shareControl.setAttribute(
-      "title",
-      "Share"
-    );
-
-    shareControl.innerHTML =
-      "↗";
-
-    function shareContent(event) {
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      const shareUrl =
-        getCardShareUrl(card);
-
-      const shareTitle =
-        card.dataset.name ||
-        "Deeprows";
-
-      if (
-        navigator.share
-      ) {
-
-        navigator.share({
-          title:
-            shareTitle,
-          text:
-            shareTitle,
-          url:
-            shareUrl
-        })
-        .catch(
-          function (error) {
-
-            if (
-              error &&
-              error.name ===
-              "AbortError"
-            ) {
-              return;
-            }
-
-            copyShareLink(
-              shareUrl
-            );
-
-          }
-        );
-
-        return;
-      }
-
-      copyShareLink(
-        shareUrl
-      );
-
-    }
-
-    shareControl.addEventListener(
-      "click",
-      shareContent
-    );
-
-    shareControl.addEventListener(
-      "keydown",
-      function (event) {
-
-        if (
-          event.key === "Enter" ||
-          event.key === " "
-        ) {
-          shareContent(event);
-        }
-
-      }
-    );
-
-    card.appendChild(
-      shareControl
-    );
-
-}
-
-function copyShareLink(url) {
-
-    if (
-      navigator.clipboard &&
-      window.isSecureContext
-    ) {
-
-      navigator.clipboard.writeText(
-        url
-      )
-      .then(
-        function () {
-          alert(
-            "Content link copied."
-          );
-        }
-      )
-      .catch(
-        function () {
-          fallbackCopyShareLink(
-            url
-          );
-        }
-      );
-
-      return;
-    }
-
-    fallbackCopyShareLink(
-      url
-    );
-
-}
-
-function fallbackCopyShareLink(url) {
-
-    const textarea =
-      document.createElement("textarea");
-
-    textarea.value =
-      url;
-
-    textarea.style.position =
-      "fixed";
-
-    textarea.style.left =
-      "-9999px";
-
-    document.body.appendChild(
-      textarea
-    );
-
-    textarea.focus();
-    textarea.select();
-
-    try {
-
-      document.execCommand(
-        "copy"
-      );
-
-      alert(
-        "Content link copied."
-      );
-
-    }
-
-    catch (error) {
-
-      window.prompt(
-        "Copy this content link:",
-        url
-      );
-
-    }
-
-    textarea.remove();
-
-}
-
-function addShareControlsToCards() {
-
-    document
-      .querySelectorAll(
-        ".match-card, .tv-channel, .movie-card"
-      )
-      .forEach(
-        function (card) {
-          addShareControl(card);
-        }
-      );
-
-}
-
-function updateContentHash(card) {
-
-    const contentId =
-      getCardContentId(card);
-
-    if (!contentId) {
-      return;
-    }
-
-    const newUrl =
-      window.location.origin +
-      window.location.pathname +
-      "#" +
-      contentId;
-
-    window.history.pushState(
-      {
-        contentId:
-          contentId
-      },
-      "",
-      newUrl
-    );
-
-}
-
-function openContentFromHash() {
-
-    const hash =
-      window.location.hash
-        .replace(/^#/, "")
-        .trim();
-
-    if (!hash) {
-      return false;
-    }
-
-    const card =
-      document.querySelector(
-        '[data-content-id="' +
-        CSS.escape(hash) +
-        '"]'
-      );
-
-    if (!card) {
-      return false;
-    }
-
-    card.click();
-
-    setTimeout(
-      function () {
-
-        card.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-
-      },
-      120
-    );
-
-    return true;
-
-}
-
-window.addEventListener( “hashchange”, function () {
-openContentFromHash(); } );
-
-/* ========================================================= CREATE JSON
-POSTS ========================================================= */
-
-function createMovieCard(post) {
+  function createMovieCard(post) {
 
     const name =
       getPostName(post, "Movie");
@@ -854,46 +528,78 @@ function createMovieCard(post) {
 
     return button;
 
+  }
+
+
+  function formatHighlightDate(value) {
+
+  if (!value) {
+    return "";
+  }
+
+  const raw =
+    String(value).trim();
+
+  const date =
+    /^\d{4}-\d{2}-\d{2}$/.test(raw)
+      ? new Date(raw + "T00:00:00")
+      : new Date(raw);
+
+  if (Number.isNaN(date.getTime())) {
+    return raw;
+  }
+
+  return new Intl.DateTimeFormat(
+    undefined,
+    {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    }
+  ).format(date);
+
 }
 
-function formatHighlightDate(value) {
-
-if (!value) { return ““; }
-
-const raw = String(value).trim();
-
-const date = /^--$/.test(raw) ? new Date(raw + “T00:00:00”) : new
-Date(raw);
-
-if (Number.isNaN(date.getTime())) { return raw; }
-
-return new Intl.DateTimeFormat( undefined, { weekday: “short”, day:
-“numeric”, month: “short”, year: “numeric” } ).format(date);
-
-}
 
 function createHighlightCard(post) {
 
-const name = getPostName( post, “Football Highlight” );
+  const name =
+    getPostName(
+      post,
+      "Football Highlight"
+    );
 
-const url = getPostUrl(post);
+  const url =
+    getPostUrl(post);
 
-const date = getPostDate(post);
+  const date =
+    getPostDate(post);
 
-const card = document.createElement(“button”);
+  const card =
+    document.createElement("button");
 
-card.type = “button”;
+  card.type = "button";
 
-/ Use the same base card as * Upcoming & Live Matches. */ card.className
-= “match-card highlight-card is-upcoming”;
+  /*
+   * Use the same base card as
+   * Upcoming & Live Matches.
+   */
+  card.className =
+    "match-card highlight-card is-upcoming";
 
-card.dataset.name = name;
+  card.dataset.name =
+    name;
 
-card.dataset.url = url;
+  card.dataset.url =
+    url;
 
-if (date) { card.dataset.date = date; }
+  if (date) {
+    card.dataset.date =
+      date;
+  }
 
-card.innerHTML = `
+  card.innerHTML = `
 
     <span class="match-status upcoming">
       HIGHLIGHT
@@ -919,13 +625,14 @@ card.innerHTML = `
       WATCH HIGHLIGHT
     </span>
 
-`;
+  `;
 
-return card;
+  return card;
 
 }
 
-function createTVCard(post) {
+
+  function createTVCard(post) {
 
     const name =
       getPostName(post, "TV Channel");
@@ -973,9 +680,10 @@ function createTVCard(post) {
 
     return card;
 
-}
+  }
 
-function createMatchCard(post) {
+
+  function createMatchCard(post) {
 
     const name =
       getPostName(post, "Football Match");
@@ -1039,12 +747,14 @@ function createMatchCard(post) {
 
     return card;
 
-}
+  }
 
-/* ========================================================= JSON
-LOADING ========================================================= */
 
-async function loadJsonFile(path) {
+  /* =========================================================
+     JSON LOADING
+     ========================================================= */
+
+  async function loadJsonFile(path) {
 
     try {
 
@@ -1078,13 +788,17 @@ async function loadJsonFile(path) {
 
     }
 
-}
+  }
 
-/* ========================================================= INSERT NEW
-POSTS BEFORE OLD POSTS
-========================================================= */
 
-function prependPosts( container, cards ) {
+  /* =========================================================
+     INSERT NEW POSTS BEFORE OLD POSTS
+     ========================================================= */
+
+  function prependPosts(
+    container,
+    cards
+  ) {
 
     if (!container || !cards.length) {
       return;
@@ -1101,13 +815,14 @@ function prependPosts( container, cards ) {
 
     container.prepend(fragment);
 
-}
+  }
 
-/* ========================================================= LOAD NEW
-CONTENT FROM JSON FILES
-========================================================= */
 
-async function loadExternalContent() {
+  /* =========================================================
+     LOAD NEW CONTENT FROM JSON FILES
+     ========================================================= */
+
+  async function loadExternalContent() {
 
     const results =
       await Promise.all([
@@ -1168,11 +883,17 @@ async function loadExternalContent() {
 
     if (highlightsContent) {
 
-prependPosts( highlightsContent.querySelector( “.highlight-grid,
-.highlights-grid, .content-grid” ) || highlightsContent,
-highlightPosts.map( createHighlightCard ) );
+  prependPosts(
+    highlightsContent.querySelector(
+      ".highlight-grid, .highlights-grid, .content-grid"
+    ) || highlightsContent,
+    highlightPosts.map(
+      createHighlightCard
+    )
+  );
 
 }
+
 
     if (tvContent) {
 
@@ -1212,15 +933,14 @@ highlightPosts.map( createHighlightCard ) );
       updateStickyPositions
     );
 
-    openContentFromHash();
+  }
 
-}
 
-/* ========================================================= STICKY
-LAYOUT CALCULATION
-========================================================= */
+  /* =========================================================
+     STICKY LAYOUT CALCULATION
+     ========================================================= */
 
-function updateStickyPositions() {
+  function updateStickyPositions() {
 
     if (!screenSection) {
       return;
@@ -1255,12 +975,14 @@ function updateStickyPositions() {
       ) + "px"
     );
 
-}
+  }
 
-/* ========================================================= ACTIVE APP
-BUTTON ========================================================= */
 
-function setActiveButton(button) {
+  /* =========================================================
+     ACTIVE APP BUTTON
+     ========================================================= */
+
+  function setActiveButton(button) {
 
     [
       footballButton,
@@ -1281,12 +1003,14 @@ function setActiveButton(button) {
       button.classList.add("active");
     }
 
-}
+  }
 
-/* ========================================================= ACTIVE NAV
-========================================================= */
 
-function setActiveNav(link) {
+  /* =========================================================
+     ACTIVE NAV
+     ========================================================= */
+
+  function setActiveNav(link) {
 
     [
       navFootball,
@@ -1307,12 +1031,14 @@ function setActiveNav(link) {
       link.classList.add("active");
     }
 
-}
+  }
 
-/* ========================================================= SHOW
-CONTENT ========================================================= */
 
-function showContent(section) {
+  /* =========================================================
+     SHOW CONTENT
+     ========================================================= */
+
+  function showContent(section) {
 
     if (footballContent) {
       footballContent.hidden =
@@ -1342,12 +1068,14 @@ function showContent(section) {
       updateStickyPositions
     );
 
-}
+  }
 
-/* ========================================================= OPEN
-SECTIONS ========================================================= */
 
-function openFootball() {
+  /* =========================================================
+     OPEN SECTIONS
+     ========================================================= */
+
+  function openFootball() {
 
     showContent("football");
 
@@ -1361,9 +1089,10 @@ function openFootball() {
 
     updateFootballControls();
 
-}
+  }
 
-function openHighlights() {
+
+  function openHighlights() {
 
     showContent("highlights");
 
@@ -1375,9 +1104,10 @@ function openHighlights() {
       navHighlights
     );
 
-}
+  }
 
-function openTV() {
+
+  function openTV() {
 
     showContent("tv");
 
@@ -1389,9 +1119,10 @@ function openTV() {
       navTV
     );
 
-}
+  }
 
-function openMovies() {
+
+  function openMovies() {
 
     showContent("movies");
 
@@ -1403,42 +1134,92 @@ function openMovies() {
       navMovies
     );
 
-}
+  }
 
-/* ========================================================= APP BUTTON
-EVENTS ========================================================= */
 
-if (footballButton) { footballButton.addEventListener( “click”,
-openFootball ); }
+  /* =========================================================
+     APP BUTTON EVENTS
+     ========================================================= */
 
-if (highlightsButton) { highlightsButton.addEventListener( “click”,
-openHighlights ); }
+  if (footballButton) {
+    footballButton.addEventListener(
+      "click",
+      openFootball
+    );
+  }
 
-if (tvButton) { tvButton.addEventListener( “click”, openTV ); }
+  if (highlightsButton) {
+    highlightsButton.addEventListener(
+      "click",
+      openHighlights
+    );
+  }
 
-if (moviesButton) { moviesButton.addEventListener( “click”, openMovies
-); }
+  if (tvButton) {
+    tvButton.addEventListener(
+      "click",
+      openTV
+    );
+  }
 
-/* ========================================================= NAVIGATION
-EVENTS ========================================================= */
+  if (moviesButton) {
+    moviesButton.addEventListener(
+      "click",
+      openMovies
+    );
+  }
 
-if (navFootball) { navFootball.addEventListener( “click”, function
-(event) { event.preventDefault(); openFootball(); } ); }
 
-if (navHighlights) { navHighlights.addEventListener( “click”, function
-(event) { event.preventDefault(); openHighlights(); } ); }
+  /* =========================================================
+     NAVIGATION EVENTS
+     ========================================================= */
 
-if (navTV) { navTV.addEventListener( “click”, function (event) {
-event.preventDefault(); openTV(); } ); }
+  if (navFootball) {
+    navFootball.addEventListener(
+      "click",
+      function (event) {
+        event.preventDefault();
+        openFootball();
+      }
+    );
+  }
 
-if (navMovies) { navMovies.addEventListener( “click”, function (event) {
-event.preventDefault(); openMovies(); } ); }
+  if (navHighlights) {
+    navHighlights.addEventListener(
+      "click",
+      function (event) {
+        event.preventDefault();
+        openHighlights();
+      }
+    );
+  }
 
-/* ========================================================= UPDATE
-FOOTBALL CONTROLS
-========================================================= */
+  if (navTV) {
+    navTV.addEventListener(
+      "click",
+      function (event) {
+        event.preventDefault();
+        openTV();
+      }
+    );
+  }
 
-function updateFootballControls() {
+  if (navMovies) {
+    navMovies.addEventListener(
+      "click",
+      function (event) {
+        event.preventDefault();
+        openMovies();
+      }
+    );
+  }
+
+
+  /* =========================================================
+     UPDATE FOOTBALL CONTROLS
+     ========================================================= */
+
+  function updateFootballControls() {
 
     if (!footballScreenControls) {
       return;
@@ -1473,12 +1254,14 @@ function updateFootballControls() {
       altScreenButton.classList.remove("active");
     }
 
-}
+  }
 
-/* ========================================================= HIDE ALT
-SCREEN ========================================================= */
 
-function hideAltScreen() {
+  /* =========================================================
+     HIDE ALT SCREEN
+     ========================================================= */
+
+  function hideAltScreen() {
 
     if (altScreenFrame) {
       altScreenFrame.src =
@@ -1502,12 +1285,14 @@ function hideAltScreen() {
       altScreenButton.classList.remove("active");
     }
 
-}
+  }
 
-/* ========================================================= OPEN ALT
-SCREEN ========================================================= */
 
-function openAltScreen() {
+  /* =========================================================
+     OPEN ALT SCREEN
+     ========================================================= */
+
+  function openAltScreen() {
 
     if (
       currentScreenType !== "match" ||
@@ -1577,12 +1362,14 @@ function openAltScreen() {
       altScreenButton.classList.add("active");
     }
 
-}
+  }
 
-/* ========================================================= MAIN SCREEN
-BUTTON ========================================================= */
 
-if (mainScreenButton) {
+  /* =========================================================
+     MAIN SCREEN BUTTON
+     ========================================================= */
+
+  if (mainScreenButton) {
 
     mainScreenButton.addEventListener(
       "click",
@@ -1608,12 +1395,14 @@ if (mainScreenButton) {
       }
     );
 
-}
+  }
 
-/* ========================================================= ALT SCREEN
-BUTTON ========================================================= */
 
-if (altScreenButton) {
+  /* =========================================================
+     ALT SCREEN BUTTON
+     ========================================================= */
+
+  if (altScreenButton) {
 
     altScreenButton.addEventListener(
       "click",
@@ -1622,12 +1411,14 @@ if (altScreenButton) {
       }
     );
 
-}
+  }
 
-/* ========================================================= CLOSE ALT
-SCREEN ========================================================= */
 
-if (closeAltScreen) {
+  /* =========================================================
+     CLOSE ALT SCREEN
+     ========================================================= */
+
+  if (closeAltScreen) {
 
     closeAltScreen.addEventListener(
       "click",
@@ -1636,9 +1427,10 @@ if (closeAltScreen) {
       }
     );
 
-}
+  }
 
-if (altScreenOverlay) {
+
+  if (altScreenOverlay) {
 
     altScreenOverlay.addEventListener(
       "click",
@@ -1653,12 +1445,16 @@ if (altScreenOverlay) {
       }
     );
 
-}
+  }
 
-/* ========================================================= ESC KEY
-========================================================= */
 
-document.addEventListener( “keydown”, function (event) {
+  /* =========================================================
+     ESC KEY
+     ========================================================= */
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
 
       if (
         event.key === "Escape" &&
@@ -1669,17 +1465,21 @@ document.addEventListener( “keydown”, function (event) {
       }
 
     }
+  );
 
-);
 
-/* ========================================================= DIRECT M3U8
-/ HLS PLAYER =========================================================
-*/
+  /* =========================================================
+     DIRECT M3U8 / HLS PLAYER
+     ========================================================= */
 
-function isM3U8Url(url) { return /.m3u8(?:$|[?#])/i.test( String(url ||
-““).trim() ); }
+  function isM3U8Url(url) {
+    return /\\.m3u8(?:$|[?#])/i.test(
+      String(url || "").trim()
+    );
+  }
 
-function destroyM3U8Player() {
+
+  function destroyM3U8Player() {
 
     if (hlsInstance) {
       try {
@@ -1716,10 +1516,10 @@ function destroyM3U8Player() {
       hlsUnmuteButton.remove();
       hlsUnmuteButton = null;
     }
+  }
 
-}
 
-function loadHlsLibrary() {
+  function loadHlsLibrary() {
 
     if (window.Hls) {
       return Promise.resolve(window.Hls);
@@ -1806,18 +1606,16 @@ function loadHlsLibrary() {
             );
           };
 
-        document.head.appendChild(
-          script
-        );
+        document.head.appendChild(script);
 
       }
     );
 
     return hlsLibraryPromise;
+  }
 
-}
 
-function createM3U8Player(url) {
+  function createM3U8Player(url) {
 
     if (!screenPlayer) {
       return;
@@ -2126,164 +1924,176 @@ function createM3U8Player(url) {
         }
       );
 
-}
+  }
 
-/* ========================================================= LOAD SCREEN
-IMPORTANT: All card content loads into the existing main screen. Cards
-never receive their own iframe/player.
-========================================================= */
 
-function loadScreen( url, name, type, keepMatchState ) {
+  /* =========================================================
+     LOAD SCREEN
+     ========================================================= */
+
+  function loadScreen(
+    url,
+    name,
+    type,
+    keepMatchState
+  ) {
 
     if ((!screenFrame && !screenPlayer) || !url) {
       return;
     }
 
     if (screenLoadTimer) {
-      clearTimeout(screenLoadTimer);
+
+      clearTimeout(
+        screenLoadTimer
+      );
+
       screenLoadTimer = null;
+
     }
 
     hideAltScreen();
 
-    currentScreenType = type || "";
+    currentScreenType =
+      type || "";
 
-    if (!keepMatchState && type !== "match") {
-      currentMatchCard = null;
-      currentMainUrl = "";
-      currentAltUrl = "";
+    if (!keepMatchState) {
+
+      if (type !== "match") {
+
+        currentMatchCard = null;
+        currentMainUrl = "";
+        currentAltUrl = "";
+
+      }
+
     }
 
     if (nowShowing) {
-      nowShowing.textContent = name || "Now Playing";
+      nowShowing.textContent =
+        name || "Now Playing";
     }
 
     if (screenPlaceholder) {
-      screenPlaceholder.classList.add("hidden");
+      screenPlaceholder.classList.add(
+        "hidden"
+      );
     }
-
-    /* =======================================================
-       DIRECT M3U8 / HLS
-       ======================================================= */
 
     if (isM3U8Url(url)) {
 
-      if (screenFrame) {
-        screenFrame.src = "about:blank";
-        screenFrame.style.display = "none";
-      }
+      createM3U8Player(url);
 
-      if (screenPlayer) {
-        createM3U8Player(url);
-      }
-
-      requestAnimationFrame(updateStickyPositions);
+      requestAnimationFrame(
+        updateStickyPositions
+      );
 
     }
-
-    /* =======================================================
-       NORMAL IFRAME / EMBED URL
-       ======================================================= */
 
     else {
 
       destroyM3U8Player();
 
-      /*
-       * IMPORTANT:
-       * This is the existing main #screenFrame.
-       * Nothing is created inside the clicked card.
-       */
       if (screenFrame) {
 
-        screenFrame.style.display = "";
-        screenFrame.style.opacity = "0.25";
-        screenFrame.src = "about:blank";
+        screenFrame.style.display =
+          "";
 
-        screenLoadTimer = setTimeout(
-          function () {
+        screenFrame.style.opacity =
+          "0.25";
 
-            if (!screenFrame) {
-              return;
-            }
+        screenFrame.src =
+          "about:blank";
 
-            screenFrame.src = url;
-            screenFrame.style.display = "";
-            screenFrame.style.opacity = "1";
-            screenLoadTimer = null;
+        screenLoadTimer =
+          setTimeout(
+            function () {
 
-            requestAnimationFrame(updateStickyPositions);
+              screenFrame.src =
+                url;
 
-          },
-          150
-        );
+              screenFrame.style.opacity =
+                "1";
+
+              screenLoadTimer = null;
+
+              requestAnimationFrame(
+                updateStickyPositions
+              );
+
+            },
+            150
+          );
 
       }
 
     }
 
+
     if (screenStatus) {
 
       if (type === "tv") {
-        screenStatus.textContent = "LIVE TV";
+        screenStatus.textContent =
+          "LIVE TV";
       }
+
       else if (type === "highlight") {
-        screenStatus.textContent = "HIGHLIGHT";
+        screenStatus.textContent =
+          "HIGHLIGHT";
       }
+
       else if (type === "movie") {
-        screenStatus.textContent = "MOVIE";
+        screenStatus.textContent =
+          "MOVIE";
       }
+
       else {
-        screenStatus.textContent = "LIVE";
+        screenStatus.textContent =
+          "LIVE";
       }
 
     }
 
     updateFootballControls();
 
-    /*
-     * Keep the existing main player visible instead of moving
-     * the clicked card or placing a player above the card.
-     */
     if (screenPlayer) {
 
-      requestAnimationFrame(
-        function () {
+      const rect =
+        screenPlayer.getBoundingClientRect();
 
-          const rect =
-            screenPlayer.getBoundingClientRect();
+      const headerHeight =
+        siteHeader
+          ? siteHeader.getBoundingClientRect().height
+          : 66;
 
-          const headerHeight =
-            siteHeader
-              ? siteHeader.getBoundingClientRect().height
-              : 66;
+      if (rect.top < headerHeight) {
 
-          if (rect.top < headerHeight) {
+        window.scrollBy({
+          top:
+            rect.top -
+            headerHeight -
+            10,
+          behavior:
+            "smooth"
+        });
 
-            window.scrollBy({
-              top: rect.top - headerHeight - 10,
-              behavior: "smooth"
-            });
-
-          }
-
-        }
-      );
+      }
 
     }
 
-}
+  }
 
-/* ========================================================= BIND
-CONTENT CARDS =========================================================
-*/
 
-function bindContentCards() {
+  /* =========================================================
+     BIND CONTENT CARDS
+     ========================================================= */
+
+  function bindContentCards() {
 
     const matchCards =
-      document.querySelectorAll(
-        ".match-card:not(.highlight-card)"
-      );
+  document.querySelectorAll(
+    ".match-card:not(.highlight-card)"
+  );
 
     const highlightCards =
       document.querySelectorAll(
@@ -2316,13 +2126,10 @@ function bindContentCards() {
 
         card.addEventListener(
           "click",
-          function (event) {
-
-            event.preventDefault();
-            event.stopPropagation();
+          function () {
 
             const url =
-              this.dataset.url || "";
+              this.dataset.url;
 
             const altUrl =
               this.dataset.altUrl || "";
@@ -2334,23 +2141,26 @@ function bindContentCards() {
               )?.textContent?.trim() ||
               "Football Match";
 
-            currentMatchCard = this;
-            currentMainUrl = url;
-            currentAltUrl = altUrl;
-            currentScreenType = "match";
+            currentMatchCard =
+              this;
 
-            document
-              .querySelectorAll(
-                ".match-card:not(.highlight-card)"
-              )
-              .forEach(
-                function (item) {
-                  item.classList.remove(
-                    "active",
-                    "selected"
-                  );
-                }
-              );
+            currentMainUrl =
+              url || "";
+
+            currentAltUrl =
+              altUrl || "";
+
+            currentScreenType =
+              "match";
+
+            matchCards.forEach(
+              function (item) {
+                item.classList.remove(
+                  "active",
+                  "selected"
+                );
+              }
+            );
 
             this.classList.add(
               "active",
@@ -2359,7 +2169,6 @@ function bindContentCards() {
 
             hideAltScreen();
 
-            /* Load into the EXISTING main screen. */
             loadScreen(
               url,
               name,
@@ -2391,41 +2200,34 @@ function bindContentCards() {
 
         card.addEventListener(
           "click",
-          function (event) {
-
-            event.preventDefault();
-            event.stopPropagation();
+          function () {
 
             const url =
-              this.dataset.url || "";
+              this.dataset.url;
 
             const name =
               this.dataset.name ||
               this.querySelector(
-                ".match-teams"
-              )?.textContent?.trim() ||
-              this.querySelector(
-                ".highlight-title"
+                "strong"
               )?.textContent?.trim() ||
               "Football Highlight";
 
-            document
-              .querySelectorAll(
-                ".highlight-card"
-              )
-              .forEach(
-                function (item) {
-                  item.classList.remove("active");
-                }
-              );
+            highlightCards.forEach(
+              function (item) {
+                item.classList.remove(
+                  "active"
+                );
+              }
+            );
 
-            this.classList.add("active");
+            this.classList.add(
+              "active"
+            );
 
             currentMatchCard = null;
             currentMainUrl = "";
             currentAltUrl = "";
 
-            /* Load into the EXISTING main screen. */
             loadScreen(
               url,
               name,
@@ -2456,13 +2258,10 @@ function bindContentCards() {
 
         channel.addEventListener(
           "click",
-          function (event) {
-
-            event.preventDefault();
-            event.stopPropagation();
+          function () {
 
             const url =
-              this.dataset.url || "";
+              this.dataset.url;
 
             const name =
               this.dataset.name ||
@@ -2471,23 +2270,22 @@ function bindContentCards() {
               )?.textContent?.trim() ||
               "TV Channel";
 
-            document
-              .querySelectorAll(
-                ".tv-channel"
-              )
-              .forEach(
-                function (item) {
-                  item.classList.remove("active");
-                }
-              );
+            tvChannels.forEach(
+              function (item) {
+                item.classList.remove(
+                  "active"
+                );
+              }
+            );
 
-            this.classList.add("active");
+            this.classList.add(
+              "active"
+            );
 
             currentMatchCard = null;
             currentMainUrl = "";
             currentAltUrl = "";
 
-            /* Load into the EXISTING main screen. */
             loadScreen(
               url,
               name,
@@ -2518,13 +2316,10 @@ function bindContentCards() {
 
         movie.addEventListener(
           "click",
-          function (event) {
-
-            event.preventDefault();
-            event.stopPropagation();
+          function () {
 
             const url =
-              this.dataset.url || "";
+              this.dataset.url;
 
             const name =
               this.dataset.name ||
@@ -2533,23 +2328,22 @@ function bindContentCards() {
               )?.textContent?.trim() ||
               "Movie";
 
-            document
-              .querySelectorAll(
-                ".movie-card"
-              )
-              .forEach(
-                function (item) {
-                  item.classList.remove("active");
-                }
-              );
+            movieCards.forEach(
+              function (item) {
+                item.classList.remove(
+                  "active"
+                );
+              }
+            );
 
-            this.classList.add("active");
+            this.classList.add(
+              "active"
+            );
 
             currentMatchCard = null;
             currentMainUrl = "";
             currentAltUrl = "";
 
-            /* Load into the EXISTING main screen. */
             loadScreen(
               url,
               name,
@@ -2564,14 +2358,14 @@ function bindContentCards() {
       }
     );
 
-    addShareControlsToCards();
+  }
 
-}
 
-/* ========================================================= FULLSCREEN
-========================================================= */
+  /* =========================================================
+     FULLSCREEN
+     ========================================================= */
 
-function enterScreenFullscreen() {
+  function enterScreenFullscreen() {
 
     if (!screenPlayer) {
       return;
@@ -2648,9 +2442,10 @@ function enterScreenFullscreen() {
 
     }
 
-}
+  }
 
-function exitScreenFullscreen() {
+
+  function exitScreenFullscreen() {
 
     if (
       screen.orientation &&
@@ -2726,9 +2521,10 @@ function exitScreenFullscreen() {
 
     }
 
-}
+  }
 
-if (fullscreenButton) {
+
+  if (fullscreenButton) {
 
     fullscreenButton.addEventListener(
       "click",
@@ -2750,12 +2546,14 @@ if (fullscreenButton) {
       }
     );
 
-}
+  }
 
-/* ========================================================= FULLSCREEN
-CHANGE ========================================================= */
 
-function handleFullscreenChange() {
+  /* =========================================================
+     FULLSCREEN CHANGE
+     ========================================================= */
+
+  function handleFullscreenChange() {
 
     if (!fullscreenButton) {
       return;
@@ -2880,26 +2678,38 @@ function handleFullscreenChange() {
       }
     );
 
-}
+  }
 
-document.addEventListener( “fullscreenchange”, handleFullscreenChange );
 
-document.addEventListener( “webkitfullscreenchange”,
-handleFullscreenChange );
+  document.addEventListener(
+    "fullscreenchange",
+    handleFullscreenChange
+  );
 
-document.addEventListener( “mozfullscreenchange”, handleFullscreenChange
-);
+  document.addEventListener(
+    "webkitfullscreenchange",
+    handleFullscreenChange
+  );
 
-document.addEventListener( “MSFullscreenChange”, handleFullscreenChange
-);
+  document.addEventListener(
+    "mozfullscreenchange",
+    handleFullscreenChange
+  );
 
-/* ========================================================= FULLSCREEN
-/ ORIENTATION RESIZE
-========================================================= */
+  document.addEventListener(
+    "MSFullscreenChange",
+    handleFullscreenChange
+  );
 
-let fullscreenResizeTimer = null;
 
-function handleFullscreenResize() {
+  /* =========================================================
+     FULLSCREEN / ORIENTATION RESIZE
+     ========================================================= */
+
+  let fullscreenResizeTimer =
+    null;
+
+  function handleFullscreenResize() {
 
     if (fullscreenResizeTimer) {
       clearTimeout(
@@ -2921,23 +2731,34 @@ function handleFullscreenResize() {
         80
       );
 
-}
+  }
 
-window.addEventListener( “resize”, handleFullscreenResize );
+  window.addEventListener(
+    "resize",
+    handleFullscreenResize
+  );
 
-if ( screen.orientation && screen.orientation.addEventListener ) {
+  if (
+    screen.orientation &&
+    screen.orientation.addEventListener
+  ) {
 
     screen.orientation.addEventListener(
       "change",
       handleFullscreenResize
     );
 
-}
+  }
 
-/* ========================================================= MOBILE MENU
-========================================================= */
 
-if ( menuToggle && mainNav ) {
+  /* =========================================================
+     MOBILE MENU
+     ========================================================= */
+
+  if (
+    menuToggle &&
+    mainNav
+  ) {
 
     menuToggle.addEventListener(
       "click",
@@ -2982,12 +2803,16 @@ if ( menuToggle && mainNav ) {
         }
       );
 
-}
+  }
 
-/* ========================================================= ALT SCREEN
-PAGE SAFETY ========================================================= */
 
-window.addEventListener( “pagehide”, function () {
+  /* =========================================================
+     ALT SCREEN PAGE SAFETY
+     ========================================================= */
+
+  window.addEventListener(
+    "pagehide",
+    function () {
 
       hideAltScreen();
 
@@ -3006,20 +2831,25 @@ window.addEventListener( “pagehide”, function () {
       }
 
     }
+  );
 
-);
 
-/* ========================================================= INITIAL
-STATE ========================================================= */
+  /* =========================================================
+     INITIAL STATE
+     ========================================================= */
 
-updateStickyPositions();
+  updateStickyPositions();
 
-openFootball();
+  openFootball();
 
-bindContentCards();
+  bindContentCards();
 
-loadExternalContent();
+  loadExternalContent();
 
-requestAnimationFrame( function () { updateStickyPositions(); } );
+  requestAnimationFrame(
+    function () {
+      updateStickyPositions();
+    }
+  );
 
 });
