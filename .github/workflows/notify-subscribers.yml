@@ -11,9 +11,16 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install firebase-admin
+
       - name: Send push notification
-        run: |
-          curl -s -X POST "https://us-central1-deeprows-4d37c.cloudfunctions.net/sendNotification" \
-            -H "Content-Type: application/json" \
-            -H "x-send-secret: ${{ secrets.SEND_SECRET }}" \
-            -d '{"title":"New content on Deeprowss","body":"Check out the latest update!","url":"https://deeprows.github.io/Footbolive/"}'
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/send-notification.js "New content on Deeprowss" "Check out the latest update!" "https://deeprows.github.io/Footbolive/"
