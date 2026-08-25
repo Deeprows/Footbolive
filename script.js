@@ -30,6 +30,69 @@ document.addEventListener("DOMContentLoaded", function () {
 
 })();
 
+/* =========================================================
+   PUSH NOTIFICATIONS
+   ========================================================= */
+(function () {
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBs9eSquNu2drJjM3vqFGDX1QU-VE1_F7U",
+    authDomain: "deeprows-4d37c.firebaseapp.com",
+    projectId: "deeprows-4d37c",
+    storageBucket: "deeprows-4d37c.firebasestorage.app",
+    messagingSenderId: "227439941748",
+    appId: "1:227439941748:web:dc00e8a6e620db2279921"
+  };
+
+  const VAPID_KEY = "PASTE_YOUR_VAPID_PUBLIC_KEY_HERE"; // Firebase console > Project settings > Cloud Messaging > Web Push certificates
+  const REGISTER_ENDPOINT = "https://us-central1-deeprows-4d37c.cloudfunctions.net/registerNotificationToken";
+
+  const enableBtn = document.getElementById("enableNotifications"); // add this button in your HTML
+
+  async function subscribeToPush() {
+    if (!("serviceWorker" in navigator) || !("Notification" in window)) {
+      alert("Push notifications aren't supported on this browser.");
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") return;
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging(app);
+
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+    const token = await messaging.getToken({
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: registration
+    });
+
+    if (!token) return;
+
+    await fetch(REGISTER_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token })
+    });
+
+    // Foreground messages (tab is open and focused)
+    messaging.onMessage(function (payload) {
+      const title = payload.notification?.title || "Deeprowss";
+      const body = payload.notification?.body || "";
+      if (Notification.permission === "granted") {
+        new Notification(title, { body, icon: "icons/icon-192.png" });
+      }
+    });
+
+    if (enableBtn) enableBtn.textContent = "Notifications On ✓";
+  }
+
+  if (enableBtn) {
+    enableBtn.addEventListener("click", subscribeToPush);
+  }
+
+})();
 
   /* =========================================================
      CONTENT JSON FILES
