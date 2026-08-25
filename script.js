@@ -457,6 +457,448 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     SHARE / UNIQUE CONTENT LINKS
+     ========================================================= */
+
+  function createContentId(type, name, url) {
+
+    const raw =
+      String(type || "") +
+      "|" +
+      String(name || "") +
+      "|" +
+      String(url || "");
+
+    let hash = 0;
+
+    for (let i = 0; i < raw.length; i++) {
+      hash =
+        ((hash << 5) - hash) +
+        raw.charCodeAt(i);
+
+      hash |= 0;
+    }
+
+    const safeName =
+      String(name || "content")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .substring(0, 45) ||
+      "content";
+
+    const hashPart =
+      Math.abs(hash)
+        .toString(36);
+
+    return (
+      "content-" +
+      safeName +
+      "-" +
+      hashPart
+    );
+
+  }
+
+
+  function getCardContentType(card) {
+
+    if (!card) {
+      return "";
+    }
+
+    if (
+      card.classList.contains(
+        "highlight-card"
+      )
+    ) {
+      return "highlight";
+    }
+
+    if (
+      card.classList.contains(
+        "tv-channel"
+      )
+    ) {
+      return "tv";
+    }
+
+    if (
+      card.classList.contains(
+        "movie-card"
+      )
+    ) {
+      return "movie";
+    }
+
+    if (
+      card.classList.contains(
+        "match-card"
+      )
+    ) {
+      return "match";
+    }
+
+    return "";
+
+  }
+
+
+  function getCardContentId(card) {
+
+    if (!card) {
+      return "";
+    }
+
+    const type =
+      getCardContentType(card);
+
+    const name =
+      card.dataset.name ||
+      "";
+
+    const url =
+      card.dataset.url ||
+      "";
+
+    if (!type || !name) {
+      return "";
+    }
+
+    if (!card.dataset.contentId) {
+      card.dataset.contentId =
+        createContentId(
+          type,
+          name,
+          url
+        );
+    }
+
+    return card.dataset.contentId;
+
+  }
+
+
+  function getCardShareUrl(card) {
+
+    const contentId =
+      getCardContentId(card);
+
+    if (!contentId) {
+      return window.location.href;
+    }
+
+    return (
+      window.location.origin +
+      window.location.pathname +
+      "#" +
+      contentId
+    );
+
+  }
+
+
+  function addShareControl(card) {
+
+    if (!card || card.dataset.shareBound === "true") {
+      return;
+    }
+
+    const contentId =
+      getCardContentId(card);
+
+    if (!contentId) {
+      return;
+    }
+
+    card.dataset.shareBound =
+      "true";
+
+    const shareControl =
+      document.createElement("span");
+
+    shareControl.className =
+      "content-share-button";
+
+    shareControl.setAttribute(
+      "role",
+      "button"
+    );
+
+    shareControl.setAttribute(
+      "tabindex",
+      "0"
+    );
+
+    shareControl.setAttribute(
+      "aria-label",
+      "Share " +
+      (
+        card.dataset.name ||
+        "content"
+      )
+    );
+
+    shareControl.setAttribute(
+      "title",
+      "Share"
+    );
+
+    shareControl.innerHTML =
+      "↗";
+
+    function shareContent(event) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const shareUrl =
+        getCardShareUrl(card);
+
+      const shareTitle =
+        card.dataset.name ||
+        "Deeprows";
+
+      if (
+        navigator.share
+      ) {
+
+        navigator.share({
+          title:
+            shareTitle,
+          text:
+            shareTitle,
+          url:
+            shareUrl
+        })
+        .catch(
+          function (error) {
+
+            if (
+              error &&
+              error.name ===
+              "AbortError"
+            ) {
+              return;
+            }
+
+            copyShareLink(
+              shareUrl
+            );
+
+          }
+        );
+
+        return;
+      }
+
+      copyShareLink(
+        shareUrl
+      );
+
+    }
+
+    shareControl.addEventListener(
+      "click",
+      shareContent
+    );
+
+    shareControl.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          shareContent(event);
+        }
+
+      }
+    );
+
+    card.appendChild(
+      shareControl
+    );
+
+  }
+
+
+  function copyShareLink(url) {
+
+    if (
+      navigator.clipboard &&
+      window.isSecureContext
+    ) {
+
+      navigator.clipboard.writeText(
+        url
+      )
+      .then(
+        function () {
+          alert(
+            "Content link copied."
+          );
+        }
+      )
+      .catch(
+        function () {
+          fallbackCopyShareLink(
+            url
+          );
+        }
+      );
+
+      return;
+    }
+
+    fallbackCopyShareLink(
+      url
+    );
+
+  }
+
+
+  function fallbackCopyShareLink(url) {
+
+    const textarea =
+      document.createElement("textarea");
+
+    textarea.value =
+      url;
+
+    textarea.style.position =
+      "fixed";
+
+    textarea.style.left =
+      "-9999px";
+
+    document.body.appendChild(
+      textarea
+    );
+
+    textarea.focus();
+    textarea.select();
+
+    try {
+
+      document.execCommand(
+        "copy"
+      );
+
+      alert(
+        "Content link copied."
+      );
+
+    }
+
+    catch (error) {
+
+      window.prompt(
+        "Copy this content link:",
+        url
+      );
+
+    }
+
+    textarea.remove();
+
+  }
+
+
+  function addShareControlsToCards() {
+
+    document
+      .querySelectorAll(
+        ".match-card, .tv-channel, .movie-card"
+      )
+      .forEach(
+        function (card) {
+          addShareControl(card);
+        }
+      );
+
+  }
+
+
+  function updateContentHash(card) {
+
+    const contentId =
+      getCardContentId(card);
+
+    if (!contentId) {
+      return;
+    }
+
+    const newUrl =
+      window.location.origin +
+      window.location.pathname +
+      "#" +
+      contentId;
+
+    window.history.pushState(
+      {
+        contentId:
+          contentId
+      },
+      "",
+      newUrl
+    );
+
+  }
+
+
+  function openContentFromHash() {
+
+    const hash =
+      window.location.hash
+        .replace(/^#/, "")
+        .trim();
+
+    if (!hash) {
+      return false;
+    }
+
+    const card =
+      document.querySelector(
+        '[data-content-id="' +
+        CSS.escape(hash) +
+        '"]'
+      );
+
+    if (!card) {
+      return false;
+    }
+
+    card.click();
+
+    setTimeout(
+      function () {
+
+        card.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+      },
+      120
+    );
+
+    return true;
+
+  }
+
+
+  window.addEventListener(
+    "hashchange",
+    function () {
+      openContentFromHash();
+    }
+  );
+
+
+  /* =========================================================
      CREATE JSON POSTS
      ========================================================= */
 
@@ -932,6 +1374,8 @@ function createHighlightCard(post) {
     requestAnimationFrame(
       updateStickyPositions
     );
+
+    openContentFromHash();
 
   }
 
@@ -1473,7 +1917,7 @@ function createHighlightCard(post) {
      ========================================================= */
 
   function isM3U8Url(url) {
-    return /\\.m3u8(?:$|[?#])/i.test(
+    return /\.m3u8(?:$|[?#])/i.test(
       String(url || "").trim()
     );
   }
@@ -1606,7 +2050,9 @@ function createHighlightCard(post) {
             );
           };
 
-        document.head.appendChild(script);
+        document.head.appendChild(
+          script
+        );
 
       }
     );
@@ -2357,6 +2803,8 @@ function createHighlightCard(post) {
 
       }
     );
+
+    addShareControlsToCards();
 
   }
 
