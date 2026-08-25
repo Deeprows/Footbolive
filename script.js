@@ -457,6 +457,290 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =========================================================
+     SHARE / DEEP-LINK FEATURE
+     Adds a share icon to every content card (match, highlight,
+     TV channel, movie) and lets a shared link open that exact
+     piece of content directly. Fully self-contained — inline
+     styles only, so it does not depend on style.css.
+     ========================================================= */
+
+  const SHARE_SELECTORS = {
+    football: ".match-card:not(.highlight-card)",
+    highlights: ".highlight-card",
+    tv: ".tv-channel",
+    movies: ".movie-card"
+  };
+
+  function slugify(value) {
+
+    return String(value ?? "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+
+  }
+
+  function getShareType(card) {
+
+    if (card.classList.contains("highlight-card")) {
+      return "highlights";
+    }
+
+    if (card.classList.contains("match-card")) {
+      return "football";
+    }
+
+    if (card.classList.contains("tv-channel")) {
+      return "tv";
+    }
+
+    if (card.classList.contains("movie-card")) {
+      return "movies";
+    }
+
+    return "";
+
+  }
+
+  function toast(message) {
+
+    const bubble =
+      document.createElement("div");
+
+    bubble.textContent = message;
+
+    bubble.style.cssText =
+      "position:fixed;bottom:24px;left:50%;" +
+      "transform:translateX(-50%) translateY(20px);" +
+      "background:#10131a;border:1px solid #2a2e37;" +
+      "color:#fff;padding:10px 16px;border-radius:10px;" +
+      "font-size:13px;font-weight:600;opacity:0;" +
+      "transition:opacity .25s ease, transform .25s ease;" +
+      "z-index:99999;pointer-events:none;";
+
+    document.body.appendChild(bubble);
+
+    requestAnimationFrame(
+      function () {
+        bubble.style.opacity = "1";
+        bubble.style.transform =
+          "translateX(-50%) translateY(0)";
+      }
+    );
+
+    setTimeout(
+      function () {
+
+        bubble.style.opacity = "0";
+        bubble.style.transform =
+          "translateX(-50%) translateY(20px)";
+
+        setTimeout(
+          function () {
+            bubble.remove();
+          },
+          300
+        );
+
+      },
+      1600
+    );
+
+  }
+
+  function buildShareUrl(type, slug) {
+
+    return (
+      location.origin +
+      location.pathname +
+      "#" + type + "=" + slug
+    );
+
+  }
+
+  function shareCard(type, slug, name) {
+
+    const url =
+      buildShareUrl(type, slug);
+
+    if (navigator.share) {
+
+      navigator.share({
+        title: name,
+        url: url
+      }).catch(function () {});
+
+      return;
+
+    }
+
+    if (
+      navigator.clipboard &&
+      navigator.clipboard.writeText
+    ) {
+
+      navigator.clipboard.writeText(url)
+        .then(function () {
+          toast("Link copied!");
+        })
+        .catch(function () {
+          window.prompt(
+            "Copy this link:",
+            url
+          );
+        });
+
+      return;
+
+    }
+
+    window.prompt(
+      "Copy this link:",
+      url
+    );
+
+  }
+
+  function addShareButtons() {
+
+    Object.keys(SHARE_SELECTORS).forEach(
+      function (type) {
+
+        document
+          .querySelectorAll(SHARE_SELECTORS[type])
+          .forEach(function (card) {
+
+            if (card.dataset.shareBound === "true") {
+              return;
+            }
+
+            card.dataset.shareBound = "true";
+
+            if (
+              getComputedStyle(card).position === "static"
+            ) {
+              card.style.position = "relative";
+            }
+
+            const name =
+              card.dataset.name ||
+              card.textContent.trim() ||
+              "Content";
+
+            const slug = slugify(name);
+
+            card.dataset.shareSlug = slug;
+
+            const shareBtn =
+              document.createElement("span");
+
+            shareBtn.className = "share-btn";
+            shareBtn.setAttribute("role", "button");
+            shareBtn.setAttribute("tabindex", "0");
+
+            shareBtn.setAttribute(
+              "aria-label",
+              "Share " + name
+            );
+
+            shareBtn.textContent = "\u{1F517}";
+
+            shareBtn.style.cssText =
+              "position:absolute;top:8px;right:8px;" +
+              "width:28px;height:28px;display:flex;" +
+              "align-items:center;justify-content:center;" +
+              "border-radius:50%;background:rgba(0,0,0,.55);" +
+              "font-size:14px;line-height:1;z-index:5;" +
+              "cursor:pointer;";
+
+            shareBtn.addEventListener(
+              "click",
+              function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+                shareCard(type, slug, name);
+              }
+            );
+
+            shareBtn.addEventListener(
+              "keydown",
+              function (event) {
+
+                if (
+                  event.key === "Enter" ||
+                  event.key === " "
+                ) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  shareCard(type, slug, name);
+                }
+
+              }
+            );
+
+            card.appendChild(shareBtn);
+
+          });
+
+      }
+    );
+
+  }
+
+  function openFromShareLink() {
+
+    const hash =
+      location.hash.slice(1);
+
+    if (!hash || hash.indexOf("=") === -1) {
+      return;
+    }
+
+    const parts = hash.split("=");
+    const type = parts[0];
+    const slug = parts[1];
+
+    const selector =
+      SHARE_SELECTORS[type];
+
+    if (!selector) {
+      return;
+    }
+
+    if (type === "football") {
+      openFootball();
+    }
+    else if (type === "highlights") {
+      openHighlights();
+    }
+    else if (type === "tv") {
+      openTV();
+    }
+    else if (type === "movies") {
+      openMovies();
+    }
+
+    const card =
+      document.querySelector(
+        selector + '[data-share-slug="' + slug + '"]'
+      );
+
+    if (card) {
+
+      card.click();
+
+      card.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    }
+
+  }
+
+
+  /* =========================================================
      CREATE JSON POSTS
      ========================================================= */
 
@@ -2358,6 +2642,15 @@ function createHighlightCard(post) {
       }
     );
 
+
+    /* =======================================================
+       ADD SHARE ICONS
+       Runs every time cards are (re)bound — safe to call
+       repeatedly, each card is only wired once.
+       ======================================================= */
+
+    addShareButtons();
+
   }
 
 
@@ -2835,6 +3128,18 @@ function createHighlightCard(post) {
 
 
   /* =========================================================
+     SHARE LINK NAVIGATION
+     Re-checks the URL hash if the user navigates back/forward
+     or if the hash changes while the page is already open.
+     ========================================================= */
+
+  window.addEventListener(
+    "hashchange",
+    openFromShareLink
+  );
+
+
+  /* =========================================================
      INITIAL STATE
      ========================================================= */
 
@@ -2844,7 +3149,9 @@ function createHighlightCard(post) {
 
   bindContentCards();
 
-  loadExternalContent();
+  loadExternalContent().then(
+    openFromShareLink
+  );
 
   requestAnimationFrame(
     function () {
