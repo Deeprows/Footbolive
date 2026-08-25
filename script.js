@@ -1817,7 +1817,7 @@ function createHighlightCard(post) {
      ========================================================= */
 
   function isM3U8Url(url) {
-    return /\\.m3u8(?:$|[?#])/i.test(
+    return /\.m3u8(?:$|[?#])/i.test(
       String(url || "").trim()
     );
   }
