@@ -44,11 +44,10 @@ document.addEventListener("DOMContentLoaded", function () {
   };
   const VAPID_KEY = "BO43ZTu_blj75M-mPQnoixa4vMKPLUkwz3qMJ4gclv2nury_qL4TCPAoAL0NxZhGKzArPRqqwiF-A1ndg9S6lts"; // Firebase console > Project settings > Cloud Messaging > Web Push certificates
   const enableBtn = document.getElementById("enableNotifications"); // add this button in your HTML
-
   if (enableBtn && Notification.permission === "granted") {
     enableBtn.textContent = "Notifications On ✓";
   }
-
+   
   async function subscribeToPush() {
     if (!("serviceWorker" in navigator) || !("Notification" in window)) {
       alert("Push notifications aren't supported on this browser.");
