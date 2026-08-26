@@ -30,6 +30,79 @@ document.addEventListener("DOMContentLoaded", function () {
 
 })();
 
+      /* =========================================================
+   PUSH NOTIFICATIONS
+   ========================================================= */
+(function () {
+
+  const enableBtn = document.getElementById("enableNotifications");
+
+  if (!enableBtn) return;
+
+  // Bail out completely on browsers/webviews without support,
+  // so the rest of script.js is never at risk.
+  if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+    enableBtn.style.display = "none";
+    return;
+  }
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBs9eSquNu2drJjM3vqFGDX1QU-VE1_F7U",
+    authDomain: "deeprows-4d37c.firebaseapp.com",
+    projectId: "deeprows-4d37c",
+    storageBucket: "deeprows-4d37c.firebasestorage.app",
+    messagingSenderId: "227439941748",
+    appId: "1:227439941748:web:dc00e8a6e620db2279921"
+  };
+
+  const VAPID_KEY = "BO43ZTu_blj75M-mPQnoixa4vMKPLUkwz3qMJ4gclv2nury_qL4TCPAoAL0NxZhGKzArPRqqwiF-A1ndg9S6lts";
+
+  if (Notification.permission === "granted") {
+    enableBtn.textContent = "Notifications On ✓";
+  }
+
+  async function subscribeToPush() {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") return;
+
+      const app = firebase.initializeApp(firebaseConfig);
+      const messaging = firebase.messaging(app);
+      const db = firebase.firestore(app);
+
+      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+      const token = await messaging.getToken({
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration
+      });
+
+      if (!token) return;
+
+      await db.collection("push_tokens").add({
+        token: token,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      messaging.onMessage(function (payload) {
+        const title = payload.notification?.title || "Deeprowss";
+        const body = payload.notification?.body || "";
+        if (Notification.permission === "granted") {
+          new Notification(title, { body, icon: "icons/icon-192.png" });
+        }
+      });
+
+      enableBtn.textContent = "Notifications On ✓";
+
+    } catch (error) {
+      console.log("Push notification setup failed:", error);
+    }
+  }
+
+  enableBtn.addEventListener("click", subscribeToPush);
+
+})();
+
   /* =========================================================
      CONTENT JSON FILES
      New JSON posts are inserted into the existing sections.
