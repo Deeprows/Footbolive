@@ -1,20 +1,12 @@
 [
   {
-    "name": "The Lost Pirate Kingdom",
-    "url": "https://vsembed.ru/embed/tv/tt14057360",
-    "downloadUrl": "",
-    "date": "2026-08-20",
-    "rating": "6.6/10"
-  },
-  {
-  "name": "The Odyssey | Epic, Adventure",
-  "url": "https://vsembed.ru/embed/movie/tt33764258",
-  "downloadUrl": "https://wildshare.net/82027651ed18e025/The.Odyssey.The.Making.of.an.Epic.2026.NaijaPrey.com.mkv",
-  "date": "2026-08-25",
-  "rating": "8.5/10",
-  "image": "https://github.com/Deeprows/Footbolive/blob/4fcc6ba6f65a102a223262abda1da4478c6f78b0/Movie%20poster/Benny-Safdie-and-Matt-Damon-in-The-Odyssey.png",
-  "summary": " After the Trojan War, Odysseus faces a dangerous voyage back to Ithaca, meeting creatures like the Cyclops Polyphemus, Sirens, and Calypso along the way. ."
-}
+    "name": "The Odyssey | Epic, Adventure",
+    "url": "https://vsembed.ru/embed/movie/tt33764258",
+    "downloadUrl": "https://wildshare.net/82027651ed18e025/The.Odyssey.The.Making.of.an.Epic.2026.NaijaPrey.com.mkv",
+    "date": "2026-08-25",
+    "rating": "8.5/10",
+    "image": "https://raw.githubusercontent.com/Deeprows/Footbolive/4fcc6ba6f65a102a223262abda1da4478c6f78b0/Movie%20poster/Benny-Safdie-and-Matt-Damon-in-The-Odyssey.png",
+    "summary": "After the Trojan War, Odysseus faces a dangerous voyage back to Ithaca, meeting creatures like the Cyclops Polyphemus, Sirens, and Calypso along the way."
   },
   {
     "name": "Mutiny - Action, Drama, Thriller",
@@ -36,6 +28,13 @@
     "downloadUrl": "https://wildshare.net/67209f6a1cffaa4e/Lucky.S01E01.NaijaPrey.com.mkv",
     "date": "2026-08-23",
     "rating": "6.7/10"
+  },
+  {
+    "name": "The Lost Pirate Kingdom",
+    "url": "https://vsembed.ru/embed/tv/tt14057360",
+    "downloadUrl": "",
+    "date": "2026-08-20",
+    "rating": "6.6/10"
   },
   {
     "name": "Obsession (2026)",
