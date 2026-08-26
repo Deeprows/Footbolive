@@ -30,13 +30,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 })();
 
-      /* =========================================================
+    /* =========================================================
    PUSH NOTIFICATIONS
    ========================================================= */
 (function () {
-
   const enableBtn = document.getElementById("enableNotifications");
-
   if (!enableBtn) return;
 
   // Bail out completely on browsers/webviews without support,
@@ -63,8 +61,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function subscribeToPush() {
     try {
+
+      if (typeof firebase === "undefined") {
+        alert("Firebase failed to load. Check your internet connection and try again.");
+        return;
+      }
+
       const permission = await Notification.requestPermission();
-      if (permission !== "granted") return;
+
+      if (permission === "denied") {
+        alert("Notifications are blocked for this site. Please enable them in your browser's site settings.");
+        return;
+      }
+
+      if (permission !== "granted") {
+        return;
+      }
 
       const app = firebase.initializeApp(firebaseConfig);
       const messaging = firebase.messaging(app);
@@ -77,7 +89,10 @@ document.addEventListener("DOMContentLoaded", function () {
         serviceWorkerRegistration: registration
       });
 
-      if (!token) return;
+      if (!token) {
+        alert("Could not generate a notification token. Please try again.");
+        return;
+      }
 
       await db.collection("push_tokens").add({
         token: token,
@@ -96,27 +111,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     } catch (error) {
       console.log("Push notification setup failed:", error);
+      alert("Notification setup failed: " + (error && error.message ? error.message : error));
     }
   }
 
   enableBtn.addEventListener("click", subscribeToPush);
-
 })();
-
   /* =========================================================
      CONTENT JSON FILES
      New JSON posts are inserted into the existing sections.
      Existing posts in index.html remain untouched.
      Newest posts are placed first.
      ========================================================= */
-
   const CONTENT_FILES = {
     football: "content/football/matches.json",
     highlights: "content/highlights/highlights.json",
     tv: "content/tv/channels.json",
     movies: "content/movies/movies.json"
   };
-
 
   /* =========================================================
      ZOOM / GESTURE PROTECTION
