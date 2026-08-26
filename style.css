@@ -881,7 +881,77 @@ box-shadow:0 15px 30px rgba(0,0,0,.3);
 top:14px;right:14px;width:48px;height:48px;font-size:31px;
 }
 }
+/* =========================================================
+   TOP DOWNLOAD + TELEGRAM BUTTONS
+   ========================================================= */
 
+.top-action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+
+  width: 100%;
+  padding: 0 0 8px;
+}
+
+
+.top-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  min-height: 30px;
+  padding: 0 10px;
+
+  border: 1px solid #2a2e37;
+  border-radius: 8px;
+
+  background: #10131a;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.top-action-button:hover {
+  border-color: #e9003f;
+  background: #171a22;
+}
+
+
+.top-action-button:active {
+  transform: scale(0.97);
+}
+
+
+/* EXTRA COMPACT ON MOBILE */
+@media (max-width: 550px) {
+
+  .top-action-buttons {
+    gap: 6px;
+    padding-bottom: 7px;
+  }
+
+
+  .top-action-button {
+    min-height: 28px;
+    padding: 0 9px;
+    font-size: 9px;
+  }
+
+}
 @media (prefers-reduced-motion:reduce){
 ,::before,*::after{
 scroll-behavior:auto!important;
