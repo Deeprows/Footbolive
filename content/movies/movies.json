@@ -1,19 +1,21 @@
 [
   {
-    "name": "The Odyssey | Epic, Adventure",
+    "name": "The Odyssey",
     "url": "https://vsembed.ru/embed/movie/tt33764258",
     "downloadUrl": "https://wildshare.net/82027651ed18e025/The.Odyssey.The.Making.of.an.Epic.2026.NaijaPrey.com.mkv",
     "date": "2026-08-25",
     "rating": "8.5/10",
     "image": "",
-    "summary": "Epic, Adventure"
+    "summary": "Epic | Adventure"
   },
   {
-    "name": "Mutiny - Action, Drama, Thriller",
+    "name": "Mutiny",
     "url": "https://vsembed.ru/embed/movie/tt32338669",
     "downloadUrl": "https://wildshare.net/d79b860d45949313/Mutiny.2026.NaijaPrey.com.mkv",
     "date": "2026-08-24",
     "rating": "5.7/10"
+    "image": "",
+    "summary": "Action | Drama | Thriller"
   },
   {
     "name": "No Escape 2015",
@@ -21,6 +23,8 @@
     "downloadUrl": "https://wildshare.net/6bb197ee2f2e871c/No.Escape.2015.NaijaPrey.com.mkv",
     "date": "2026-08-23",
     "rating": "6.8/10"
+    "image": "",
+    "summary":
   },
   {
     "name": "LUCKY 2026 | Series",
@@ -28,6 +32,8 @@
     "downloadUrl": "https://wildshare.net/67209f6a1cffaa4e/Lucky.S01E01.NaijaPrey.com.mkv",
     "date": "2026-08-23",
     "rating": "6.7/10"
+    "image": "",
+    "summary":
   },
   {
     "name": "The Lost Pirate Kingdom",
@@ -35,6 +41,8 @@
     "downloadUrl": "",
     "date": "2026-08-20",
     "rating": "6.6/10"
+    "image": "",
+    "summary":
   },
   {
     "name": "Obsession (2026)",
@@ -42,5 +50,7 @@
     "downloadUrl": "https://wildshare.net/e8ea7a8d36bdfe94/Obsession.2026.NaijaPrey.com.mkv",
     "date": "2026-08-20",
     "rating": "5.1/10"
+    "image": "",
+    "summary":
   }
 ]
