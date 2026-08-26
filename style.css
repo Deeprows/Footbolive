@@ -648,192 +648,36 @@ background:rgba(255,23,68,.13);color:#ff5b78;font-weight:950;letter-spacing:1px;
 }
 .tv-channel.active .tv-channel-status{background:rgba(255,23,68,.2);color:#ff6b86}
 
-/* =========================================================
-   MOVIE CARDS — IMAGE BACKGROUND + READABLE GRADIENT
-   ========================================================= */
-
-.movie-card {
-  position: relative;
-  min-width: 0;
-  min-height: 190px;
-  display: block;
-  padding: 0;
-  overflow: hidden;
-
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 16px;
-
-  background: #0b0e14;
-  color: #fff;
-  text-align: left;
-
-  cursor: pointer;
-  isolation: isolate;
-
-  transition:
-    transform .2s ease,
-    border-color .2s ease,
-    box-shadow .2s ease;
+.movies-content{padding-top:25px}
+.movie-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.movie-card{
+position:relative;min-width:0;min-height:150px;display:flex;flex-direction:column;
+align-items:flex-start;justify-content:center;gap:7px;padding:17px;overflow:hidden;
+border:1px solid var(--line);border-radius:14px;
+background:linear-gradient(145deg,var(--surface),#0c1016);color:#fff;text-align:left;
+cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;touch-action:manipulation;
 }
-
-/* Movie image fills the entire card */
-.movie-poster {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-  background: linear-gradient(145deg,#171b24,#090b10);
+.movie-card::before{
+content:"";position:absolute;width:110px;height:110px;top:-58px;right:-8px;border-radius:50%;
+background:rgba(255,23,68,.08);pointer-events:none;
 }
-
-.movie-poster img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  transition: transform .35s ease;
+.movie-card:hover{transform:translateY(-3px);border-color:rgba(255,23,68,.45);box-shadow:0 10px 25px rgba(0,0,0,.22)}
+.movie-card.active{border-color:rgba(255,23,68,.65);background:linear-gradient(145deg,rgba(255,23,68,.13),#10141b);box-shadow:0 0 0 1px rgba(255,23,68,.08)}
+.movie-status{
+display:inline-flex;padding:4px 7px;border-radius:999px;background:rgba(255,23,68,.12);
+color:#ff637d;font-size:8px;font-weight:950;letter-spacing:1px;position:relative;z-index:2;
 }
-
-/* Dark gradient — strongest at the bottom where text sits */
-.movie-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(0,0,0,.08) 0%,
-      rgba(0,0,0,.15) 28%,
-      rgba(5,7,10,.55) 55%,
-      rgba(5,7,10,.96) 100%
-    );
+.movie-icon{
+position:absolute;top:15px;right:15px;width:42px;height:42px;display:grid;place-items:center;
+border-radius:12px;background:linear-gradient(145deg,#252b36,#151922);
+border:1px solid rgba(255,255,255,.09);font-size:20px;z-index:2;
 }
-
-/* Extra dark layer at the bottom for title readability */
-.movie-card .movie-info {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  z-index: 3;
-
-  padding: 45px 14px 14px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-
-  background:
-    linear-gradient(
-      to top,
-      rgba(5,7,10,.98),
-      rgba(5,7,10,.72) 45%,
-      transparent
-    );
+.movie-title{
+display:block;max-width:75%;overflow:hidden;font-size:16px;font-weight:900;line-height:1.2;
+text-overflow:ellipsis;white-space:nowrap;position:relative;z-index:2;
 }
-
-/* MOVIE badge */
-.movie-status {
-  display: inline-flex;
-
-  padding: 4px 7px;
-  border-radius: 999px;
-
-  background: rgba(255,23,68,.85);
-  color: #fff;
-
-  font-size: 8px;
-  font-weight: 950;
-  letter-spacing: 1px;
-}
-
-/* Title */
-.movie-title {
-  display: block;
-  width: 100%;
-  max-width: 90%;
-
-  overflow: hidden;
-
-  color: #fff;
-  font-size: 16px;
-  font-weight: 950;
-  line-height: 1.2;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  text-shadow: 0 2px 8px rgba(0,0,0,.9);
-}
-
-/* Rating */
-.movie-rating {
-  color: #dce1e8;
-  font-size: 11px;
-  font-weight: 700;
-
-  text-shadow: 0 2px 6px rgba(0,0,0,.9);
-}
-
-/* Summary / genre */
-.movie-summary {
-  color: #c4cad3;
-  font-size: 11px;
-  font-weight: 600;
-
-  overflow: hidden;
-  max-width: 90%;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Placeholder when image is missing */
-.movie-poster-placeholder {
-  display: grid;
-  place-items: center;
-
-  background:
-    radial-gradient(
-      circle at 75% 20%,
-      rgba(255,23,68,.20),
-      transparent 35%
-    ),
-    linear-gradient(
-      145deg,
-      #191d27,
-      #080a0f
-    );
-
-  font-size: 42px;
-}
-
-/* Hover */
-.movie-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255,23,68,.55);
-  box-shadow: 0 12px 30px rgba(0,0,0,.35);
-}
-
-.movie-card:hover .movie-poster img {
-  transform: scale(1.04);
-}
-
-/* Selected movie */
-.movie-card.active {
-  border-color: rgba(255,23,68,.75);
-
-  box-shadow:
-    0 0 0 1px rgba(255,23,68,.15),
-    0 12px 30px rgba(0,0,0,.35);
-}
+.movie-rating{color:var(--muted);font-size:11px;position:relative;z-index:2}
+.empty-state{padding:35px 15px;color:var(--muted);text-align:center;font-size:13px}
 
 .footer{border-top:1px solid var(--line);padding:20px 0;background:#05070a}
 .footer-wrap{display:flex;align-items:center;justify-content:space-between;gap:15px;color:var(--muted);font-size:11px}
@@ -985,34 +829,12 @@ box-shadow:0 15px 30px rgba(0,0,0,.3);
 .tv-channel::before{width:100px;height:100px;top:-54px;right:-8px}
 .tv-channel::after{width:76px;height:76px;top:-42px;right:18px}
 
-.movie-grid {
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.movie-card {
-  min-height: 180px;
-  height: 180px;
-  padding: 0;
-  border-radius: 15px;
-}
-
-.movie-card .movie-info {
-  padding: 42px 13px 13px;
-}
-
-.movie-title {
-  font-size: 15px;
-  max-width: 90%;
-}
-
-.movie-rating {
-  font-size: 10px;
-}
-
-.movie-summary {
-  font-size: 10px;
-}
+.movie-grid{grid-template-columns:1fr;gap:10px}
+.movie-card{min-height:105px;padding:15px;border-radius:14px}
+.movie-status{font-size:8px;padding:4px 7px}
+.movie-title{font-size:15px;max-width:72%}
+.movie-rating{font-size:10px}
+.movie-icon{width:43px;height:43px;top:13px;right:13px;border-radius:12px;font-size:20px}
 
 .footer-wrap{flex-direction:column;align-items:flex-start}
 }
