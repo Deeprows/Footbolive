@@ -985,12 +985,34 @@ box-shadow:0 15px 30px rgba(0,0,0,.3);
 .tv-channel::before{width:100px;height:100px;top:-54px;right:-8px}
 .tv-channel::after{width:76px;height:76px;top:-42px;right:18px}
 
-.movie-grid{grid-template-columns:1fr;gap:10px}
-.movie-card{min-height:105px;padding:15px;border-radius:14px}
-.movie-status{font-size:8px;padding:4px 7px}
-.movie-title{font-size:15px;max-width:72%}
-.movie-rating{font-size:10px}
-.movie-icon{width:43px;height:43px;top:13px;right:13px;border-radius:12px;font-size:20px}
+.movie-grid {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.movie-card {
+  min-height: 180px;
+  height: 180px;
+  padding: 0;
+  border-radius: 15px;
+}
+
+.movie-card .movie-info {
+  padding: 42px 13px 13px;
+}
+
+.movie-title {
+  font-size: 15px;
+  max-width: 90%;
+}
+
+.movie-rating {
+  font-size: 10px;
+}
+
+.movie-summary {
+  font-size: 10px;
+}
 
 .footer-wrap{flex-direction:column;align-items:flex-start}
 }
