@@ -818,51 +818,82 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function createMovieCard(post) {
 
-    const name =
-      getPostName(post, "Movie");
+  const name =
+    getPostName(post, "Movie");
 
-    const url =
-      getPostUrl(post);
+  const url =
+    getPostUrl(post);
 
-    const downloadUrl =
-      post.downloadUrl ||
-      post.downloadURL ||
-      "";
+  const downloadUrl =
+    post.downloadUrl ||
+    post.downloadURL ||
+    "";
 
-    const rating =
-      post.rating ||
-      post.imdb ||
-      post.imdbRating ||
-      "";
+  const rating =
+    post.rating ||
+    post.imdb ||
+    post.imdbRating ||
+    "";
 
-    const date =
-      getPostDate(post);
+  const image =
+    post.image ||
+    post.poster ||
+    post.posterUrl ||
+    post.thumbnail ||
+    "";
 
-    const button =
-      document.createElement("button");
+  const summary =
+    post.summary ||
+    post.description ||
+    post.plot ||
+    "";
 
-    button.type = "button";
-    button.className = "movie-card";
+  const date =
+    getPostDate(post);
 
-    button.dataset.name = name;
-    button.dataset.url = url;
+  const button =
+    document.createElement("button");
 
-    if (downloadUrl) {
-      button.dataset.downloadUrl =
-        downloadUrl;
+  button.type = "button";
+  button.className = "movie-card";
+
+  button.dataset.name = name;
+  button.dataset.url = url;
+
+  if (downloadUrl) {
+    button.dataset.downloadUrl =
+      downloadUrl;
+  }
+
+  if (date) {
+    button.dataset.date = date;
+  }
+
+  button.innerHTML = `
+
+    ${
+      image
+        ? `
+          <div class="movie-poster">
+            <img
+              src="${escapeHtml(image)}"
+              alt="${escapeHtml(name)}"
+              loading="lazy"
+              onerror="this.parentElement.classList.add('poster-error')"
+            >
+          </div>
+        `
+        : `
+          <div class="movie-poster movie-poster-placeholder">
+            🎬
+          </div>
+        `
     }
 
-    if (date) {
-      button.dataset.date = date;
-    }
+    <div class="movie-info">
 
-    button.innerHTML = `
       <span class="movie-status">
         MOVIE
-      </span>
-
-      <span class="movie-icon">
-        🎬
       </span>
 
       <span class="movie-title">
@@ -871,20 +902,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
       ${
         rating
-          ? `<span class="movie-rating">
-               ${escapeHtml(
-                 String(rating).toLowerCase().includes("imdb")
-                   ? rating
-                   : "IMDb " + rating
-               )}
-             </span>`
+          ? `
+            <span class="movie-rating">
+              ${escapeHtml(
+                String(rating)
+                  .toLowerCase()
+                  .includes("imdb")
+                  ? rating
+                  : "IMDb " + rating
+              )}
+            </span>
+          `
           : ""
       }
-    `;
 
-    return button;
+      ${
+        summary
+          ? `
+            <span class="movie-summary">
+              ${escapeHtml(summary)}
+            </span>
+          `
+          : ""
+      }
 
-  }
+    </div>
+  `;
+
+  return button;
+}
 
 
   function formatHighlightDate(value) {
