@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - uses: actions/setup-node@v4
         with:
@@ -20,7 +22,24 @@ jobs:
       - name: Install dependencies
         run: npm install firebase-admin
 
+      - name: Determine changed content type
+        id: changed
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q 'content/football/matches.json'; then
+            echo "title=New Football Match Added" >> $GITHUB_OUTPUT
+            echo "body=A new match just went live on Deeprowss — check it out!" >> $GITHUB_OUTPUT
+          elif git diff --name-only HEAD^ HEAD | grep -q 'content/highlights/highlights.json'; then
+            echo "title=New Highlight Added" >> $GITHUB_OUTPUT
+            echo "body=A new football highlight is now available on Deeprowss." >> $GITHUB_OUTPUT
+          elif git diff --name-only HEAD^ HEAD | grep -q 'content/movies/movies.json'; then
+            echo "title=New Movie Added" >> $GITHUB_OUTPUT
+            echo "body=A new movie just dropped on Deeprowss — watch it now!" >> $GITHUB_OUTPUT
+          else
+            echo "title=New content on Deeprowss" >> $GITHUB_OUTPUT
+            echo "body=Check out the latest update!" >> $GITHUB_OUTPUT
+          fi
+
       - name: Send push notification
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        run: node scripts/send-notification.js "New content on Deeprowss" "Check out the latest update!" "https://deeprowss.com"
+        run: node scripts/send-notification.js "${{ steps.changed.outputs.title }}" "${{ steps.changed.outputs.body }}" "https://deeprowss.com/"
