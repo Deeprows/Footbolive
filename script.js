@@ -42,38 +42,33 @@ document.addEventListener("DOMContentLoaded", function () {
     messagingSenderId: "227439941748",
     appId: "1:227439941748:web:dc00e8a6e620db2279921"
   };
-
   const VAPID_KEY = "BO43ZTu_blj75M-mPQnoixa4vMKPLUkwz3qMJ4gclv2nury_qL4TCPAoAL0NxZhGKzArPRqqwiF-A1ndg9S6lts"; // Firebase console > Project settings > Cloud Messaging > Web Push certificates
-
   const enableBtn = document.getElementById("enableNotifications"); // add this button in your HTML
+
+  if (enableBtn && Notification.permission === "granted") {
+    enableBtn.textContent = "Notifications On ✓";
+  }
 
   async function subscribeToPush() {
     if (!("serviceWorker" in navigator) || !("Notification" in window)) {
       alert("Push notifications aren't supported on this browser.");
       return;
     }
-
     const permission = await Notification.requestPermission();
     if (permission !== "granted") return;
-
     const app = firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging(app);
     const db = firebase.firestore(app);
-
     const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-
     const token = await messaging.getToken({
       vapidKey: VAPID_KEY,
       serviceWorkerRegistration: registration
     });
-
     if (!token) return;
-
     await db.collection("push_tokens").add({
       token: token,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-
     // Foreground messages (tab is open and focused)
     messaging.onMessage(function (payload) {
       const title = payload.notification?.title || "Deeprowss";
@@ -82,15 +77,13 @@ document.addEventListener("DOMContentLoaded", function () {
         new Notification(title, { body, icon: "icons/icon-192.png" });
       }
     });
-
     if (enableBtn) enableBtn.textContent = "Notifications On ✓";
   }
-
   if (enableBtn) {
     enableBtn.addEventListener("click", subscribeToPush);
   }
 })();
-
+   
   /* =========================================================
      CONTENT JSON FILES
      New JSON posts are inserted into the existing sections.
