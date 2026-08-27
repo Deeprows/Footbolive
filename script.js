@@ -28,7 +28,13 @@ const movieEmptyElement =
   document.getElementById(
     "movieEmpty"
   );
+const movieSearchInput =
+  document.getElementById(
+    "movieSearch"
+  );
 
+let currentMovieGenre = "all";
+let currentMovieSearch = "";
 
 function filterMoviesByGenre(
   selectedGenre
