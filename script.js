@@ -987,75 +987,102 @@ movieGenreButtons.forEach(
      CREATE JSON POSTS
      ========================================================= */
 
-  function createMovieCard(post) {
+function createMovieCard(post) {
 
-    const name =
-      getPostName(post, "Movie");
+  const name =
+    getPostName(post, "Movie");
 
-    const url =
-      getPostUrl(post);
+  const url =
+    getPostUrl(post);
 
-    const downloadUrl =
-      post.downloadUrl ||
-      post.downloadURL ||
-      "";
+  const downloadUrl =
+    post.downloadUrl ||
+    post.downloadURL ||
+    "";
 
-    const rating =
-      post.rating ||
-      post.imdb ||
-      post.imdbRating ||
-      "";
+  const rating =
+    post.rating ||
+    post.imdb ||
+    post.imdbRating ||
+    "";
 
-    const date =
-      getPostDate(post);
+  const date =
+    getPostDate(post);
 
-    const button =
-      document.createElement("button");
+  const genre =
+    post.genre || "";
 
-    button.type = "button";
-    button.className = "movie-card";
 
-    button.dataset.name = name;
-    button.dataset.url = url;
+  const button =
+    document.createElement("button");
 
-    if (downloadUrl) {
-      button.dataset.downloadUrl =
-        downloadUrl;
-    }
+  button.type = "button";
 
-    if (date) {
-      button.dataset.date = date;
-    }
+  button.className =
+    "movie-card";
 
-    button.innerHTML = `
-      <span class="movie-status">
-        MOVIE
-      </span>
 
-      <span class="movie-icon">
-        🎬
-      </span>
+  button.dataset.name =
+    name;
 
-      <span class="movie-title">
-        ${escapeHtml(name)}
-      </span>
+  button.dataset.url =
+    url;
 
-      ${
-        rating
-          ? `<span class="movie-rating">
-               ${escapeHtml(
-                 String(rating).toLowerCase().includes("imdb")
-                   ? rating
-                   : "IMDb " + rating
-               )}
-             </span>`
-          : ""
-      }
-    `;
 
-    return button;
+  /* =========================================================
+     MOVIE GENRE FROM JSON
+     ========================================================= */
+
+  button.dataset.genre =
+    genre;
+
+
+  if (downloadUrl) {
+
+    button.dataset.downloadUrl =
+      downloadUrl;
 
   }
+
+
+  if (date) {
+
+    button.dataset.date =
+      date;
+
+  }
+
+
+  button.innerHTML = `
+    <span class="movie-status">
+      MOVIE
+    </span>
+
+    <span class="movie-icon">
+      🎬
+    </span>
+
+    <span class="movie-title">
+      ${escapeHtml(name)}
+    </span>
+
+    ${
+      rating
+        ? `<span class="movie-rating">
+             ${escapeHtml(
+               String(rating).toLowerCase().includes("imdb")
+                 ? rating
+                 : "IMDb " + rating
+             )}
+           </span>`
+        : ""
+    }
+  `;
+
+
+  return button;
+
+}
 
 
   function formatHighlightDate(value) {
