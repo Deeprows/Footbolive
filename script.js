@@ -1007,14 +1007,13 @@ function createMovieCard(post) {
     "";
 
   const date =
-    getPostDate(post);
+  getPostDate(post);
 
-  const genre =
-    post.genre || "";
+const genre =
+  post.genre || "";
 
-
-  const button =
-    document.createElement("button");
+const button =
+  document.createElement("button");
 
   button.type = "button";
 
