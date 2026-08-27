@@ -1791,19 +1791,90 @@
 
       <div class="container">
 
+<div class="content-heading movie-heading">
 
-        <div class="content-heading">
+  <div class="movie-heading-left">
 
-          <h1>
-            Movies
-          </h1>
+    <h1>Movies</h1>
 
-          <span class="content-count" id="movieCount">
-            1
-          </span>
+    <div
+      class="movie-genres"
+      id="movieGenres"
+      aria-label="Movie genres"
+    >
 
-        </div>
+      <button
+        type="button"
+        class="movie-genre active"
+        data-genre-filter="all"
+        aria-pressed="true"
+      >
+        All
+      </button>
 
+      <button
+        type="button"
+        class="movie-genre"
+        data-genre-filter="Action"
+        aria-pressed="false"
+      >
+        Action
+      </button>
+
+      <button
+        type="button"
+        class="movie-genre"
+        data-genre-filter="Drama"
+        aria-pressed="false"
+      >
+        Drama
+      </button>
+
+      <button
+        type="button"
+        class="movie-genre"
+        data-genre-filter="Comedy"
+        aria-pressed="false"
+      >
+        Comedy
+      </button>
+
+      <button
+        type="button"
+        class="movie-genre"
+        data-genre-filter="Adventure"
+        aria-pressed="false"
+      >
+        Adventure
+      </button>
+
+      <button
+        type="button"
+        class="movie-genre"
+        data-genre-filter="Thriller"
+        aria-pressed="false"
+      >
+        Thriller
+      </button>
+
+      <button
+        type="button"
+        class="movie-genre"
+        data-genre-filter="Animation"
+        aria-pressed="false"
+      >
+        Animation
+      </button>
+
+    </div>
+
+  </div>
+
+  <span class="content-count" id="movieCount">
+    5
+  </span>
+
+</div>
 
         <div
           class="movie-grid"
