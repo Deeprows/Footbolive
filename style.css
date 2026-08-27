@@ -1168,108 +1168,113 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
 }
 
 /* =========================================================
-   COMPACT TOP PLAYER AND NAVIGATION
+   EXTRA COMPACT TOP PLAYER AND NAVIGATION
+   Does NOT change iframe/video screen resolution
    ========================================================= */
 
-/* Move the entire player area slightly upward */
+/* Move top player area upward */
 .screen-section {
-  padding-top: 12px;
+  padding-top: 3px;
 }
 
 
-/* Slim Football Live, Highlights, TV Channels and Movies buttons */
+/* Slim navigation area */
 .app-menu {
-  padding: 10px 0 5px;
+  padding: 5px 0 2px;
 }
 
 .app-buttons {
-  gap: 8px;
+  gap: 6px;
 }
 
+
+/* Football Live, Highlights, TV Channels, Movies */
 .app-button {
-  min-height: 46px;
-  padding: 6px 14px;
-  border-radius: 11px;
+  min-height: 38px;
+  padding: 4px 11px;
+  border-radius: 10px;
 }
 
 
-/* Reduce space above the content below the navigation */
+/* Bring Movies/content upward */
 .content-section {
-  padding-top: 16px;
+  padding-top: 8px;
 }
 
 
-/* Reduce the Now Showing area height */
+/* Reduce Now Showing area */
 .screen-bottom {
-  padding: 7px 12px;
-  gap: 10px;
+  padding: 4px 10px;
+  gap: 7px;
 }
 
 
-/* Make Now Showing text area more compact */
+/* Compact Now Showing text */
 .now-showing span {
-  margin-bottom: 1px;
+  margin-bottom: 0;
 }
 
 #nowShowing {
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 
 /* Smaller fullscreen button */
 .fullscreen-button {
-  width: 38px;
-  height: 34px;
+  width: 34px;
+  height: 30px;
 }
 
 
-/* MOBILE ADJUSTMENTS */
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 550px) {
 
-  /* Shift player and top area upward slightly */
   .screen-section {
-    padding-top: 5px;
+    padding-top: 0;
   }
 
-  /* Slim the four navigation buttons */
   .app-menu {
-    padding: 8px 0 4px;
+    padding: 4px 0 1px;
   }
 
   .app-buttons {
-    gap: 7px;
+    gap: 6px;
   }
 
+  /* Extra slim buttons */
   .app-button {
-    min-width: 135px;
-    min-height: 44px;
-    padding: 5px 12px;
-    font-size: 11px;
+    min-width: 125px;
+    min-height: 38px;
+    padding: 3px 10px;
+    font-size: 10px;
   }
 
-  /* Make Now Showing section slimmer */
+  /* Reduce space below navigation */
+  .content-section {
+    padding-top: 8px;
+  }
+
+  /* Extra compact Now Showing section */
   .screen-bottom {
-    padding: 6px 10px;
-    gap: 8px;
+    padding: 4px 9px;
+    gap: 6px;
   }
 
   .now-showing span {
-    font-size: 8px;
-    margin-bottom: 1px;
+    font-size: 7px;
+    margin-bottom: 0;
   }
 
   #nowShowing {
-    font-size: 13px;
-    line-height: 1.15;
+    font-size: 12px;
+    line-height: 1.1;
   }
 
   .fullscreen-button {
-    width: 36px;
-    height: 32px;
-  }
-
-  /* Bring content below the navigation upward */
-  .content-section {
-    padding-top: 14px;
+    width: 34px;
+    height: 30px;
   }
 }
