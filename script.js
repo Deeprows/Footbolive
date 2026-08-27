@@ -5,6 +5,165 @@
 document.addEventListener("DOMContentLoaded", function () {
 
   "use strict";
+/* =========================================================
+   MOVIE GENRE FILTER
+   ========================================================= */
+
+const movieGenreButtons =
+  document.querySelectorAll(
+    ".movie-genre"
+  );
+
+const movieListElement =
+  document.getElementById(
+    "movieList"
+  );
+
+const movieCountElement =
+  document.getElementById(
+    "movieCount"
+  );
+
+const movieEmptyElement =
+  document.getElementById(
+    "movieEmpty"
+  );
+
+
+function filterMoviesByGenre(
+  selectedGenre
+) {
+
+  if (!movieListElement) {
+    return;
+  }
+
+
+  const movieCards =
+    Array.from(
+      movieListElement.querySelectorAll(
+        ".movie-card"
+      )
+    );
+
+
+  let visibleMovies = 0;
+
+
+  movieCards.forEach(
+    function (movie) {
+
+      const genres =
+        String(
+          movie.dataset.genre || ""
+        )
+          .split(",")
+          .map(
+            function (genre) {
+              return genre.trim().toLowerCase();
+            }
+          );
+
+
+      const shouldShow =
+        selectedGenre === "all" ||
+        genres.includes(
+          selectedGenre.toLowerCase()
+        );
+
+
+      movie.hidden =
+        !shouldShow;
+
+
+      if (shouldShow) {
+        visibleMovies++;
+      }
+
+
+      if (
+        !shouldShow &&
+        movie.classList.contains(
+          "active"
+        )
+      ) {
+
+        movie.classList.remove(
+          "active"
+        );
+
+      }
+
+    }
+  );
+
+
+  if (movieCountElement) {
+
+    movieCountElement.textContent =
+      visibleMovies;
+
+  }
+
+
+  if (movieEmptyElement) {
+
+    movieEmptyElement.hidden =
+      visibleMovies !== 0;
+
+  }
+
+}
+
+
+movieGenreButtons.forEach(
+  function (button) {
+
+    button.addEventListener(
+      "click",
+      function () {
+
+        const selectedGenre =
+          this.dataset.genreFilter ||
+          "all";
+
+
+        movieGenreButtons.forEach(
+          function (genreButton) {
+
+            genreButton.classList.remove(
+              "active"
+            );
+
+            genreButton.setAttribute(
+              "aria-pressed",
+              "false"
+            );
+
+          }
+        );
+
+
+        this.classList.add(
+          "active"
+        );
+
+
+        this.setAttribute(
+          "aria-pressed",
+          "true"
+        );
+
+
+        filterMoviesByGenre(
+          selectedGenre
+        );
+
+      }
+    );
+
+  }
+);
 
   console.log("Deeprowss app loaded");
 
