@@ -1313,14 +1313,3 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
     line-height: 1.15;
   }
 }
-
-/* HIDE ALL CONTENT HEADINGS EXCEPT MOVIES */
-
-.content-section:not(#movies) .content-heading,
-.tv-category-heading {
-  display: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  height: 0 !important;
-  min-height: 0 !important;
-}
