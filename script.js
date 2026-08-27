@@ -37,13 +37,11 @@ let currentMovieGenre = "all";
 let currentMovieSearch = "";
 
 function filterMoviesByGenre(
-  selectedGenre
-) {
+function filterMovies() {
 
   if (!movieListElement) {
     return;
   }
-
 
   const movieCards =
     Array.from(
@@ -52,9 +50,7 @@ function filterMoviesByGenre(
       )
     );
 
-
   let visibleMovies = 0;
-
 
   movieCards.forEach(
     function (movie) {
@@ -70,36 +66,34 @@ function filterMoviesByGenre(
             }
           );
 
+      const movieName =
+        String(
+          movie.dataset.name || ""
+        ).toLowerCase();
 
-      const shouldShow =
-        selectedGenre === "all" ||
+      const matchesGenre =
+        currentMovieGenre === "all" ||
         genres.includes(
-          selectedGenre.toLowerCase()
+          currentMovieGenre.toLowerCase()
         );
 
+      const matchesSearch =
+        !currentMovieSearch ||
+        movieName.includes(
+          currentMovieSearch.toLowerCase()
+        );
+
+      const shouldShow =
+        matchesGenre &&
+        matchesSearch;
 
       movie.classList.toggle(
-  "genre-hidden",
-  !shouldShow
-);
-
+        "genre-hidden",
+        !shouldShow
+      );
 
       if (shouldShow) {
         visibleMovies++;
-      }
-
-
-      if (
-        !shouldShow &&
-        movie.classList.contains(
-          "active"
-        )
-      ) {
-
-        movie.classList.remove(
-          "active"
-        );
-
       }
 
     }
@@ -122,7 +116,6 @@ function filterMoviesByGenre(
   }
 
 }
-
 
 movieGenreButtons.forEach(
   function (button) {
