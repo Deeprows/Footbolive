@@ -72,8 +72,10 @@ function filterMoviesByGenre(
         );
 
 
-      movie.hidden =
-        !shouldShow;
+      movie.classList.toggle(
+  "genre-hidden",
+  !shouldShow
+);
 
 
       if (shouldShow) {
