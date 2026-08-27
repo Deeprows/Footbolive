@@ -1299,7 +1299,7 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
 .section-header h2,
 .content-header h2,
 .category-header h2 {
-  font-size: 26px;
+  font-size: 10px;
   line-height: 1;
 }
 
@@ -1309,7 +1309,7 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
   .section-header h2,
   .content-header h2,
   .category-header h2 {
-    font-size: 10px;
+    font-size: 5px;
     line-height: 1;
   }
 }
