@@ -151,9 +151,8 @@ movieGenreButtons.forEach(
         );
 
 
-        filterMoviesByGenre(
-          selectedGenre
-        );
+   currentMovieGenre = selectedGenre;
+   filterMovies();
 
       }
     );
