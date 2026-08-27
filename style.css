@@ -903,16 +903,16 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
   justify-content: center;
   gap: 4px;
 
-  height: 28px;
-  padding: 0 9px;
+  height: 32px;
+  padding: 0 11px;
 
   border: 1px solid #2a2e37;
-  border-radius: 7px;
+  border-radius: 8px;
 
   background: #10131a;
   color: #ffffff;
 
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
 
   text-decoration: none;
@@ -941,9 +941,9 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
   }
 
   .header-action-button {
-    height: 26px;
-    padding: 0 8px;
-    font-size: 8px;
+    height: 32px;
+    padding: 0 11px;
+    font-size: 10px;
   }
 
 }
