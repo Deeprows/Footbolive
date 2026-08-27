@@ -4,70 +4,79 @@
     "url": "https://vsembed.ru/embed/tv/tt14057360",
     "downloadUrl": "",
     "date": "2026-08-20",
-    "rating": "6.6/10 ⭐"
-    "data-genre="Action,Adventure"
+    "rating": "6.6/10 ⭐",
+    "genre": "Action,Adventure"
   },
   {
     "name": "Joy Ride 2023",
     "url": "https://vidsrc.sbs/embed/movie/864168",
     "downloadUrl": "",
     "date": "2026-08-27",
-    "rating": "Comedy - 6.7/10 ⭐"
+    "rating": "Comedy - 6.7/10 ⭐",
+    "genre": "Comedy"
   },
   {
     "name": "Motor City 2025",
     "url": "https://vsembed.ru/embed/movie/tt2012616",
     "downloadUrl": "https://wildshare.net/58c8da999a9c5735/Motor.City.2026.NaijaPrey.com.mkv",
     "date": "2026-08-26",
-    "rating": "Action | Crime | Drama - 6.0/10 ⭐"
+    "rating": "Action | Crime | Drama - 6.0/10 ⭐",
+    "genre": "Action,Crime,Drama"
   },
   {
     "name": "Land Of Wolves 2026",
     "url": "https://vsembed.ru/embed/movie/tt42941113",
     "downloadUrl": "https://wildshare.net/534f483e653d588f/Land.Of.Wolves.2026.NaijaPrey.com.mkv",
     "date": "2026-08-26",
-    "rating": "Action - 5.4/10 ⭐"
+    "rating": "Action - 5.4/10 ⭐",
+    "genre": "Action"
   },
   {
     "name": "Gintama: Yoshiwara in Flames 2026",
     "url": "https://vidsrc.sbs/embed/movie/1530941/",
     "downloadUrl": "https://wildshare.net/b446257964f04a1a/Gintama.Yoshiwara.in.Flames.2026.NaijaPrey.com.mkv",
     "date": "2026-08-26",
-    "rating": "Action | Animation | Comedy - 8.7/10 ⭐"
+    "rating": "Action | Animation | Comedy - 8.7/10 ⭐",
+    "genre": "Action,Animation,Comedy"
   },
   {
     "name": "The Odyssey",
     "url": "https://vsembed.ru/embed/movie/tt33764258",
     "downloadUrl": "https://wildshare.net/82027651ed18e025/The.Odyssey.The.Making.of.an.Epic.2026.NaijaPrey.com.mkv",
     "date": "2026-08-26",
-    "rating": "Epic | Adventure - 8.5/10 ⭐"
+    "rating": "Epic | Adventure - 8.5/10 ⭐",
+    "genre": "Epic,Adventure"
   },
   {
     "name": "Mutiny",
     "url": "https://vsembed.ru/embed/movie/tt32338669",
     "downloadUrl": "https://wildshare.net/d79b860d45949313/Mutiny.2026.NaijaPrey.com.mkv",
     "date": "2026-08-24",
-    "rating": "Action | Drama | Thriller - 5.7/10 ⭐"
+    "rating": "Action | Drama | Thriller - 5.7/10 ⭐",
+    "genre": "Action,Drama,Thriller"
   },
   {
     "name": "No Escape 2015",
     "url": "https://vsembed.ru/embed/movie/tt1781922",
     "downloadUrl": "https://wildshare.net/6bb197ee2f2e871c/No.Escape.2015.NaijaPrey.com.mkv",
     "date": "2026-08-23",
-    "rating": "6.8/10 ⭐"
+    "rating": "6.8/10 ⭐",
+    "genre": "Action,Thriller"
   },
   {
     "name": "LUCKY 2026",
     "url": "https://vsembed.ru/embed/tv/tt34866681",
     "downloadUrl": "https://wildshare.net/67209f6a1cffaa4e/Lucky.S01E01.NaijaPrey.com.mkv",
     "date": "2026-08-23",
-    "rating": "Series - 6.7/10 ⭐"
+    "rating": "Series - 6.7/10 ⭐",
+    "genre": "Drama,Series"
   },
   {
     "name": "Obsession (2026)",
     "url": "https://vsembed.su/embed/movie/tt37287335",
     "downloadUrl": "https://wildshare.net/e8ea7a8d36bdfe94/Obsession.2026.NaijaPrey.com.mkv",
     "date": "2026-08-20",
-    "rating": "5.1/10 ⭐"
+    "rating": "5.1/10 ⭐",
+    "genre": "Drama,Thriller"
   }
 ]
