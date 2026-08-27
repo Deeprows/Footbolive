@@ -1244,6 +1244,19 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
     gap: 6px;
   }
 
+  .section-header h2,
+.content-header h2,
+.category-header h2 {
+  display: none;
+}
+
+.section-header,
+.content-header,
+.category-header {
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
   /* Extra slim buttons */
   .app-button {
     min-width: 125px;
