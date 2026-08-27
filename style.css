@@ -1278,3 +1278,25 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
     height: 30px;
   }
 }
+
+/* =========================================================
+   SMALLER CATEGORY HEADER TEXTS
+   ========================================================= */
+
+.section-header h2,
+.content-header h2,
+.category-header h2 {
+  font-size: 26px;
+  line-height: 1.15;
+}
+
+
+/* Mobile */
+@media (max-width: 550px) {
+  .section-header h2,
+  .content-header h2,
+  .category-header h2 {
+    font-size: 21px;
+    line-height: 1.15;
+  }
+}
