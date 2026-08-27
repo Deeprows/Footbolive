@@ -1314,9 +1314,9 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
   }
 }
 
-/* COMPLETELY REMOVE CATEGORY HEADERS AND THEIR SPACE */
+/* HIDE ALL CONTENT HEADINGS EXCEPT MOVIES */
 
-.content-heading,
+.content-section:not(#movies) .content-heading,
 .tv-category-heading {
   display: none !important;
   margin: 0 !important;
