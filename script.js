@@ -28,6 +28,7 @@ const movieEmptyElement =
   document.getElementById(
     "movieEmpty"
   );
+   
 const movieSearchInput =
   document.getElementById(
     "movieSearch"
@@ -36,7 +37,7 @@ const movieSearchInput =
 let currentMovieGenre = "all";
 let currentMovieSearch = "";
 
-function filterMoviesByGenre(
+
 function filterMovies() {
 
   if (!movieListElement) {
@@ -99,20 +100,14 @@ function filterMovies() {
     }
   );
 
-
   if (movieCountElement) {
-
     movieCountElement.textContent =
       visibleMovies;
-
   }
 
-
   if (movieEmptyElement) {
-
     movieEmptyElement.hidden =
       visibleMovies !== 0;
-
   }
 
 }
