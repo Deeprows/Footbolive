@@ -1060,3 +1060,10 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
   }
 
 }
+/* =========================================================
+   MOVIE GENRE FILTER VISIBILITY
+   ========================================================= */
+
+.movie-card.genre-hidden {
+  display: none !important;
+}
