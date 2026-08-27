@@ -165,7 +165,22 @@ movieGenreButtons.forEach(
 
   }
 );
+if (movieSearchInput) {
 
+  movieSearchInput.addEventListener(
+    "input",
+    function () {
+
+      currentMovieSearch =
+        this.value.trim();
+
+      filterMovies();
+
+    }
+  );
+
+}
+   
   console.log("Deeprowss app loaded");
 
 
