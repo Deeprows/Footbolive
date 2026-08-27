@@ -1166,3 +1166,110 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
   }
 
 }
+
+/* =========================================================
+   COMPACT TOP PLAYER AND NAVIGATION
+   ========================================================= */
+
+/* Move the entire player area slightly upward */
+.screen-section {
+  padding-top: 12px;
+}
+
+
+/* Slim Football Live, Highlights, TV Channels and Movies buttons */
+.app-menu {
+  padding: 10px 0 5px;
+}
+
+.app-buttons {
+  gap: 8px;
+}
+
+.app-button {
+  min-height: 46px;
+  padding: 6px 14px;
+  border-radius: 11px;
+}
+
+
+/* Reduce space above the content below the navigation */
+.content-section {
+  padding-top: 16px;
+}
+
+
+/* Reduce the Now Showing area height */
+.screen-bottom {
+  padding: 7px 12px;
+  gap: 10px;
+}
+
+
+/* Make Now Showing text area more compact */
+.now-showing span {
+  margin-bottom: 1px;
+}
+
+#nowShowing {
+  line-height: 1.2;
+}
+
+
+/* Smaller fullscreen button */
+.fullscreen-button {
+  width: 38px;
+  height: 34px;
+}
+
+
+/* MOBILE ADJUSTMENTS */
+@media (max-width: 550px) {
+
+  /* Shift player and top area upward slightly */
+  .screen-section {
+    padding-top: 5px;
+  }
+
+  /* Slim the four navigation buttons */
+  .app-menu {
+    padding: 8px 0 4px;
+  }
+
+  .app-buttons {
+    gap: 7px;
+  }
+
+  .app-button {
+    min-width: 135px;
+    min-height: 44px;
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+
+  /* Make Now Showing section slimmer */
+  .screen-bottom {
+    padding: 6px 10px;
+    gap: 8px;
+  }
+
+  .now-showing span {
+    font-size: 8px;
+    margin-bottom: 1px;
+  }
+
+  #nowShowing {
+    font-size: 13px;
+    line-height: 1.15;
+  }
+
+  .fullscreen-button {
+    width: 36px;
+    height: 32px;
+  }
+
+  /* Bring content below the navigation upward */
+  .content-section {
+    padding-top: 14px;
+  }
+}
