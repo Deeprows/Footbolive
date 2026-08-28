@@ -1376,3 +1376,167 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
 .screen-player:-webkit-full-screen .screen-status {
     display: none !important;
 }
+
+/* =========================================================
+   DEEPROWS APP DOWNLOAD POPUP
+   ========================================================= */
+
+.deeprows-app-popup[hidden] {
+    display: none !important;
+}
+
+.deeprows-app-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.deeprows-app-popup-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+}
+
+.deeprows-app-popup-card {
+    position: relative;
+    z-index: 2;
+    width: min(420px, 100%);
+    padding: 30px 24px 24px;
+    background: #101512;
+    border: 1px solid rgba(0, 255, 120, 0.25);
+    border-radius: 22px;
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.55);
+    text-align: center;
+    color: #fff;
+    animation: deeprowsPopupIn 0.3s ease;
+}
+
+@keyframes deeprowsPopupIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+.deeprows-app-popup-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 255, 120, 0.12);
+    border-radius: 18px;
+    font-size: 32px;
+}
+
+.deeprows-app-popup-card h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.deeprows-app-popup-card p {
+    margin: 0 auto 22px;
+    max-width: 330px;
+    color: #b9c2bc;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.deeprows-app-popup-download {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    background: #18d66b;
+    color: #061109;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 800;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.deeprows-app-popup-download:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+.deeprows-app-popup-browser {
+    width: 100%;
+    margin-top: 10px;
+    min-height: 44px;
+    border: 0;
+    background: transparent;
+    color: #aeb8b1;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.deeprows-app-popup-browser:hover {
+    color: #fff;
+}
+
+.deeprows-app-popup-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.deeprows-app-popup-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+body.deeprows-popup-open {
+    overflow: hidden;
+}
+
+@media (max-width: 550px) {
+
+    .deeprows-app-popup {
+        align-items: flex-end;
+        padding: 12px;
+    }
+
+    .deeprows-app-popup-card {
+        width: 100%;
+        padding: 28px 20px 18px;
+        border-radius: 20px;
+    }
+
+    .deeprows-app-popup-card h2 {
+        font-size: 21px;
+    }
+
+    .deeprows-app-popup-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 28px;
+    }
+
+}
