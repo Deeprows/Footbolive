@@ -2411,18 +2411,37 @@ public void onReceivedError(
 
     private void hideStatusBar() {
 
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
+    /*
+     * Hide the status bar AND Android navigation bar.
+     *
+     * The bars can temporarily appear when the user performs
+     * the Android system swipe gesture. They will then hide again.
+     */
+
+    WindowCompat.setDecorFitsSystemWindows(
+            getWindow(),
+            false
+    );
+
+    WindowInsetsControllerCompat controller =
+            WindowCompat.getInsetsController(
+                    getWindow(),
+                    getWindow().getDecorView()
+            );
+
+    if (controller != null) {
+
+        controller.hide(
+                WindowInsetsCompat.Type.statusBars() |
+                WindowInsetsCompat.Type.navigationBars()
         );
 
-
-        getWindow()
-                .getDecorView()
-                .setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                );
+        controller.setSystemBarsBehavior(
+                WindowInsetsControllerCompat
+                        .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        );
     }
+}
 
 
     /*
