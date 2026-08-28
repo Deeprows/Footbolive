@@ -602,13 +602,13 @@ if (movieSearchInput) {
      CURRENT SCREEN STATE
      ========================================================= */
 
-  let currentScreenType = "";
-  let currentMatchCard = null;
-  let currentMainUrl = "";
-  let currentAltUrl = "";
-  let screenLoadTimer = null;
+let currentScreenType = "";
+let currentMatchCard = null;
+let currentMainUrl = "";
+let currentAltUrl = "";
+let screenLoadTimer = null;
 
-   /* =========================================================
+/* =========================================================
    DEFAULT HOMEPAGE SCREEN
    ========================================================= */
 
@@ -621,10 +621,9 @@ if (screenFrame) {
     screenFrame.dataset.altUrl || "";
 
   currentScreenType =
-    "match";
+    "default";
 
 }
-
   // Direct M3U8/HLS player state
   let hlsVideo = null;
   let hlsInstance = null;
