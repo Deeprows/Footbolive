@@ -1789,8 +1789,9 @@ function createHighlightCard(post) {
     }
 
     const shouldShow =
-      currentScreenType === "match" &&
-      hasValidAltUrl(currentAltUrl);
+  currentScreenType === "match" &&
+  currentMatchCard &&
+  hasValidAltUrl(currentAltUrl);
 
     footballScreenControls.hidden =
       !shouldShow;
