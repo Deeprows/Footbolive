@@ -1843,23 +1843,26 @@ function createHighlightCard(post) {
 
 function updateFootballControls() {
 
+  const hasAltScreen =
+    currentScreenType === "match" &&
+    hasValidAltUrl(currentAltUrl);
+
   if (altScreenButton) {
     altScreenButton.hidden =
-      !currentMatchCard;
+      !hasAltScreen;
   }
 
   if (mainScreenButton) {
     mainScreenButton.hidden =
-      !currentMatchCard;
+      !hasAltScreen;
   }
 
   if (footballScreenControls) {
     footballScreenControls.hidden =
-      !currentMatchCard;
+      !hasAltScreen;
   }
 
 }
-
 
   /* =========================================================
      HIDE ALT SCREEN
