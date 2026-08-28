@@ -1592,3 +1592,9 @@ body.deeprows-popup-open {
     transform: rotate(360deg);
   }
 }
+
+.share-btn {
+  top: auto !important;
+  bottom: 8px !important;
+  right: 8px !important;
+}
