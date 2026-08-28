@@ -982,7 +982,28 @@ public class MainActivity extends Activity {
      * OFFLINE PAGE
      * =========================================================
      */
+    private boolean isPlayerEmbedUrl(
+        WebResourceRequest request
+) {
 
+    if (request == null ||
+            request.getUrl() == null) {
+
+        return false;
+    }
+
+    String url =
+            request.getUrl()
+                    .toString()
+                    .toLowerCase();
+
+    /*
+     * Detect movie and stream embed pages.
+     */
+
+    return url.contains("/embed/");
+}
+    
     private void showOfflinePage() {
 
         if (mainWebView == null) {
