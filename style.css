@@ -1540,3 +1540,55 @@ body.deeprows-popup-open {
     }
 
 }
+
+/* =========================================================
+   REFRESH CONTENT BUTTON
+   ========================================================= */
+
+.refresh-page-btn {
+  position: fixed;
+  left: 15px;
+  bottom: 15px;
+
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #1db954;
+  color: #fff;
+
+  font-size: 25px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  z-index: 9999;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+
+  transition: transform 0.2s ease;
+}
+
+.refresh-page-btn:active {
+  transform: scale(0.9);
+}
+
+.refresh-page-btn.refreshing {
+  animation: refreshSpin 0.7s linear infinite;
+}
+
+@keyframes refreshSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
