@@ -1915,13 +1915,14 @@ function updateFootballControls() {
 
 
   /* =========================================================
-     OPEN ALT SCREEN
-     ========================================================= */
+   OPEN ALT SCREEN
+   ========================================================= */
 
-  function openAltScreen() {
+function openAltScreen() {
 
   if (
-    currentScreenType !== "match"
+    currentScreenType !== "match" &&
+    currentScreenType !== "default"
   ) {
     return;
   }
@@ -1936,58 +1937,97 @@ function updateFootballControls() {
 
   }
 
-    const matchName =
-  currentMatchCard?.dataset.name ||
-  nowShowing?.textContent?.trim() ||
-  "Now Playing";
+  /*
+   * DEFAULT HOMEPAGE SCREEN
+   *
+   * Use the SAME main iframe.
+   */
+  if (
+    currentScreenType === "default" &&
+    screenFrame
+  ) {
 
-    if (altScreenMatch) {
-      altScreenMatch.textContent =
-        matchName;
-    }
-
-    if (altScreenFrame) {
-
-      altScreenFrame.src =
-        "about:blank";
-
-      setTimeout(
-        function () {
-
-          if (
-            currentScreenType === "match" &&
-            hasValidAltUrl(currentAltUrl)
-          ) {
-            altScreenFrame.src =
-              currentAltUrl;
-          }
-
-        },
-        80
-      );
-
-    }
-
-    if (altScreenOverlay) {
-      altScreenOverlay.hidden =
-        false;
-    }
-
-    document.body.classList.add(
-      "alt-screen-open"
-    );
+    screenFrame.src =
+      currentAltUrl;
 
     if (mainScreenButton) {
-      mainScreenButton.classList.remove("active");
+      mainScreenButton.classList.remove(
+        "active"
+      );
     }
 
     if (altScreenButton) {
-      altScreenButton.classList.add("active");
+      altScreenButton.classList.add(
+        "active"
+      );
     }
+
+    return;
 
   }
 
+  /*
+   * FOOTBALL MATCH
+   *
+   * Keep the existing alternative-screen
+   * overlay behavior.
+   */
 
+  const matchName =
+    currentMatchCard?.dataset.name ||
+    nowShowing?.textContent?.trim() ||
+    "Football Match";
+
+  if (altScreenMatch) {
+    altScreenMatch.textContent =
+      matchName;
+  }
+
+  if (altScreenFrame) {
+
+    altScreenFrame.src =
+      "about:blank";
+
+    setTimeout(
+      function () {
+
+        if (
+          currentScreenType === "match" &&
+          hasValidAltUrl(currentAltUrl)
+        ) {
+          altScreenFrame.src =
+            currentAltUrl;
+        }
+
+      },
+      80
+    );
+
+  }
+
+  if (altScreenOverlay) {
+    altScreenOverlay.hidden =
+      false;
+  }
+
+  document.body.classList.add(
+    "alt-screen-open"
+  );
+
+  if (mainScreenButton) {
+    mainScreenButton.classList.remove(
+      "active"
+    );
+  }
+
+  if (altScreenButton) {
+    altScreenButton.classList.add(
+      "active"
+    );
+  }
+
+}
+   
   /* =========================================================
      MAIN SCREEN BUTTON
      ========================================================= */
