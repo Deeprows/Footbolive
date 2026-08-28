@@ -949,7 +949,7 @@ box-shadow:0 15px 30px rgba(0,0,0,.3);
 .tv-channel-info strong{font-size:11px}
 .tv-channel-info small{font-size:8px}
 
-.movie-card{min-height:102px;padding:14px}
+.movie-card{min-height:120px;padding:14px}
 .movie-title{font-size:14px}
 .movie-icon{width:40px;height:40px;top:12px;right:12px;font-size:19px}
 }
