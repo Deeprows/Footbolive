@@ -1143,7 +1143,17 @@ const button =
   }
 
 
-  button.innerHTML = `
+   button.innerHTML = `
+    ${
+      image
+        ? `<span class="movie-background"
+             style="background-image:url('${escapeHtml(image)}');">
+           </span>`
+        : ""
+    }
+
+    <span class="movie-overlay"></span>
+
     <span class="movie-status">
       MOVIE
     </span>
@@ -1168,7 +1178,6 @@ const button =
         : ""
     }
   `;
-
 
   return button;
 
