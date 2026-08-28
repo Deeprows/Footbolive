@@ -2748,8 +2748,6 @@ function updateFootballControls() {
             currentMatchCard =
               this;
 
-            updateFootballControls();
-
             currentMainUrl =
               url || "";
 
@@ -2758,6 +2756,8 @@ function updateFootballControls() {
 
             currentScreenType =
               "match";
+             
+             updateFootballControls();
 
             matchCards.forEach(
               function (item) {
