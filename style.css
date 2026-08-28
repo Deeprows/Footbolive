@@ -1579,22 +1579,3 @@ body.deeprows-popup-open {
   transform: scale(0.9);
 }
 
-.refresh-page-btn.refreshing {
-  animation: refreshSpin 0.7s linear infinite;
-}
-
-@keyframes refreshSpin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.share-btn {
-  top: auto !important;
-  bottom: 8px !important;
-  right: 8px !important;
-}
