@@ -1096,7 +1096,13 @@ function createMovieCard(post) {
 
 const genre =
   post.genre || "";
-
+   
+  const image =
+    post.image ||
+    post.poster ||
+    post.posterUrl ||
+    "";
+   
 const button =
   document.createElement("button");
 
