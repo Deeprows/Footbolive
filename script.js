@@ -2748,6 +2748,8 @@ function updateFootballControls() {
             currentMatchCard =
               this;
 
+            updateFootballControls();
+
             currentMainUrl =
               url || "";
 
