@@ -3573,3 +3573,24 @@ function openAltScreen() {
   );
 
 });
+
+/* =========================================================
+   REFRESH CONTENT BUTTON
+   ========================================================= */
+
+const refreshPageBtn =
+  document.getElementById("refreshPageBtn");
+
+if (refreshPageBtn) {
+
+  refreshPageBtn.addEventListener("click", function () {
+
+    refreshPageBtn.classList.add("refreshing");
+
+    // Reload the entire page
+    // so fresh HTML and JSON content are loaded
+    window.location.reload();
+
+  });
+
+}
