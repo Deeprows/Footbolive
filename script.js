@@ -2034,33 +2034,65 @@ function openAltScreen() {
 
   if (mainScreenButton) {
 
-    mainScreenButton.addEventListener(
-      "click",
-      function () {
+  mainScreenButton.addEventListener(
+    "click",
+    function () {
 
-        if (
-          currentScreenType !== "match" ||
-          !currentMainUrl
-        ) {
-          return;
-        }
+      if (
+        !currentMainUrl ||
+        (
+          currentScreenType !== "match" &&
+          currentScreenType !== "default"
+        )
+      ) {
+        return;
+      }
 
-        hideAltScreen();
+      /*
+       * DEFAULT HOMEPAGE
+       * Restore the original URL in the same iframe.
+       */
+      if (
+        currentScreenType === "default" &&
+        screenFrame
+      ) {
 
-        loadScreen(
-          currentMainUrl,
-          currentMatchCard?.dataset.name ||
-          "Football Match",
-          "match",
-          true
+        screenFrame.src =
+          currentMainUrl;
+
+        mainScreenButton.classList.add(
+          "active"
         );
 
+        if (altScreenButton) {
+          altScreenButton.classList.remove(
+            "active"
+          );
+        }
+
+        return;
+
       }
-    );
 
-  }
+      /*
+       * FOOTBALL MATCH
+       * Existing behavior.
+       */
+      hideAltScreen();
 
+      loadScreen(
+        currentMainUrl,
+        currentMatchCard?.dataset.name ||
+        "Football Match",
+        "match",
+        true
+      );
 
+    }
+  );
+
+}
+   
   /* =========================================================
      ALT SCREEN BUTTON
      ========================================================= */
