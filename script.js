@@ -608,6 +608,23 @@ if (movieSearchInput) {
   let currentAltUrl = "";
   let screenLoadTimer = null;
 
+   /* =========================================================
+   DEFAULT HOMEPAGE SCREEN
+   ========================================================= */
+
+if (screenFrame) {
+
+  currentMainUrl =
+    screenFrame.getAttribute("src") || "";
+
+  currentAltUrl =
+    screenFrame.dataset.altUrl || "";
+
+  currentScreenType =
+    "match";
+
+}
+
   // Direct M3U8/HLS player state
   let hlsVideo = null;
   let hlsInstance = null;
