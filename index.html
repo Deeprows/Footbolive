@@ -410,7 +410,7 @@
     <div class="container header-action-buttons">
 
       <a
-        href="YOUR-DOWNLOAD-APP-LINK"
+        href="https://drive.google.com/file/d/1tQJ5X46VtBCdA-6Lvt0HM_lBjuLFgKEM/view?usp=drivesdk"
         class="header-action-button"
         aria-label="Download Deeprowss App"
       >
@@ -707,6 +707,328 @@
 
     </section>
 
+<!-- =========================================================
+     DEEPROWS APP DOWNLOAD POPUP
+     Browser only — hidden inside Deeprows Android app
+     Shows once every 24 hours
+     ========================================================= -->
+
+<div id="deeprowsAppPopup" class="deeprows-app-popup" hidden>
+    <div class="deeprows-app-popup-backdrop"></div>
+
+    <div class="deeprows-app-popup-card" role="dialog" aria-modal="true">
+
+        <button
+            type="button"
+            class="deeprows-app-popup-close"
+            id="deeprowsAppPopupClose"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+        <div class="deeprows-app-popup-icon">
+            📱
+        </div>
+
+        <h2>Get the Deeprows App</h2>
+
+        <p>
+            Watch football, highlights, TV and movies more easily
+            with the Deeprows app.
+        </p>
+
+        <a
+            href="https://drive.google.com/file/d/1tQJ5X46VtBCdA-6Lvt0HM_lBjuLFgKEM/view?usp=drivesdk"
+            class="deeprows-app-popup-download"
+            id="deeprowsAppDownload"
+        >
+            Download App
+        </a>
+
+        <button
+            type="button"
+            class="deeprows-app-popup-browser"
+            id="deeprowsAppContinue"
+        >
+            Continue in Browser
+        </button>
+
+    </div>
+</div>
+
+<script>
+(function () {
+
+    "use strict";
+
+    /*
+     * =========================================================
+     * DEEPROWS APP POPUP
+     * =========================================================
+     *
+     * The Android app should set:
+     *
+     *     window.DeeprowsApp = true;
+     *
+     * before this code runs.
+     *
+     * Browser users will therefore see the popup.
+     */
+
+    const popup = document.getElementById("deeprowsAppPopup");
+    const closeButton = document.getElementById("deeprowsAppPopupClose");
+    const continueButton = document.getElementById("deeprowsAppContinue");
+    const downloadButton = document.getElementById("deeprowsAppDownload");
+
+    if (!popup) {
+        return;
+    }
+
+    /*
+     * =========================================================
+     * SETTINGS
+     * =========================================================
+     */
+
+    const STORAGE_KEY = "deeprows_app_popup_last_seen";
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+
+    /*
+     * Only show on mobile browsers.
+     * Remove this function if you also want desktop users
+     * to see the popup.
+     */
+
+    function isMobileBrowser() {
+
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+            .test(navigator.userAgent);
+
+    }
+
+    /*
+     * =========================================================
+     * CHECK IF RUNNING INSIDE DEEPROWS APP
+     * =========================================================
+     */
+
+    function isDeeprowsApp() {
+
+        /*
+         * Primary method:
+         * Android WebView sets window.DeeprowsApp = true
+         */
+
+        if (window.DeeprowsApp === true) {
+            return true;
+        }
+
+        /*
+         * Optional fallback:
+         * If your Android WebView uses a custom user-agent,
+         * this can identify it.
+         */
+
+        const ua = navigator.userAgent || "";
+
+        if (
+            ua.indexOf("DeeprowsApp") !== -1 ||
+            ua.indexOf("Deeprows-Android") !== -1
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /*
+     * =========================================================
+     * 24-HOUR CHECK
+     * =========================================================
+     */
+
+    function hasSeenPopupToday() {
+
+        try {
+
+            const lastSeen =
+                parseInt(
+                    localStorage.getItem(STORAGE_KEY),
+                    10
+                );
+
+            if (!lastSeen) {
+                return false;
+            }
+
+            return (
+                Date.now() - lastSeen < ONE_DAY
+            );
+
+        } catch (error) {
+
+            return false;
+
+        }
+
+    }
+
+    /*
+     * =========================================================
+     * SAVE 24-HOUR SUPPRESSION
+     * =========================================================
+     */
+
+    function rememberPopup() {
+
+        try {
+
+            localStorage.setItem(
+                STORAGE_KEY,
+                String(Date.now())
+            );
+
+        } catch (error) {
+            // Ignore storage errors.
+        }
+
+    }
+
+    /*
+     * =========================================================
+     * SHOW
+     * =========================================================
+     */
+
+    function showPopup() {
+
+        popup.hidden = false;
+
+        document.body.classList.add(
+            "deeprows-popup-open"
+        );
+
+    }
+
+    /*
+     * =========================================================
+     * CLOSE
+     * =========================================================
+     */
+
+    function closePopup() {
+
+        rememberPopup();
+
+        popup.hidden = true;
+
+        document.body.classList.remove(
+            "deeprows-popup-open"
+        );
+
+    }
+
+    /*
+     * =========================================================
+     * DECIDE WHETHER TO SHOW
+     * =========================================================
+     */
+
+    function shouldShowPopup() {
+
+        // Never show inside Deeprows Android app.
+        if (isDeeprowsApp()) {
+            return false;
+        }
+
+        // Only show on mobile browsers.
+        if (!isMobileBrowser()) {
+            return false;
+        }
+
+        // Show only once every 24 hours.
+        if (hasSeenPopupToday()) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    /*
+     * =========================================================
+     * EVENTS
+     * =========================================================
+     */
+
+    closeButton.addEventListener(
+        "click",
+        closePopup
+    );
+
+    continueButton.addEventListener(
+        "click",
+        closePopup
+    );
+
+    downloadButton.addEventListener(
+        "click",
+        function () {
+
+            /*
+             * Remember immediately so returning to the
+             * website doesn't show the popup again.
+             */
+
+            rememberPopup();
+
+        }
+    );
+
+    /*
+     * Clicking the dark background also closes it.
+     */
+
+    popup.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target.classList.contains(
+                    "deeprows-app-popup-backdrop"
+                )
+            ) {
+
+                closePopup();
+
+            }
+
+        }
+    );
+
+    /*
+     * =========================================================
+     * START
+     * =========================================================
+     */
+
+    if (shouldShowPopup()) {
+
+        /*
+         * Small delay so the popup doesn't appear before
+         * the page has finished rendering.
+         */
+
+        setTimeout(
+            showPopup,
+            1200
+        );
+
+    }
+
+})();
+</script>
 
     <!-- =======================================================
          FOOTBALL LIVE
