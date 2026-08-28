@@ -2406,40 +2406,32 @@ public void onReceivedError(
      * =========================================================
      */
 
-    private void hideStatusBar() {
+   private void hideStatusBar() {
 
     /*
-     * Hide the status bar AND Android navigation bar.
+     * Hide the status bar and Android navigation bar.
      *
-     * The bars can temporarily appear when the user performs
-     * the Android system swipe gesture. They will then hide again.
+     * IMMERSIVE_STICKY allows the bars to temporarily appear
+     * when the user uses an Android system gesture, then hide
+     * again automatically.
      */
 
-    WindowCompat.setDecorFitsSystemWindows(
-            getWindow(),
-            false
+    getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
     );
 
-    WindowInsetsControllerCompat controller =
-            WindowCompat.getInsetsController(
-                    getWindow(),
-                    getWindow().getDecorView()
+    getWindow()
+            .getDecorView()
+            .setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             );
-
-    if (controller != null) {
-
-        controller.hide(
-                WindowInsetsCompat.Type.statusBars() |
-                WindowInsetsCompat.Type.navigationBars()
-        );
-
-        controller.setSystemBarsBehavior(
-                WindowInsetsControllerCompat
-                        .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        );
-    }
 }
-
 
     /*
      * =========================================================
