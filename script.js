@@ -3585,7 +3585,12 @@ if (refreshPageBtn) {
 
   refreshPageBtn.addEventListener("click", function () {
 
-    window.location.reload();
+    // Refresh the current WebView page
+    if (window.history && window.history.go) {
+      window.history.go(0);
+    } else {
+      location.reload();
+    }
 
   });
 
