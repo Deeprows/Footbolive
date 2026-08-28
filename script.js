@@ -177,8 +177,7 @@ if (movieSearchInput) {
    
   console.log("Deeprowss app loaded");
 
-
-  /* =========================================================
+/* =========================================================
    SITE-WIDE POPUNDER
    ========================================================= */
 
@@ -187,15 +186,75 @@ if (movieSearchInput) {
   const popunderScript =
     "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
 
-  const script =
-    document.createElement("script");
+  /*
+   * Check whether the Download App / Continue in Browser
+   * popup is currently visible.
+   */
+  function isAppPopupVisible() {
 
-  script.src =
-    popunderScript;
+    const popup =
+      document.getElementById("deeprowsAppPopup");
 
-  script.async = true;
+    if (!popup) {
+      return false;
+    }
 
-  document.body.appendChild(script);
+    return !popup.hidden &&
+           window.getComputedStyle(popup).display !== "none";
+
+  }
+
+  /*
+   * Load the popunder only when the app popup
+   * is no longer visible.
+   */
+  function loadPopunder() {
+
+    if (isAppPopupVisible()) {
+
+      /*
+       * Check again after 1 second.
+       */
+      setTimeout(
+        loadPopunder,
+        1000
+      );
+
+      return;
+    }
+
+    /*
+     * Don't load the script more than once.
+     */
+    if (
+      document.querySelector(
+        'script[data-deeprows-popunder="true"]'
+      )
+    ) {
+      return;
+    }
+
+    const script =
+      document.createElement("script");
+
+    script.src =
+      popunderScript;
+
+    script.async = true;
+
+    script.setAttribute(
+      "data-deeprows-popunder",
+      "true"
+    );
+
+    document.body.appendChild(script);
+
+  }
+
+  /*
+   * Start checking.
+   */
+  loadPopunder();
 
 })();
 
