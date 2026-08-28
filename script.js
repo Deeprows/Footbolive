@@ -1860,8 +1860,11 @@ function createHighlightCard(post) {
 function updateFootballControls() {
 
   const hasAltScreen =
-    currentScreenType === "match" &&
-    hasValidAltUrl(currentAltUrl);
+    hasValidAltUrl(currentAltUrl) &&
+    (
+      currentScreenType === "match" ||
+      currentScreenType === "default"
+    );
 
   if (altScreenButton) {
     altScreenButton.hidden =
