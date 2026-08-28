@@ -505,31 +505,58 @@ public class MainActivity extends Activity {
                      */
 
                     @Override
-                    public void onReceivedError(
-                            WebView view,
-                            WebResourceRequest request,
-                            android.webkit.WebResourceError error
-                    ) {
+public void onReceivedError(
+        WebView view,
+        WebResourceRequest request,
+        android.webkit.WebResourceError error
+) {
 
-                        super.onReceivedError(
-                                view,
-                                request,
-                                error
-                        );
+    super.onReceivedError(
+            view,
+            request,
+            error
+    );
 
 
-                        if (request != null &&
-                                request.isForMainFrame()) {
+    /*
+     * MAIN WEBSITE ERROR
+     *
+     * OR
+     *
+     * MOVIE / STREAM IFRAME ERROR
+     */
 
-                            webPageVisible =
-                                    true;
+    if (request != null &&
+            (
+                    request.isForMainFrame()
+                    ||
+                    isPlayerEmbedUrl(request)
+            )) {
 
-                            hideCustomSplash();
+        webPageVisible =
+                true;
 
-                            showOfflinePage();
-                        }
-                    }
+        hideCustomSplash();
 
+
+        /*
+         * Stop the failed request immediately.
+         */
+
+        view.stopLoading();
+
+
+        /*
+         * Show Deeprowss offline page
+         * instead of Android's error page
+         * containing the external URL.
+         */
+
+        view.post(
+                () -> showOfflinePage()
+        );
+    }
+}
 
                     @Override
                     public void onReceivedError(
