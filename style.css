@@ -913,7 +913,7 @@ box-shadow:0 15px 30px rgba(0,0,0,.3);
 .tv-channel::after{width:76px;height:76px;top:-42px;right:18px}
 
 .movie-grid{grid-template-columns:1fr;gap:10px}
-.movie-card{min-height:105px;padding:15px;border-radius:14px}
+.movie-card{min-height:125px;padding:15px;border-radius:14px}
 .movie-status{font-size:8px;padding:4px 7px}
 .movie-title{font-size:15px;max-width:72%}
 .movie-rating{font-size:10px}
