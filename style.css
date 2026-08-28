@@ -1337,3 +1337,11 @@ top:14px;right:14px;width:48px;height:48px;font-size:31px;
   height: 0 !important;
   min-height: 0 !important;
 }
+
+/* Hide player overlays and controls in fullscreen */
+.screen-player:fullscreen .screen-status,
+.screen-player:fullscreen .screen-bottom,
+.screen-player:-webkit-full-screen .screen-status,
+.screen-player:-webkit-full-screen .screen-bottom {
+    display: none !important;
+}
