@@ -1918,29 +1918,26 @@ function updateFootballControls() {
 
   function openAltScreen() {
 
-    if (
-      currentScreenType !== "match" ||
-      !currentMatchCard
-    ) {
-      return;
-    }
+  if (
+    currentScreenType !== "match"
+  ) {
+    return;
+  }
 
-    if (!hasValidAltUrl(currentAltUrl)) {
+  if (!hasValidAltUrl(currentAltUrl)) {
 
-      alert(
-        "No alternative screen has been added for this match yet."
-      );
+    alert(
+      "No alternative screen has been added for this screen yet."
+    );
 
-      return;
+    return;
 
-    }
+  }
 
     const matchName =
-      currentMatchCard.dataset.name ||
-      currentMatchCard.querySelector(
-        ".match-teams"
-      )?.textContent?.trim() ||
-      "Football Match";
+  currentMatchCard?.dataset.name ||
+  nowShowing?.textContent?.trim() ||
+  "Now Playing";
 
     if (altScreenMatch) {
       altScreenMatch.textContent =
