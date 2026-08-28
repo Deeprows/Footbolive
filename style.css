@@ -1579,3 +1579,8 @@ body.deeprows-popup-open {
   transform: scale(0.9);
 }
 
+.share-btn {
+  top: auto !important;
+  bottom: 8px !important;
+  right: 8px !important;
+}
