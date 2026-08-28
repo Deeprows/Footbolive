@@ -1841,43 +1841,24 @@ function createHighlightCard(post) {
      UPDATE FOOTBALL CONTROLS
      ========================================================= */
 
-  function updateFootballControls() {
+function updateFootballControls() {
 
-    if (!footballScreenControls) {
-      return;
-    }
-
-    const shouldShow =
-  currentScreenType === "match" &&
-  currentMatchCard &&
-  hasValidAltUrl(currentAltUrl);
-
-    footballScreenControls.hidden =
-      !shouldShow;
-
-    if (!shouldShow) {
-
-      if (mainScreenButton) {
-        mainScreenButton.classList.remove("active");
-      }
-
-      if (altScreenButton) {
-        altScreenButton.classList.remove("active");
-      }
-
-      return;
-
-    }
-
-    if (mainScreenButton) {
-      mainScreenButton.classList.add("active");
-    }
-
-    if (altScreenButton) {
-      altScreenButton.classList.remove("active");
-    }
-
+  if (altScreenButton) {
+    altScreenButton.hidden =
+      !currentMatchCard;
   }
+
+  if (mainScreenButton) {
+    mainScreenButton.hidden =
+      !currentMatchCard;
+  }
+
+  if (footballScreenControls) {
+    footballScreenControls.hidden =
+      !currentMatchCard;
+  }
+
+}
 
 
   /* =========================================================
