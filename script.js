@@ -975,8 +975,8 @@ if (screenFrame) {
             shareBtn.textContent = "\u{1F517}";
 
             shareBtn.style.cssText =
-              "position:absolute;top:8px;right:8px;" +
-              "width:28px;height:28px;display:flex;" +
+               "position:absolute;bottom:8px;right:8px;" +
+               "width:28px;height:28px;display:flex;" +
               "align-items:center;justify-content:center;" +
               "border-radius:50%;background:rgba(0,0,0,.55);" +
               "font-size:14px;line-height:1;z-index:5;" +
