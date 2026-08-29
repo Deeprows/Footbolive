@@ -2639,20 +2639,40 @@
         }
 
 
-        function forceIframeNavigate(iframe, url) {
+     function bustCacheUrl(url) {
 
-  // Setting src to a URL that differs from the current one
-  // ONLY by the #fragment does not reload the iframe's document
-  // (browsers treat it as same-page fragment navigation, since
-  // several of your matches route both the main and alt stream
-  // through the same bharadwajpro player page). Routing through
-  // about:blank first forces a genuine reload every time.
+  const hashIndex =
+    url.indexOf("#");
 
-  iframe.src = "about:blank";
+  const base =
+    hashIndex === -1
+      ? url
+      : url.slice(0, hashIndex);
 
-  requestAnimationFrame(function () {
-    iframe.src = url;
-  });
+  const hash =
+    hashIndex === -1
+      ? ""
+      : url.slice(hashIndex);
+
+  const separator =
+    base.includes("?")
+      ? "&"
+      : "?";
+
+  // Adding a unique query param to the page URL (before the #)
+  // guarantees the src is never identical-except-fragment to
+  // whatever the iframe is currently showing, so the browser
+  // always performs a real navigation instead of treating it
+  // as a same-document fragment jump (which is what caused the
+  // blank screen with the about:blank approach — that intermediate
+  // step introduced a timing race the browser didn't always win).
+  return (
+    base +
+    separator +
+    "_cb=" +
+    Date.now() +
+    hash
+  );
 
 }
 
@@ -2680,7 +2700,7 @@ function switchFootballScreen() {
 
   if (!altScreenActive) {
 
-    forceIframeNavigate(screenFrame, altUrl);
+    screenFrame.src = bustCacheUrl(altUrl);
     altScreenActive = true;
 
     if (screenStatus) {
@@ -2690,7 +2710,7 @@ function switchFootballScreen() {
 
   } else {
 
-    forceIframeNavigate(screenFrame, mainUrl);
+    screenFrame.src = bustCacheUrl(mainUrl);
     altScreenActive = false;
 
     if (screenStatus) {
@@ -2702,9 +2722,7 @@ function switchFootballScreen() {
 
   updateAltScreenButton();
 
-}
-
-        /*
+}        /*
          * Keep Alt Screen synchronized with the active Football section.
          * This also catches section changes made by script.js.
          */
