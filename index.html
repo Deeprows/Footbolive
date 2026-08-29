@@ -2639,53 +2639,70 @@
         }
 
 
-        function switchFootballScreen() {
+        function forceIframeNavigate(iframe, url) {
 
-          if (!currentMatchCard || !screenFrame) {
-            return;
-          }
+  // Setting src to a URL that differs from the current one
+  // ONLY by the #fragment does not reload the iframe's document
+  // (browsers treat it as same-page fragment navigation, since
+  // several of your matches route both the main and alt stream
+  // through the same bharadwajpro player page). Routing through
+  // about:blank first forces a genuine reload every time.
 
-          const mainUrl =
-            (
-              currentMatchCard.dataset.url ||
-              ""
-            ).trim();
+  iframe.src = "about:blank";
 
-          const altUrl =
-            getAlternativeUrl(
-              currentMatchCard
-            );
+  requestAnimationFrame(function () {
+    iframe.src = url;
+  });
 
-          if (!altUrl) {
-            return;
-          }
+}
 
-          if (!altScreenActive) {
 
-            screenFrame.src = altUrl;
-            altScreenActive = true;
+function switchFootballScreen() {
 
-            if (screenStatus) {
-              screenStatus.textContent =
-                "ALT SCREEN";
-            }
+  if (!currentMatchCard || !screenFrame) {
+    return;
+  }
 
-          } else {
+  const mainUrl =
+    (
+      currentMatchCard.dataset.url ||
+      ""
+    ).trim();
 
-            screenFrame.src = mainUrl;
-            altScreenActive = false;
+  const altUrl =
+    getAlternativeUrl(
+      currentMatchCard
+    );
 
-            if (screenStatus) {
-              screenStatus.textContent =
-                "LIVE";
-            }
+  if (!altUrl) {
+    return;
+  }
 
-          }
+  if (!altScreenActive) {
 
-          updateAltScreenButton();
+    forceIframeNavigate(screenFrame, altUrl);
+    altScreenActive = true;
 
-        }
+    if (screenStatus) {
+      screenStatus.textContent =
+        "ALT SCREEN";
+    }
 
+  } else {
+
+    forceIframeNavigate(screenFrame, mainUrl);
+    altScreenActive = false;
+
+    if (screenStatus) {
+      screenStatus.textContent =
+        "LIVE";
+    }
+
+  }
+
+  updateAltScreenButton();
+
+}
 
         /*
          * Keep Alt Screen synchronized with the active Football section.
