@@ -1,1 +1,737 @@
+* {
+  box-sizing: border-box;
+}
 
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+body {
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+
+/* =========================================================
+   PLAYER
+   ========================================================= */
+
+.player {
+  position: relative;
+
+  width: 100vw;
+  height: 100vh;
+
+  background: #000;
+
+  overflow: hidden;
+
+  color: #fff;
+
+  user-select: none;
+
+  --accent: #e9003f;
+  --panel: rgba(7, 9, 13, 0.94);
+}
+
+
+/* =========================================================
+   VIDEO
+   ========================================================= */
+
+#video {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  background: #000;
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
+
+.player-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.55),
+      transparent 22%,
+      transparent 65%,
+      rgba(0, 0, 0, 0.75)
+    );
+
+  opacity: 1;
+
+  transition: opacity 0.3s ease;
+}
+
+
+/* =========================================================
+   WATERMARK
+   ========================================================= */
+
+.watermark {
+  position: absolute;
+
+  top: 14px;
+  left: 16px;
+
+  z-index: 10;
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: rgba(233, 0, 63, 0.85);
+
+  color: #fff;
+
+  font-size: 22px;
+  font-weight: 900;
+
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.4);
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   CHANNEL NAME
+   ========================================================= */
+
+.channel-name {
+  position: absolute;
+
+  top: 18px;
+  right: 16px;
+
+  z-index: 10;
+
+  max-width: 60%;
+
+  padding: 7px 11px;
+
+  border-radius: 8px;
+
+  background: rgba(7, 9, 13, 0.72);
+
+  color: #fff;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   LIVE BADGE
+   ========================================================= */
+
+.live-badge {
+  position: absolute;
+
+  left: 15px;
+  bottom: 63px;
+
+  z-index: 10;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 5px 9px;
+
+  border-radius: 6px;
+
+  background: rgba(7, 9, 13, 0.82);
+
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.4px;
+
+  pointer-events: none;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #e9003f;
+
+  box-shadow:
+    0 0 8px rgba(233, 0, 63, 0.8);
+
+  animation: livePulse 1.2s infinite;
+}
+
+@keyframes livePulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
+
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.loading-screen {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 20;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  background: rgba(0, 0, 0, 0.65);
+
+  font-size: 13px;
+}
+
+.loading-screen[hidden] {
+  display: none;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+
+  border: 4px solid rgba(255, 255, 255, 0.2);
+
+  border-top-color: #e9003f;
+
+  border-radius: 50%;
+
+  animation:
+    spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* =========================================================
+   WATCH OVERLAY
+   ========================================================= */
+
+.watch-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 30;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background:
+    rgba(0, 0, 0, 0.38);
+
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease;
+}
+
+.watch-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   WATCH BUTTON
+   ========================================================= */
+
+.watch-button {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 14px 20px;
+
+  border: 0;
+
+  border-radius: 12px;
+
+  background: #e9003f;
+
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.45);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.watch-button:hover {
+  background: #ff174f;
+}
+
+.watch-button:active {
+  transform: scale(0.96);
+}
+
+.watch-icon {
+  font-size: 18px;
+}
+
+
+/* =========================================================
+   CENTER PLAY
+   ========================================================= */
+
+.center-play {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 15;
+
+  width: 62px;
+  height: 62px;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background: rgba(233, 0, 63, 0.92);
+
+  color: #fff;
+
+  font-size: 24px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.player.controls-visible .center-play {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.center-play:hover {
+  transform:
+    translate(-50%, -50%)
+    scale(1.08);
+}
+
+
+/* =========================================================
+   CONTROLS
+   ========================================================= */
+
+.controls {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 40;
+
+  display: flex;
+
+  align-items: center;
+
+  min-height: 52px;
+
+  padding:
+    7px 10px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.45),
+      transparent
+    );
+
+  opacity: 1;
+
+  transition:
+    opacity 0.3s ease;
+}
+
+.player.controls-hidden .controls {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.player.controls-hidden .center-play {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   CONTROL BUTTONS
+   ========================================================= */
+
+.control-button {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #fff;
+
+  font-size: 17px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.control-button:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.control-button:active {
+  transform: scale(0.9);
+}
+
+
+/* =========================================================
+   VOLUME
+   ========================================================= */
+
+.volume-container {
+  display: flex;
+
+  align-items: center;
+
+  width: 80px;
+
+  margin-left: 2px;
+}
+
+#volumeSlider {
+  width: 100%;
+
+  height: 4px;
+
+  accent-color: #e9003f;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   SPACER
+   ========================================================= */
+
+.controls-spacer {
+  flex: 1;
+}
+
+
+/* =========================================================
+   QUALITY MENU
+   ========================================================= */
+
+.quality-menu {
+  position: absolute;
+
+  right: 48px;
+  bottom: 58px;
+
+  z-index: 50;
+
+  min-width: 130px;
+
+  padding: 7px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.1);
+
+  border-radius: 10px;
+
+  background: var(--panel);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+.quality-menu[hidden] {
+  display: none;
+}
+
+.quality-title {
+  padding: 7px 9px;
+
+  color: #999;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+.quality-option {
+  width: 100%;
+
+  padding: 9px 10px;
+
+  border: 0;
+
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #fff;
+
+  text-align: left;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.quality-option:hover {
+  background: rgba(233, 0, 63, 0.15);
+}
+
+.quality-option.active {
+  background: #e9003f;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.error-screen {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 60;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 20px;
+
+  text-align: center;
+
+  background:
+    rgba(0, 0, 0, 0.88);
+}
+
+.error-screen[hidden] {
+  display: none;
+}
+
+.error-icon {
+  font-size: 30px;
+}
+
+.error-screen strong {
+  font-size: 15px;
+}
+
+.error-screen span {
+  color: #aaa;
+
+  font-size: 12px;
+}
+
+#retryButton {
+  margin-top: 8px;
+
+  padding: 9px 16px;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  background: #e9003f;
+
+  color: #fff;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .watermark {
+    top: 9px;
+    left: 9px;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+
+    font-size: 18px;
+  }
+
+  .channel-name {
+    top: 11px;
+    right: 9px;
+
+    max-width: 55%;
+
+    padding: 5px 8px;
+
+    font-size: 11px;
+  }
+
+  .live-badge {
+    left: 9px;
+    bottom: 54px;
+
+    padding: 4px 7px;
+
+    font-size: 9px;
+  }
+
+  .controls {
+    min-height: 46px;
+
+    padding: 4px 5px;
+  }
+
+  .control-button {
+    width: 34px;
+    height: 34px;
+
+    font-size: 15px;
+  }
+
+  .volume-container {
+    width: 55px;
+  }
+
+  .center-play {
+    width: 52px;
+    height: 52px;
+
+    font-size: 20px;
+  }
+
+  .quality-menu {
+    right: 42px;
+    bottom: 50px;
+
+    min-width: 115px;
+  }
+
+}
