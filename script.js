@@ -2075,19 +2075,32 @@ function openAltScreen() {
 }
    
   /* =========================================================
-     ALT SCREEN BUTTON
-     ========================================================= */
+   ALT SCREEN BUTTON
+   NOTE: Match-card alt-screen toggling is handled entirely
+   by the inline script in index.html (it swaps screenFrame.src
+   directly). This handler now only covers the DEFAULT/home
+   screen — the overlay elements (altScreenOverlay, altScreenFrame,
+   mainScreenButton) don't exist in the current HTML, so letting
+   openAltScreen() run for "match" was a silent no-op that just
+   fought with the inline script for control of the button state.
+   ========================================================= */
 
-  if (altScreenButton) {
+if (altScreenButton) {
 
-    altScreenButton.addEventListener(
-      "click",
-      function () {
+  altScreenButton.addEventListener(
+    "click",
+    function () {
+
+      if (currentScreenType === "default") {
         openAltScreen();
       }
-    );
 
-  }
+      // "match" is intentionally left to the inline script.
+
+    }
+  );
+
+}
 
 
   /* =========================================================
