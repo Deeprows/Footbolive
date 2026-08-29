@@ -13,7 +13,10 @@ body {
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 }
 
 
@@ -23,13 +26,16 @@ body {
 
 .player {
   position: relative;
+
   width: 100vw;
   height: 100vh;
 
   background: #000;
+
   overflow: hidden;
 
   color: #fff;
+
   user-select: none;
 
   --accent: #e9003f;
@@ -43,33 +49,37 @@ body {
 
 #video {
   position: absolute;
+
   inset: 0;
 
   width: 100%;
   height: 100%;
 
   object-fit: contain;
+
   background: #000;
 }
 
 
 /* =========================================================
-   PLAYER OVERLAY
+   OVERLAY
    ========================================================= */
 
 .player-overlay {
   position: absolute;
+
   inset: 0;
 
   pointer-events: none;
 
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.55),
-    transparent 22%,
-    transparent 65%,
-    rgba(0, 0, 0, 0.75)
-  );
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.55),
+      transparent 22%,
+      transparent 65%,
+      rgba(0, 0, 0, 0.75)
+    );
 
   opacity: 1;
 
@@ -78,7 +88,7 @@ body {
 
 
 /* =========================================================
-   DEEPROWSS WATERMARK
+   WATERMARK
    ========================================================= */
 
 .watermark {
@@ -93,6 +103,7 @@ body {
   height: 38px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
@@ -105,32 +116,33 @@ body {
   font-size: 22px;
   font-weight: 900;
 
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.4);
 
   pointer-events: none;
 }
 
-
 /* =========================================================
-   LOADING SCREEN
+   LOADING
    ========================================================= */
 
 .loading-screen {
   position: absolute;
+
   inset: 0;
 
   z-index: 20;
 
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
   justify-content: center;
 
   gap: 12px;
 
   background: rgba(0, 0, 0, 0.65);
-
-  color: #fff;
 
   font-size: 13px;
 }
@@ -139,45 +151,47 @@ body {
   display: none;
 }
 
-
-/* =========================================================
-   LOADER
-   ========================================================= */
-
 .loader {
   width: 40px;
   height: 40px;
 
   border: 4px solid rgba(255, 255, 255, 0.2);
+
   border-top-color: #e9003f;
 
   border-radius: 50%;
 
-  animation: spin 0.8s linear infinite;
+  animation:
+    spin 0.8s linear infinite;
 }
 
 @keyframes spin {
+
   to {
     transform: rotate(360deg);
   }
+
 }
 
 
 /* =========================================================
-   TAP TO WATCH OVERLAY
+   WATCH OVERLAY
    ========================================================= */
 
 .watch-overlay {
   position: absolute;
+
   inset: 0;
 
   z-index: 30;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
-  background: rgba(0, 0, 0, 0.38);
+  background:
+    rgba(0, 0, 0, 0.38);
 
   transition:
     opacity 0.25s ease,
@@ -197,6 +211,7 @@ body {
 
 .watch-button {
   display: flex;
+
   align-items: center;
 
   gap: 10px;
@@ -204,9 +219,11 @@ body {
   padding: 14px 20px;
 
   border: 0;
+
   border-radius: 12px;
 
   background: #e9003f;
+
   color: #fff;
 
   font-size: 14px;
@@ -214,7 +231,8 @@ body {
 
   cursor: pointer;
 
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.45);
 
   transition:
     transform 0.2s ease,
@@ -235,7 +253,7 @@ body {
 
 
 /* =========================================================
-   CENTER PLAY BUTTON
+   CENTER PLAY
    ========================================================= */
 
 .center-play {
@@ -252,20 +270,24 @@ body {
   height: 62px;
 
   border: 0;
+
   border-radius: 50%;
 
   background: rgba(233, 0, 63, 0.92);
+
   color: #fff;
 
   font-size: 24px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   cursor: pointer;
 
   opacity: 0;
+
   pointer-events: none;
 
   transition:
@@ -299,22 +321,26 @@ body {
   z-index: 40;
 
   display: flex;
+
   align-items: center;
 
   min-height: 52px;
 
-  padding: 7px 10px;
+  padding:
+    7px 10px;
 
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.95),
-    rgba(0, 0, 0, 0.45),
-    transparent
-  );
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.45),
+      transparent
+    );
 
   opacity: 1;
 
-  transition: opacity 0.3s ease;
+  transition:
+    opacity 0.3s ease;
 }
 
 .player.controls-hidden .controls {
@@ -337,15 +363,18 @@ body {
   height: 36px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   flex: 0 0 auto;
 
   border: 0;
+
   border-radius: 8px;
 
   background: transparent;
+
   color: #fff;
 
   font-size: 17px;
@@ -372,6 +401,7 @@ body {
 
 .volume-container {
   display: flex;
+
   align-items: center;
 
   width: 80px;
@@ -381,6 +411,7 @@ body {
 
 #volumeSlider {
   width: 100%;
+
   height: 4px;
 
   accent-color: #e9003f;
@@ -414,12 +445,15 @@ body {
 
   padding: 7px;
 
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border:
+    1px solid rgba(255, 255, 255, 0.1);
+
   border-radius: 10px;
 
   background: var(--panel);
 
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.55);
 }
 
 .quality-menu[hidden] {
@@ -443,9 +477,11 @@ body {
   padding: 9px 10px;
 
   border: 0;
+
   border-radius: 7px;
 
   background: transparent;
+
   color: #fff;
 
   text-align: left;
@@ -466,16 +502,18 @@ body {
 
 
 /* =========================================================
-   ERROR SCREEN
+   ERROR
    ========================================================= */
 
 .error-screen {
   position: absolute;
+
   inset: 0;
 
   z-index: 60;
 
   display: flex;
+
   flex-direction: column;
 
   align-items: center;
@@ -487,7 +525,8 @@ body {
 
   text-align: center;
 
-  background: rgba(0, 0, 0, 0.88);
+  background:
+    rgba(0, 0, 0, 0.88);
 }
 
 .error-screen[hidden] {
@@ -504,6 +543,7 @@ body {
 
 .error-screen span {
   color: #aaa;
+
   font-size: 12px;
 }
 
@@ -513,9 +553,11 @@ body {
   padding: 9px 16px;
 
   border: 0;
+
   border-radius: 8px;
 
   background: #e9003f;
+
   color: #fff;
 
   font-weight: 700;
@@ -542,8 +584,29 @@ body {
     font-size: 18px;
   }
 
+  .channel-name {
+    top: 11px;
+    right: 9px;
+
+    max-width: 55%;
+
+    padding: 5px 8px;
+
+    font-size: 11px;
+  }
+
+  .live-badge {
+    left: 9px;
+    bottom: 54px;
+
+    padding: 4px 7px;
+
+    font-size: 9px;
+  }
+
   .controls {
     min-height: 46px;
+
     padding: 4px 5px;
   }
 
@@ -571,4 +634,5 @@ body {
 
     min-width: 115px;
   }
+
 }
