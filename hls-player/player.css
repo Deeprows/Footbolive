@@ -158,70 +158,6 @@ body {
 
 
 /* =========================================================
-   LIVE BADGE
-   ========================================================= */
-
-.live-badge {
-  position: absolute;
-
-  left: 15px;
-  bottom: 63px;
-
-  z-index: 10;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 6px;
-
-  padding: 5px 9px;
-
-  border-radius: 6px;
-
-  background: rgba(7, 9, 13, 0.82);
-
-  color: #fff;
-
-  font-size: 11px;
-  font-weight: 800;
-
-  letter-spacing: 0.4px;
-
-  pointer-events: none;
-}
-
-.live-dot {
-  width: 7px;
-  height: 7px;
-
-  border-radius: 50%;
-
-  background: #e9003f;
-
-  box-shadow:
-    0 0 8px rgba(233, 0, 63, 0.8);
-
-  animation: livePulse 1.2s infinite;
-}
-
-@keyframes livePulse {
-
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.4;
-    transform: scale(0.75);
-  }
-
-}
-
-
-/* =========================================================
    LOADING
    ========================================================= */
 
@@ -692,15 +628,6 @@ body {
     padding: 5px 8px;
 
     font-size: 11px;
-  }
-
-  .live-badge {
-    left: 9px;
-    bottom: 54px;
-
-    padding: 4px 7px;
-
-    font-size: 9px;
   }
 
   .controls {
