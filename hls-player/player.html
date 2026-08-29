@@ -10,167 +10,53 @@
 
   <title>Deeprowss Player</title>
 
-  <!-- =====================================================
-       HLS.JS
-       ===================================================== -->
-
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-  <!-- =====================================================
-       PLAYER CSS
-       ===================================================== -->
-
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="player.css">
 </head>
 
 <body>
 
-  <!-- =====================================================
-       PLAYER
-       ===================================================== -->
+  <div class="player" id="player">
 
-  <div
-    id="player"
-    class="player"
-  >
-
-    <!-- ===================================================
-         VIDEO
-         =================================================== -->
-
+    <!-- VIDEO -->
     <video
       id="video"
       playsinline
-      webkit-playsinline
-      preload="auto"
+      preload="metadata"
       crossorigin="anonymous"
     ></video>
 
 
-    <!-- ===================================================
-         DARK VIDEO OVERLAY
-         =================================================== -->
-
-    <div
-      class="player-overlay"
-      aria-hidden="true"
-    ></div>
+    <!-- DARK OVERLAY -->
+    <div class="player-overlay" id="playerOverlay"></div>
 
 
-    <!-- ===================================================
-         DEEPROWSS WATERMARK
-         =================================================== -->
-
-    <div
-      class="watermark"
-      aria-hidden="true"
-    >
+    <!-- D WATERMARK -->
+    <div class="watermark">
       D
     </div>
 
-
-    <!-- ===================================================
-         LOADING SCREEN
-         =================================================== -->
-
+    <!-- LOADING -->
     <div
-      id="loadingScreen"
       class="loading-screen"
+      id="loadingScreen"
     >
-
-      <div
-        class="loader"
-        aria-hidden="true"
-      ></div>
-
-      <span>Loading...</span>
-
+      <div class="loader"></div>
+      <span>Loading stream...</span>
     </div>
 
 
-    <!-- ===================================================
-         TAP TO WATCH OVERLAY
-         =================================================== -->
-
+    <!-- ERROR -->
     <div
-      id="watchOverlay"
-      class="watch-overlay"
-    >
-
-      <button
-        id="watchButton"
-        class="watch-button"
-        type="button"
-      >
-
-        <span
-          class="watch-icon"
-          aria-hidden="true"
-        >
-          ▶
-        </span>
-
-        <span>
-          Tap to Watch
-        </span>
-
-      </button>
-
-    </div>
-
-
-    <!-- ===================================================
-         CENTER PLAY BUTTON
-         =================================================== -->
-
-    <button
-      id="centerPlay"
-      class="center-play"
-      type="button"
-      aria-label="Play"
-    >
-      ▶
-    </button>
-
-
-    <!-- ===================================================
-         QUALITY MENU
-         =================================================== -->
-
-    <div
-      id="qualityMenu"
-      class="quality-menu"
-      hidden
-    >
-
-      <div class="quality-title">
-        Quality
-      </div>
-
-      <!-- Quality options are added by JavaScript -->
-
-    </div>
-
-
-    <!-- ===================================================
-         ERROR SCREEN
-         =================================================== -->
-
-    <div
-      id="errorScreen"
       class="error-screen"
+      id="errorScreen"
       hidden
     >
-
-      <div
-        class="error-icon"
-        aria-hidden="true"
-      >
+      <div class="error-icon">
         ⚠
       </div>
 
       <strong>
-        Stream Error
+        Stream unavailable
       </strong>
 
       <span id="errorMessage">
@@ -178,58 +64,99 @@
       </span>
 
       <button
-        id="retryButton"
         type="button"
+        id="retryButton"
       >
-        Retry
+        ↻ Retry
+      </button>
+    </div>
+
+
+    <!-- TAP TO WATCH -->
+    <div
+      class="watch-overlay"
+      id="watchOverlay"
+    >
+
+      <button
+        type="button"
+        class="watch-button"
+        id="watchButton"
+      >
+        <span class="watch-icon">▶</span>
+        <span>Tap to Watch</span>
       </button>
 
     </div>
 
 
-    <!-- ===================================================
-         PLAYER CONTROLS
-         =================================================== -->
+    <!-- CENTER PLAY -->
+    <button
+      type="button"
+      class="center-play"
+      id="centerPlay"
+      aria-label="Play"
+    >
+      ▶
+    </button>
 
+
+    <!-- QUALITY MENU -->
     <div
-      id="controls"
-      class="controls"
+      class="quality-menu"
+      id="qualityMenu"
+      hidden
     >
 
-      <!-- PLAY / PAUSE -->
+      <div class="quality-title">
+        Quality
+      </div>
 
       <button
-        id="playButton"
-        class="control-button"
         type="button"
+        data-quality="-1"
+        class="quality-option active"
+      >
+        Auto
+      </button>
+
+    </div>
+
+
+    <!-- CONTROLS -->
+    <div
+      class="controls"
+      id="controls"
+    >
+
+      <button
+        type="button"
+        class="control-button"
+        id="playButton"
         aria-label="Play"
       >
         ▶
       </button>
 
 
-      <!-- MUTE -->
-
       <button
-        id="muteButton"
-        class="control-button"
         type="button"
+        class="control-button"
+        id="muteButton"
         aria-label="Mute"
       >
         🔊
       </button>
 
 
-      <!-- VOLUME -->
-
       <div class="volume-container">
 
         <input
-          id="volumeSlider"
           type="range"
+          id="volumeSlider"
           min="0"
           max="1"
-          step="0.01"
+          step="0.05"
           value="1"
           aria-label="Volume"
         >
@@ -237,29 +164,23 @@
       </div>
 
 
-      <!-- SPACER -->
-
       <div class="controls-spacer"></div>
 
 
-      <!-- QUALITY -->
-
       <button
-        id="qualityButton"
-        class="control-button"
         type="button"
-        aria-label="Video quality"
+        class="control-button quality-button"
+        id="qualityButton"
+        aria-label="Quality"
       >
         ⚙
       </button>
 
 
-      <!-- FULLSCREEN -->
-
       <button
-        id="fullscreenButton"
-        class="control-button"
         type="button"
+        class="control-button"
+        id="fullscreenButton"
         aria-label="Fullscreen"
       >
         ⛶
@@ -270,10 +191,10 @@
   </div>
 
 
-  <!-- =====================================================
-       PLAYER JAVASCRIPT
-       ===================================================== -->
+  <!-- HLS.JS -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
+  <!-- PLAYER SCRIPT -->
   <script src="player.js"></script>
 
 </body>
