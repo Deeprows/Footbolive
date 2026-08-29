@@ -1,1 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>Deeprowss Player</title>
+
+  <link rel="stylesheet" href="player.css">
+</head>
+
+<body>
+
+  <div class="player" id="player">
+
+    <!-- VIDEO -->
+    <video
+      id="video"
+      playsinline
+      preload="metadata"
+      crossorigin="anonymous"
+    ></video>
+
+
+    <!-- DARK OVERLAY -->
+    <div class="player-overlay" id="playerOverlay"></div>
+
+
+    <!-- D WATERMARK -->
+    <div class="watermark">
+      D
+    </div>
+
+
+    <!-- CHANNEL NAME -->
+    <div class="channel-name" id="channelName">
+      Deeprowss
+    </div>
+
+
+    <!-- LIVE BADGE -->
+    <div class="live-badge">
+      <span class="live-dot"></span>
+      LIVE
+    </div>
+
+
+    <!-- LOADING -->
+    <div
+      class="loading-screen"
+      id="loadingScreen"
+    >
+      <div class="loader"></div>
+      <span>Loading stream...</span>
+    </div>
+
+
+    <!-- ERROR -->
+    <div
+      class="error-screen"
+      id="errorScreen"
+      hidden
+    >
+      <div class="error-icon">
+        ⚠
+      </div>
+
+      <strong>
+        Stream unavailable
+      </strong>
+
+      <span id="errorMessage">
+        Unable to load this stream.
+      </span>
+
+      <button
+        type="button"
+        id="retryButton"
+      >
+        ↻ Retry
+      </button>
+    </div>
+
+
+    <!-- TAP TO WATCH -->
+    <div
+      class="watch-overlay"
+      id="watchOverlay"
+    >
+
+      <button
+        type="button"
+        class="watch-button"
+        id="watchButton"
+      >
+        <span class="watch-icon">▶</span>
+        <span>Tap to Watch</span>
+      </button>
+
+    </div>
+
+
+    <!-- CENTER PLAY -->
+    <button
+      type="button"
+      class="center-play"
+      id="centerPlay"
+      aria-label="Play"
+    >
+      ▶
+    </button>
+
+
+    <!-- QUALITY MENU -->
+    <div
+      class="quality-menu"
+      id="qualityMenu"
+      hidden
+    >
+
+      <div class="quality-title">
+        Quality
+      </div>
+
+      <button
+        type="button"
+        data-quality="-1"
+        class="quality-option active"
+      >
+        Auto
+      </button>
+
+    </div>
+
+
+    <!-- CONTROLS -->
+    <div
+      class="controls"
+      id="controls"
+    >
+
+      <button
+        type="button"
+        class="control-button"
+        id="playButton"
+        aria-label="Play"
+      >
+        ▶
+      </button>
+
+
+      <button
+        type="button"
+        class="control-button"
+        id="muteButton"
+        aria-label="Mute"
+      >
+        🔊
+      </button>
+
+
+      <div class="volume-container">
+
+        <input
+          type="range"
+          id="volumeSlider"
+          min="0"
+          max="1"
+          step="0.05"
+          value="1"
+          aria-label="Volume"
+        >
+
+      </div>
+
+
+      <div class="controls-spacer"></div>
+
+
+      <button
+        type="button"
+        class="control-button quality-button"
+        id="qualityButton"
+        aria-label="Quality"
+      >
+        ⚙
+      </button>
+
+
+      <button
+        type="button"
+        class="control-button"
+        id="fullscreenButton"
+        aria-label="Fullscreen"
+      >
+        ⛶
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- HLS.JS -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <!-- PLAYER SCRIPT -->
+  <script src="player.js"></script>
+
+</body>
+</html>
