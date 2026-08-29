@@ -1943,106 +1943,72 @@ function openAltScreen() {
   }
 
   if (!hasValidAltUrl(currentAltUrl)) {
-
     alert(
       "No alternative screen has been added for this screen yet."
     );
-
     return;
-
   }
 
   /*
    * DEFAULT HOMEPAGE SCREEN
-   *
-   * Use the SAME main iframe.
+   * Use the main iframe.
    */
   if (
     currentScreenType === "default" &&
     screenFrame
   ) {
 
-    screenFrame.src =
-      currentAltUrl;
+    screenFrame.src = currentAltUrl;
 
     if (mainScreenButton) {
-      mainScreenButton.classList.remove(
-        "active"
-      );
+      mainScreenButton.classList.remove("active");
     }
 
     if (altScreenButton) {
-      altScreenButton.classList.add(
-        "active"
-      );
+      altScreenButton.classList.add("active");
     }
 
     return;
-
   }
 
   /*
    * FOOTBALL MATCH
-   *
-   * Keep the existing alternative-screen
-   * overlay behavior.
+   * Use the alternative-screen overlay.
    */
+  if (currentScreenType === "match") {
 
-  const matchName =
-    currentMatchCard?.dataset.name ||
-    nowShowing?.textContent?.trim() ||
-    "Football Match";
+    const matchName =
+      currentMatchCard?.dataset.name ||
+      nowShowing?.textContent?.trim() ||
+      "Football Match";
 
-  if (altScreenMatch) {
-    altScreenMatch.textContent =
-      matchName;
-  }
+    if (altScreenMatch) {
+      altScreenMatch.textContent = matchName;
+    }
 
-  if (altScreenFrame) {
+    if (altScreenFrame) {
+      altScreenFrame.src = currentAltUrl;
+    }
 
-    altScreenFrame.src =
-      "about:blank";
+    if (altScreenOverlay) {
+      altScreenOverlay.hidden = false;
+    }
 
-    setTimeout(
-      function () {
-
-        if (
-          currentScreenType === "match" &&
-          hasValidAltUrl(currentAltUrl)
-        ) {
-          altScreenFrame.src =
-            currentAltUrl;
-        }
-
-      },
-      80
+    document.body.classList.add(
+      "alt-screen-open"
     );
 
+    if (mainScreenButton) {
+      mainScreenButton.classList.remove("active");
+    }
+
+    if (altScreenButton) {
+      altScreenButton.classList.add("active");
+    }
+
   }
 
-  if (altScreenOverlay) {
-    altScreenOverlay.hidden =
-      false;
-  }
-
-  document.body.classList.add(
-    "alt-screen-open"
-  );
-
-  if (mainScreenButton) {
-    mainScreenButton.classList.remove(
-      "active"
-    );
-  }
-
-  if (altScreenButton) {
-    altScreenButton.classList.add(
-      "active"
-    );
-  }
-
-}
-   
+}   
   /* =========================================================
      MAIN SCREEN BUTTON
      ========================================================= */
