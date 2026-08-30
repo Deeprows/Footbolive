@@ -6,7 +6,12 @@
   },
    {
     "name": "Chelsea 4 vs 3 Brighton",
-    "url": "https://cdn.videas.fr/v-medias/s5/hlsv1/6e/3c/6e3c982a-f5c9-4e52-9d8f-5cb172994b37/playlist.m3u8",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/6e/3c/6e3c982a-f5c9-4e52-9d8f-5cb172994b37/playlist.m3u8",
+    "date": "2026-08-30"
+  },
+  {
+    "name": "Real Madrid vs Malaga",
+    "url": "https://geo.dailymotion.com/player.html?video=xb2fimq",
     "date": "2026-08-30"
   },
   {
