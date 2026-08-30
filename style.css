@@ -1623,7 +1623,18 @@ body.deeprows-popup-open {
   right: 8px !important;
 }
 
-.disclaimer-button {
-  text-decoration: none;
+.disclaimer-menu-link {
+  text-align: center;
+  margin: 10px auto 15px;
+}
+
+.disclaimer-menu-link a {
   color: inherit;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.disclaimer-menu-link a:hover {
+  text-decoration: underline;
 }
