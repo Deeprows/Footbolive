@@ -1622,3 +1622,8 @@ body.deeprows-popup-open {
   bottom: 8px !important;
   right: 8px !important;
 }
+
+.disclaimer-button {
+  text-decoration: none;
+  color: inherit;
+}
