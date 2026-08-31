@@ -1,16 +1,25 @@
+/* =========================================================
+   RESET
+   ========================================================= */
+
 * {
   box-sizing: border-box;
 }
+
 
 html,
 body {
   width: 100%;
   height: 100%;
+
   margin: 0;
   padding: 0;
+
   background: #000;
+
   overflow: hidden;
 }
+
 
 body {
   font-family:
@@ -58,11 +67,13 @@ body {
   object-fit: contain;
 
   background: #000;
+
+  outline: none;
 }
 
 
 /* =========================================================
-   OVERLAY
+   DARK OVERLAY
    ========================================================= */
 
 .player-overlay {
@@ -83,7 +94,8 @@ body {
 
   opacity: 1;
 
-  transition: opacity 0.3s ease;
+  transition:
+    opacity 0.3s ease;
 }
 
 
@@ -122,6 +134,7 @@ body {
   pointer-events: none;
 }
 
+
 /* =========================================================
    LOADING
    ========================================================= */
@@ -142,14 +155,17 @@ body {
 
   gap: 12px;
 
-  background: rgba(0, 0, 0, 0.65);
+  background:
+    rgba(0, 0, 0, 0.65);
 
   font-size: 13px;
 }
 
+
 .loading-screen[hidden] {
   display: none;
 }
+
 
 .loader {
   width: 40px;
@@ -164,6 +180,7 @@ body {
   animation:
     spin 0.8s linear infinite;
 }
+
 
 @keyframes spin {
 
@@ -198,9 +215,12 @@ body {
     visibility 0.25s ease;
 }
 
+
 .watch-overlay.hidden {
   opacity: 0;
+
   visibility: hidden;
+
   pointer-events: none;
 }
 
@@ -227,6 +247,7 @@ body {
   color: #fff;
 
   font-size: 14px;
+
   font-weight: 800;
 
   cursor: pointer;
@@ -239,13 +260,16 @@ body {
     background 0.2s ease;
 }
 
+
 .watch-button:hover {
   background: #ff174f;
 }
 
+
 .watch-button:active {
   transform: scale(0.96);
 }
+
 
 .watch-icon {
   font-size: 18px;
@@ -262,7 +286,8 @@ body {
   left: 50%;
   top: 50%;
 
-  transform: translate(-50%, -50%);
+  transform:
+    translate(-50%, -50%);
 
   z-index: 15;
 
@@ -273,7 +298,8 @@ body {
 
   border-radius: 50%;
 
-  background: rgba(233, 0, 63, 0.92);
+  background:
+    rgba(233, 0, 63, 0.92);
 
   color: #fff;
 
@@ -295,10 +321,13 @@ body {
     transform 0.2s ease;
 }
 
+
 .player.controls-visible .center-play {
   opacity: 1;
+
   pointer-events: auto;
 }
+
 
 .center-play:hover {
   transform:
@@ -343,13 +372,17 @@ body {
     opacity 0.3s ease;
 }
 
+
 .player.controls-hidden .controls {
   opacity: 0;
+
   pointer-events: none;
 }
 
+
 .player.controls-hidden .center-play {
   opacity: 0;
+
   pointer-events: none;
 }
 
@@ -386,12 +419,52 @@ body {
     transform 0.15s ease;
 }
 
+
 .control-button:hover {
-  background: rgba(255, 255, 255, 0.13);
+  background:
+    rgba(255, 255, 255, 0.13);
 }
 
+
 .control-button:active {
-  transform: scale(0.9);
+  transform:
+    scale(0.9);
+}
+
+
+/* =========================================================
+   SEEK BUTTONS
+   ========================================================= */
+
+.seek-button {
+  font-size: 16px;
+
+  position: relative;
+}
+
+
+.seek-button::after {
+  content: "10";
+
+  position: absolute;
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  bottom: 7px;
+}
+
+
+#backwardButton::after {
+  left: 14px;
+}
+
+
+#forwardButton::after {
+  left: 14px;
 }
 
 
@@ -408,6 +481,7 @@ body {
 
   margin-left: 2px;
 }
+
 
 #volumeSlider {
   width: 100%;
@@ -443,6 +517,10 @@ body {
 
   min-width: 130px;
 
+  max-height: 70vh;
+
+  overflow-y: auto;
+
   padding: 7px;
 
   border:
@@ -450,31 +528,38 @@ body {
 
   border-radius: 10px;
 
-  background: var(--panel);
+  background:
+    var(--panel);
 
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.55);
 }
 
+
 .quality-menu[hidden] {
   display: none;
 }
 
+
 .quality-title {
-  padding: 7px 9px;
+  padding:
+    7px 9px;
 
   color: #999;
 
   font-size: 11px;
+
   font-weight: 700;
 
   text-transform: uppercase;
 }
 
+
 .quality-option {
   width: 100%;
 
-  padding: 9px 10px;
+  padding:
+    9px 10px;
 
   border: 0;
 
@@ -487,17 +572,22 @@ body {
   text-align: left;
 
   font-size: 12px;
+
   font-weight: 700;
 
   cursor: pointer;
 }
 
+
 .quality-option:hover {
-  background: rgba(233, 0, 63, 0.15);
+  background:
+    rgba(233, 0, 63, 0.15);
 }
 
+
 .quality-option.active {
-  background: #e9003f;
+  background:
+    #e9003f;
 }
 
 
@@ -529,17 +619,21 @@ body {
     rgba(0, 0, 0, 0.88);
 }
 
+
 .error-screen[hidden] {
   display: none;
 }
+
 
 .error-icon {
   font-size: 30px;
 }
 
+
 .error-screen strong {
   font-size: 15px;
 }
+
 
 .error-screen span {
   color: #aaa;
@@ -547,16 +641,19 @@ body {
   font-size: 12px;
 }
 
+
 #retryButton {
   margin-top: 8px;
 
-  padding: 9px 16px;
+  padding:
+    9px 16px;
 
   border: 0;
 
   border-radius: 8px;
 
-  background: #e9003f;
+  background:
+    #e9003f;
 
   color: #fff;
 
@@ -584,31 +681,14 @@ body {
     font-size: 18px;
   }
 
-  .channel-name {
-    top: 11px;
-    right: 9px;
-
-    max-width: 55%;
-
-    padding: 5px 8px;
-
-    font-size: 11px;
-  }
-
-  .live-badge {
-    left: 9px;
-    bottom: 54px;
-
-    padding: 4px 7px;
-
-    font-size: 9px;
-  }
 
   .controls {
     min-height: 46px;
 
-    padding: 4px 5px;
+    padding:
+      4px 5px;
   }
+
 
   .control-button {
     width: 34px;
@@ -617,9 +697,29 @@ body {
     font-size: 15px;
   }
 
+
+  .seek-button {
+    font-size: 14px;
+  }
+
+
+  .seek-button::after {
+    font-size: 6px;
+
+    bottom: 7px;
+  }
+
+
+  #backwardButton::after,
+  #forwardButton::after {
+    left: 13px;
+  }
+
+
   .volume-container {
     width: 55px;
   }
+
 
   .center-play {
     width: 52px;
@@ -628,11 +728,37 @@ body {
     font-size: 20px;
   }
 
+
   .quality-menu {
     right: 42px;
+
     bottom: 50px;
 
     min-width: 115px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .volume-container {
+    display: none;
+  }
+
+
+  .control-button {
+    width: 32px;
+    height: 32px;
+  }
+
+
+  .seek-button {
+    font-size: 13px;
   }
 
 }
