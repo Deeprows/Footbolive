@@ -17,7 +17,10 @@
 
   <div class="player" id="player">
 
-    <!-- VIDEO -->
+    <!-- =====================================================
+         VIDEO
+         ===================================================== -->
+
     <video
       id="video"
       playsinline
@@ -26,31 +29,51 @@
     ></video>
 
 
-    <!-- DARK OVERLAY -->
-    <div class="player-overlay" id="playerOverlay"></div>
+    <!-- =====================================================
+         DARK OVERLAY
+         ===================================================== -->
+
+    <div
+      class="player-overlay"
+      id="playerOverlay"
+    ></div>
 
 
-    <!-- D WATERMARK -->
+    <!-- =====================================================
+         D WATERMARK
+         ===================================================== -->
+
     <div class="watermark">
       D
     </div>
 
-    <!-- LOADING -->
+
+    <!-- =====================================================
+         LOADING
+         ===================================================== -->
+
     <div
       class="loading-screen"
       id="loadingScreen"
     >
       <div class="loader"></div>
-      <span>Loading stream...</span>
+
+      <span>
+        Loading stream...
+      </span>
     </div>
 
 
-    <!-- ERROR -->
+    <!-- =====================================================
+         ERROR
+         ===================================================== -->
+
     <div
       class="error-screen"
       id="errorScreen"
       hidden
     >
+
       <div class="error-icon">
         ⚠
       </div>
@@ -69,10 +92,14 @@
       >
         ↻ Retry
       </button>
+
     </div>
 
 
-    <!-- TAP TO WATCH -->
+    <!-- =====================================================
+         TAP TO WATCH
+         ===================================================== -->
+
     <div
       class="watch-overlay"
       id="watchOverlay"
@@ -83,14 +110,24 @@
         class="watch-button"
         id="watchButton"
       >
-        <span class="watch-icon">▶</span>
-        <span>Tap to Watch</span>
+
+        <span class="watch-icon">
+          ▶
+        </span>
+
+        <span>
+          Tap to Watch
+        </span>
+
       </button>
 
     </div>
 
 
-    <!-- CENTER PLAY -->
+    <!-- =====================================================
+         CENTER PLAY
+         ===================================================== -->
+
     <button
       type="button"
       class="center-play"
@@ -101,7 +138,10 @@
     </button>
 
 
-    <!-- QUALITY MENU -->
+    <!-- =====================================================
+         QUALITY MENU
+         ===================================================== -->
+
     <div
       class="quality-menu"
       id="qualityMenu"
@@ -123,11 +163,16 @@
     </div>
 
 
-    <!-- CONTROLS -->
+    <!-- =====================================================
+         CONTROLS
+         ===================================================== -->
+
     <div
       class="controls"
       id="controls"
     >
+
+      <!-- PLAY / PAUSE -->
 
       <button
         type="button"
@@ -139,6 +184,34 @@
       </button>
 
 
+      <!-- BACKWARD 10 SECONDS -->
+
+      <button
+        type="button"
+        class="control-button seek-button"
+        id="backwardButton"
+        aria-label="Back 10 seconds"
+        title="Back 10 seconds"
+      >
+        ⏪
+      </button>
+
+
+      <!-- FORWARD 10 SECONDS -->
+
+      <button
+        type="button"
+        class="control-button seek-button"
+        id="forwardButton"
+        aria-label="Forward 10 seconds"
+        title="Forward 10 seconds"
+      >
+        ⏩
+      </button>
+
+
+      <!-- MUTE -->
+
       <button
         type="button"
         class="control-button"
@@ -148,6 +221,8 @@
         🔊
       </button>
 
+
+      <!-- VOLUME -->
 
       <div class="volume-container">
 
@@ -164,24 +239,32 @@
       </div>
 
 
+      <!-- SPACER -->
+
       <div class="controls-spacer"></div>
 
+
+      <!-- QUALITY -->
 
       <button
         type="button"
         class="control-button quality-button"
         id="qualityButton"
         aria-label="Quality"
+        title="Quality"
       >
         ⚙
       </button>
 
+
+      <!-- FULLSCREEN -->
 
       <button
         type="button"
         class="control-button"
         id="fullscreenButton"
         aria-label="Fullscreen"
+        title="Fullscreen"
       >
         ⛶
       </button>
@@ -191,10 +274,17 @@
   </div>
 
 
-  <!-- HLS.JS -->
+  <!-- =======================================================
+       HLS.JS
+       ======================================================= -->
+
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-  <!-- PLAYER SCRIPT -->
+
+  <!-- =======================================================
+       PLAYER SCRIPT
+       ======================================================= -->
+
   <script src="player.js"></script>
 
 </body>
