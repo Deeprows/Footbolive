@@ -25,6 +25,12 @@
   const centerPlay =
     document.getElementById("centerPlay");
 
+  const backwardButton =
+    document.getElementById("backwardButton");
+
+  const forwardButton =
+    document.getElementById("forwardButton");
+
   const muteButton =
     document.getElementById("muteButton");
 
@@ -52,6 +58,14 @@
   const retryButton =
     document.getElementById("retryButton");
 
+
+  /* =========================================================
+     SETTINGS
+     ========================================================= */
+
+  const SEEK_SECONDS = 10;
+
+
   /* =========================================================
      STREAM URL
      ========================================================= */
@@ -59,7 +73,7 @@
   function getStreamUrl() {
 
     /*
-     * Your links will look like:
+     * Stream format:
      *
      * player.html#https://example.com/live/index.m3u8
      */
@@ -67,20 +81,27 @@
     const hash =
       window.location.hash.substring(1);
 
+
     if (!hash) {
       return "";
     }
 
+
     try {
+
       return decodeURIComponent(hash);
+
     } catch (error) {
+
       return hash;
+
     }
 
   }
 
+
   /* =========================================================
-     STREAM
+     HLS
      ========================================================= */
 
   let hls = null;
@@ -116,11 +137,15 @@
 
     hideLoading();
 
+
     if (errorMessage) {
+
       errorMessage.textContent =
         message ||
         "Unable to load this stream.";
+
     }
+
 
     if (errorScreen) {
       errorScreen.hidden = false;
@@ -146,8 +171,11 @@
 
     if (video.paused) {
 
-      playButton.textContent = "▶";
-      centerPlay.textContent = "▶";
+      playButton.textContent =
+        "▶";
+
+      centerPlay.textContent =
+        "▶";
 
       playButton.setAttribute(
         "aria-label",
@@ -156,8 +184,11 @@
 
     } else {
 
-      playButton.textContent = "❚❚";
-      centerPlay.textContent = "❚❚";
+      playButton.textContent =
+        "❚❚";
+
+      centerPlay.textContent =
+        "❚❚";
 
       playButton.setAttribute(
         "aria-label",
@@ -174,7 +205,12 @@
     if (video.paused) {
 
       video.play().catch(function () {
-        // Autoplay restrictions are normal.
+
+        /*
+         * Browser autoplay restrictions
+         * are normal.
+         */
+
       });
 
     } else {
@@ -192,20 +228,28 @@
 
   function updateMuteButton() {
 
-    if (!muteButton) {
-      return;
-    }
-
     if (
       video.muted ||
       video.volume === 0
     ) {
 
-      muteButton.textContent = "🔇";
+      muteButton.textContent =
+        "🔇";
+
+      muteButton.setAttribute(
+        "aria-label",
+        "Unmute"
+      );
 
     } else {
 
-      muteButton.textContent = "🔊";
+      muteButton.textContent =
+        "🔊";
+
+      muteButton.setAttribute(
+        "aria-label",
+        "Mute"
+      );
 
     }
 
@@ -229,15 +273,199 @@
   function updateVolume() {
 
     const value =
-      Number(volumeSlider.value);
+      Number(
+        volumeSlider.value
+      );
 
-    video.volume = value;
+
+    video.volume =
+      value;
+
 
     if (value > 0) {
       video.muted = false;
     }
 
+
     updateMuteButton();
+
+  }
+
+
+  /* =========================================================
+     SEEK / FORWARD / BACKWARD
+     ========================================================= */
+
+  function seekVideo(seconds) {
+
+    /*
+     * Make sure metadata exists.
+     */
+
+    if (
+      !video ||
+      video.readyState < 1
+    ) {
+
+      return;
+
+    }
+
+
+    /*
+     * -------------------------------------------------------
+     * NORMAL VIDEO / VOD
+     * -------------------------------------------------------
+     */
+
+    if (
+      Number.isFinite(video.duration)
+    ) {
+
+      const currentTime =
+        video.currentTime;
+
+      const targetTime =
+        currentTime + seconds;
+
+
+      const safeTime =
+        Math.max(
+          0,
+          Math.min(
+            targetTime,
+            video.duration
+          )
+        );
+
+
+      try {
+
+        video.currentTime =
+          safeTime;
+
+      } catch (error) {
+
+        console.log(
+          "Seek error:",
+          error
+        );
+
+      }
+
+
+      return;
+
+    }
+
+
+    /*
+     * -------------------------------------------------------
+     * LIVE HLS / DVR
+     * -------------------------------------------------------
+     *
+     * Live streams can have a seekable window.
+     *
+     * Example:
+     *
+     *  start = 1000 seconds
+     *  end   = 1060 seconds
+     *
+     * We keep the seek inside that window.
+     */
+
+    if (
+      video.seekable &&
+      video.seekable.length > 0
+    ) {
+
+      try {
+
+        const lastRange =
+          video.seekable.length - 1;
+
+
+        const start =
+          video.seekable.start(
+            lastRange
+          );
+
+
+        const end =
+          video.seekable.end(
+            lastRange
+          );
+
+
+        const current =
+          video.currentTime;
+
+
+        const target =
+          current + seconds;
+
+
+        const safeTarget =
+          Math.max(
+            start,
+            Math.min(
+              target,
+              end
+            )
+          );
+
+
+        video.currentTime =
+          safeTarget;
+
+
+      } catch (error) {
+
+        console.log(
+          "Live seek error:",
+          error
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    /*
+     * -------------------------------------------------------
+     * NON-SEEKABLE LIVE STREAM
+     * -------------------------------------------------------
+     *
+     * There is no DVR window.
+     */
+
+    console.log(
+      "This live stream does not provide a seekable window."
+    );
+
+  }
+
+
+  function seekBackward() {
+
+    seekVideo(
+      -SEEK_SECONDS
+    );
+
+    showControls();
+
+  }
+
+
+  function seekForward() {
+
+    seekVideo(
+      SEEK_SECONDS
+    );
+
+    showControls();
 
   }
 
@@ -250,9 +478,13 @@
 
     try {
 
-      if (!document.fullscreenElement) {
+      if (
+        !document.fullscreenElement
+      ) {
 
-        if (player.requestFullscreen) {
+        if (
+          player.requestFullscreen
+        ) {
 
           await player.requestFullscreen();
 
@@ -283,7 +515,7 @@
 
 
   /* =========================================================
-     QUALITY
+     QUALITY MENU
      ========================================================= */
 
   function clearQualityMenu() {
@@ -291,6 +523,7 @@
     if (!qualityMenu) {
       return;
     }
+
 
     qualityMenu
       .querySelectorAll(
@@ -311,18 +544,26 @@
   ) {
 
     const button =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
-    button.type = "button";
+
+    button.type =
+      "button";
+
 
     button.className =
       "quality-option";
 
+
     button.dataset.quality =
       String(index);
 
+
     button.textContent =
       label;
+
 
     qualityMenu.appendChild(
       button
@@ -337,7 +578,9 @@
       return;
     }
 
+
     clearQualityMenu();
+
 
     addQualityButton(
       -1,
@@ -357,15 +600,21 @@
 
 
     hls.levels.forEach(
-      function (level, index) {
+      function (
+        level,
+        index
+      ) {
 
         const height =
           level.height;
 
+
         let label =
           height
             ? height + "p"
-            : "Quality " + (index + 1);
+            : "Quality " +
+              (index + 1);
+
 
         addQualityButton(
           index,
@@ -391,6 +640,7 @@
                 button.dataset.quality
               );
 
+
             setQuality(
               quality
             );
@@ -410,6 +660,7 @@
     currentQuality =
       quality;
 
+
     if (hls) {
 
       hls.currentLevel =
@@ -422,18 +673,22 @@
       .querySelectorAll(
         ".quality-option"
       )
-      .forEach(function (button) {
+      .forEach(
+        function (button) {
 
-        button.classList.toggle(
-          "active",
-          Number(
-            button.dataset.quality
-          ) === quality
-        );
+          button.classList.toggle(
+            "active",
+            Number(
+              button.dataset.quality
+            ) === quality
+          );
 
-      });
+        }
+      );
 
-    qualityMenu.hidden = true;
+
+    qualityMenu.hidden =
+      true;
 
   }
 
@@ -442,7 +697,8 @@
      CONTROLS AUTO HIDE
      ========================================================= */
 
-  let hideControlsTimer = null;
+  let hideControlsTimer =
+    null;
 
 
   function showControls() {
@@ -450,6 +706,7 @@
     player.classList.add(
       "controls-visible"
     );
+
 
     player.classList.remove(
       "controls-hidden"
@@ -471,6 +728,7 @@
               "controls-hidden"
             );
 
+
             player.classList.remove(
               "controls-visible"
             );
@@ -490,9 +748,11 @@
       hideControlsTimer
     );
 
+
     player.classList.add(
       "controls-visible"
     );
+
 
     player.classList.remove(
       "controls-hidden"
@@ -502,7 +762,7 @@
 
 
   /* =========================================================
-     LOAD STREAM
+     DESTROY HLS
      ========================================================= */
 
   function destroyHls() {
@@ -510,10 +770,17 @@
     if (hls) {
 
       try {
+
         hls.destroy();
+
       } catch (error) {
-        console.log(error);
+
+        console.log(
+          error
+        );
+
       }
+
 
       hls = null;
 
@@ -522,10 +789,15 @@
   }
 
 
+  /* =========================================================
+     LOAD STREAM
+     ========================================================= */
+
   function loadStream() {
 
     const streamUrl =
       getStreamUrl();
+
 
     if (!streamUrl) {
 
@@ -547,9 +819,9 @@
 
 
     /*
-     * Native HLS
-     *
-     * Safari / iOS / some browsers.
+     * =======================================================
+     * NATIVE HLS
+     * =======================================================
      */
 
     if (
@@ -560,6 +832,7 @@
 
       video.src =
         streamUrl;
+
 
       video.addEventListener(
         "loadedmetadata",
@@ -595,7 +868,9 @@
 
 
     /*
+     * =======================================================
      * HLS.JS
+     * =======================================================
      */
 
     if (
@@ -606,15 +881,35 @@
       hls =
         new Hls({
 
-          enableWorker: true,
+          enableWorker:
+            true,
 
-          lowLatencyMode: true,
+          lowLatencyMode:
+            true,
 
-          backBufferLength: 30,
+          /*
+           * Keep enough buffer
+           * for short backward seeking.
+           */
 
-          liveSyncDurationCount: 3,
+          backBufferLength:
+            30,
 
-          maxBufferLength: 30
+          liveSyncDurationCount:
+            3,
+
+          maxBufferLength:
+            30,
+
+          /*
+           * Allow the player
+           * to maintain a seekable
+           * DVR window where
+           * the stream provides one.
+           */
+
+          maxMaxBufferLength:
+            60
 
         });
 
@@ -622,6 +917,7 @@
       hls.loadSource(
         streamUrl
       );
+
 
       hls.attachMedia(
         video
@@ -634,7 +930,9 @@
 
           hideLoading();
 
+
           buildQualityMenu();
+
 
           /*
            * Start with Auto quality.
@@ -665,6 +963,7 @@
                 '[data-quality="-1"]'
               );
 
+
             if (autoButton) {
 
               qualityMenu
@@ -680,6 +979,7 @@
 
                   }
                 );
+
 
               autoButton.classList.add(
                 "active"
@@ -711,14 +1011,14 @@
           }
 
 
+          /*
+           * NETWORK ERROR
+           */
+
           if (
             data.type ===
             Hls.ErrorTypes.NETWORK_ERROR
           ) {
-
-            /*
-             * Try reconnecting first.
-             */
 
             try {
 
@@ -728,12 +1028,18 @@
 
             } catch (error) {
 
-              console.log(error);
+              console.log(
+                error
+              );
 
             }
 
           }
 
+
+          /*
+           * MEDIA ERROR
+           */
 
           if (
             data.type ===
@@ -748,7 +1054,9 @@
 
             } catch (error) {
 
-              console.log(error);
+              console.log(
+                error
+              );
 
             }
 
@@ -785,9 +1093,11 @@
 
     showLoading();
 
+
     clearTimeout(
       retryTimer
     );
+
 
     retryTimer =
       setTimeout(
@@ -808,7 +1118,9 @@
       "hidden"
     );
 
+
     showControlsForever();
+
 
     video.play().catch(
       function () {
@@ -842,6 +1154,8 @@
   );
 
 
+  /* PLAY */
+
   playButton.addEventListener(
     "click",
     function (event) {
@@ -853,6 +1167,8 @@
     }
   );
 
+
+  /* CENTER PLAY */
 
   centerPlay.addEventListener(
     "click",
@@ -866,6 +1182,42 @@
   );
 
 
+  /* =========================================================
+     BACKWARD
+     ========================================================= */
+
+  backwardButton.addEventListener(
+    "click",
+    function (event) {
+
+      event.stopPropagation();
+
+      seekBackward();
+
+    }
+  );
+
+
+  /* =========================================================
+     FORWARD
+     ========================================================= */
+
+  forwardButton.addEventListener(
+    "click",
+    function (event) {
+
+      event.stopPropagation();
+
+      seekForward();
+
+    }
+  );
+
+
+  /* =========================================================
+     MUTE
+     ========================================================= */
+
   muteButton.addEventListener(
     "click",
     function (event) {
@@ -878,11 +1230,19 @@
   );
 
 
+  /* =========================================================
+     VOLUME
+     ========================================================= */
+
   volumeSlider.addEventListener(
     "input",
     updateVolume
   );
 
+
+  /* =========================================================
+     FULLSCREEN
+     ========================================================= */
 
   fullscreenButton.addEventListener(
     "click",
@@ -896,20 +1256,30 @@
   );
 
 
+  /* =========================================================
+     QUALITY
+     ========================================================= */
+
   qualityButton.addEventListener(
     "click",
     function (event) {
 
       event.stopPropagation();
 
+
       qualityMenu.hidden =
         !qualityMenu.hidden;
+
 
       showControlsForever();
 
     }
   );
 
+
+  /* =========================================================
+     RETRY
+     ========================================================= */
 
   retryButton.addEventListener(
     "click",
@@ -975,6 +1345,10 @@
   );
 
 
+  /* =========================================================
+     VIDEO CLICK
+     ========================================================= */
+
   video.addEventListener(
     "click",
     function () {
@@ -988,7 +1362,7 @@
 
 
   /* =========================================================
-     PLAYER TOUCH / MOUSE
+     PLAYER MOUSE
      ========================================================= */
 
   player.addEventListener(
@@ -1000,6 +1374,10 @@
     }
   );
 
+
+  /* =========================================================
+     PLAYER TOUCH
+     ========================================================= */
 
   player.addEventListener(
     "touchstart",
@@ -1015,7 +1393,98 @@
 
 
   /* =========================================================
-     CLOSE QUALITY WHEN CLICKING OUTSIDE
+     KEYBOARD SHORTCUTS
+     ========================================================= */
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      /*
+       * Do not interfere with
+       * text inputs.
+       */
+
+      if (
+        event.target.tagName ===
+          "INPUT" ||
+        event.target.tagName ===
+          "TEXTAREA"
+      ) {
+
+        return;
+
+      }
+
+
+      switch (event.key) {
+
+        /*
+         * Space
+         */
+
+        case " ":
+
+          event.preventDefault();
+
+          togglePlay();
+
+          showControls();
+
+          break;
+
+
+        /*
+         * Left arrow
+         *
+         * Back 10 seconds
+         */
+
+        case "ArrowLeft":
+
+          event.preventDefault();
+
+          seekBackward();
+
+          break;
+
+
+        /*
+         * Right arrow
+         *
+         * Forward 10 seconds
+         */
+
+        case "ArrowRight":
+
+          event.preventDefault();
+
+          seekForward();
+
+          break;
+
+
+        /*
+         * M
+         *
+         * Mute
+         */
+
+        case "m":
+        case "M":
+
+          toggleMute();
+
+          break;
+
+      }
+
+    }
+  );
+
+
+  /* =========================================================
+     CLOSE QUALITY MENU
      ========================================================= */
 
   document.addEventListener(
@@ -1027,7 +1496,7 @@
           event.target
         ) &&
         event.target !==
-        qualityButton
+          qualityButton
       ) {
 
         qualityMenu.hidden =
@@ -1039,20 +1508,23 @@
   );
 
 
- /* =========================================================
-INITIALIZATION
-========================================================= */
+  /* =========================================================
+     INITIALIZATION
+     ========================================================= */
 
-video.volume = 1;
+  video.volume =
+    1;
 
-volumeSlider.value = 1;
 
-updateMuteButton();
+  volumeSlider.value =
+    1;
 
-updatePlayButton();
 
-loadStream();
+  updateMuteButton();
 
+  updatePlayButton();
+
+  loadStream();
 
 
 })();
