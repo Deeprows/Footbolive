@@ -1652,88 +1652,522 @@ body.deeprows-popup-open {
   font-size: clamp(13px, 3.5vw, 16px); /* shrink on small screens instead of clipping */
 }
 
-/* =========================
-   LIGHT / DARK THEME
-========================= */
+/* =========================================================
+   DEEPROWSS LIGHT / DARK THEME
+   Dark is default
+========================================================= */
 
-/* Smooth theme transition */
+/* Theme transition */
 body,
-header,
-nav,
-main,
-section,
-footer,
-.content-card,
-.movie-card,
+.site-header,
+.screen-section,
+.app-menu,
+.app-button,
 .match-card,
 .highlight-card,
-.tv-card,
-button,
-input {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+.tv-channel,
+.movie-card,
+.movie-genre,
+.movie-search input,
+.screen-bottom,
+.footer,
+.theme-toggle {
+  transition:
+    background-color .25s ease,
+    color .25s ease,
+    border-color .25s ease,
+    box-shadow .25s ease;
 }
 
-/* Theme toggle button */
+
+/* =========================================================
+   THEME BUTTON
+========================================================= */
+
 .theme-toggle {
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 50%;
-  background: #222;
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
+  width: 40px;
+  height: 40px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: var(--surface);
+  color: #ffffff;
+
+  border: 1px solid var(--line);
+
+  font-size: 18px;
+
+  cursor: pointer;
 }
 
-/* LIGHT MODE */
+
+/* =========================================================
+   LIGHT MODE VARIABLES
+========================================================= */
+
 body.light-mode {
-  background: #ffffff !important;
-  color: #111111 !important;
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f1f3f5;
+  --surface-3: #e7e9ed;
+
+  --line: rgba(20, 25, 35, .12);
+
+  --text: #15171c;
+  --muted: #68707d;
+
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      rgba(255, 23, 68, .08),
+      transparent 35%
+    ),
+    #f5f6f8;
+
+  color: var(--text);
 }
 
-body.light-mode header,
-body.light-mode nav,
-body.light-mode footer {
-  background: #ffffff !important;
-  color: #111111 !important;
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+body.light-mode .site-header {
+  background: rgba(255, 255, 255, .94);
+  border-color: var(--line);
 }
 
-/* Cards */
-body.light-mode .content-card,
-body.light-mode .movie-card,
-body.light-mode .match-card,
-body.light-mode .highlight-card,
-body.light-mode .tv-card {
-  background: #f5f5f5 !important;
-  color: #111111 !important;
-  border-color: #dddddd !important;
+body.light-mode .main-nav a {
+  color: #68707d;
 }
 
-/* General text */
-body.light-mode h1,
-body.light-mode h2,
-body.light-mode h3,
-body.light-mode h4,
-body.light-mode p,
-body.light-mode span,
-body.light-mode label {
-  color: #111111;
+body.light-mode .main-nav a:hover {
+  color: #15171c;
+  background: #f0f1f3;
 }
 
-/* Inputs */
-body.light-mode input,
-body.light-mode textarea,
-body.light-mode select {
+body.light-mode .main-nav a.active {
+  color: #d90036;
+  background: rgba(255, 23, 68, .10);
+}
+
+body.light-mode .menu-toggle {
+  background: #f0f1f3;
+  color: #15171c;
+}
+
+
+/* =========================================================
+   PLAYER AREA
+========================================================= */
+
+body.light-mode .screen-section {
+  background: var(--bg);
+}
+
+body.light-mode .screen-bottom {
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #eef0f3
+  );
+}
+
+body.light-mode #nowShowing {
+  color: #15171c;
+}
+
+body.light-mode .now-showing span {
+  color: #68707d;
+}
+
+body.light-mode .fullscreen-button {
+  background: #eef0f3;
+  color: #15171c;
+
+  border-color: rgba(20, 25, 35, .12);
+}
+
+
+/* Keep video area dark */
+body.light-mode .screen-player {
+  background: #000000;
+}
+
+
+/* =========================================================
+   APP CATEGORY BUTTONS
+========================================================= */
+
+body.light-mode .app-menu {
+  background:
+    linear-gradient(
+      to bottom,
+      var(--bg) 0%,
+      var(--bg) 88%,
+      rgba(245, 246, 248, 0) 100%
+    );
+}
+
+body.light-mode .app-button {
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f0f1f3
+    );
+
+  color: #68707d;
+
+  border-color: var(--line);
+}
+
+body.light-mode .app-button:hover {
+  color: #15171c;
+  border-color: rgba(255, 23, 68, .30);
+}
+
+body.light-mode .app-button.active {
+  color: #d90036;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 23, 68, .12),
+      #ffffff
+    );
+
+  border-color: rgba(255, 23, 68, .40);
+}
+
+
+/* =========================================================
+   MAIN HEADINGS
+========================================================= */
+
+body.light-mode .content-heading h1,
+body.light-mode .movie-heading h1,
+body.light-mode .tv-category-heading h2 {
+  color: #15171c;
+}
+
+body.light-mode .content-count {
+  background: #e9ebee;
+  color: #68707d;
+}
+
+
+/* =========================================================
+   MATCH CARDS
+========================================================= */
+
+body.light-mode .match-card {
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f0f1f3
+    );
+
+  color: #15171c;
+
+  border-color: rgba(255, 23, 68, .22);
+}
+
+body.light-mode .match-card.is-upcoming {
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f0f1f3
+    );
+}
+
+body.light-mode .match-card.is-live {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 23, 68, .10),
+      #ffffff
+    );
+}
+
+body.light-mode .match-card.is-ended {
+  background: #eceef1;
+}
+
+body.light-mode .match-teams {
+  color: #15171c;
+}
+
+body.light-mode .match-card.is-ended .match-teams {
+  color: #707783;
+}
+
+body.light-mode .match-date {
+  color: #68707d;
+}
+
+body.light-mode .match-time {
+  color: #15171c;
+}
+
+
+/* =========================================================
+   HIGHLIGHTS
+========================================================= */
+
+body.light-mode .highlight-card {
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f0f1f3
+    );
+
+  color: #15171c;
+
+  border-color: rgba(255, 23, 68, .22);
+}
+
+body.light-mode .highlight-card.active {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 23, 68, .10),
+      #ffffff
+    );
+}
+
+body.light-mode .highlight-card strong,
+body.light-mode .highlight-card .match-teams {
+  color: #15171c;
+}
+
+body.light-mode .highlight-card .match-date {
+  color: #68707d;
+}
+
+body.light-mode .highlight-thumbnail {
+  background:
+    linear-gradient(
+      145deg,
+      #f0f1f3,
+      #e5e8ec
+    );
+
+  border-color: rgba(20, 25, 35, .10);
+}
+
+
+/* =========================================================
+   TV CHANNELS
+========================================================= */
+
+body.light-mode .tv-channel {
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f0f1f3
+    );
+
+  color: #15171c;
+
+  border-color: rgba(255, 23, 68, .22);
+}
+
+body.light-mode .tv-channel.active {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 23, 68, .10),
+      #ffffff
+    );
+}
+
+body.light-mode .tv-channel-info strong {
+  color: #15171c;
+}
+
+body.light-mode .tv-channel-info small {
+  color: #68707d;
+}
+
+body.light-mode .tv-channel-icon {
+  background:
+    linear-gradient(
+      145deg,
+      #f0f1f3,
+      #e5e8ec
+    );
+
+  border-color: rgba(20, 25, 35, .10);
+}
+
+
+/* =========================================================
+   MOVIES
+========================================================= */
+
+body.light-mode .movie-card {
+  color: #ffffff;
+
+  border-color: rgba(20, 25, 35, .10);
+}
+
+
+/*
+ Movie cards have poster images.
+ Keep their text WHITE because the background
+ is an image with a dark overlay.
+*/
+
+body.light-mode .movie-title {
+  color: #ffffff;
+}
+
+body.light-mode .movie-rating {
+  color: #e1e4e8;
+}
+
+
+/* =========================================================
+   MOVIE GENRES
+========================================================= */
+
+body.light-mode .movie-genre {
   background: #ffffff;
-  color: #111111;
-  border-color: #cccccc;
+
+  color: #68707d;
+
+  border-color: rgba(20, 25, 35, .12);
 }
 
-/* Theme button in light mode */
+body.light-mode .movie-genre:hover {
+  background: #f0f1f3;
+
+  color: #15171c;
+
+  border-color: rgba(255, 23, 68, .45);
+}
+
+body.light-mode .movie-genre.active {
+  background: rgba(255, 23, 68, .10);
+
+  color: #d90036;
+
+  border-color: rgba(255, 23, 68, .60);
+}
+
+
+/* =========================================================
+   MOVIE SEARCH
+========================================================= */
+
+body.light-mode .movie-search input {
+  background: #ffffff;
+
+  color: #15171c;
+
+  border-color: rgba(20, 25, 35, .14);
+}
+
+body.light-mode .movie-search input::placeholder {
+  color: #8a919c;
+}
+
+body.light-mode .movie-search input:focus {
+  background: #ffffff;
+
+  border-color: rgba(255, 23, 68, .70);
+}
+
+body.light-mode .movie-search-icon {
+  color: #68707d;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+========================================================= */
+
+body.light-mode .empty-state {
+  color: #68707d;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+body.light-mode .footer {
+  background: #ffffff;
+
+  border-color: var(--line);
+}
+
+body.light-mode .footer-wrap {
+  color: #68707d;
+}
+
+body.light-mode .footer strong {
+  color: #15171c;
+}
+
+
+/* =========================================================
+   DOWNLOAD / HEADER BUTTONS
+========================================================= */
+
+body.light-mode .header-action-button {
+  background: #ffffff;
+
+  color: #15171c;
+
+  border-color: #d9dde3;
+}
+
+body.light-mode .header-action-button:hover {
+  background: #f2f3f5;
+
+  border-color: #e9003f;
+}
+
+
+/* =========================================================
+   POPUP
+   Keep popup dark for better contrast
+========================================================= */
+
+body.light-mode .deeprows-app-popup-card {
+  background: #10141b;
+  color: #ffffff;
+}
+
+body.light-mode .deeprows-app-popup-card h2 {
+  color: #ffffff;
+}
+
+body.light-mode .deeprows-app-popup-card p {
+  color: #b9c2bc;
+}
+
+
+/* =========================================================
+   THEME BUTTON
+========================================================= */
+
 body.light-mode .theme-toggle {
-  background: #eeeeee;
-  color: #111111;
+  background: #ffffff;
+
+  color: #15171c;
+
+  border-color: #d9dde3;
 }
