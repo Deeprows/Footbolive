@@ -179,85 +179,375 @@ if (movieSearchInput) {
 
 /* =========================================================
    SITE-WIDE POPUNDER
+   Deeprowss controlled popunder system
    ========================================================= */
 
 (function () {
+  "use strict";
 
-  const popunderScript =
+  /* ==============================
+     SETTINGS
+     ============================== */
+
+  // Wait 30 seconds after the page opens
+  const INITIAL_DELAY = 30 * 1000;
+
+  // Allow another popunder after 3 minutes
+  const POPUNDER_COOLDOWN = 3 * 60 * 1000;
+
+  // EffectiveCPM popunder script
+  const POPUNDER_SCRIPT =
     "https://pl28059580.effectivecpmnetwork.com/e6/2f/e8/e62fe8e048d86c5fd05ea7118ec22e8d.js";
 
-  /*
-   * Check whether the Download App / Continue in Browser
-   * popup is currently visible.
-   */
-  function isAppPopupVisible() {
 
-    const popup =
-      document.getElementById("deeprowsAppPopup");
+  /* ==============================
+     STORAGE
+     ============================== */
 
-    if (!popup) {
-      return false;
+  const STORAGE_KEY =
+    "deeprowss_popunder_last_shown";
+
+  let popunderReady = false;
+  let popunderLoading = false;
+  let interactionInProgress = false;
+
+
+  /* ==============================
+     CHECK COOLDOWN
+     ============================== */
+
+  function canShowPopunder() {
+
+    const lastShown =
+      Number(
+        localStorage.getItem(
+          STORAGE_KEY
+        )
+      );
+
+    if (!lastShown) {
+      return true;
     }
 
-    return !popup.hidden &&
-           window.getComputedStyle(popup).display !== "none";
+    return (
+      Date.now() - lastShown >=
+      POPUNDER_COOLDOWN
+    );
 
   }
 
-  /*
-   * Load the popunder only when the app popup
-   * is no longer visible.
-   */
+
+  /* ==============================
+     SAVE POPUNDER TIME
+     ============================== */
+
+  function markPopunderShown() {
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      Date.now().toString()
+    );
+
+  }
+
+
+  /* ==============================
+     LOAD POPUNDER SCRIPT
+     ============================== */
+
   function loadPopunder() {
 
-    if (isAppPopupVisible()) {
-
-      /*
-       * Check again after 1 second.
-       */
-      setTimeout(
-        loadPopunder,
-        1000
-      );
-
-      return;
-    }
-
-    /*
-     * Don't load the script more than once.
-     */
     if (
-      document.querySelector(
-        'script[data-deeprows-popunder="true"]'
-      )
+      popunderLoading ||
+      popunderReady ||
+      !canShowPopunder()
     ) {
       return;
     }
+
+    popunderLoading = true;
 
     const script =
       document.createElement("script");
 
     script.src =
-      popunderScript;
+      POPUNDER_SCRIPT;
 
     script.async = true;
 
-    script.setAttribute(
-      "data-deeprows-popunder",
-      "true"
-    );
+    script.onload =
+      function () {
 
-    document.body.appendChild(script);
+        popunderReady = true;
+        popunderLoading = false;
+
+        markPopunderShown();
+
+      };
+
+    script.onerror =
+      function () {
+
+        popunderLoading = false;
+
+      };
+
+    document.head.appendChild(
+      script
+    );
 
   }
 
-  /*
-   * Start checking.
-   */
-  loadPopunder();
+
+  /* ==============================
+     ENABLE AFTER 30 SECONDS
+     ============================== */
+
+  setTimeout(
+    function () {
+
+      popunderReady = true;
+
+    },
+    INITIAL_DELAY
+  );
+
+
+  /* ==============================
+     HANDLE USER INTERACTION
+     ============================== */
+
+  function handleInteraction(
+    event
+  ) {
+
+    if (
+      interactionInProgress ||
+      !popunderReady
+    ) {
+      return;
+    }
+
+    if (
+      !canShowPopunder()
+    ) {
+      return;
+    }
+
+    interactionInProgress = true;
+
+    loadPopunder();
+
+
+    /*
+     * Prevent multiple triggers
+     * from the same interaction.
+     */
+
+    setTimeout(
+      function () {
+
+        interactionInProgress =
+          false;
+
+      },
+      1000
+    );
+
+  }
+
+
+  /* ==============================
+     GENERAL USER INTERACTIONS
+     ============================== */
+
+  document.addEventListener(
+    "click",
+    handleInteraction,
+    true
+  );
+
+
+  document.addEventListener(
+    "touchstart",
+    handleInteraction,
+    {
+      capture: true,
+      passive: true
+    }
+  );
+
+
+  /* ==============================
+     IFRAME SCREEN INTERACTION
+     ============================== */
+
+  function setupIframeTrigger() {
+
+    const iframeWrap =
+      document.getElementById(
+        "screenFrameWrap"
+      );
+
+    const iframe =
+      document.getElementById(
+        "screenFrame"
+      );
+
+    if (
+      !iframeWrap ||
+      !iframe
+    ) {
+      return;
+    }
+
+
+    /*
+     * Create invisible interaction layer.
+     *
+     * This captures the first touch
+     * on the iframe screen area.
+     */
+
+    const overlay =
+      document.createElement("div");
+
+    overlay.id =
+      "popunderIframeOverlay";
+
+    overlay.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    Object.assign(
+      overlay.style,
+      {
+
+        position: "absolute",
+
+        inset: "0",
+
+        zIndex: "999",
+
+        background:
+          "transparent",
+
+        cursor: "pointer",
+
+        touchAction:
+          "manipulation"
+
+      }
+    );
+
+
+    /*
+     * Ensure iframe wrapper
+     * can position the overlay.
+     */
+
+    const wrapStyle =
+      window.getComputedStyle(
+        iframeWrap
+      );
+
+    if (
+      wrapStyle.position ===
+      "static"
+    ) {
+
+      iframeWrap.style.position =
+        "relative";
+
+    }
+
+
+    iframeWrap.appendChild(
+      overlay
+    );
+
+
+    function handleIframeInteraction(
+      event
+    ) {
+
+      /*
+       * Only trigger after
+       * the 30-second delay.
+       */
+
+      handleInteraction(
+        event
+      );
+
+
+      /*
+       * Remove overlay immediately
+       * after the first interaction.
+       *
+       * Future touches go directly
+       * to the iframe.
+       */
+
+      overlay.remove();
+
+    }
+
+
+    overlay.addEventListener(
+      "pointerdown",
+      handleIframeInteraction,
+      {
+        once: true,
+        passive: true
+      }
+    );
+
+
+    overlay.addEventListener(
+      "touchstart",
+      handleIframeInteraction,
+      {
+        once: true,
+        passive: true
+      }
+    );
+
+
+    overlay.addEventListener(
+      "click",
+      handleIframeInteraction,
+      {
+        once: true
+      }
+    );
+
+  }
+
+
+  /* ==============================
+     START SYSTEM
+     ============================== */
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      setupIframeTrigger
+    );
+
+  } else {
+
+    setupIframeTrigger();
+
+  }
 
 })();
-
     /* =========================================================
    PUSH NOTIFICATIONS
    ========================================================= */
