@@ -189,11 +189,13 @@ if (movieSearchInput) {
      SETTINGS
      ============================== */
 
-  // Wait 30 seconds after the page opens
-  const INITIAL_DELAY = 30 * 1000;
+  // Do not trigger anything during
+  // the first 10 seconds.
+  const INITIAL_DELAY = 10 * 1000;
 
-  // Allow another popunder after 3 minutes
-  const POPUNDER_COOLDOWN = 3 * 60 * 1000;
+  // Allow another popunder after
+  // 30 seconds.
+  const POPUNDER_COOLDOWN = 30 * 1000;
 
   // EffectiveCPM popunder script
   const POPUNDER_SCRIPT =
@@ -207,13 +209,12 @@ if (movieSearchInput) {
   const STORAGE_KEY =
     "deeprowss_popunder_last_shown";
 
-  let popunderReady = false;
+  let popunderEnabled = false;
   let popunderLoading = false;
-  let interactionInProgress = false;
 
 
   /* ==============================
-     CHECK COOLDOWN
+     CHECK IF COOLDOWN HAS ENDED
      ============================== */
 
   function canShowPopunder() {
@@ -225,6 +226,7 @@ if (movieSearchInput) {
         )
       );
 
+    // No previous popunder
     if (!lastShown) {
       return true;
     }
@@ -252,20 +254,38 @@ if (movieSearchInput) {
 
 
   /* ==============================
-     LOAD POPUNDER SCRIPT
+     TRIGGER POPUNDER
      ============================== */
 
-  function loadPopunder() {
+  function triggerPopunder() {
 
-    if (
-      popunderLoading ||
-      popunderReady ||
-      !canShowPopunder()
-    ) {
+    // Popunder is not yet enabled
+    if (!popunderEnabled) {
+      return;
+    }
+
+    // Still inside the 30-second cooldown
+    if (!canShowPopunder()) {
+      return;
+    }
+
+    // Prevent duplicate script loading
+    if (popunderLoading) {
       return;
     }
 
     popunderLoading = true;
+
+
+    /*
+     * Mark the time immediately.
+     *
+     * This prevents multiple rapid clicks
+     * from loading the ad repeatedly.
+     */
+
+    markPopunderShown();
+
 
     const script =
       document.createElement("script");
@@ -275,15 +295,14 @@ if (movieSearchInput) {
 
     script.async = true;
 
+
     script.onload =
       function () {
 
-        popunderReady = true;
         popunderLoading = false;
 
-        markPopunderShown();
-
       };
+
 
     script.onerror =
       function () {
@@ -291,6 +310,7 @@ if (movieSearchInput) {
         popunderLoading = false;
 
       };
+
 
     document.head.appendChild(
       script
@@ -300,13 +320,13 @@ if (movieSearchInput) {
 
 
   /* ==============================
-     ENABLE AFTER 30 SECONDS
+     ENABLE AFTER 10 SECONDS
      ============================== */
 
   setTimeout(
     function () {
 
-      popunderReady = true;
+      popunderEnabled = true;
 
     },
     INITIAL_DELAY
@@ -314,240 +334,33 @@ if (movieSearchInput) {
 
 
   /* ==============================
-     HANDLE USER INTERACTION
-     ============================== */
-
-  function handleInteraction(
-    event
-  ) {
-
-    if (
-      interactionInProgress ||
-      !popunderReady
-    ) {
-      return;
-    }
-
-    if (
-      !canShowPopunder()
-    ) {
-      return;
-    }
-
-    interactionInProgress = true;
-
-    loadPopunder();
-
-
-    /*
-     * Prevent multiple triggers
-     * from the same interaction.
-     */
-
-    setTimeout(
-      function () {
-
-        interactionInProgress =
-          false;
-
-      },
-      1000
-    );
-
-  }
-
-
-  /* ==============================
-     GENERAL USER INTERACTIONS
+     SITE-WIDE INTERACTIONS
      ============================== */
 
   document.addEventListener(
     "click",
-    handleInteraction,
+    function () {
+
+      triggerPopunder();
+
+    },
     true
   );
 
 
   document.addEventListener(
-    "touchstart",
-    handleInteraction,
-    {
-      capture: true,
-      passive: true
-    }
+    "pointerdown",
+    function () {
+
+      triggerPopunder();
+
+    },
+    true
   );
 
 
-  /* ==============================
-     IFRAME SCREEN INTERACTION
-     ============================== */
-
-  function setupIframeTrigger() {
-
-    const iframeWrap =
-      document.getElementById(
-        "screenFrameWrap"
-      );
-
-    const iframe =
-      document.getElementById(
-        "screenFrame"
-      );
-
-    if (
-      !iframeWrap ||
-      !iframe
-    ) {
-      return;
-    }
-
-
-    /*
-     * Create invisible interaction layer.
-     *
-     * This captures the first touch
-     * on the iframe screen area.
-     */
-
-    const overlay =
-      document.createElement("div");
-
-    overlay.id =
-      "popunderIframeOverlay";
-
-    overlay.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
-    Object.assign(
-      overlay.style,
-      {
-
-        position: "absolute",
-
-        inset: "0",
-
-        zIndex: "999",
-
-        background:
-          "transparent",
-
-        cursor: "pointer",
-
-        touchAction:
-          "manipulation"
-
-      }
-    );
-
-
-    /*
-     * Ensure iframe wrapper
-     * can position the overlay.
-     */
-
-    const wrapStyle =
-      window.getComputedStyle(
-        iframeWrap
-      );
-
-    if (
-      wrapStyle.position ===
-      "static"
-    ) {
-
-      iframeWrap.style.position =
-        "relative";
-
-    }
-
-
-    iframeWrap.appendChild(
-      overlay
-    );
-
-
-    function handleIframeInteraction(
-      event
-    ) {
-
-      /*
-       * Only trigger after
-       * the 30-second delay.
-       */
-
-      handleInteraction(
-        event
-      );
-
-
-      /*
-       * Remove overlay immediately
-       * after the first interaction.
-       *
-       * Future touches go directly
-       * to the iframe.
-       */
-
-      overlay.remove();
-
-    }
-
-
-    overlay.addEventListener(
-      "pointerdown",
-      handleIframeInteraction,
-      {
-        once: true,
-        passive: true
-      }
-    );
-
-
-    overlay.addEventListener(
-      "touchstart",
-      handleIframeInteraction,
-      {
-        once: true,
-        passive: true
-      }
-    );
-
-
-    overlay.addEventListener(
-      "click",
-      handleIframeInteraction,
-      {
-        once: true
-      }
-    );
-
-  }
-
-
-  /* ==============================
-     START SYSTEM
-     ============================== */
-
-  if (
-    document.readyState ===
-    "loading"
-  ) {
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      setupIframeTrigger
-    );
-
-  } else {
-
-    setupIframeTrigger();
-
-  }
-
 })();
+   
     /* =========================================================
    PUSH NOTIFICATIONS
    ========================================================= */
