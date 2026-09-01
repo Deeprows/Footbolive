@@ -1651,3 +1651,97 @@ body.deeprows-popup-open {
   word-break: break-word;
   font-size: clamp(13px, 3.5vw, 16px); /* shrink on small screens instead of clipping */
 }
+
+/* X2 Onclick Ads Notice */
+.x2-ad-notice {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%) translateY(20px);
+  width: calc(100% - 32px);
+  max-width: 420px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 10px 12px 10px 15px;
+
+  background: #111;
+  color: #fff;
+
+  border: 1px solid rgba(255, 0, 0, 0.35);
+  border-radius: 10px;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+
+  z-index: 99999;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: opacity 0.3s ease,
+              transform 0.3s ease,
+              visibility 0.3s ease;
+}
+
+.x2-ad-notice.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.x2-ad-notice-text {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.x2-ad-notice-close {
+  flex-shrink: 0;
+
+  width: 28px;
+  height: 28px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: #fff;
+
+  font-size: 22px;
+  line-height: 28px;
+
+  cursor: pointer;
+}
+
+.x2-ad-notice-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Light mode support */
+body.light-mode .x2-ad-notice,
+body.light .x2-ad-notice {
+  background: #fff;
+  color: #111;
+  border-color: rgba(255, 0, 0, 0.4);
+}
+
+body.light-mode .x2-ad-notice-close,
+body.light .x2-ad-notice-close {
+  color: #111;
+}
+
+@media (max-width: 480px) {
+  .x2-ad-notice {
+    bottom: 10px;
+    width: calc(100% - 20px);
+    padding: 9px 10px 9px 13px;
+  }
+
+  .x2-ad-notice-text {
+    font-size: 12px;
+  }
+}
