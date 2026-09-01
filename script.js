@@ -3692,3 +3692,30 @@ if (refreshPageBtn) {
   });
 
 }
+
+// X2 Onclick Ads Notice - show once every 24 hours
+(function () {
+  const notice = document.getElementById("x2AdNotice");
+  const closeButton = document.getElementById("closeX2AdNotice");
+
+  if (!notice || !closeButton) return;
+
+  const storageKey = "x2AdNoticeLastClosed";
+  const twentyFourHours = 24 * 60 * 60 * 1000;
+
+  const lastClosed = localStorage.getItem(storageKey);
+  const now = Date.now();
+
+  // Show notice if it hasn't been closed in the last 24 hours
+  if (!lastClosed || now - Number(lastClosed) >= twentyFourHours) {
+    setTimeout(() => {
+      notice.classList.add("show");
+    }, 1000);
+  }
+
+  // Close and remember for 24 hours
+  closeButton.addEventListener("click", () => {
+    notice.classList.remove("show");
+    localStorage.setItem(storageKey, Date.now().toString());
+  });
+})();
