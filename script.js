@@ -1685,9 +1685,13 @@ function createHighlightCard(post) {
 
     bindContentCards();
 
-    requestAnimationFrame(
-      updateStickyPositions
-    );
+/* Refresh movie filters after JSON movies
+   have been added to the page */
+filterMovies();
+
+requestAnimationFrame(
+  updateStickyPositions
+);
 
   }
 
