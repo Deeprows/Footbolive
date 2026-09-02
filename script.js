@@ -3723,6 +3723,9 @@ if (refreshPageBtn) {
 /* =========================================
    DEEPROWSS MOVIES & HIGHLIGHTS TICKER
    Movies first → Highlights second
+
+   ALWAYS VISIBLE ON PAGE LOAD
+   User can only hide it with the X button.
    ========================================= */
 
 (function () {
@@ -3751,41 +3754,15 @@ if (refreshPageBtn) {
 
 
   /* =======================================
-     SETTINGS
+     ALWAYS SHOW TICKER ON PAGE LOAD
      ======================================= */
 
-  const STORAGE_KEY =
-    "deeprowssTickerClosed";
+  ticker.classList.remove(
+    "is-hidden"
+  );
 
-  const CLOSE_DURATION =
-    24 * 60 * 60 * 1000;
-
-
-  /* =======================================
-     CHECK IF USER CLOSED TICKER
-     ======================================= */
-
-  const lastClosed =
-    Number(
-      localStorage.getItem(
-        STORAGE_KEY
-      )
-    );
-
-
-  if (
-    lastClosed &&
-    Date.now() - lastClosed <
-    CLOSE_DURATION
-  ) {
-
-    ticker.classList.add(
-      "is-hidden"
-    );
-
-    return;
-
-  }
+  ticker.style.display =
+    "";
 
 
   /* =======================================
@@ -4190,7 +4167,10 @@ if (refreshPageBtn) {
 
   /* =======================================
      CLOSE BUTTON
-     HIDE FOR 24 HOURS
+
+     Only hides ticker for the current page.
+     It will automatically return after
+     refresh or reopening the website.
      ======================================= */
 
   if (closeButton) {
@@ -4203,15 +4183,6 @@ if (refreshPageBtn) {
 
         ticker.classList.add(
           "is-hidden"
-        );
-
-
-        localStorage.setItem(
-
-          STORAGE_KEY,
-
-          Date.now().toString()
-
         );
 
       }
@@ -4229,8 +4200,8 @@ if (refreshPageBtn) {
 
 
   /*
-   * Rebuild periodically so content
-   * loaded dynamically can appear.
+   * Rebuild periodically so dynamically
+   * loaded content can appear.
    */
 
   setInterval(
