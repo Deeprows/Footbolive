@@ -1758,18 +1758,14 @@ body.light .x2-ad-notice-close {
 
 /* =========================================
    DEEPROWSS MOVIES & HIGHLIGHTS TICKER
+   Normal page layout
    Movies → Highlights
    ========================================= */
 
 .deeprowss-ticker {
-  position: fixed;
-  left: 50%;
-  bottom: 70px;
+  position: relative;
 
-  transform: translateX(-50%);
-
-  width: calc(100% - 24px);
-  max-width: 850px;
+  width: 100%;
   height: 40px;
 
   display: flex;
@@ -1778,23 +1774,27 @@ body.light .x2-ad-notice-close {
   background: #111;
   color: #fff;
 
-  border: 1px solid rgba(255, 0, 0, 0.45);
-  border-radius: 9px;
+  border-bottom:
+    1px solid rgba(255, 0, 0, 0.45);
 
   overflow: hidden;
 
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.2);
 
   z-index: 99998;
 
+  opacity: 1;
+
   transition:
     opacity 0.3s ease,
+    height 0.3s ease,
     transform 0.3s ease;
 }
 
 
 /* =========================================
-   HIDDEN
+   HIDDEN / CLOSED
    ========================================= */
 
 .deeprowss-ticker.is-hidden {
@@ -1802,9 +1802,14 @@ body.light .x2-ad-notice-close {
 
   pointer-events: none;
 
+  height: 0;
+
   transform:
-    translateX(-50%)
-    translateY(20px);
+    translateY(-20px);
+
+  border: none;
+
+  overflow: hidden;
 }
 
 
@@ -1820,17 +1825,17 @@ body.light .x2-ad-notice-close {
   align-items: center;
   justify-content: center;
 
-  padding: 0;
+  flex-shrink: 0;
 
   background: #d60000;
-  color: #fff;
 
-  flex-shrink: 0;
+  color: #fff;
 }
 
 
 .deeprowss-ticker-notification-icon {
   font-size: 17px;
+
   line-height: 1;
 }
 
@@ -1843,6 +1848,8 @@ body.light .x2-ad-notice-close {
   flex: 1;
 
   height: 100%;
+
+  min-width: 0;
 
   overflow: hidden;
 
@@ -1859,6 +1866,8 @@ body.light .x2-ad-notice-close {
   display: inline-flex;
 
   align-items: center;
+
+  width: max-content;
 
   white-space: nowrap;
 
@@ -1885,7 +1894,7 @@ body.light .x2-ad-notice-close {
 }
 
 
-/* Pause scrolling on hover */
+/* Pause on hover */
 
 .deeprowss-ticker-window:hover
 .deeprowss-ticker-track {
@@ -1894,7 +1903,7 @@ body.light .x2-ad-notice-close {
 
 
 /* =========================================
-   INDIVIDUAL TICKER ITEM
+   INDIVIDUAL ITEM
    ========================================= */
 
 .deeprowss-ticker-item {
@@ -1906,24 +1915,25 @@ body.light .x2-ad-notice-close {
 
   margin-right: 30px;
 
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
   color: inherit;
 
+  font-family: inherit;
+
   font-size: 12px;
+
   font-weight: 600;
 
   cursor: pointer;
 
   text-decoration: none;
 
-  background: transparent;
-
-  border: none;
-
-  padding: 0;
-
   white-space: nowrap;
-
-  font-family: inherit;
 }
 
 
@@ -1951,12 +1961,7 @@ body.light .x2-ad-notice-close {
   font-weight: 800;
 
   line-height: 1.2;
-}
 
-
-/* Movie badge */
-
-.deeprowss-ticker-item .deeprowss-ticker-badge {
   text-transform: uppercase;
 }
 
@@ -1984,6 +1989,8 @@ body.light .x2-ad-notice-close {
 
   height: 100%;
 
+  padding: 0;
+
   border: none;
 
   border-left:
@@ -1994,6 +2001,8 @@ body.light .x2-ad-notice-close {
 
   color: #fff;
 
+  font-family: inherit;
+
   font-size: 22px;
 
   line-height: 1;
@@ -2001,8 +2010,6 @@ body.light .x2-ad-notice-close {
   cursor: pointer;
 
   flex-shrink: 0;
-
-  font-family: inherit;
 
   transition:
     background 0.2s ease;
@@ -2022,33 +2029,46 @@ body.light .x2-ad-notice-close {
 body.light-mode .deeprowss-ticker,
 body.light .deeprowss-ticker {
   background: #fff;
+
   color: #111;
+
+  border-bottom-color:
+    rgba(255, 0, 0, 0.4);
 }
 
 
-body.light-mode .deeprowss-ticker-close,
-body.light .deeprowss-ticker-close {
+body.light-mode
+.deeprowss-ticker-close,
+body.light
+.deeprowss-ticker-close {
   background: #fff;
+
   color: #111;
 }
 
 
-body.light-mode .deeprowss-ticker-close:hover,
-body.light .deeprowss-ticker-close:hover {
+body.light-mode
+.deeprowss-ticker-close:hover,
+body.light
+.deeprowss-ticker-close:hover {
   background:
     rgba(0, 0, 0, 0.06);
 }
 
 
-body.light-mode .deeprowss-ticker-separator,
-body.light .deeprowss-ticker-separator {
+body.light-mode
+.deeprowss-ticker-separator,
+body.light
+.deeprowss-ticker-separator {
   color:
     rgba(0, 0, 0, 0.3);
 }
 
 
-body.light-mode .deeprowss-ticker-badge,
-body.light .deeprowss-ticker-badge {
+body.light-mode
+.deeprowss-ticker-badge,
+body.light
+.deeprowss-ticker-badge {
   background:
     rgba(0, 0, 0, 0.08);
 }
@@ -2061,10 +2081,7 @@ body.light .deeprowss-ticker-badge {
 @media (max-width: 600px) {
 
   .deeprowss-ticker {
-    bottom: 65px;
-
-    width:
-      calc(100% - 16px);
+    width: 100%;
 
     height: 38px;
   }
