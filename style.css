@@ -1656,8 +1656,11 @@ body.deeprows-popup-open {
 .x2-ad-notice {
   position: fixed;
   left: 50%;
-  bottom: 16px;
-  transform: translateX(-50%) translateY(20px);
+  top: 70px;
+  bottom: auto;
+
+  transform: translateX(-50%) translateY(-20px);
+
   width: calc(100% - 32px);
   max-width: 420px;
 
@@ -1681,14 +1684,17 @@ body.deeprows-popup-open {
   opacity: 0;
   visibility: hidden;
 
-  transition: opacity 0.3s ease,
-              transform 0.3s ease,
-              visibility 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0.3s ease;
 }
 
+/* Visible state */
 .x2-ad-notice.show {
   opacity: 1;
   visibility: visible;
+
   transform: translateX(-50%) translateY(0);
 }
 
@@ -1734,14 +1740,341 @@ body.light .x2-ad-notice-close {
   color: #111;
 }
 
+/* Mobile */
 @media (max-width: 480px) {
   .x2-ad-notice {
-    bottom: 10px;
+    top: 60px;
+    bottom: auto;
+
     width: calc(100% - 20px);
+
     padding: 9px 10px 9px 13px;
   }
 
   .x2-ad-notice-text {
     font-size: 12px;
   }
+}
+
+/* =========================================
+   DEEPROWSS LIVE & LATEST TICKER
+   ========================================= */
+
+.deeprowss-ticker {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+
+  transform: translateX(-50%);
+
+  width: calc(100% - 24px);
+  max-width: 850px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  background: #111;
+  color: #fff;
+
+  border: 1px solid rgba(255, 0, 0, 0.45);
+  border-radius: 9px;
+
+  overflow: hidden;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.35);
+
+  z-index: 99998;
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+
+/* Hidden */
+
+.deeprowss-ticker.is-hidden {
+  opacity: 0;
+
+  pointer-events: none;
+
+  transform:
+    translateX(-50%)
+    translateY(20px);
+}
+
+
+/* LIVE label */
+
+.deeprowss-ticker-label {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 0 11px;
+
+  background: #d60000;
+
+  color: #fff;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  flex-shrink: 0;
+}
+
+
+.deeprowss-ticker-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  animation: deeprowssTickerPulse 1.3s infinite;
+}
+
+
+@keyframes deeprowssTickerPulse {
+
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.7);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+}
+
+
+/* Scrolling window */
+
+.deeprowss-ticker-window {
+  flex: 1;
+
+  height: 100%;
+
+  overflow: hidden;
+
+  display: flex;
+
+  align-items: center;
+}
+
+
+/* Moving track */
+
+.deeprowss-ticker-track {
+  display: inline-flex;
+
+  align-items: center;
+
+  white-space: nowrap;
+
+  will-change: transform;
+
+  animation:
+    deeprowssTickerMove
+    var(--ticker-speed, 35s)
+    linear
+    infinite;
+}
+
+
+@keyframes deeprowssTickerMove {
+
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+
+}
+
+
+/* Pause when touched */
+
+.deeprowss-ticker-window:hover
+.deeprowss-ticker-track {
+
+  animation-play-state: paused;
+
+}
+
+
+/* Individual item */
+
+.deeprowss-ticker-item {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-right: 30px;
+
+  color: inherit;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  text-decoration: none;
+}
+
+
+.deeprowss-ticker-item:hover {
+  color: #ff4b4b;
+}
+
+
+/* Badge */
+
+.deeprowss-ticker-badge {
+  padding: 3px 6px;
+
+  border-radius: 4px;
+
+  background:
+    rgba(255, 255, 255, 0.1);
+
+  font-size: 9px;
+
+  font-weight: 800;
+}
+
+
+/* Live match */
+
+.deeprowss-ticker-item.is-live {
+  color: #ff5656;
+}
+
+
+.deeprowss-ticker-item.is-live
+.deeprowss-ticker-badge {
+
+  background: #d60000;
+
+  color: #fff;
+}
+
+
+/* Separator */
+
+.deeprowss-ticker-separator {
+  color:
+    rgba(255, 255, 255, 0.35);
+
+  margin-right: 30px;
+}
+
+
+/* Close */
+
+.deeprowss-ticker-close {
+  width: 38px;
+
+  height: 100%;
+
+  border: none;
+
+  border-left:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  background: #111;
+
+  color: #fff;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+}
+
+
+/* Light mode */
+
+body.light-mode .deeprowss-ticker,
+body.light .deeprowss-ticker {
+
+  background: #fff;
+
+  color: #111;
+
+}
+
+
+body.light-mode .deeprowss-ticker-close,
+body.light .deeprowss-ticker-close {
+
+  background: #fff;
+
+  color: #111;
+
+}
+
+
+body.light-mode .deeprowss-ticker-separator,
+body.light .deeprowss-ticker-separator {
+
+  color:
+    rgba(0, 0, 0, 0.3);
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+  .deeprowss-ticker {
+    bottom: 8px;
+
+    width:
+      calc(100% - 16px);
+
+    height: 38px;
+  }
+
+
+  .deeprowss-ticker-label {
+    padding: 0 9px;
+
+    font-size: 9px;
+  }
+
+
+  .deeprowss-ticker-item {
+    font-size: 11px;
+
+    margin-right: 24px;
+  }
+
+
+  .deeprowss-ticker-close {
+    width: 34px;
+  }
+
 }
