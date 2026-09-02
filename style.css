@@ -1763,7 +1763,7 @@ body.light .x2-ad-notice-close {
 .deeprowss-ticker {
   position: fixed;
   left: 50%;
-  bottom: 70px;
+  bottom: 12px;
 
   transform: translateX(-50%);
 
@@ -1947,6 +1947,22 @@ body.light .x2-ad-notice-close {
 }
 
 
+/* Live match */
+
+.deeprowss-ticker-item.is-live {
+  color: #ff5656;
+}
+
+
+.deeprowss-ticker-item.is-live
+.deeprowss-ticker-badge {
+
+  background: #d60000;
+
+  color: #fff;
+}
+
+
 /* Separator */
 
 .deeprowss-ticker-separator {
@@ -2032,10 +2048,9 @@ body.light
    ========================================= */
 
 @media (max-width: 600px) {
+
   .deeprowss-ticker {
-    bottom: 65px;
-  }
-}
+    bottom: 8px;
 
     width:
       calc(100% - 16px);
