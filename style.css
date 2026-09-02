@@ -1805,64 +1805,38 @@ body.light .x2-ad-notice-close {
 }
 
 
-/* LIVE label */
+/* =========================================
+   NOTIFICATION ICON
+   Replaces the old LIVE label
+   ========================================= */
 
 .deeprowss-ticker-label {
+  width: 42px;
   height: 100%;
 
   display: flex;
   align-items: center;
+  justify-content: center;
 
-  gap: 6px;
-
-  padding: 0 11px;
+  padding: 0;
 
   background: #d60000;
 
   color: #fff;
 
-  font-size: 10px;
-  font-weight: 800;
-
-  white-space: nowrap;
-
   flex-shrink: 0;
 }
 
 
-.deeprowss-ticker-dot {
-  width: 7px;
-  height: 7px;
-
-  border-radius: 50%;
-
-  background: #fff;
-
-  animation: deeprowssTickerPulse 1.3s infinite;
+.deeprowss-ticker-notification-icon {
+  font-size: 17px;
+  line-height: 1;
 }
 
 
-@keyframes deeprowssTickerPulse {
-
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.4;
-    transform: scale(0.7);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-}
-
-
-/* Scrolling window */
+/* =========================================
+   SCROLLING WINDOW
+   ========================================= */
 
 .deeprowss-ticker-window {
   flex: 1;
@@ -1909,7 +1883,7 @@ body.light .x2-ad-notice-close {
 }
 
 
-/* Pause when touched */
+/* Pause when hovered or touched */
 
 .deeprowss-ticker-window:hover
 .deeprowss-ticker-track {
@@ -1919,7 +1893,9 @@ body.light .x2-ad-notice-close {
 }
 
 
-/* Individual item */
+/* =========================================
+   INDIVIDUAL ITEM
+   ========================================= */
 
 .deeprowss-ticker-item {
   display: inline-flex;
@@ -1939,6 +1915,14 @@ body.light .x2-ad-notice-close {
   cursor: pointer;
 
   text-decoration: none;
+
+  background: none;
+
+  border: none;
+
+  padding: 0;
+
+  white-space: nowrap;
 }
 
 
@@ -1986,10 +1970,14 @@ body.light .x2-ad-notice-close {
     rgba(255, 255, 255, 0.35);
 
   margin-right: 30px;
+
+  flex-shrink: 0;
 }
 
 
-/* Close */
+/* =========================================
+   CLOSE BUTTON
+   ========================================= */
 
 .deeprowss-ticker-close {
   width: 38px;
@@ -2014,7 +2002,15 @@ body.light .x2-ad-notice-close {
 }
 
 
-/* Light mode */
+.deeprowss-ticker-close:hover {
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+
+/* =========================================
+   LIGHT MODE
+   ========================================= */
 
 body.light-mode .deeprowss-ticker,
 body.light .deeprowss-ticker {
@@ -2036,8 +2032,10 @@ body.light .deeprowss-ticker-close {
 }
 
 
-body.light-mode .deeprowss-ticker-separator,
-body.light .deeprowss-ticker-separator {
+body.light-mode
+.deeprowss-ticker-separator,
+body.light
+.deeprowss-ticker-separator {
 
   color:
     rgba(0, 0, 0, 0.3);
@@ -2045,7 +2043,9 @@ body.light .deeprowss-ticker-separator {
 }
 
 
-/* Mobile */
+/* =========================================
+   MOBILE
+   ========================================= */
 
 @media (max-width: 600px) {
 
@@ -2060,9 +2060,12 @@ body.light .deeprowss-ticker-separator {
 
 
   .deeprowss-ticker-label {
-    padding: 0 9px;
+    width: 38px;
+  }
 
-    font-size: 9px;
+
+  .deeprowss-ticker-notification-icon {
+    font-size: 16px;
   }
 
 
