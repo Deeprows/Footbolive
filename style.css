@@ -2124,57 +2124,70 @@ body.light
 
 }
 
-/* =========================================
-   DESKTOP LAYOUT FIX
-   ========================================= */
+/* =====================================================
+   DESKTOP / PC LAYOUT ONLY
+   These rules affect screens wider than 768px
+   ===================================================== */
 
-/* Player should scroll normally instead of covering page content */
-.screen-section {
-  position: relative !important;
-  top: auto !important;
-  z-index: 1 !important;
-}
+@media screen and (min-width: 769px) {
 
-/* Keep the navigation menu sticky if needed */
-.app-menu {
-  position: relative !important;
-  top: auto !important;
-  z-index: 10 !important;
-}
+    /* Desktop page width */
+    body {
+        overflow-x: hidden;
+    }
 
-/* Make sure all content stays above the background */
-.content-section,
-.tv-content,
-.movies-content,
-#footballContent,
-#highlightsContent,
-#tvContent,
-#moviesContent {
-  position: relative;
-  z-index: 2;
-}
+    /* Main content width */
+    .container {
+        width: 95%;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-/* Fix player sizing */
-.screen-player {
-  width: 100%;
-  height: auto;
-}
+    /* Player section desktop layout */
+    .screen-section {
+        width: 100%;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-/* Use the aspect-ratio wrapper */
-.screen-player iframe {
-  height: 100% !important;
-}
+    /* Player stays properly sized on PC */
+    .screen-player {
+        width: 100%;
+        max-width: 100%;
+    }
 
-/* Desktop */
-@media (min-width: 769px) {
+    /* Desktop iframe */
+    .screen-frame-wrap {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        max-height: 700px;
+    }
 
-  .screen-section {
-    padding-top: 20px;
-  }
+    /* Force iframe to fit its container */
+    #screenFrame {
+        width: 100% !important;
+        height: 100% !important;
+    }
 
-  .screen-frame-wrap {
-    aspect-ratio: 16 / 9 !important;
-    max-height: 650px;
-  }
+    /* Make content sections visible and properly positioned */
+    .content-section {
+        position: relative;
+        width: 100%;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+        z-index: 5;
+    }
+
+    /* Fixture and content grids */
+    .match-grid,
+    .movie-grid,
+    .highlight-grid,
+    .tv-grid {
+        width: 100%;
+        max-width: 100%;
+    }
 
 }
