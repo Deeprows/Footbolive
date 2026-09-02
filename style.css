@@ -2123,3 +2123,58 @@ body.light
   }
 
 }
+
+/* =========================================
+   DESKTOP LAYOUT FIX
+   ========================================= */
+
+/* Player should scroll normally instead of covering page content */
+.screen-section {
+  position: relative !important;
+  top: auto !important;
+  z-index: 1 !important;
+}
+
+/* Keep the navigation menu sticky if needed */
+.app-menu {
+  position: relative !important;
+  top: auto !important;
+  z-index: 10 !important;
+}
+
+/* Make sure all content stays above the background */
+.content-section,
+.tv-content,
+.movies-content,
+#footballContent,
+#highlightsContent,
+#tvContent,
+#moviesContent {
+  position: relative;
+  z-index: 2;
+}
+
+/* Fix player sizing */
+.screen-player {
+  width: 100%;
+  height: auto;
+}
+
+/* Use the aspect-ratio wrapper */
+.screen-player iframe {
+  height: 100% !important;
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+
+  .screen-section {
+    padding-top: 20px;
+  }
+
+  .screen-frame-wrap {
+    aspect-ratio: 16 / 9 !important;
+    max-height: 650px;
+  }
+
+}
