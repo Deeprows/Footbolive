@@ -3891,11 +3891,6 @@ if (refreshPageBtn) {
         }
 
 
-        /*
-         * Scroll to the original
-         * movie or highlight card.
-         */
-
         sourceElement.scrollIntoView({
 
           behavior: "smooth",
@@ -3904,11 +3899,6 @@ if (refreshPageBtn) {
 
         });
 
-
-        /*
-         * Click the original card
-         * after scrolling.
-         */
 
         setTimeout(
 
@@ -3959,8 +3949,6 @@ if (refreshPageBtn) {
 
   /* =======================================
      GET LATEST MOVIES
-
-     Reads existing movie cards.
      ======================================= */
 
   function getLatestMovies() {
@@ -4007,8 +3995,6 @@ if (refreshPageBtn) {
 
   /* =======================================
      GET LATEST HIGHLIGHTS
-
-     Reads existing highlight cards.
      ======================================= */
 
   function getLatestHighlights() {
@@ -4062,9 +4048,7 @@ if (refreshPageBtn) {
     const items = [];
 
 
-    /* =====================================
-       MOVIES FIRST
-       ===================================== */
+    /* MOVIES FIRST */
 
     getLatestMovies()
 
@@ -4093,9 +4077,7 @@ if (refreshPageBtn) {
       );
 
 
-    /* =====================================
-       HIGHLIGHTS SECOND
-       ===================================== */
+    /* HIGHLIGHTS SECOND */
 
     getLatestHighlights()
 
@@ -4124,9 +4106,7 @@ if (refreshPageBtn) {
       );
 
 
-    /* =====================================
-       NO CONTENT
-       ===================================== */
+    /* No content */
 
     if (!items.length) {
 
@@ -4138,19 +4118,15 @@ if (refreshPageBtn) {
     }
 
 
-    /* =====================================
-       CLEAR CURRENT TICKER
-       ===================================== */
+    /* Clear ticker */
 
     track.innerHTML =
       "";
 
 
     /*
-     * Duplicate all items.
-     *
-     * This creates the continuous
-     * scrolling loop.
+     * Duplicate all items
+     * for continuous scrolling.
      */
 
     const loopItems =
@@ -4188,7 +4164,7 @@ if (refreshPageBtn) {
 
 
     /* =====================================
-       SCROLL SPEED
+       SET SCROLL SPEED
        ===================================== */
 
     const speed =
@@ -4246,17 +4222,15 @@ if (refreshPageBtn) {
 
 
   /* =======================================
-     START TICKER
+     START
      ======================================= */
 
   buildTicker();
 
 
   /*
-   * Rebuild every 60 seconds.
-   *
-   * This allows newly loaded
-   * content to appear automatically.
+   * Rebuild periodically so content
+   * loaded dynamically can appear.
    */
 
   setInterval(
