@@ -2305,3 +2305,11 @@ body.light
 .seo-content p {
   margin-bottom: 16px;
 }
+
+/* =========================================================
+   SEO CONTENT — HIDDEN FROM FRONTEND
+   ========================================================= */
+
+.seo-content {
+  display: none !important;
+}
