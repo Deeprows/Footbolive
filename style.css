@@ -1763,7 +1763,7 @@ body.light .x2-ad-notice-close {
 .deeprowss-ticker {
   position: fixed;
   left: 50%;
-  bottom: 12px;
+  bottom: 70px;
 
   transform: translateX(-50%);
 
@@ -2048,9 +2048,10 @@ body.light
    ========================================= */
 
 @media (max-width: 600px) {
-
   .deeprowss-ticker {
-    bottom: 8px;
+    bottom: 65px;
+  }
+}
 
     width:
       calc(100% - 16px);
