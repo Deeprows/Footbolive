@@ -1,5 +1,6 @@
 /*
- * REQUIRED Gradle dependency:
+ * REQUIRED Gradle dependencies:
+ *
  * implementation "androidx.media3:media3-exoplayer:1.8.0"
  * implementation "androidx.media3:media3-ui:1.8.0"
  *
@@ -15,7 +16,6 @@ import android.content.pm.ActivityInfo;
 import android.content.Intent;
 import android.net.Uri;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -33,6 +33,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -41,29 +42,17 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
+import androidx.core.splashscreen.SplashScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.core.splashscreen.SplashScreen;
 
 public class MainActivity extends Activity {
 
     private static final String WEBSITE_URL =
             "https://deeprowss.com";
 
-    /*
-     * =========================================================
-     * EXTERNAL LINK EXCEPTIONS
-     * =========================================================
-     *
-     * These links bypass the in-app popup WebView and are opened
-     * externally by Android.
-     *
-     * Telegram is included so the Telegram app/browser can handle
-     * the link normally.
-     *
-     * Replace OTHER_EXTERNAL_URL with your second link.
-     */
     private static final String TELEGRAM_URL =
             "https://t.me/deeprows";
 
@@ -79,7 +68,9 @@ public class MainActivity extends Activity {
     private WebView mainWebView;
 
     private WebView popupWebView;
-    private final List<WebView> popupWebViewStack = new ArrayList<>();
+
+    private final List<WebView> popupWebViewStack =
+            new ArrayList<>();
 
     private FrameLayout popupContainer;
 
@@ -87,9 +78,13 @@ public class MainActivity extends Activity {
 
     private WebChromeClient.CustomViewCallback customViewCallback;
 
-    /* Native Media3 player for direct video URLs. */
+    /*
+     * Native Media3 player.
+     */
     private ExoPlayer nativePlayer;
+
     private PlayerView nativePlayerView;
+
     private boolean nativePlayerFullscreen = false;
 
     private int popupBarHeight;
@@ -98,43 +93,42 @@ public class MainActivity extends Activity {
 
     /*
      * =========================================================
-     * SPLASH SCREEN
+     * SPLASH
      * =========================================================
-     *
-     * The Android splash screen remains visible until the
-     * WebView has committed its first visible page content.
-     *
-     * There is NO fixed splash delay.
      */
+
     private boolean webPageVisible = false;
 
-    /*
-     * Custom splash overlay.
-     *
-     * The complete deeprowss_splash.png is shown centered at a normal size
-     * instead of being treated as the Android 12 splash icon.
-     */
     private View customSplashView;
+
+    private TextView splashLoadingText;
+
+    private ProgressBar splashLoadingProgress;
+
+    private Handler splashAnimationHandler;
+
+    private Runnable splashAnimationRunnable;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         /*
-         * Install the AndroidX splash screen BEFORE super.onCreate().
+         * Install AndroidX splash screen BEFORE super.onCreate().
          */
         SplashScreen splashScreen =
                 SplashScreen.installSplashScreen(this);
 
         /*
-         * Keep the splash screen visible while the WebView is
-         * loading the first visible webpage.
+         * Keep Android splash alive until the WebView has
+         * committed its first visible page.
          */
         splashScreen.setKeepOnScreenCondition(
                 () -> !webPageVisible
         );
 
         super.onCreate(savedInstanceState);
+
 
         /*
          * =====================================================
@@ -184,14 +178,11 @@ public class MainActivity extends Activity {
                 rootLayout
         );
 
+
         /*
          * =====================================================
-         * CUSTOM DEEPROWSS SPLASH
+         * CUSTOM SPLASH
          * =====================================================
-         *
-         * Android 12+ treats windowSplashScreenAnimatedIcon as an icon.
-         * Our deeprowss_splash.png is a complete splash composition, so show
-         * the whole image in a centered ImageView instead.
          */
 
         showCustomSplash();
@@ -205,7 +196,6 @@ public class MainActivity extends Activity {
 
         createMainWebView();
 
-
         if (mainWebView != null) {
 
             mainWebView.setBackgroundColor(
@@ -215,10 +205,9 @@ public class MainActivity extends Activity {
 
 
         /*
-         * Load Deeprowss.
-         *
-         * The splash screen stays visible until the WebView
-         * reports that visible webpage content is ready.
+         * =====================================================
+         * LOAD WEBSITE
+         * =====================================================
          */
 
         mainWebView.loadUrl(
@@ -243,56 +232,298 @@ public class MainActivity extends Activity {
             return;
         }
 
-        android.widget.ImageView splashImage =
-                new android.widget.ImageView(this);
 
-        splashImage.setImageResource(
+        /*
+         * =====================================================
+         * SPLASH CONTAINER
+         * =====================================================
+         */
+
+        FrameLayout splashContainer =
+                new FrameLayout(this);
+
+        splashContainer.setBackgroundColor(
+                BG_COLOR
+        );
+
+
+        /*
+         * =====================================================
+         * SPLASH IMAGE
+         * =====================================================
+         */
+
+        ImageView splashImage =
+                new ImageView(this);
+
+        int splashResource =
                 getResources().getIdentifier(
                         "deeprowss_splash",
                         "drawable",
                         getPackageName()
-                )
-        );
+                );
+
+        if (splashResource != 0) {
+
+            splashImage.setImageResource(
+                    splashResource
+            );
+        }
 
         splashImage.setScaleType(
-                android.widget.ImageView.ScaleType.CENTER_INSIDE
+                ImageView.ScaleType.CENTER_INSIDE
         );
 
-        splashImage.setAdjustViewBounds(true);
+        splashImage.setAdjustViewBounds(
+                true
+        );
 
         splashImage.setBackgroundColor(
                 BG_COLOR
         );
 
-        /*
-         * Keep the complete square splash centered with margins so it
-         * cannot become an oversized full-screen image.
-         */
-        int margin = dp(32);
 
-        FrameLayout.LayoutParams splashParams =
+        /*
+         * Keep splash image at a controlled size.
+         */
+
+        FrameLayout.LayoutParams imageParams =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
+                        dp(330),
+                        Gravity.CENTER
                 );
 
-        splashParams.setMargins(
-                margin,
-                margin,
-                margin,
-                margin
+        imageParams.setMargins(
+                dp(32),
+                dp(20),
+                dp(32),
+                dp(90)
         );
 
-        customSplashView = splashImage;
+        splashContainer.addView(
+                splashImage,
+                imageParams
+        );
+
+
+        /*
+         * =====================================================
+         * LOADING LAYOUT
+         * =====================================================
+         */
+
+        LinearLayout loadingLayout =
+                new LinearLayout(this);
+
+        loadingLayout.setOrientation(
+                LinearLayout.VERTICAL
+        );
+
+        loadingLayout.setGravity(
+                Gravity.CENTER
+        );
+
+
+        /*
+         * =====================================================
+         * LOADING SPINNER
+         * =====================================================
+         */
+
+        splashLoadingProgress =
+                new ProgressBar(
+                        this
+                );
+
+        splashLoadingProgress.setIndeterminate(
+                true
+        );
+
+        LinearLayout.LayoutParams progressParams =
+                new LinearLayout.LayoutParams(
+                        dp(32),
+                        dp(32)
+                );
+
+        progressParams.gravity =
+                Gravity.CENTER;
+
+        loadingLayout.addView(
+                splashLoadingProgress,
+                progressParams
+        );
+
+
+        /*
+         * =====================================================
+         * LOADING TEXT
+         * =====================================================
+         */
+
+        splashLoadingText =
+                new TextView(this);
+
+        splashLoadingText.setText(
+                "Loading..."
+        );
+
+        splashLoadingText.setTextColor(
+                Color.WHITE
+        );
+
+        splashLoadingText.setTextSize(
+                14
+        );
+
+        splashLoadingText.setGravity(
+                Gravity.CENTER
+        );
+
+        splashLoadingText.setTypeface(
+                null,
+                android.graphics.Typeface.BOLD
+        );
+
+        LinearLayout.LayoutParams textParams =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+
+        textParams.gravity =
+                Gravity.CENTER;
+
+        textParams.topMargin =
+                dp(10);
+
+        loadingLayout.addView(
+                splashLoadingText,
+                textParams
+        );
+
+
+        /*
+         * =====================================================
+         * LOADING POSITION
+         * =====================================================
+         */
+
+        FrameLayout.LayoutParams loadingParams =
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        Gravity.CENTER_HORIZONTAL |
+                        Gravity.BOTTOM
+                );
+
+        loadingParams.bottomMargin =
+                dp(55);
+
+        splashContainer.addView(
+                loadingLayout,
+                loadingParams
+        );
+
+
+        /*
+         * =====================================================
+         * SAVE SPLASH
+         * =====================================================
+         */
+
+        customSplashView =
+                splashContainer;
 
         rootLayout.addView(
                 customSplashView,
-                splashParams
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
         );
 
         customSplashView.bringToFront();
+
+
+        /*
+         * =====================================================
+         * LOADING TEXT ANIMATION
+         * =====================================================
+         *
+         * The spinner itself is native Android.
+         *
+         * The text gently fades in/out to give the loading
+         * indicator a polished animated appearance.
+         */
+
+        splashAnimationHandler =
+                new Handler(
+                        Looper.getMainLooper()
+                );
+
+        splashAnimationRunnable =
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        if (customSplashView == null ||
+                                splashLoadingText == null) {
+
+                            return;
+                        }
+
+                        splashLoadingText
+                                .animate()
+                                .alpha(0.35f)
+                                .setDuration(550)
+                                .withEndAction(
+                                        () -> {
+
+                                            if (customSplashView == null ||
+                                                    splashLoadingText == null) {
+
+                                                return;
+                                            }
+
+                                            splashLoadingText
+                                                    .animate()
+                                                    .alpha(1f)
+                                                    .setDuration(550)
+                                                    .withEndAction(
+                                                            () -> {
+
+                                                                if (customSplashView != null &&
+                                                                        splashAnimationHandler != null &&
+                                                                        splashAnimationRunnable != null) {
+
+                                                                    splashAnimationHandler
+                                                                            .postDelayed(
+                                                                                    splashAnimationRunnable,
+                                                                                    50
+                                                                            );
+                                                                }
+                                                            }
+                                                    )
+                                                    .start();
+                                        }
+                                )
+                                .start();
+                    }
+                };
+
+        splashAnimationHandler.post(
+                splashAnimationRunnable
+        );
     }
 
+
+    /*
+     * =========================================================
+     * HIDE CUSTOM SPLASH
+     * =========================================================
+     */
 
     private void hideCustomSplash() {
 
@@ -300,18 +531,48 @@ public class MainActivity extends Activity {
             return;
         }
 
-        View splash = customSplashView;
+        /*
+         * Stop loading animation.
+         */
 
-        customSplashView = null;
+        if (splashAnimationHandler != null &&
+                splashAnimationRunnable != null) {
+
+            splashAnimationHandler.removeCallbacks(
+                    splashAnimationRunnable
+            );
+        }
+
+        View splash =
+                customSplashView;
+
+        customSplashView =
+                null;
 
         splash.animate()
                 .alpha(0f)
                 .setDuration(180)
                 .withEndAction(
                         () -> {
+
                             if (rootLayout != null) {
-                                rootLayout.removeView(splash);
+
+                                rootLayout.removeView(
+                                        splash
+                                );
                             }
+
+                            splashLoadingText =
+                                    null;
+
+                            splashLoadingProgress =
+                                    null;
+
+                            splashAnimationRunnable =
+                                    null;
+
+                            splashAnimationHandler =
+                                    null;
                         }
                 )
                 .start();
@@ -360,7 +621,8 @@ public class MainActivity extends Activity {
                         }
 
                         String url =
-                                request.getUrl().toString();
+                                request.getUrl()
+                                        .toString();
 
 
                         if (showingOfflinePage) {
@@ -368,7 +630,9 @@ public class MainActivity extends Activity {
                             showingOfflinePage =
                                     false;
 
-                            view.loadUrl(url);
+                            view.loadUrl(
+                                    url
+                            );
 
                             return true;
                         }
@@ -399,7 +663,9 @@ public class MainActivity extends Activity {
                             showingOfflinePage =
                                     false;
 
-                            view.loadUrl(url);
+                            view.loadUrl(
+                                    url
+                            );
 
                             return true;
                         }
@@ -426,12 +692,6 @@ public class MainActivity extends Activity {
                                 favicon
                         );
 
-
-                        /*
-                         * Never show white while the website
-                         * or a new page is loading.
-                         */
-
                         view.setBackgroundColor(
                                 BG_COLOR
                         );
@@ -442,15 +702,8 @@ public class MainActivity extends Activity {
                      * =================================================
                      * SPLASH RELEASE
                      * =================================================
-                     *
-                     * onPageCommitVisible() is used instead of
-                     * onPageFinished() because it indicates that the
-                     * page has committed content that is about to be
-                     * drawn by the WebView.
-                     *
-                     * This removes the splash based on actual WebView
-                     * visibility rather than an arbitrary timer.
                      */
+
                     @Override
                     public void onPageCommitVisible(
                             WebView view,
@@ -483,10 +736,9 @@ public class MainActivity extends Activity {
                                 url
                         );
 
-
                         if (url != null &&
                                 url.startsWith(
-                                        "https://deeprowss.com"
+                                        WEBSITE_URL
                                 )) {
 
                             showingOfflinePage =
@@ -496,67 +748,89 @@ public class MainActivity extends Activity {
 
 
                     /*
-                     * Only show offline page if the MAIN
-                     * document fails.
+                     * =================================================
+                     * NETWORK / IFRAME ERROR HANDLING
+                     * =================================================
                      *
-                     * Also release the splash here so the app
-                     * does not remain stuck on the splash screen
-                     * when there is no internet connection.
+                     * IMPORTANT:
+                     *
+                     * Main document failure:
+                     *     -> Deeprowss offline page.
+                     *
+                     * Player/iframe failure:
+                     *     -> Only the player area gets an error.
+                     *
+                     * The failed external URL is NEVER displayed.
                      */
 
                     @Override
-public void onReceivedError(
-        WebView view,
-        WebResourceRequest request,
-        android.webkit.WebResourceError error
-) {
+                    public void onReceivedError(
+                            WebView view,
+                            WebResourceRequest request,
+                            android.webkit.WebResourceError error
+                    ) {
 
-    super.onReceivedError(
-            view,
-            request,
-            error
-    );
-
-
-    /*
-     * MAIN WEBSITE ERROR
-     *
-     * OR
-     *
-     * MOVIE / STREAM IFRAME ERROR
-     */
-
-    if (request != null &&
-            (
-                    request.isForMainFrame()
-                    ||
-                    isPlayerEmbedUrl(request)
-            )) {
-
-        webPageVisible =
-                true;
-
-        hideCustomSplash();
+                        super.onReceivedError(
+                                view,
+                                request,
+                                error
+                        );
 
 
-        /*
-         * Stop the failed request immediately.
-         */
-
-        view.stopLoading();
+                        if (request == null) {
+                            return;
+                        }
 
 
-        /*
-         * Show Deeprowss offline page
-         * instead of Android's error page
-         * containing the external URL.
-         */
+                        /*
+                         * =================================================
+                         * MAIN WEBSITE FAILURE
+                         * =================================================
+                         */
 
-        view.post(
-                () -> showOfflinePage()
-        );
-    }
-}
+                        if (request.isForMainFrame()) {
+
+                            webPageVisible =
+                                    true;
+
+                            hideCustomSplash();
+
+                            view.stopLoading();
+
+                            view.post(
+                                    () -> showOfflinePage()
+                            );
+
+                            return;
+                        }
+
+
+                        /*
+                         * =================================================
+                         * PLAYER / IFRAME FAILURE
+                         * =================================================
+                         */
+
+                        if (isPlayerEmbedUrl(request)) {
+
+                            String failedUrl =
+                                    request.getUrl() != null
+                                            ? request.getUrl().toString()
+                                            : "";
+
+                            view.post(
+                                    () -> showPlayerConnectionError(
+                                            view,
+                                            failedUrl
+                                    )
+                            );
+                        }
+                    }
+
+
+                    /*
+                     * Android versions below API 23.
+                     */
 
                     @Override
                     public void onReceivedError(
@@ -578,6 +852,8 @@ public void onReceivedError(
 
                             webPageVisible =
                                     true;
+
+                            hideCustomSplash();
 
                             showOfflinePage();
                         }
@@ -642,17 +918,14 @@ public void onReceivedError(
                         new Handler(
                                 Looper.getMainLooper()
                         ).postDelayed(
-                                new Runnable() {
+                                () -> {
 
-                                    @Override
-                                    public void run() {
+                                    if (refreshContainer != null) {
 
-                                        if (refreshContainer != null) {
-
-                                            refreshContainer
-                                                    .stopRefreshing();
-                                        }
+                                        refreshContainer
+                                                .stopRefreshing();
                                     }
+
                                 },
                                 900
                         );
@@ -662,7 +935,7 @@ public void onReceivedError(
 
 
         /*
-         * Add WebView.
+         * Add main WebView.
          */
 
         refreshContainer.addView(
@@ -684,6 +957,215 @@ public void onReceivedError(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT
                 )
+        );
+    }
+
+
+    /*
+     * =========================================================
+     * PLAYER / IFRAME URL DETECTION
+     * =========================================================
+     */
+
+    private boolean isPlayerEmbedUrl(
+            WebResourceRequest request
+    ) {
+
+        if (request == null ||
+                request.getUrl() == null) {
+
+            return false;
+        }
+
+        String url =
+                request.getUrl()
+                        .toString()
+                        .toLowerCase(
+                                java.util.Locale.US
+                        );
+
+        /*
+         * Detect player/movie/stream embed pages.
+         */
+
+        return url.contains("/embed/");
+    }
+
+
+    /*
+     * =========================================================
+     * PLAYER CONNECTION ERROR
+     * =========================================================
+     *
+     * IMPORTANT:
+     *
+     * The failed URL is used internally only to locate the
+     * corresponding iframe.
+     *
+     * It is NEVER printed to the user.
+     */
+
+    private void showPlayerConnectionError(
+            WebView webView,
+            String failedUrl
+    ) {
+
+        if (webView == null) {
+            return;
+        }
+
+
+        if (failedUrl == null ||
+                failedUrl.trim().isEmpty()) {
+
+            return;
+        }
+
+
+        /*
+         * Escape the URL for JavaScript.
+         *
+         * This URL is NOT shown anywhere.
+         */
+
+        String escapedUrl =
+                failedUrl
+                        .replace(
+                                "\\",
+                                "\\\\"
+                        )
+                        .replace(
+                                "'",
+                                "\\'"
+                        )
+                        .replace(
+                                "\n",
+                                ""
+                        )
+                        .replace(
+                                "\r",
+                                ""
+                        );
+
+
+        /*
+         * =====================================================
+         * JAVASCRIPT
+         * =====================================================
+         *
+         * Find the failed iframe.
+         *
+         * Hide it.
+         *
+         * Put a local Deeprowss error message in its place.
+         */
+
+        String javascript =
+                "(function() {" +
+
+                "var frames = document.getElementsByTagName('iframe');" +
+
+                "for (var i = 0; i < frames.length; i++) {" +
+
+                "    var frame = frames[i];" +
+
+                "    var src = frame.getAttribute('src') || '';" +
+
+                "    if (src === '" +
+                escapedUrl +
+                "' || " +
+
+                "        src.indexOf('" +
+                escapedUrl +
+                "') === 0 || " +
+
+                "        '" +
+                escapedUrl +
+                "'.indexOf(src) === 0) {" +
+
+                "        frame.style.display = 'none';" +
+
+                "        var parent = frame.parentElement;" +
+
+                "        if (!parent) continue;" +
+
+                "        parent.style.position = 'relative';" +
+
+                "        var old = parent.querySelector('.deeprowss-player-error');" +
+
+                "        if (old) continue;" +
+
+                "        var box = document.createElement('div');" +
+
+                "        box.className = 'deeprowss-player-error';" +
+
+                "        box.style.cssText = " +
+
+                "'position:absolute;" +
+                "left:0;" +
+                "top:0;" +
+                "width:100%;" +
+                "height:100%;" +
+                "min-height:220px;" +
+                "background:#07090d;" +
+                "color:#fff;" +
+                "display:flex;" +
+                "align-items:center;" +
+                "justify-content:center;" +
+                "text-align:center;" +
+                "z-index:999999;" +
+                "box-sizing:border-box;" +
+                "padding:25px;';" +
+
+                "        box.innerHTML =" +
+
+                "'<div style=\"max-width:380px;\">' +" +
+
+                "'<div style=\"font-size:21px;" +
+                "font-weight:700;" +
+                "margin-bottom:10px;\">" +
+
+                "Unable to connect at this time" +
+
+                "</div>' +" +
+
+                "'<div style=\"font-size:14px;" +
+                "line-height:1.6;" +
+                "color:#9299a8;" +
+                "margin-bottom:20px;\">" +
+
+                "Check your network connection and refresh the page." +
+
+                "</div>' +" +
+
+                "'<button onclick=\"location.reload()\" " +
+
+                "style=\"border:0;" +
+                "border-radius:10px;" +
+                "background:#ff1744;" +
+                "color:#fff;" +
+                "padding:12px 25px;" +
+                "font-size:14px;" +
+                "font-weight:700;\">" +
+
+                "REFRESH" +
+
+                "</button>' +" +
+
+                "'</div>';" +
+
+                "        parent.appendChild(box);" +
+
+                "    }" +
+
+                "}" +
+
+                "})();";
+
+
+        webView.evaluateJavascript(
+                javascript,
+                null
         );
     }
 
@@ -760,7 +1242,7 @@ public void onReceivedError(
 
 
         /*
-         * Zoom controls OFF.
+         * Zoom OFF.
          */
 
         settings.setBuiltInZoomControls(
@@ -771,16 +1253,13 @@ public void onReceivedError(
                 false
         );
 
+        settings.setSupportZoom(
+                false
+        );
+
 
         /*
-         * =====================================================
-         * IMPORTANT WEB VIEW SCALING
-         * =====================================================
-         *
-         * Do NOT force Android to resize the website.
-         *
-         * The HTML viewport and website CSS control the
-         * responsive layout.
+         * Website scaling.
          */
 
         settings.setLoadWithOverviewMode(
@@ -793,7 +1272,7 @@ public void onReceivedError(
 
 
         /*
-         * Keep website text at its real CSS size.
+         * Text.
          */
 
         settings.setTextZoom(
@@ -804,19 +1283,9 @@ public void onReceivedError(
                 "UTF-8"
         );
 
-        settings.setSupportZoom(
-                false
-        );
-
 
         /*
-         * =====================================================
-         * IMPORTANT CACHE SETTING
-         * =====================================================
-         *
-         * This prevents an old style.css or script.js from
-         * remaining in the WebView cache after you update
-         * the GitHub website.
+         * Cache.
          */
 
         settings.setCacheMode(
@@ -825,9 +1294,7 @@ public void onReceivedError(
 
 
         /*
-         * =====================================================
-         * MIXED CONTENT
-         * =====================================================
+         * Mixed content.
          */
 
         if (android.os.Build.VERSION.SDK_INT >=
@@ -841,17 +1308,32 @@ public void onReceivedError(
 
         /*
          * =====================================================
-         * DOWNLOAD SUPPORT
+         * INTERACTION
          * =====================================================
          */
 
+        webView.setClickable(
+                true
+        );
+
+        webView.setFocusable(
+                true
+        );
+
+        webView.setFocusableInTouchMode(
+                true
+        );
+
+        webView.setEnabled(
+                true
+        );
+
+
         /*
-         * Make every WebView a normal interactive browser surface.
+         * =====================================================
+         * DOWNLOAD
+         * =====================================================
          */
-        webView.setClickable(true);
-        webView.setFocusable(true);
-        webView.setFocusableInTouchMode(true);
-        webView.setEnabled(true);
 
         webView.setDownloadListener(
                 new DownloadListener() {
@@ -877,7 +1359,9 @@ public void onReceivedError(
 
 
         /*
-         * Cookies.
+         * =====================================================
+         * COOKIES
+         * =====================================================
          */
 
         CookieManager cookieManager =
@@ -896,7 +1380,7 @@ public void onReceivedError(
 
     /*
      * =========================================================
-     * WEB DOWNLOAD
+     * DOWNLOAD
      * =========================================================
      */
 
@@ -922,16 +1406,21 @@ public void onReceivedError(
                 return;
             }
 
+
             DownloadManager.Request request =
                     new DownloadManager.Request(
                             Uri.parse(url)
                     );
 
+
             if (mimeType != null &&
                     !mimeType.trim().isEmpty()) {
 
-                request.setMimeType(mimeType);
+                request.setMimeType(
+                        mimeType
+                );
             }
+
 
             if (userAgent != null &&
                     !userAgent.trim().isEmpty()) {
@@ -942,10 +1431,12 @@ public void onReceivedError(
                 );
             }
 
+
             String cookies =
                     CookieManager
                             .getInstance()
                             .getCookie(url);
+
 
             if (cookies != null &&
                     !cookies.trim().isEmpty()) {
@@ -956,15 +1447,18 @@ public void onReceivedError(
                 );
             }
 
+
             request.setDescription(
                     "Downloading from Deeprowss"
             );
+
 
             request.setNotificationVisibility(
                     DownloadManager
                             .Request
                             .VISIBILITY_VISIBLE_NOTIFY_COMPLETED
             );
+
 
             String fileName =
                     android.webkit.URLUtil
@@ -974,6 +1468,7 @@ public void onReceivedError(
                                     mimeType
                             );
 
+
             if (fileName == null ||
                     fileName.trim().isEmpty()) {
 
@@ -981,10 +1476,12 @@ public void onReceivedError(
                         "deeprowss_download";
             }
 
+
             request.setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_DOWNLOADS,
                     fileName
             );
+
 
             DownloadManager manager =
                     (DownloadManager)
@@ -992,14 +1489,19 @@ public void onReceivedError(
                                     DOWNLOAD_SERVICE
                             );
 
+
             if (manager != null) {
 
-                manager.enqueue(request);
+                manager.enqueue(
+                        request
+                );
             }
 
         } catch (Exception ignored) {
 
-            // Do not crash the app if a website uses an unsupported download scheme.
+            /*
+             * Never crash the app because of a website download.
+             */
         }
     }
 
@@ -1009,38 +1511,15 @@ public void onReceivedError(
      * OFFLINE PAGE
      * =========================================================
      */
-    private boolean isPlayerEmbedUrl(
-        WebResourceRequest request
-) {
 
-    if (request == null ||
-            request.getUrl() == null) {
-
-        return false;
-    }
-
-    String url =
-            request.getUrl()
-                    .toString()
-                    .toLowerCase();
-
-    /*
-     * Detect movie and stream embed pages.
-     */
-
-    return url.contains("/embed/");
-}
-    
     private void showOfflinePage() {
 
         if (mainWebView == null) {
-
             return;
         }
 
 
         if (showingOfflinePage) {
-
             return;
         }
 
@@ -1186,7 +1665,7 @@ public void onReceivedError(
 
     /*
      * =========================================================
-     * TRY WEBSITE AGAIN
+     * TRY AGAIN
      * =========================================================
      */
 
@@ -1227,15 +1706,9 @@ public void onReceivedError(
 
 
         /*
-         * =========================================================
-         * EXTERNAL LINK EXCEPTIONS
-         * =========================================================
-         *
-         * These specific links are NOT opened inside the app's
-         * popup WebView. Android handles them externally.
-         *
-         * Everything else keeps the existing behavior.
+         * External exceptions.
          */
+
         if (isExternalExceptionUrl(url)) {
 
             openExternalUrl(url);
@@ -1245,9 +1718,7 @@ public void onReceivedError(
 
 
         /*
-         * =========================================================
-         * NORMAL DEEPROWSS NAVIGATION
-         * =========================================================
+         * Deeprowss GitHub pages remain inside main WebView.
          */
 
         if (url.startsWith(
@@ -1266,8 +1737,7 @@ public void onReceivedError(
 
 
         /*
-         * All other links keep using the existing
-         * in-app popup WebView.
+         * Everything else uses popup WebView.
          */
 
         openPopup(
@@ -1292,6 +1762,7 @@ public void onReceivedError(
             return false;
         }
 
+
         try {
 
             Uri uri =
@@ -1300,15 +1771,18 @@ public void onReceivedError(
             String host =
                     uri.getHost();
 
+
             if (host == null) {
 
                 return false;
             }
 
+
             host =
                     host.toLowerCase(
                             java.util.Locale.US
                     );
+
 
             return host.equals("t.me") ||
                     host.equals("telegram.me") ||
@@ -1321,6 +1795,12 @@ public void onReceivedError(
     }
 
 
+    /*
+     * =========================================================
+     * HTTP URL CHECK
+     * =========================================================
+     */
+
     private boolean isHttpUrl(
             String url
     ) {
@@ -1329,10 +1809,13 @@ public void onReceivedError(
             return false;
         }
 
+
         String value =
-                url.trim().toLowerCase(
-                        java.util.Locale.US
-                );
+                url.trim()
+                        .toLowerCase(
+                                java.util.Locale.US
+                        );
+
 
         return value.startsWith("http://") ||
                 value.startsWith("https://");
@@ -1357,16 +1840,20 @@ public void onReceivedError(
                             Uri.parse(url)
                     );
 
-            startActivity(intent);
+            startActivity(
+                    intent
+            );
 
         } catch (Exception ignored) {
 
             /*
-             * If no external application can handle the URL,
-             * keep the link inside the existing popup WebView
-             * rather than crashing the app.
+             * If Android cannot handle the scheme,
+             * keep it inside popup.
              */
-            openPopup(url);
+
+            openPopup(
+                    url
+            );
         }
     }
 
@@ -1375,23 +1862,38 @@ public void onReceivedError(
      * =========================================================
      * NATIVE MEDIA3 PLAYER
      * =========================================================
-     *
-     * Direct MP4/WebM/M3U8 media URLs can be played by Media3.
-     * Ordinary webpages and JavaScript players stay in WebView.
      */
 
-    private boolean isDirectMediaUrl(String url) {
+    private boolean isDirectMediaUrl(
+            String url
+    ) {
 
-        if (url == null || url.trim().isEmpty()) {
+        if (url == null ||
+                url.trim().isEmpty()) {
+
             return false;
         }
 
-        String u = url.toLowerCase(java.util.Locale.US);
 
-        int queryIndex = u.indexOf('?');
+        String u =
+                url.toLowerCase(
+                        java.util.Locale.US
+                );
+
+
+        int queryIndex =
+                u.indexOf('?');
+
+
         if (queryIndex >= 0) {
-            u = u.substring(0, queryIndex);
+
+            u =
+                    u.substring(
+                            0,
+                            queryIndex
+                    );
         }
+
 
         return u.endsWith(".mp4") ||
                 u.endsWith(".m4v") ||
@@ -1401,35 +1903,85 @@ public void onReceivedError(
     }
 
 
-    private void playNativeMedia(String url) {
+    private void playNativeMedia(
+            String url
+    ) {
 
-        if (url == null || url.trim().isEmpty()) {
+        if (url == null ||
+                url.trim().isEmpty()) {
+
             return;
         }
 
+
         releaseNativePlayer();
 
-        nativePlayer = new ExoPlayer.Builder(this).build();
 
-        nativePlayerView = new PlayerView(this);
-        nativePlayerView.setUseController(true);
-        nativePlayerView.setPlayer(nativePlayer);
-        nativePlayerView.setBackgroundColor(Color.BLACK);
+        nativePlayer =
+                new ExoPlayer.Builder(
+                        this
+                ).build();
 
-        MediaItem mediaItem = MediaItem.fromUri(Uri.parse(url));
-        nativePlayer.setMediaItem(mediaItem);
+
+        nativePlayerView =
+                new PlayerView(
+                        this
+                );
+
+
+        nativePlayerView.setUseController(
+                true
+        );
+
+
+        nativePlayerView.setPlayer(
+                nativePlayer
+        );
+
+
+        nativePlayerView.setBackgroundColor(
+                Color.BLACK
+        );
+
+
+        MediaItem mediaItem =
+                MediaItem.fromUri(
+                        Uri.parse(url)
+                );
+
+
+        nativePlayer.setMediaItem(
+                mediaItem
+        );
+
+
         nativePlayer.prepare();
-        nativePlayer.setPlayWhenReady(true);
 
-        nativePlayerFullscreen = true;
+
+        nativePlayer.setPlayWhenReady(
+                true
+        );
+
+
+        nativePlayerFullscreen =
+                true;
+
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.GONE);
+
+            refreshContainer.setVisibility(
+                    View.GONE
+            );
         }
 
+
         if (popupContainer != null) {
-            popupContainer.setVisibility(View.GONE);
+
+            popupContainer.setVisibility(
+                    View.GONE
+            );
         }
+
 
         rootLayout.addView(
                 nativePlayerView,
@@ -1439,42 +1991,68 @@ public void onReceivedError(
                 )
         );
 
+
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         );
 
+
         hideStatusBar();
 
-        nativePlayer.addListener(new Player.Listener() {
-            @Override
-            public void onPlaybackStateChanged(int playbackState) {
-                if (playbackState == Player.STATE_ENDED) {
-                    exitNativeMedia();
+
+        nativePlayer.addListener(
+                new Player.Listener() {
+
+                    @Override
+                    public void onPlaybackStateChanged(
+                            int playbackState
+                    ) {
+
+                        if (playbackState ==
+                                Player.STATE_ENDED) {
+
+                            exitNativeMedia();
+                        }
+                    }
                 }
-            }
-        });
+        );
     }
 
 
     private void exitNativeMedia() {
 
-        if (!nativePlayerFullscreen && nativePlayerView == null) {
+        if (!nativePlayerFullscreen &&
+                nativePlayerView == null) {
+
             return;
         }
 
+
         releaseNativePlayer();
 
-        nativePlayerFullscreen = false;
+
+        nativePlayerFullscreen =
+                false;
+
 
         setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         );
 
+
         if (popupContainer != null) {
-            popupContainer.setVisibility(View.VISIBLE);
+
+            popupContainer.setVisibility(
+                    View.VISIBLE
+            );
+
         } else if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.VISIBLE);
+
+            refreshContainer.setVisibility(
+                    View.VISIBLE
+            );
         }
+
 
         hideStatusBar();
     }
@@ -1483,23 +2061,40 @@ public void onReceivedError(
     private void releaseNativePlayer() {
 
         if (nativePlayer != null) {
+
             try {
+
                 nativePlayer.stop();
+
             } catch (Exception ignored) {
             }
+
 
             nativePlayer.release();
-            nativePlayer = null;
+
+            nativePlayer =
+                    null;
         }
 
+
         if (nativePlayerView != null) {
+
             try {
-                nativePlayerView.setPlayer(null);
-                rootLayout.removeView(nativePlayerView);
+
+                nativePlayerView.setPlayer(
+                        null
+                );
+
+                rootLayout.removeView(
+                        nativePlayerView
+                );
+
             } catch (Exception ignored) {
             }
 
-            nativePlayerView = null;
+
+            nativePlayerView =
+                    null;
         }
     }
 
@@ -1676,111 +2271,129 @@ public void onReceivedError(
 
     /*
      * =========================================================
-     * OPEN POPUP / BROWSER WINDOW
+     * OPEN POPUP
      * =========================================================
-     *
-     * This method is intentionally kept as the single entry point
-     * for opening a normal URL inside the app browser.
-     *
-     * It creates a NEW WebView window and loads the URL into it.
-     * The existing browser windows are NOT destroyed.
      */
-    private void openPopup(String url) {
 
-        if (url == null || url.trim().isEmpty()) {
+    private void openPopup(
+            String url
+    ) {
+
+        if (url == null ||
+                url.trim().isEmpty()) {
+
             return;
         }
 
-        String targetUrl = url.trim();
 
-        /*
-         * Do not try to render Android-only schemes as webpages.
-         * Let Android handle them instead.
-         */
+        String targetUrl =
+                url.trim();
+
+
         if (!isHttpUrl(targetUrl)) {
-            openExternalUrl(targetUrl);
+
+            openExternalUrl(
+                    targetUrl
+            );
+
             return;
         }
 
-        WebView browserWindow = createPopupWebView();
 
-        /*
-         * IMPORTANT:
-         * createPopupWebView() attaches the window to the browser
-         * container and makes it the active/focused window.
-         */
-        browserWindow.loadUrl(targetUrl);
+        WebView browserWindow =
+                createPopupWebView();
+
+
+        browserWindow.loadUrl(
+                targetUrl
+        );
     }
 
 
     /*
      * =========================================================
-     * POPUP WEBVIEW
+     * CREATE POPUP WEBVIEW
      * =========================================================
      */
 
     private WebView createPopupWebView() {
 
-        /*
-         * IMPORTANT:
-         *
-         * Every window gets its OWN WebView.
-         * We never destroy the current WebView just because a
-         * website asks for another window.
-         *
-         * This is much closer to Chrome's window behavior.
-         */
         final WebView newWebView =
                 new WebView(this);
 
-        newWebView.setBackgroundColor(Color.BLACK);
+
+        newWebView.setBackgroundColor(
+                Color.BLACK
+        );
+
+
+        newWebView.setClickable(
+                true
+        );
+
+        newWebView.setFocusable(
+                true
+        );
+
+        newWebView.setFocusableInTouchMode(
+                true
+        );
+
+        newWebView.setEnabled(
+                true
+        );
+
+        newWebView.setHapticFeedbackEnabled(
+                true
+        );
+
+
+        configureWebView(
+                newWebView
+        );
+
 
         /*
-         * Make the WebView a real interactive/focusable child.
-         * Some popup-heavy websites depend on focus for touch,
-         * JavaScript controls, forms and scrolling.
+         * Modern Chrome-like User Agent.
          */
-        newWebView.setClickable(true);
-        newWebView.setFocusable(true);
-        newWebView.setFocusableInTouchMode(true);
-        newWebView.setEnabled(true);
-        newWebView.setHapticFeedbackEnabled(true);
 
-        configureWebView(newWebView);
-
-        /*
-         * Give external pages a normal modern Chrome-like user agent.
-         * This prevents sites from serving a crippled WebView version
-         * of their page when their normal mobile page works correctly.
-         */
         try {
+
             String defaultUa =
-                    newWebView.getSettings().getUserAgentString();
+                    newWebView
+                            .getSettings()
+                            .getUserAgentString();
+
 
             if (defaultUa != null &&
-                    !defaultUa.toLowerCase(
-                            java.util.Locale.US
-                    ).contains("chrome/")) {
+                    !defaultUa
+                            .toLowerCase(
+                                    java.util.Locale.US
+                            )
+                            .contains("chrome/")) {
 
                 String chromeUa =
                         defaultUa +
                         " Chrome/131.0.0.0 Mobile Safari/537.36";
 
-                newWebView.getSettings().setUserAgentString(
-                        chromeUa
-                );
+
+                newWebView
+                        .getSettings()
+                        .setUserAgentString(
+                                chromeUa
+                        );
             }
+
         } catch (Exception ignored) {
         }
 
+
         /*
-         * Keep normal browser navigation INSIDE this WebView.
-         *
-         * Do not intercept ordinary HTTPS links here.
-         * Returning false is important: WebView itself performs
-         * the navigation and preserves the website's JavaScript,
-         * forms, redirects, history and touch behavior.
+         * =====================================================
+         * POPUP WEBVIEW CLIENT
+         * =====================================================
          */
+
         newWebView.setWebViewClient(
                 new WebViewClient() {
 
@@ -1796,23 +2409,25 @@ public void onReceivedError(
                             return false;
                         }
 
-                        String url =
-                                request.getUrl().toString();
 
-                        /*
-                         * Only non-web/application schemes are sent
-                         * to Android. Normal HTTP/HTTPS stays inside
-                         * the browser window.
-                         */
+                        String url =
+                                request.getUrl()
+                                        .toString();
+
+
                         if (!isHttpUrl(url)) {
 
-                            openExternalUrl(url);
+                            openExternalUrl(
+                                    url
+                            );
 
                             return true;
                         }
 
+
                         return false;
                     }
+
 
                     @Override
                     public boolean shouldOverrideUrlLoading(
@@ -1826,15 +2441,20 @@ public void onReceivedError(
                             return false;
                         }
 
+
                         if (!isHttpUrl(url)) {
 
-                            openExternalUrl(url);
+                            openExternalUrl(
+                                    url
+                            );
 
                             return true;
                         }
 
+
                         return false;
                     }
+
 
                     @Override
                     public void onPageStarted(
@@ -1849,14 +2469,15 @@ public void onReceivedError(
                                 favicon
                         );
 
-                        view.setBackgroundColor(Color.BLACK);
 
-                        /*
-                         * Make sure the active WebView remains above
-                         * every other popup/browser layer.
-                         */
+                        view.setBackgroundColor(
+                                Color.BLACK
+                        );
+
+
                         view.bringToFront();
                     }
+
 
                     @Override
                     public void onPageFinished(
@@ -1869,19 +2490,93 @@ public void onReceivedError(
                                 url
                         );
 
-                        view.setBackgroundColor(Color.BLACK);
 
-                        /*
-                         * Restore focus after page navigation.
-                         * This is especially useful on pages that
-                         * replace their DOM after loading.
-                         */
-                        view.setFocusable(true);
-                        view.setFocusableInTouchMode(true);
+                        view.setBackgroundColor(
+                                Color.BLACK
+                        );
+
+
+                        view.setFocusable(
+                                true
+                        );
+
+                        view.setFocusableInTouchMode(
+                                true
+                        );
+
+
                         view.requestFocus(
                                 View.FOCUS_DOWN
                         );
                     }
+
+
+                    /*
+                     * =================================================
+                     * POPUP ERROR HANDLING
+                     * =================================================
+                     *
+                     * Never allow Android to display the failing URL.
+                     */
+
+                    @Override
+                    public void onReceivedError(
+                            WebView view,
+                            WebResourceRequest request,
+                            android.webkit.WebResourceError error
+                    ) {
+
+                        super.onReceivedError(
+                                view,
+                                request,
+                                error
+                        );
+
+
+                        if (request == null) {
+                            return;
+                        }
+
+
+                        /*
+                         * Main popup document failed.
+                         */
+
+                        if (request.isForMainFrame()) {
+
+                            view.stopLoading();
+
+                            view.post(
+                                    () -> showPopupConnectionError(
+                                            view
+                                    )
+                            );
+
+                            return;
+                        }
+
+
+                        /*
+                         * Embedded player failed.
+                         */
+
+                        if (isPlayerEmbedUrl(request)) {
+
+                            String failedUrl =
+                                    request.getUrl() != null
+                                            ? request.getUrl().toString()
+                                            : "";
+
+
+                            view.post(
+                                    () -> showPlayerConnectionError(
+                                            view,
+                                            failedUrl
+                                    )
+                            );
+                        }
+                    }
+
 
                     @Override
                     public boolean shouldOverrideKeyEvent(
@@ -1894,19 +2589,20 @@ public void onReceivedError(
                 }
         );
 
+
         /*
-         * Each window gets its own Chrome client.
-         *
-         * window.open()/target=_blank therefore creates another
-         * WebView without destroying the existing page.
+         * Chrome client.
          */
+
         newWebView.setWebChromeClient(
                 createChromeClient()
         );
 
+
         /*
-         * Download buttons work through Android DownloadManager.
+         * Downloads.
          */
+
         newWebView.setDownloadListener(
                 new DownloadListener() {
 
@@ -1929,43 +2625,170 @@ public void onReceivedError(
                 }
         );
 
+
         /*
-         * Add this WebView to the browser window stack.
+         * Add popup to stack.
          */
-        popupWebViewStack.add(newWebView);
-        popupWebView = newWebView;
+
+        popupWebViewStack.add(
+                newWebView
+        );
+
+        popupWebView =
+                newWebView;
+
 
         showPopupContainer();
 
-        /*
-         * The container is already on screen at this point.
-         * Add the new window above the previous window.
-         */
-        attachPopupWebView(newWebView);
 
-        newWebView.setVisibility(View.VISIBLE);
+        attachPopupWebView(
+                newWebView
+        );
+
+
+        newWebView.setVisibility(
+                View.VISIBLE
+        );
+
         newWebView.bringToFront();
 
-        /*
-         * Explicitly request touch focus.
-         */
+
         newWebView.post(
                 () -> {
-                    newWebView.setFocusable(true);
-                    newWebView.setFocusableInTouchMode(true);
+
+                    newWebView.setFocusable(
+                            true
+                    );
+
+                    newWebView.setFocusableInTouchMode(
+                            true
+                    );
+
                     newWebView.requestFocus(
                             View.FOCUS_DOWN
                     );
+
                     newWebView.bringToFront();
                 }
         );
 
+
         return newWebView;
     }
 
+
     /*
      * =========================================================
-     * ATTACH POPUP/BROWSER WINDOW
+     * POPUP CONNECTION ERROR
+     * =========================================================
+     */
+
+    private void showPopupConnectionError(
+            WebView webView
+    ) {
+
+        if (webView == null) {
+            return;
+        }
+
+
+        String html =
+                "<!DOCTYPE html>" +
+
+                "<html>" +
+
+                "<head>" +
+
+                "<meta name='viewport' " +
+                "content='width=device-width," +
+                "initial-scale=1.0'>" +
+
+                "<style>" +
+
+                "html,body{" +
+                "margin:0;" +
+                "padding:0;" +
+                "width:100%;" +
+                "height:100%;" +
+                "background:#07090d;" +
+                "color:#fff;" +
+                "font-family:Arial,sans-serif;" +
+                "}" +
+
+                "body{" +
+                "display:flex;" +
+                "align-items:center;" +
+                "justify-content:center;" +
+                "text-align:center;" +
+                "}" +
+
+                ".box{" +
+                "width:88%;" +
+                "max-width:420px;" +
+                "}" +
+
+                "h1{" +
+                "font-size:23px;" +
+                "margin:0 0 12px;" +
+                "}" +
+
+                "p{" +
+                "font-size:14px;" +
+                "line-height:1.6;" +
+                "color:#9299a8;" +
+                "margin:0 0 25px;" +
+                "}" +
+
+                "button{" +
+                "border:0;" +
+                "border-radius:10px;" +
+                "background:#ff1744;" +
+                "color:#fff;" +
+                "padding:13px 26px;" +
+                "font-size:14px;" +
+                "font-weight:700;" +
+                "}" +
+
+                "</style>" +
+
+                "</head>" +
+
+                "<body>" +
+
+                "<div class='box'>" +
+
+                "<h1>" +
+                "Unable to connect at this time" +
+                "</h1>" +
+
+                "<p>" +
+                "Check your network connection and refresh the page." +
+                "</p>" +
+
+                "<button onclick='location.reload()'>" +
+                "REFRESH" +
+                "</button>" +
+
+                "</div>" +
+
+                "</body>" +
+
+                "</html>";
+
+
+        webView.loadDataWithBaseURL(
+                WEBSITE_URL,
+                html,
+                "text/html",
+                "UTF-8",
+                null
+        );
+    }
+
+
+    /*
+     * =========================================================
+     * ATTACH POPUP WEBVIEW
      * =========================================================
      */
 
@@ -1979,21 +2802,24 @@ public void onReceivedError(
             return;
         }
 
-        /*
-         * Remove the WebView from any previous parent first.
-         */
-        if (webView.getParent() instanceof android.view.ViewGroup) {
 
-            ((android.view.ViewGroup) webView.getParent())
-                    .removeView(webView);
+        if (webView.getParent()
+                instanceof android.view.ViewGroup) {
+
+            ((android.view.ViewGroup)
+                    webView.getParent())
+                    .removeView(
+                            webView
+                    );
         }
 
+
         /*
-         * Hide previous browser windows.
-         * They remain alive in the stack so their history/session
-         * is preserved, just like switching browser windows.
+         * Hide previous windows.
          */
-        for (WebView existing : popupWebViewStack) {
+
+        for (WebView existing :
+                popupWebViewStack) {
 
             if (existing != webView) {
 
@@ -2003,19 +2829,23 @@ public void onReceivedError(
             }
         }
 
+
         FrameLayout.LayoutParams webParams =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT
                 );
 
+
         webParams.topMargin =
                 popupBarHeight;
+
 
         popupContainer.addView(
                 webView,
                 webParams
         );
+
 
         webView.setVisibility(
                 View.VISIBLE
@@ -2023,6 +2853,13 @@ public void onReceivedError(
 
         webView.bringToFront();
     }
+
+
+    /*
+     * =========================================================
+     * SWITCH POPUP WINDOW
+     * =========================================================
+     */
 
     private void switchToPreviousPopupWindow() {
 
@@ -2033,43 +2870,59 @@ public void onReceivedError(
             return;
         }
 
+
         WebView current =
                 popupWebViewStack.remove(
                         popupWebViewStack.size() - 1
                 );
 
+
         try {
+
             if (popupContainer != null) {
-                popupContainer.removeView(current);
+
+                popupContainer.removeView(
+                        current
+                );
             }
 
+
             current.stopLoading();
+
             current.onPause();
+
             current.destroy();
 
         } catch (Exception ignored) {
         }
+
 
         popupWebView =
                 popupWebViewStack.get(
                         popupWebViewStack.size() - 1
                 );
 
+
         attachPopupWebView(
                 popupWebView
         );
 
+
         popupWebView.onResume();
+
 
         popupWebView.post(
                 () -> {
+
                     popupWebView.requestFocus(
                             View.FOCUS_DOWN
                     );
+
                     popupWebView.bringToFront();
                 }
         );
     }
+
 
     /*
      * =========================================================
@@ -2122,7 +2975,9 @@ public void onReceivedError(
 
 
         /*
-         * BACK BUTTON
+         * =====================================================
+         * BACK
+         * =====================================================
          */
 
         ImageButton backButton =
@@ -2150,27 +3005,25 @@ public void onReceivedError(
 
 
         backButton.setOnClickListener(
-                new View.OnClickListener() {
+                v -> {
 
-                    @Override
-                    public void onClick(View v) {
+                    if (popupWebView != null &&
+                            popupWebView.canGoBack()) {
 
-                        if (popupWebView != null &&
-                                popupWebView.canGoBack()) {
+                        popupWebView.goBack();
 
-                            popupWebView.goBack();
+                    } else {
 
-                        } else {
-
-                            switchToPreviousPopupWindow();
-                        }
+                        switchToPreviousPopupWindow();
                     }
                 }
         );
 
 
         /*
+         * =====================================================
          * TITLE
+         * =====================================================
          */
 
         TextView title =
@@ -2211,7 +3064,9 @@ public void onReceivedError(
 
 
         /*
+         * =====================================================
          * CLOSE
+         * =====================================================
          */
 
         ImageButton closeButton =
@@ -2239,16 +3094,13 @@ public void onReceivedError(
 
 
         closeButton.setOnClickListener(
-                new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-
-                        closePopup();
-                    }
-                }
+                v -> closePopup()
         );
 
+
+        /*
+         * Add buttons.
+         */
 
         topBar.addView(
                 backButton,
@@ -2278,6 +3130,12 @@ public void onReceivedError(
         );
 
 
+        /*
+         * =====================================================
+         * TOP BAR
+         * =====================================================
+         */
+
         FrameLayout.LayoutParams barParams =
                 new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
@@ -2292,17 +3150,11 @@ public void onReceivedError(
         );
 
 
-        FrameLayout.LayoutParams webParams =
-                new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
-                );
-
-
-        webParams.topMargin =
-                popupBarHeight;
-
-
+        /*
+         * =====================================================
+         * POPUP CONTAINER
+         * =====================================================
+         */
 
         FrameLayout.LayoutParams popupParams =
                 new FrameLayout.LayoutParams(
@@ -2350,28 +3202,39 @@ public void onReceivedError(
 
 
         /*
-         * Destroy every browser window, not just the active one.
+         * Destroy every popup.
          */
+
         for (WebView browserWindow :
-                new ArrayList<>(popupWebViewStack)) {
+                new ArrayList<>(
+                        popupWebViewStack
+                )) {
 
             try {
 
                 if (popupContainer != null) {
-                    popupContainer.removeView(browserWindow);
+
+                    popupContainer.removeView(
+                            browserWindow
+                    );
                 }
 
+
                 browserWindow.stopLoading();
+
                 browserWindow.onPause();
+
                 browserWindow.destroy();
 
             } catch (Exception ignored) {
             }
         }
 
+
         popupWebViewStack.clear();
 
-        popupWebView = null;
+        popupWebView =
+                null;
 
 
         rootLayout.removeView(
@@ -2406,32 +3269,26 @@ public void onReceivedError(
      * =========================================================
      */
 
-   private void hideStatusBar() {
+    private void hideStatusBar() {
 
-    /*
-     * Hide the status bar and Android navigation bar.
-     *
-     * IMMERSIVE_STICKY allows the bars to temporarily appear
-     * when the user uses an Android system gesture, then hide
-     * again automatically.
-     */
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
 
-    getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-    );
 
-    getWindow()
-            .getDecorView()
-            .setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            );
-}
+        getWindow()
+                .getDecorView()
+                .setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                );
+    }
+
 
     /*
      * =========================================================
@@ -2448,6 +3305,7 @@ public void onReceivedError(
 
             return;
         }
+
 
         if (customVideoView != null) {
 
@@ -2534,14 +3392,30 @@ public void onReceivedError(
     @Override
     protected void onDestroy() {
 
+        /*
+         * Stop splash animation.
+         */
+
+        if (splashAnimationHandler != null &&
+                splashAnimationRunnable != null) {
+
+            splashAnimationHandler.removeCallbacks(
+                    splashAnimationRunnable
+            );
+        }
+
+
         if (customSplashView != null) {
 
             try {
+
                 rootLayout.removeView(
                         customSplashView
                 );
+
             } catch (Exception ignored) {
             }
+
 
             customSplashView =
                     null;
@@ -2549,6 +3423,7 @@ public void onReceivedError(
 
 
         releaseNativePlayer();
+
 
         if (customVideoView != null) {
 
@@ -2561,24 +3436,41 @@ public void onReceivedError(
             } catch (Exception ignored) {
             }
 
+
             customVideoView =
                     null;
         }
 
 
+        /*
+         * Destroy popup WebViews.
+         */
+
         for (WebView browserWindow :
-                new ArrayList<>(popupWebViewStack)) {
+                new ArrayList<>(
+                        popupWebViewStack
+                )) {
 
             try {
+
                 browserWindow.stopLoading();
+
                 browserWindow.destroy();
+
             } catch (Exception ignored) {
             }
         }
 
-        popupWebViewStack.clear();
-        popupWebView = null;
 
+        popupWebViewStack.clear();
+
+        popupWebView =
+                null;
+
+
+        /*
+         * Destroy main WebView.
+         */
 
         if (mainWebView != null) {
 
@@ -2590,6 +3482,7 @@ public void onReceivedError(
 
             } catch (Exception ignored) {
             }
+
 
             mainWebView =
                     null;
@@ -2647,7 +3540,6 @@ public void onReceivedError(
         private static final float TRIGGER_DISTANCE =
                 180f;
 
-
         private static final float MAX_PULL_DISTANCE =
                 300f;
 
@@ -2671,7 +3563,9 @@ public void onReceivedError(
 
 
             progressBar =
-                    new ProgressBar(context);
+                    new ProgressBar(
+                            context
+                    );
 
 
             progressBar.setVisibility(
@@ -2949,7 +3843,10 @@ public void onReceivedError(
 
                 webView.animate()
                         .translationY(
-                                dp(getContext(), 70)
+                                dp(
+                                        getContext(),
+                                        70
+                                )
                         )
                         .setDuration(150)
                         .start();
