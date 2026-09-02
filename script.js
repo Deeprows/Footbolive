@@ -3719,3 +3719,933 @@ if (refreshPageBtn) {
     localStorage.setItem(storageKey, Date.now().toString());
   });
 })();
+
+/* =========================================
+   DEEPROWSS LIVE & LATEST TICKER
+   ========================================= */
+
+(function () {
+
+  const ticker =
+    document.getElementById(
+      "deeprowssTicker"
+    );
+
+  const track =
+    document.getElementById(
+      "deeprowssTickerTrack"
+    );
+
+  const closeButton =
+    document.getElementById(
+      "closeDeeprowssTicker"
+    );
+
+
+  if (!ticker || !track) {
+    return;
+  }
+
+
+  /* =======================================
+     SETTINGS
+     ======================================= */
+
+  const STORAGE_KEY =
+    "deeprowssTickerClosed";
+
+  const CLOSE_DURATION =
+    24 * 60 * 60 * 1000;
+
+
+  /* =======================================
+     CHECK IF CLOSED
+     ======================================= */
+
+  const lastClosed =
+    Number(
+      localStorage.getItem(
+        STORAGE_KEY
+      )
+    );
+
+
+  if (
+    lastClosed &&
+    Date.now() - lastClosed <
+    CLOSE_DURATION
+  ) {
+
+    ticker.classList.add(
+      "is-hidden"
+    );
+
+    return;
+
+  }
+
+
+  /* =======================================
+     ESCAPE HTML
+     ======================================= */
+
+  function escapeHTML(value) {
+
+    return String(value || "")
+
+      .replace(/&/g, "&amp;")
+
+      .replace(/</g, "&lt;")
+
+      .replace(/>/g, "&gt;")
+
+      .replace(/"/g, "&quot;")
+
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  /* =======================================
+     CHECK IF MATCH IS LIVE
+
+     Uses your existing:
+
+     data-kickoff
+     data-duration
+     ======================================= */
+
+  function getMatchState(card) {
+
+    const kickoffString =
+      card.dataset.kickoff;
+
+
+    if (!kickoffString) {
+
+      return "unknown";
+
+    }
+
+
+    const kickoff =
+      new Date(kickoffString);
+
+
+    if (
+      Number.isNaN(
+        kickoff.getTime()
+      )
+    ) {
+
+      return "unknown";
+
+    }
+
+
+    const duration =
+      Number(
+        card.dataset.duration
+      ) || 96;
+
+
+    const endTime =
+      new Date(
+
+        kickoff.getTime() +
+
+        duration *
+        60 *
+        1000
+
+      );
+
+
+    const now =
+      new Date();
+
+
+    if (now < kickoff) {
+
+      return "upcoming";
+
+    }
+
+
+    if (
+      now >= kickoff &&
+      now < endTime
+    ) {
+
+      return "live";
+
+    }
+
+
+    return "ended";
+
+  }
+
+
+  /* =======================================
+     FORMAT MATCH TIME
+     ======================================= */
+
+  function getMatchTime(card) {
+
+    const kickoffString =
+      card.dataset.kickoff;
+
+
+    if (!kickoffString) {
+      return "";
+    }
+
+
+    const kickoff =
+      new Date(kickoffString);
+
+
+    if (
+      Number.isNaN(
+        kickoff.getTime()
+      )
+    ) {
+
+      return "";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+
+      undefined,
+
+      {
+        hour: "numeric",
+        minute: "2-digit"
+      }
+
+    ).format(kickoff);
+
+  }
+
+
+  /* =======================================
+     CREATE ITEM
+     ======================================= */
+
+  function createTickerItem(
+    type,
+    name,
+    sourceElement,
+    live
+  ) {
+
+    const item =
+      document.createElement(
+        "button"
+      );
+
+
+    item.type =
+      "button";
+
+
+    item.className =
+      "deeprowss-ticker-item";
+
+
+    if (live) {
+
+      item.classList.add(
+        "is-live"
+      );
+
+    }
+
+
+    let badge =
+      "";
+
+
+    if (live) {
+
+      badge =
+        "LIVE";
+
+    }
+
+    else if (
+      type === "football"
+    ) {
+
+      badge =
+        "MATCH";
+
+    }
+
+    else if (
+      type === "tv"
+    ) {
+
+      badge =
+        "TV";
+
+    }
+
+    else if (
+      type === "movie"
+    ) {
+
+      badge =
+        "MOVIE";
+
+    }
+
+    else if (
+      type === "highlight"
+    ) {
+
+      badge =
+        "HIGHLIGHT";
+
+    }
+
+
+    item.innerHTML =
+
+      '<span class="deeprowss-ticker-badge">' +
+
+      escapeHTML(badge) +
+
+      '</span>' +
+
+      '<span>' +
+
+      escapeHTML(name) +
+
+      '</span>';
+
+
+    /* Click original card */
+
+    item.addEventListener(
+      "click",
+      function () {
+
+        if (!sourceElement) {
+          return;
+        }
+
+
+        /* Find section */
+
+        const section =
+          sourceElement.closest(
+            ".content-section"
+          );
+
+
+        if (section) {
+
+          section.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+          });
+
+        }
+
+
+        /* Click actual content */
+
+        setTimeout(
+          function () {
+
+            sourceElement.click();
+
+          },
+          350
+        );
+
+      }
+    );
+
+
+    return item;
+
+  }
+
+
+  /* =======================================
+     CREATE SEPARATOR
+     ======================================= */
+
+  function createSeparator() {
+
+    const separator =
+      document.createElement(
+        "span"
+      );
+
+
+    separator.className =
+      "deeprowss-ticker-separator";
+
+
+    separator.textContent =
+      "•";
+
+
+    return separator;
+
+  }
+
+
+  /* =======================================
+     GET LIVE FOOTBALL
+
+     .match-card
+     data-kickoff
+     data-duration
+     ======================================= */
+
+  function getLiveMatches() {
+
+    const cards =
+      Array.from(
+
+        document.querySelectorAll(
+          ".match-card[data-kickoff]"
+        )
+
+      );
+
+
+    return cards.filter(
+      function (card) {
+
+        return (
+          getMatchState(card)
+          ===
+          "live"
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =======================================
+     GET UPCOMING FOOTBALL
+
+     Only show nearest matches.
+     ======================================= */
+
+  function getUpcomingMatches() {
+
+    const cards =
+      Array.from(
+
+        document.querySelectorAll(
+          ".match-card[data-kickoff]"
+        )
+
+      );
+
+
+    return cards
+
+      .filter(
+        function (card) {
+
+          return (
+            getMatchState(card)
+            ===
+            "upcoming"
+          );
+
+        }
+      )
+
+      .sort(
+        function (a, b) {
+
+          return (
+
+            new Date(
+              a.dataset.kickoff
+            )
+
+            -
+
+            new Date(
+              b.dataset.kickoff
+            )
+
+          );
+
+        }
+      )
+
+      .slice(0, 5);
+
+  }
+
+
+  /* =======================================
+     GET TV CHANNELS
+
+     Reads your:
+
+     .tv-channel
+     data-name
+     ======================================= */
+
+  function getTVChannels() {
+
+    const channels =
+      Array.from(
+
+        document.querySelectorAll(
+          ".tv-channel[data-name]"
+        )
+
+      );
+
+
+    /*
+     * Random selection means
+     * the ticker does not always
+     * show only the first channels.
+     */
+
+    return channels
+
+      .sort(
+        function () {
+
+          return (
+            Math.random() - 0.5
+          );
+
+        }
+      )
+
+      .slice(0, 5);
+
+  }
+
+
+  /* =======================================
+     GET LATEST MOVIES
+
+     Reads existing movie cards.
+     ======================================= */
+
+  function getLatestMovies() {
+
+    const movies =
+      Array.from(
+
+        document.querySelectorAll(
+          ".movie-card[data-name]"
+        )
+
+      );
+
+
+    return movies
+
+      .sort(
+        function (a, b) {
+
+          const dateA =
+            new Date(
+              a.dataset.date ||
+              0
+            );
+
+          const dateB =
+            new Date(
+              b.dataset.date ||
+              0
+            );
+
+
+          return (
+            dateB - dateA
+          );
+
+        }
+      )
+
+      .slice(0, 4);
+
+  }
+
+
+  /* =======================================
+     GET LATEST HIGHLIGHTS
+     ======================================= */
+
+  function getLatestHighlights() {
+
+    const highlights =
+      Array.from(
+
+        document.querySelectorAll(
+          ".highlight-card[data-name]"
+        )
+
+      );
+
+
+    return highlights
+
+      .sort(
+        function (a, b) {
+
+          const dateA =
+            new Date(
+              a.dataset.date ||
+              0
+            );
+
+          const dateB =
+            new Date(
+              b.dataset.date ||
+              0
+            );
+
+
+          return (
+            dateB - dateA
+          );
+
+        }
+      )
+
+      .slice(0, 4);
+
+  }
+
+
+  /* =======================================
+     BUILD TICKER
+     ======================================= */
+
+  function buildTicker() {
+
+    const items = [];
+
+
+    /* LIVE MATCHES FIRST */
+
+    getLiveMatches()
+
+      .forEach(
+        function (card) {
+
+          items.push({
+
+            type:
+              "football",
+
+            name:
+
+              card.dataset.name ||
+
+              card.textContent
+                .trim(),
+
+            element:
+              card,
+
+            live:
+              true
+
+          });
+
+        }
+      );
+
+
+    /* UPCOMING MATCHES */
+
+    getUpcomingMatches()
+
+      .forEach(
+        function (card) {
+
+          const name =
+            card.dataset.name ||
+            "Football Match";
+
+
+          const time =
+            getMatchTime(card);
+
+
+          items.push({
+
+            type:
+              "football",
+
+            name:
+
+              time
+
+                ? name +
+                  " • " +
+                  time
+
+                : name,
+
+            element:
+              card,
+
+            live:
+              false
+
+          });
+
+        }
+      );
+
+
+    /* TV CHANNELS */
+
+    getTVChannels()
+
+      .forEach(
+        function (channel) {
+
+          items.push({
+
+            type:
+              "tv",
+
+            name:
+
+              channel.dataset.name ||
+
+              "Live TV",
+
+            element:
+              channel,
+
+            live:
+              false
+
+          });
+
+        }
+      );
+
+
+    /* MOVIES */
+
+    getLatestMovies()
+
+      .forEach(
+        function (movie) {
+
+          items.push({
+
+            type:
+              "movie",
+
+            name:
+
+              movie.dataset.name ||
+
+              "New Movie",
+
+            element:
+              movie,
+
+            live:
+              false
+
+          });
+
+        }
+      );
+
+
+    /* HIGHLIGHTS */
+
+    getLatestHighlights()
+
+      .forEach(
+        function (highlight) {
+
+          items.push({
+
+            type:
+              "highlight",
+
+            name:
+
+              highlight.dataset.name ||
+
+              "Football Highlight",
+
+            element:
+              highlight,
+
+            live:
+              false
+
+          });
+
+        }
+      );
+
+
+    /* NO CONTENT */
+
+    if (!items.length) {
+
+      track.textContent =
+        "No updates available.";
+
+      return;
+
+    }
+
+
+    /* CLEAR */
+
+    track.innerHTML =
+      "";
+
+
+    /*
+     * Duplicate items.
+
+     * This creates the
+     * continuous loop.
+     */
+
+    const loopItems =
+      items.concat(
+        items
+      );
+
+
+    loopItems.forEach(
+      function (data) {
+
+        const item =
+          createTickerItem(
+
+            data.type,
+
+            data.name,
+
+            data.element,
+
+            data.live
+
+          );
+
+
+        track.appendChild(
+          item
+        );
+
+
+        track.appendChild(
+          createSeparator()
+        );
+
+      }
+    );
+
+
+    /* Set speed */
+
+    const speed =
+      Math.max(
+
+        30,
+
+        items.length * 5
+
+      );
+
+
+    track.style.setProperty(
+
+      "--ticker-speed",
+
+      speed + "s"
+
+    );
+
+  }
+
+
+  /* =======================================
+     CLOSE BUTTON
+     ======================================= */
+
+  if (closeButton) {
+
+    closeButton.addEventListener(
+
+      "click",
+
+      function () {
+
+        ticker.classList.add(
+          "is-hidden"
+        );
+
+
+        localStorage.setItem(
+
+          STORAGE_KEY,
+
+          Date.now().toString()
+
+        );
+
+      }
+
+    );
+
+  }
+
+
+  /* =======================================
+     START
+     ======================================= */
+
+  buildTicker();
+
+
+  /*
+   * Check match status every minute.
+
+   * This allows an UPCOMING
+   * match to automatically become
+   * LIVE in the ticker.
+   */
+
+  setInterval(
+
+    buildTicker,
+
+    60 * 1000
+
+  );
+
+
+})();
