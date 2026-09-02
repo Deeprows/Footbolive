@@ -1652,14 +1652,23 @@ body.deeprows-popup-open {
   font-size: clamp(13px, 3.5vw, 16px); /* shrink on small screens instead of clipping */
 }
 
-/* X2 Onclick Ads Notice */
+/* =========================================================
+   X2 ONCLICK ADS NOTICE
+   Floating near the bottom / footer
+   ========================================================= */
+
 .x2-ad-notice {
   position: fixed;
-  left: 50%;
-  top: 70px;
-  bottom: auto;
 
-  transform: translateX(-50%) translateY(-20px);
+  /*
+   * Keep it floating near the bottom of the screen.
+   * It is independent of where the HTML sits in the body.
+   */
+  left: 50%;
+  bottom: 70px;
+  top: auto;
+
+  transform: translateX(-50%) translateY(20px);
 
   width: calc(100% - 32px);
   max-width: 420px;
@@ -1667,6 +1676,7 @@ body.deeprows-popup-open {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 12px;
 
   padding: 10px 12px 10px 15px;
@@ -1679,10 +1689,14 @@ body.deeprows-popup-open {
 
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 
-  z-index: 99999;
+  /*
+   * Above normal page content, but below fullscreen player.
+   */
+  z-index: 9998;
 
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
 
   transition:
     opacity 0.3s ease,
@@ -1690,18 +1704,36 @@ body.deeprows-popup-open {
     visibility 0.3s ease;
 }
 
-/* Visible state */
+
+/* =========================================================
+   VISIBLE STATE
+   ========================================================= */
+
 .x2-ad-notice.show {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 
   transform: translateX(-50%) translateY(0);
 }
 
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
 .x2-ad-notice-text {
+  flex: 1;
+  min-width: 0;
+
   font-size: 13px;
   line-height: 1.35;
 }
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
 
 .x2-ad-notice-close {
   flex-shrink: 0;
@@ -1727,7 +1759,11 @@ body.deeprows-popup-open {
   background: rgba(255, 255, 255, 0.12);
 }
 
-/* Light mode support */
+
+/* =========================================================
+   LIGHT MODE
+   ========================================================= */
+
 body.light-mode .x2-ad-notice,
 body.light .x2-ad-notice {
   background: #fff;
@@ -1740,20 +1776,37 @@ body.light .x2-ad-notice-close {
   color: #111;
 }
 
-/* Mobile */
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 480px) {
+
   .x2-ad-notice {
-    top: 60px;
-    bottom: auto;
+    left: 50%;
+    top: auto;
+
+    /*
+     * Leave enough room above the bottom navigation/footer.
+     */
+    bottom: 62px;
 
     width: calc(100% - 20px);
 
     padding: 9px 10px 9px 13px;
+
+    transform: translateX(-50%) translateY(20px);
+  }
+
+  .x2-ad-notice.show {
+    transform: translateX(-50%) translateY(0);
   }
 
   .x2-ad-notice-text {
     font-size: 12px;
   }
+
 }
 
 /* =========================================
