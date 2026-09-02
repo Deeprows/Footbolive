@@ -3721,7 +3721,8 @@ if (refreshPageBtn) {
 })();
 
 /* =========================================
-   DEEPROWSS LIVE & LATEST TICKER
+   DEEPROWSS MOVIES & HIGHLIGHTS TICKER
+   Movies first → Highlights second
    ========================================= */
 
 (function () {
@@ -3742,6 +3743,8 @@ if (refreshPageBtn) {
     );
 
 
+  /* Stop if ticker does not exist */
+
   if (!ticker || !track) {
     return;
   }
@@ -3759,7 +3762,7 @@ if (refreshPageBtn) {
 
 
   /* =======================================
-     CHECK IF CLOSED
+     CHECK IF USER CLOSED TICKER
      ======================================= */
 
   const lastClosed =
@@ -3807,14 +3810,13 @@ if (refreshPageBtn) {
 
 
   /* =======================================
-     CREATE ITEM
+     CREATE TICKER ITEM
      ======================================= */
 
   function createTickerItem(
     type,
     name,
-    sourceElement,
-    live
+    sourceElement
   ) {
 
     const item =
@@ -3831,52 +3833,21 @@ if (refreshPageBtn) {
       "deeprowss-ticker-item";
 
 
-    if (live) {
-
-      item.classList.add(
-        "is-live"
-      );
-
-    }
-
-
     let badge =
       "";
 
 
-    if (live) {
+    /* Movie badge */
 
-      badge =
-        "LIVE";
-
-    }
-
-    else if (
-      type === "football"
-    ) {
-
-      badge =
-        "MATCH";
-
-    }
-
-    else if (
-      type === "tv"
-    ) {
-
-      badge =
-        "TV";
-
-    }
-
-    else if (
-      type === "movie"
-    ) {
+    if (type === "movie") {
 
       badge =
         "MOVIE";
 
     }
+
+
+    /* Highlight badge */
 
     else if (
       type === "highlight"
@@ -3887,6 +3858,8 @@ if (refreshPageBtn) {
 
     }
 
+
+    /* Create item */
 
     item.innerHTML =
 
@@ -3903,10 +3876,14 @@ if (refreshPageBtn) {
       '</span>';
 
 
-    /* Click original card */
+    /* =====================================
+       CLICK ORIGINAL CONTENT
+       ===================================== */
 
     item.addEventListener(
+
       "click",
+
       function () {
 
         if (!sourceElement) {
@@ -3914,39 +3891,39 @@ if (refreshPageBtn) {
         }
 
 
-        /* Find section */
+        /*
+         * Scroll to the original
+         * movie or highlight card.
+         */
 
-        const section =
-          sourceElement.closest(
-            ".content-section"
-          );
+        sourceElement.scrollIntoView({
 
+          behavior: "smooth",
 
-        if (section) {
+          block: "center"
 
-          section.scrollIntoView({
-
-            behavior: "smooth",
-
-            block: "start"
-
-          });
-
-        }
+        });
 
 
-        /* Click actual content */
+        /*
+         * Click the original card
+         * after scrolling.
+         */
 
         setTimeout(
+
           function () {
 
             sourceElement.click();
 
           },
-          350
+
+          400
+
         );
 
       }
+
     );
 
 
@@ -3978,7 +3955,8 @@ if (refreshPageBtn) {
     return separator;
 
   }
-  
+
+
   /* =======================================
      GET LATEST MOVIES
 
@@ -4000,18 +3978,17 @@ if (refreshPageBtn) {
     return movies
 
       .sort(
+
         function (a, b) {
 
           const dateA =
             new Date(
-              a.dataset.date ||
-              0
+              a.dataset.date || 0
             );
 
           const dateB =
             new Date(
-              b.dataset.date ||
-              0
+              b.dataset.date || 0
             );
 
 
@@ -4020,15 +3997,18 @@ if (refreshPageBtn) {
           );
 
         }
+
       )
 
-      .slice(0, 4);
+      .slice(0, 6);
 
   }
 
 
   /* =======================================
      GET LATEST HIGHLIGHTS
+
+     Reads existing highlight cards.
      ======================================= */
 
   function getLatestHighlights() {
@@ -4046,18 +4026,17 @@ if (refreshPageBtn) {
     return highlights
 
       .sort(
+
         function (a, b) {
 
           const dateA =
             new Date(
-              a.dataset.date ||
-              0
+              a.dataset.date || 0
             );
 
           const dateB =
             new Date(
-              b.dataset.date ||
-              0
+              b.dataset.date || 0
             );
 
 
@@ -4066,9 +4045,10 @@ if (refreshPageBtn) {
           );
 
         }
+
       )
 
-      .slice(0, 4);
+      .slice(0, 6);
 
   }
 
@@ -4082,85 +4062,14 @@ if (refreshPageBtn) {
     const items = [];
 
 
-    /* LIVE MATCHES FIRST */
-
-    getLiveMatches()
-
-      .forEach(
-        function (card) {
-
-          items.push({
-
-            type:
-              "football",
-
-            name:
-
-              card.dataset.name ||
-
-              card.textContent
-                .trim(),
-
-            element:
-              card,
-
-            live:
-              true
-
-          });
-
-        }
-      );
-
-
-    /* UPCOMING MATCHES */
-
-    getUpcomingMatches()
-
-      .forEach(
-        function (card) {
-
-          const name =
-            card.dataset.name ||
-            "Football Match";
-
-
-          const time =
-            getMatchTime(card);
-
-
-          items.push({
-
-            type:
-              "football",
-
-            name:
-
-              time
-
-                ? name +
-                  " • " +
-                  time
-
-                : name,
-
-            element:
-              card,
-
-            live:
-              false
-
-          });
-
-        }
-      );
-
-
-    /* MOVIES */
+    /* =====================================
+       MOVIES FIRST
+       ===================================== */
 
     getLatestMovies()
 
       .forEach(
+
         function (movie) {
 
           items.push({
@@ -4175,22 +4084,23 @@ if (refreshPageBtn) {
               "New Movie",
 
             element:
-              movie,
-
-            live:
-              false
+              movie
 
           });
 
         }
+
       );
 
 
-    /* HIGHLIGHTS */
+    /* =====================================
+       HIGHLIGHTS SECOND
+       ===================================== */
 
     getLatestHighlights()
 
       .forEach(
+
         function (highlight) {
 
           items.push({
@@ -4205,18 +4115,18 @@ if (refreshPageBtn) {
               "Football Highlight",
 
             element:
-              highlight,
-
-            live:
-              false
+              highlight
 
           });
 
         }
+
       );
 
 
-    /* NO CONTENT */
+    /* =====================================
+       NO CONTENT
+       ===================================== */
 
     if (!items.length) {
 
@@ -4228,26 +4138,27 @@ if (refreshPageBtn) {
     }
 
 
-    /* CLEAR */
+    /* =====================================
+       CLEAR CURRENT TICKER
+       ===================================== */
 
     track.innerHTML =
       "";
 
 
     /*
-     * Duplicate items.
-
-     * This creates the
-     * continuous loop.
+     * Duplicate all items.
+     *
+     * This creates the continuous
+     * scrolling loop.
      */
 
     const loopItems =
-      items.concat(
-        items
-      );
+      items.concat(items);
 
 
     loopItems.forEach(
+
       function (data) {
 
         const item =
@@ -4257,9 +4168,7 @@ if (refreshPageBtn) {
 
             data.name,
 
-            data.element,
-
-            data.live
+            data.element
 
           );
 
@@ -4274,10 +4183,13 @@ if (refreshPageBtn) {
         );
 
       }
+
     );
 
 
-    /* Set speed */
+    /* =====================================
+       SCROLL SPEED
+       ===================================== */
 
     const speed =
       Math.max(
@@ -4302,6 +4214,7 @@ if (refreshPageBtn) {
 
   /* =======================================
      CLOSE BUTTON
+     HIDE FOR 24 HOURS
      ======================================= */
 
   if (closeButton) {
@@ -4333,18 +4246,17 @@ if (refreshPageBtn) {
 
 
   /* =======================================
-     START
+     START TICKER
      ======================================= */
 
   buildTicker();
 
 
   /*
-   * Check match status every minute.
-
-   * This allows an UPCOMING
-   * match to automatically become
-   * LIVE in the ticker.
+   * Rebuild every 60 seconds.
+   *
+   * This allows newly loaded
+   * content to appear automatically.
    */
 
   setInterval(
