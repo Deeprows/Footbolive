@@ -2144,48 +2144,88 @@ body.light
         margin-right: auto;
     }
 
-    /* Player section desktop layout */
+    /* -------------------------------------------------
+       PLAYER SECTION - DESKTOP
+       Prevent sticky player from covering page content
+       ------------------------------------------------- */
+
     .screen-section {
+        position: relative !important;
+        top: auto !important;
+        z-index: 1 !important;
+
         width: 100%;
         max-width: 1400px;
+
         margin-left: auto;
         margin-right: auto;
     }
 
     /* Player stays properly sized on PC */
     .screen-player {
+        position: relative;
+
         width: 100%;
         max-width: 100%;
     }
 
-    /* Desktop iframe */
+    /* Desktop iframe wrapper */
     .screen-frame-wrap {
+        position: relative;
+
         width: 100%;
+        max-width: 100%;
+
         aspect-ratio: 16 / 9;
         max-height: 700px;
+
+        overflow: hidden;
     }
 
     /* Force iframe to fit its container */
     #screenFrame {
+        display: block;
+
         width: 100% !important;
         height: 100% !important;
+
+        max-width: 100% !important;
+
+        border: 0;
     }
 
-    /* Make content sections visible and properly positioned */
+    /* -------------------------------------------------
+       CONTENT SECTIONS
+       Keep all fixtures, movies and other content visible
+       ------------------------------------------------- */
+
     .content-section {
-        position: relative;
+        position: relative !important;
+
         width: 100%;
         max-width: 1400px;
+
         margin-left: auto;
         margin-right: auto;
-        z-index: 5;
+
+        z-index: 2 !important;
     }
 
-    /* Fixture and content grids */
+    /* Make sure hidden sections stay hidden */
+    .content-section[hidden] {
+        display: none !important;
+    }
+
+    /* -------------------------------------------------
+       FIXTURE AND CONTENT GRIDS
+       ------------------------------------------------- */
+
     .match-grid,
     .movie-grid,
     .highlight-grid,
     .tv-grid {
+        position: relative;
+
         width: 100%;
         max-width: 100%;
     }
