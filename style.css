@@ -1947,22 +1947,6 @@ body.light .x2-ad-notice-close {
 }
 
 
-/* Live match */
-
-.deeprowss-ticker-item.is-live {
-  color: #ff5656;
-}
-
-
-.deeprowss-ticker-item.is-live
-.deeprowss-ticker-badge {
-
-  background: #d60000;
-
-  color: #fff;
-}
-
-
 /* Separator */
 
 .deeprowss-ticker-separator {
