@@ -4196,51 +4196,6 @@ if (refreshPageBtn) {
 
   }
 
-
-  /* =======================================
-     GET TV CHANNELS
-
-     Reads your:
-
-     .tv-channel
-     data-name
-     ======================================= */
-
-  function getTVChannels() {
-
-    const channels =
-      Array.from(
-
-        document.querySelectorAll(
-          ".tv-channel[data-name]"
-        )
-
-      );
-
-
-    /*
-     * Random selection means
-     * the ticker does not always
-     * show only the first channels.
-     */
-
-    return channels
-
-      .sort(
-        function () {
-
-          return (
-            Math.random() - 0.5
-          );
-
-        }
-      )
-
-      .slice(0, 5);
-
-  }
-
-
   /* =======================================
      GET LATEST MOVIES
 
@@ -4408,36 +4363,6 @@ if (refreshPageBtn) {
 
             element:
               card,
-
-            live:
-              false
-
-          });
-
-        }
-      );
-
-
-    /* TV CHANNELS */
-
-    getTVChannels()
-
-      .forEach(
-        function (channel) {
-
-          items.push({
-
-            type:
-              "tv",
-
-            name:
-
-              channel.dataset.name ||
-
-              "Live TV",
-
-            element:
-              channel,
 
             live:
               false
