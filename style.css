@@ -96,10 +96,11 @@ box-shadow:0 20px 60px rgba(0,0,0,.35);
 touch-action:manipulation;
 }
 .screen-status{
-position:absolute;
-bottom:13px;
-left:13px;
-top:auto;
+  position:absolute;
+  top:13px;
+  right:13px;
+  bottom:auto;
+  left:auto;
 z-index:10;
 display:flex;
 align-items:center;
