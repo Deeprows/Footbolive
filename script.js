@@ -712,6 +712,37 @@ let currentAltUrl = "";
 let screenLoadTimer = null;
 
 /* =========================================================
+   FIREBASE MATCH CHAT
+   ========================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBs9eSquNu2drJjM3vqFGDX1QU-VE1_F7U",
+  authDomain: "deeprows-4d37c.firebaseapp.com",
+  projectId: "deeprows-4d37c",
+  storageBucket: "deeprows-4d37c.firebasestorage.app",
+  messagingSenderId: "227439941748",
+  appId: "1:227439941748:web:dc00e8a6e620db2279921"
+};
+
+
+/* Initialize Firebase only once */
+
+if (
+  typeof firebase !== "undefined" &&
+  !firebase.apps.length
+) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+
+/* Firestore database */
+
+const chatDB =
+  typeof firebase !== "undefined"
+    ? firebase.firestore()
+    : null;
+
+/* =========================================================
    DEFAULT HOMEPAGE SCREEN
    ========================================================= */
 
