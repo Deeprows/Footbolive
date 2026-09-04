@@ -1109,7 +1109,136 @@
 
 
       </div>
+<!-- =======================================================
+     MATCH CHAT
+     ======================================================= -->
 
+<div id="matchChat" class="match-chat" hidden>
+
+  <!-- CHAT HEADER -->
+  <div class="match-chat-header">
+
+    <button
+      type="button"
+      id="backToMatches"
+      class="chat-back-button"
+    >
+      ← Back to Matches
+    </button>
+
+    <div class="match-chat-title">
+      <span>⚽</span>
+
+      <div>
+        <strong id="chatMatchName">
+          Match Chat
+        </strong>
+
+        <small>
+          Live fan discussion
+        </small>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- NAME SETUP -->
+
+  <div
+    id="chatNameSetup"
+    class="chat-name-setup"
+  >
+
+    <h2>
+      Join the Match Chat
+    </h2>
+
+    <p>
+      Choose a name to chat with other football fans.
+    </p>
+
+
+    <input
+      type="text"
+      id="chatUserName"
+      maxlength="30"
+      placeholder="Enter your name"
+      autocomplete="nickname"
+    >
+
+
+    <button
+      type="button"
+      id="randomNameButton"
+      class="random-name-button"
+    >
+      🎲 Random Name
+    </button>
+
+
+    <button
+      type="button"
+      id="enterChatButton"
+      class="enter-chat-button"
+    >
+      Enter Chat
+    </button>
+
+  </div>
+
+
+  <!-- ACTUAL CHAT -->
+
+  <div
+    id="chatRoom"
+    class="chat-room"
+    hidden
+  >
+
+    <!-- MESSAGES -->
+
+    <div
+      id="chatMessages"
+      class="chat-messages"
+    >
+
+      <div class="chat-loading">
+        Loading messages...
+      </div>
+
+    </div>
+
+
+    <!-- MESSAGE INPUT -->
+
+    <form
+      id="chatForm"
+      class="chat-form"
+    >
+
+      <input
+        type="text"
+        id="chatMessageInput"
+        maxlength="300"
+        placeholder="Write a comment..."
+        autocomplete="off"
+      >
+
+
+      <button
+        type="submit"
+        id="sendChatMessage"
+      >
+        Send
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+      
     </section>
 
 
