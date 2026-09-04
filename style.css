@@ -2314,3 +2314,248 @@ body.light
 .seo-content {
   display: none !important;
 }
+
+/* =========================================================
+   MATCH CHAT
+   ========================================================= */
+
+.match-chat {
+  width: 100%;
+  margin-top: 20px;
+}
+
+
+/* CHAT HEADER */
+
+.match-chat-header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+
+.chat-back-button {
+  width: fit-content;
+  border: none;
+  background: transparent;
+  color: #1e5eff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+
+.chat-back-button:hover {
+  opacity: 0.8;
+}
+
+
+.match-chat-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+.match-chat-title > span {
+  font-size: 30px;
+}
+
+
+.match-chat-title strong {
+  display: block;
+  font-size: 20px;
+}
+
+
+.match-chat-title small {
+  display: block;
+  margin-top: 3px;
+  opacity: 0.65;
+}
+
+
+/* =========================================================
+   NAME SETUP
+   ========================================================= */
+
+.chat-name-setup {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 25px;
+  border-radius: 16px;
+  background: var(--card-bg, #ffffff);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+
+.chat-name-setup h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+
+.chat-name-setup p {
+  margin-top: 0;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+
+.chat-name-setup input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+
+.random-name-button,
+.enter-chat-button {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+
+.random-name-button {
+  background: #f0f2f5;
+}
+
+
+.enter-chat-button {
+  background: #1e5eff;
+  color: white;
+}
+
+
+/* =========================================================
+   CHAT ROOM
+   ========================================================= */
+
+.chat-room {
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card-bg, #ffffff);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+
+.chat-messages {
+  height: 500px;
+  overflow-y: auto;
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+
+.chat-loading {
+  text-align: center;
+  opacity: 0.6;
+  padding: 30px;
+}
+
+
+/* INDIVIDUAL MESSAGE */
+
+.chat-message {
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+
+.chat-message:last-child {
+  border-bottom: none;
+}
+
+
+.chat-message-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e5eff;
+  margin-bottom: 5px;
+}
+
+
+.chat-message-text {
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   CHAT FORM
+   ========================================================= */
+
+.chat-form {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+#chatMessageInput {
+  flex: 1;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+
+#sendChatMessage {
+  border: none;
+  background: #1e5eff;
+  color: white;
+  border-radius: 10px;
+  padding: 0 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .chat-name-setup {
+    margin: 20px 0;
+    padding: 18px;
+  }
+
+
+  .chat-messages {
+    height: 55vh;
+    min-height: 350px;
+  }
+
+
+  .chat-form {
+    padding: 10px;
+  }
+
+
+  #sendChatMessage {
+    padding: 0 14px;
+  }
+
+}
