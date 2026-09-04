@@ -4249,3 +4249,741 @@ if (refreshPageBtn) {
 
 
 })();
+
+/* =========================================================
+   DEEPROWSS MATCH CHAT SYSTEM
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  /* ---------------------------------------------
+     ELEMENTS
+     --------------------------------------------- */
+
+  const footballContent =
+    document.getElementById("footballContent");
+
+  const matchChat =
+    document.getElementById("matchChat");
+
+  const backToMatches =
+    document.getElementById("backToMatches");
+
+  const chatMatchName =
+    document.getElementById("chatMatchName");
+
+  const chatNameSetup =
+    document.getElementById("chatNameSetup");
+
+  const chatRoom =
+    document.getElementById("chatRoom");
+
+  const chatUserName =
+    document.getElementById("chatUserName");
+
+  const randomNameButton =
+    document.getElementById("randomNameButton");
+
+  const enterChatButton =
+    document.getElementById("enterChatButton");
+
+  const chatMessages =
+    document.getElementById("chatMessages");
+
+  const chatForm =
+    document.getElementById("chatForm");
+
+  const chatMessageInput =
+    document.getElementById("chatMessageInput");
+
+
+  /* ---------------------------------------------
+     CURRENT CHAT DATA
+     --------------------------------------------- */
+
+  let currentMatchId = null;
+
+  let currentMatchName = null;
+
+  let currentChatUser = null;
+
+  let unsubscribeChat = null;
+
+
+  /* ---------------------------------------------
+     CREATE MATCH ID
+     --------------------------------------------- */
+
+  function createMatchId(name) {
+
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+  }
+
+
+  /* ---------------------------------------------
+     RANDOM NAME GENERATOR
+     --------------------------------------------- */
+
+  const randomNames = [
+    "FootballFan",
+    "GoalMaster",
+    "SuperStriker",
+    "BlueArmy",
+    "RedDevil",
+    "GoalHunter",
+    "MatchWatcher",
+    "SoccerKing",
+    "FootballHero",
+    "StadiumFan"
+  ];
+
+
+  function generateRandomName() {
+
+    const randomName =
+      randomNames[
+        Math.floor(
+          Math.random() *
+          randomNames.length
+        )
+      ];
+
+    const randomNumber =
+      Math.floor(
+        1000 +
+        Math.random() * 9000
+      );
+
+    return (
+      randomName +
+      randomNumber
+    );
+
+  }
+
+
+  /* ---------------------------------------------
+     SHOW MATCH CHAT
+     --------------------------------------------- */
+
+  function openMatchChat(
+    matchName
+  ) {
+
+    currentMatchName =
+      matchName;
+
+    currentMatchId =
+      createMatchId(
+        matchName
+      );
+
+
+    /* Hide match cards */
+
+    const footballHeading =
+      footballContent.querySelector(
+        ".content-heading"
+      );
+
+    const matchList =
+      document.getElementById(
+        "matchList"
+      );
+
+    const footballEmpty =
+      document.getElementById(
+        "footballEmpty"
+      );
+
+
+    if (footballHeading) {
+      footballHeading.hidden = true;
+    }
+
+
+    if (matchList) {
+      matchList.hidden = true;
+    }
+
+
+    if (footballEmpty) {
+      footballEmpty.hidden = true;
+    }
+
+
+    /* Show chat */
+
+    matchChat.hidden = false;
+
+
+    chatMatchName.textContent =
+      matchName;
+
+
+    /* Check saved name */
+
+    const savedName =
+      localStorage.getItem(
+        "deeprowssChatName"
+      );
+
+
+    if (savedName) {
+
+      currentChatUser =
+        savedName;
+
+
+      chatNameSetup.hidden =
+        true;
+
+
+      chatRoom.hidden =
+        false;
+
+
+      loadChatMessages();
+
+    } else {
+
+      chatRoom.hidden =
+        true;
+
+
+      chatNameSetup.hidden =
+        false;
+
+    }
+
+
+    /* Scroll to chat */
+
+    matchChat.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+  }
+
+
+  /* ---------------------------------------------
+     CLOSE CHAT / RESTORE MATCHES
+     --------------------------------------------- */
+
+  function closeMatchChat() {
+
+    /* Stop Firebase listener */
+
+    if (
+      unsubscribeChat
+    ) {
+
+      unsubscribeChat();
+
+      unsubscribeChat =
+        null;
+
+    }
+
+
+    /* Hide chat */
+
+    matchChat.hidden =
+      true;
+
+
+    /* Restore match content */
+
+    const footballHeading =
+      footballContent.querySelector(
+        ".content-heading"
+      );
+
+    const matchList =
+      document.getElementById(
+        "matchList"
+      );
+
+    const footballEmpty =
+      document.getElementById(
+        "footballEmpty"
+      );
+
+
+    if (footballHeading) {
+
+      footballHeading.hidden =
+        false;
+
+    }
+
+
+    if (matchList) {
+
+      matchList.hidden =
+        false;
+
+    }
+
+
+    if (footballEmpty) {
+
+      /*
+       Keep empty state controlled
+       by your existing script
+      */
+
+      footballEmpty.hidden =
+        true;
+
+    }
+
+
+    currentMatchId =
+      null;
+
+
+    currentMatchName =
+      null;
+
+
+    /* Scroll back */
+
+    footballContent.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+  }
+
+
+  /* ---------------------------------------------
+     BACK BUTTON
+     --------------------------------------------- */
+
+  if (backToMatches) {
+
+    backToMatches.addEventListener(
+      "click",
+      function () {
+
+        closeMatchChat();
+
+      }
+    );
+
+  }
+
+
+  /* ---------------------------------------------
+     RANDOM NAME BUTTON
+     --------------------------------------------- */
+
+  if (randomNameButton) {
+
+    randomNameButton.addEventListener(
+      "click",
+      function () {
+
+        chatUserName.value =
+          generateRandomName();
+
+      }
+    );
+
+  }
+
+
+  /* ---------------------------------------------
+     ENTER CHAT
+     --------------------------------------------- */
+
+  if (enterChatButton) {
+
+    enterChatButton.addEventListener(
+      "click",
+      function () {
+
+        const name =
+          chatUserName.value.trim();
+
+
+        if (!name) {
+
+          alert(
+            "Please enter a name or choose a random name."
+          );
+
+          return;
+
+        }
+
+
+        currentChatUser =
+          name.substring(
+            0,
+            30
+          );
+
+
+        /* Save name */
+
+        localStorage.setItem(
+          "deeprowssChatName",
+          currentChatUser
+        );
+
+
+        /* Show chat */
+
+        chatNameSetup.hidden =
+          true;
+
+
+        chatRoom.hidden =
+          false;
+
+
+        loadChatMessages();
+
+      }
+    );
+
+  }
+
+
+  /* ---------------------------------------------
+     LOAD FIREBASE MESSAGES
+     --------------------------------------------- */
+
+  function loadChatMessages() {
+
+    if (
+      !chatDB ||
+      !currentMatchId
+    ) {
+
+      chatMessages.innerHTML =
+        `
+        <div class="chat-loading">
+          Chat is currently unavailable.
+        </div>
+        `;
+
+      return;
+
+    }
+
+
+    /* Remove previous listener */
+
+    if (
+      unsubscribeChat
+    ) {
+
+      unsubscribeChat();
+
+    }
+
+
+    chatMessages.innerHTML =
+      `
+      <div class="chat-loading">
+        Loading messages...
+      </div>
+      `;
+
+
+    unsubscribeChat =
+      chatDB
+        .collection(
+          "match_chats"
+        )
+        .doc(
+          currentMatchId
+        )
+        .collection(
+          "messages"
+        )
+        .orderBy(
+          "createdAt",
+          "asc"
+        )
+        .limit(
+          100
+        )
+        .onSnapshot(
+          function (
+            snapshot
+          ) {
+
+            chatMessages.innerHTML =
+              "";
+
+
+            if (
+              snapshot.empty
+            ) {
+
+              chatMessages.innerHTML =
+                `
+                <div class="chat-loading">
+                  No comments yet. Be the first to comment!
+                </div>
+                `;
+
+              return;
+
+            }
+
+
+            snapshot.forEach(
+              function (
+                doc
+              ) {
+
+                const data =
+                  doc.data();
+
+
+                const messageElement =
+                  document.createElement(
+                    "div"
+                  );
+
+
+                messageElement.className =
+                  "chat-message";
+
+
+                const nameElement =
+                  document.createElement(
+                    "span"
+                  );
+
+
+                nameElement.className =
+                  "chat-message-name";
+
+
+                nameElement.textContent =
+                  data.name ||
+                  "Football Fan";
+
+
+                const textElement =
+                  document.createElement(
+                    "div"
+                  );
+
+
+                textElement.className =
+                  "chat-message-text";
+
+
+                textElement.textContent =
+                  data.message ||
+                  "";
+
+
+                messageElement.appendChild(
+                  nameElement
+                );
+
+
+                messageElement.appendChild(
+                  textElement
+                );
+
+
+                chatMessages.appendChild(
+                  messageElement
+                );
+
+              }
+            );
+
+
+            /* Scroll to newest message */
+
+            chatMessages.scrollTop =
+              chatMessages.scrollHeight;
+
+          },
+          function (
+            error
+          ) {
+
+            console.error(
+              "Chat error:",
+              error
+            );
+
+
+            chatMessages.innerHTML =
+              `
+              <div class="chat-loading">
+                Unable to load chat.
+              </div>
+              `;
+
+          }
+        );
+
+  }
+
+
+  /* ---------------------------------------------
+     SEND MESSAGE
+     --------------------------------------------- */
+
+  if (chatForm) {
+
+    chatForm.addEventListener(
+      "submit",
+      async function (
+        event
+      ) {
+
+        event.preventDefault();
+
+
+        const message =
+          chatMessageInput.value.trim();
+
+
+        if (
+          !message ||
+          !currentMatchId ||
+          !currentChatUser ||
+          !chatDB
+        ) {
+
+          return;
+
+        }
+
+
+        try {
+
+          await chatDB
+            .collection(
+              "match_chats"
+            )
+            .doc(
+              currentMatchId
+            )
+            .collection(
+              "messages"
+            )
+            .add({
+              name:
+                currentChatUser,
+
+              message:
+                message.substring(
+                  0,
+                  300
+                ),
+
+              createdAt:
+                firebase.firestore
+                  .FieldValue
+                  .serverTimestamp()
+            });
+
+
+          chatMessageInput.value =
+            "";
+
+
+        } catch (
+          error
+        ) {
+
+          console.error(
+            "Unable to send message:",
+            error
+          );
+
+
+          alert(
+            "Unable to send your message. Please try again."
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* ---------------------------------------------
+     MATCH CARD CLICKS
+     --------------------------------------------- */
+
+  document.addEventListener(
+    "click",
+    function (
+      event
+    ) {
+
+      const matchCard =
+        event.target.closest(
+          ".match-card"
+        );
+
+
+      if (
+        !matchCard
+      ) {
+
+        return;
+
+      }
+
+
+      /*
+       IMPORTANT:
+
+       Stop the existing match-card
+       click behaviour from immediately
+       replacing the view.
+      */
+
+      event.preventDefault();
+
+
+      event.stopImmediatePropagation();
+
+
+      const matchName =
+        matchCard.dataset.name;
+
+
+      if (
+        !matchName
+      ) {
+
+        return;
+
+      }
+
+
+      openMatchChat(
+        matchName
+      );
+
+    },
+    true
+  );
+
+
+});
