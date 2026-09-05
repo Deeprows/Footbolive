@@ -769,6 +769,7 @@ mainWebView.loadUrl(
                             showingOfflinePage =
                                     false;
                         }
+                        updateFloatingNavigation();
                     }
 
                     updateFloatingNavigation();
@@ -2946,9 +2947,9 @@ mainWebView.loadUrl(
                     popupWebView.bringToFront();
                 }
         );
+        updateFloatingNavigation();
     }
 
-updateFloatingNavigation();
     /*
      * =========================================================
      * POPUP UI
@@ -3285,9 +3286,9 @@ updateFloatingNavigation();
 
 
         hideStatusBar();
+        updateFloatingNavigation();
     }
 
-updateFloatingNavigation();
     
     /*
      * =========================================================
