@@ -765,7 +765,7 @@ mainWebView.loadUrl(
                         }
                     }
 
-
+                    updateFloatingNavigation();
                     /*
                      * =================================================
                      * NETWORK / IFRAME ERROR HANDLING
