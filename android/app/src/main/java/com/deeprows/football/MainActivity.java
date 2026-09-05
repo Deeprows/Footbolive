@@ -214,7 +214,15 @@ private FloatingArrowButton floatingForwardButton;
             );
         }
 
+createFloatingNavigation();
 
+if (customSplashView != null) {
+    customSplashView.bringToFront();
+}
+
+mainWebView.loadUrl(
+        WEBSITE_URL
+);
         /*
          * =====================================================
          * LOAD WEBSITE
