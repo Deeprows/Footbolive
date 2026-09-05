@@ -279,9 +279,10 @@ background .3s ease,opacity .3s ease;touch-action:manipulation;
 .match-card.is-upcoming{border-color:rgba(255,23,68,.28);background:linear-gradient(145deg,#11151c,#0b0e14)}
 .match-card.is-upcoming:hover{transform:translateY(-2px);border-color:rgba(255,23,68,.60);box-shadow:0 8px 24px rgba(255,23,68,.10)}
 .match-card.is-live{
-border-color:rgba(255,23,68,.65);background:linear-gradient(145deg,rgba(255,23,68,.12),#0c1016);
-box-shadow:0 0 0 1px rgba(255,23,68,.10),0 0 22px rgba(255,23,68,.12);
-animation:liveCardPulse 2s ease-in-out infinite;
+  border-color:rgba(255,23,68,.65);
+  background:linear-gradient(145deg,rgba(255,23,68,.12),#0c1016);
+  box-shadow:0 0 0 1px rgba(255,23,68,.10),0 0 22px rgba(255,23,68,.12);
+  animation:none;
 }
 .match-card.is-live:hover{transform:translateY(-2px);border-color:rgba(255,23,68,.85);box-shadow:0 0 0 1px rgba(255,23,68,.16),0 0 30px rgba(255,23,68,.20)}
 .match-card.is-ended{opacity:.58;border-color:rgba(255,255,255,.05);background:linear-gradient(145deg,rgba(255,255,255,.025),rgba(255,255,255,.008));box-shadow:none;cursor:pointer}
@@ -298,8 +299,14 @@ color:#fff;background:var(--match-live);border:1px solid rgba(255,255,255,.12);
 font-weight:950;box-shadow:0 0 12px rgba(255,23,68,.25);
 }
 .match-status.live::before{
-content:"";width:6px;height:6px;margin-right:6px;border-radius:50%;background:#fff;
-box-shadow:0 0 8px rgba(255,255,255,.9);animation:livePulse 1.2s infinite;
+  content:"";
+  width:6px;
+  height:6px;
+  margin-right:6px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 8px rgba(255,255,255,.9);
+  animation:none;
 }
 .match-status.ended{color:var(--match-ended);background:rgba(133,140,152,.10);border:1px solid rgba(133,140,152,.16)}
 .match-teams{
@@ -313,12 +320,6 @@ line-height:1.2;text-overflow:ellipsis;white-space:nowrap;
 .match-countdown{display:block;margin-top:3px;color:#ff637d;font-size:10px;font-weight:800;line-height:1.2;letter-spacing:.1px}
 .match-card.is-live .match-countdown{color:#ff637d;font-weight:950}
 .match-card.is-ended .match-countdown{color:#777e89;font-weight:600}
-
-@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
-@keyframes liveCardPulse{
-0%,100%{box-shadow:0 0 0 1px rgba(255,23,68,.10),0 0 18px rgba(255,23,68,.08)}
-50%{box-shadow:0 0 0 1px rgba(255,23,68,.22),0 0 28px rgba(255,23,68,.17)}
-}
 
 .highlight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .highlight-card{
