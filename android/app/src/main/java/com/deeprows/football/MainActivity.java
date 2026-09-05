@@ -4255,8 +4255,6 @@ private void updateFloatingNavigation() {
                     value * density + 0.5f
             );
         }
-    }
-}
 
 /*
  * =========================================================
