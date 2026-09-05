@@ -64,6 +64,17 @@ public class MainActivity extends Activity {
     private FrameLayout rootLayout;
 
     private RefreshableWebViewContainer refreshContainer;
+    /*
+ * =========================================================
+ * FLOATING NAVIGATION
+ * =========================================================
+ */
+
+private FrameLayout floatingNavigation;
+
+private FloatingArrowButton floatingBackButton;
+
+private FloatingArrowButton floatingForwardButton;
 
     private WebView mainWebView;
 
@@ -3288,7 +3299,382 @@ public class MainActivity extends Activity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 );
     }
+/*
+ * =========================================================
+ * FLOATING NAVIGATION
+ * =========================================================
+ *
+ * Slim professional arrow buttons.
+ *
+ * No emoji.
+ * No text icons.
+ *
+ * Back  = thin left arrow
+ * Forward = thin right arrow
+ */
 
+private void createFloatingNavigation() {
+
+    if (rootLayout == null ||
+            floatingNavigation != null) {
+
+        return;
+    }
+
+
+    floatingNavigation =
+            new FrameLayout(this);
+
+    floatingNavigation.setClipChildren(false);
+
+    floatingNavigation.setClipToPadding(false);
+
+
+    /*
+     * =====================================================
+     * BACK BUTTON
+     * =====================================================
+     */
+
+    floatingBackButton =
+            new FloatingArrowButton(
+                    this,
+                    false
+            );
+
+    floatingBackButton.setContentDescription(
+            "Back"
+    );
+
+
+    floatingBackButton.setOnClickListener(
+            v -> navigateBack()
+    );
+
+
+    /*
+     * =====================================================
+     * FORWARD BUTTON
+     * =====================================================
+     */
+
+    floatingForwardButton =
+            new FloatingArrowButton(
+                    this,
+                    true
+            );
+
+    floatingForwardButton.setContentDescription(
+            "Forward"
+    );
+
+
+    floatingForwardButton.setOnClickListener(
+            v -> navigateForward()
+    );
+
+
+    /*
+     * =====================================================
+     * BUTTON SIZE
+     * =====================================================
+     */
+
+    FrameLayout.LayoutParams backParams =
+            new FrameLayout.LayoutParams(
+                    dp(52),
+                    dp(52)
+            );
+
+
+    FrameLayout.LayoutParams forwardParams =
+            new FrameLayout.LayoutParams(
+                    dp(52),
+                    dp(52)
+            );
+
+
+    /*
+     * Small gap between buttons.
+     */
+
+    forwardParams.leftMargin =
+            dp(7);
+
+
+    floatingNavigation.addView(
+            floatingBackButton,
+            backParams
+    );
+
+
+    floatingNavigation.addView(
+            floatingForwardButton,
+            forwardParams
+    );
+
+
+    /*
+     * =====================================================
+     * POSITION
+     * =====================================================
+     */
+
+    FrameLayout.LayoutParams navigationParams =
+            new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    Gravity.BOTTOM | Gravity.END
+            );
+
+
+    navigationParams.setMargins(
+            dp(10),
+            dp(10),
+            dp(16),
+            dp(20)
+    );
+
+
+    rootLayout.addView(
+            floatingNavigation,
+            navigationParams
+    );
+
+
+    floatingNavigation.bringToFront();
+
+
+    updateFloatingNavigation();
+}
+
+
+/*
+ * =========================================================
+ * ACTIVE WEBVIEW
+ * =========================================================
+ */
+
+private WebView getActiveNavigationWebView() {
+
+    if (popupContainer != null &&
+            popupWebView != null) {
+
+        return popupWebView;
+    }
+
+
+    return mainWebView;
+}
+
+
+/*
+ * =========================================================
+ * BACK
+ * =========================================================
+ */
+
+private void navigateBack() {
+
+    /*
+     * Exit native player first.
+     */
+
+    if (nativePlayerFullscreen) {
+
+        exitNativeMedia();
+
+        return;
+    }
+
+
+    /*
+     * Exit HTML5 fullscreen video.
+     */
+
+    if (customVideoView != null) {
+
+        exitVideoFullscreen();
+
+        return;
+    }
+
+
+    /*
+     * Popup navigation.
+     */
+
+    if (popupContainer != null) {
+
+        if (popupWebView != null &&
+                popupWebView.canGoBack()) {
+
+            popupWebView.goBack();
+
+            popupWebView.postDelayed(
+                    this::updateFloatingNavigation,
+                    120
+            );
+
+        } else {
+
+            /*
+             * No history left.
+             *
+             * Close the popup and return to
+             * the normal Deeprowss webpage.
+             */
+
+            switchToPreviousPopupWindow();
+        }
+
+        return;
+    }
+
+
+    /*
+     * Main webpage navigation.
+     */
+
+    if (mainWebView != null &&
+            mainWebView.canGoBack()) {
+
+        mainWebView.goBack();
+
+        mainWebView.postDelayed(
+                this::updateFloatingNavigation,
+                120
+        );
+    }
+}
+
+
+/*
+ * =========================================================
+ * FORWARD
+ * =========================================================
+ */
+
+private void navigateForward() {
+
+    WebView activeWebView =
+            getActiveNavigationWebView();
+
+
+    if (activeWebView == null) {
+        return;
+    }
+
+
+    if (activeWebView.canGoForward()) {
+
+        activeWebView.goForward();
+
+        activeWebView.postDelayed(
+                this::updateFloatingNavigation,
+                120
+        );
+    }
+}
+
+
+/*
+ * =========================================================
+ * UPDATE BUTTON STATES
+ * =========================================================
+ */
+
+private void updateFloatingNavigation() {
+
+    if (floatingNavigation == null ||
+            floatingBackButton == null ||
+            floatingForwardButton == null) {
+
+        return;
+    }
+
+
+    /*
+     * Keep buttons hidden while splash is active.
+     */
+
+    if (!webPageVisible) {
+
+        floatingNavigation.setVisibility(
+                View.GONE
+        );
+
+        return;
+    }
+
+
+    /*
+     * Hide during fullscreen video.
+     */
+
+    if (nativePlayerFullscreen ||
+            customVideoView != null) {
+
+        floatingNavigation.setVisibility(
+                View.GONE
+        );
+
+        return;
+    }
+
+
+    floatingNavigation.setVisibility(
+            View.VISIBLE
+    );
+
+
+    floatingNavigation.bringToFront();
+
+
+    WebView activeWebView =
+            getActiveNavigationWebView();
+
+
+    boolean canGoBack =
+            false;
+
+    boolean canGoForward =
+            false;
+
+
+    if (activeWebView != null) {
+
+        canGoBack =
+                activeWebView.canGoBack();
+
+        canGoForward =
+                activeWebView.canGoForward();
+    }
+
+
+    /*
+     * A popup can always be closed with Back,
+     * even if that popup has no browser history.
+     */
+
+    if (popupContainer != null &&
+            popupWebView != null &&
+            !canGoBack) {
+
+        canGoBack =
+                true;
+    }
+
+
+    floatingBackButton.setArrowEnabled(
+            canGoBack
+    );
+
+
+    floatingForwardButton.setArrowEnabled(
+            canGoForward
+    );
+}
 
     /*
      * =========================================================
@@ -3875,5 +4261,362 @@ public class MainActivity extends Activity {
                     value * density + 0.5f
             );
         }
+    }
+}
+
+/*
+ * =========================================================
+ * SLIM FLOATING ARROW BUTTON
+ * =========================================================
+ *
+ * Draws the arrow manually so it stays:
+ *
+ * - slim
+ * - sharp
+ * - consistent
+ * - independent of emoji fonts
+ * - consistent across Android devices
+ */
+
+private static class FloatingArrowButton
+        extends View {
+
+    private final boolean forward;
+
+    private final android.graphics.Paint circlePaint =
+            new android.graphics.Paint(
+                    android.graphics.Paint.ANTI_ALIAS_FLAG
+            );
+
+    private final android.graphics.Paint arrowPaint =
+            new android.graphics.Paint(
+                    android.graphics.Paint.ANTI_ALIAS_FLAG
+            );
+
+    private boolean arrowEnabled = false;
+
+
+    FloatingArrowButton(
+            Context context,
+            boolean forward
+    ) {
+
+        super(context);
+
+        this.forward =
+                forward;
+
+
+        setClickable(true);
+
+        setFocusable(true);
+
+        setHapticFeedbackEnabled(true);
+
+        setElevation(
+                dpStatic(
+                        context,
+                        7
+                )
+        );
+
+
+        /*
+         * Slim arrow.
+         */
+
+        arrowPaint.setStyle(
+                android.graphics.Paint.Style.STROKE
+        );
+
+        arrowPaint.setStrokeWidth(
+                dpStatic(
+                        context,
+                        2
+                )
+        );
+
+        arrowPaint.setStrokeCap(
+                android.graphics.Paint.Cap.ROUND
+        );
+
+        arrowPaint.setStrokeJoin(
+                android.graphics.Paint.Join.ROUND
+        );
+    }
+
+
+    void setArrowEnabled(
+            boolean enabled
+    ) {
+
+        arrowEnabled =
+                enabled;
+
+        setEnabled(
+                enabled
+        );
+
+        setAlpha(
+                enabled
+                        ? 1f
+                        : 0.42f
+        );
+
+        invalidate();
+    }
+
+
+    @Override
+    protected void onDraw(
+            android.graphics.Canvas canvas
+    ) {
+
+        super.onDraw(canvas);
+
+
+        float width =
+                getWidth();
+
+        float height =
+                getHeight();
+
+
+        float centerX =
+                width / 2f;
+
+        float centerY =
+                height / 2f;
+
+
+        /*
+         * =====================================================
+         * CIRCLE
+         * =====================================================
+         */
+
+        circlePaint.setStyle(
+                android.graphics.Paint.Style.FILL
+        );
+
+
+        if (arrowEnabled) {
+
+            circlePaint.setColor(
+                    Color.rgb(
+                            22,
+                            199,
+                            103
+                    )
+            );
+
+        } else {
+
+            circlePaint.setColor(
+                    Color.rgb(
+                            16,
+                            19,
+                            26
+                    )
+            );
+        }
+
+
+        canvas.drawCircle(
+                centerX,
+                centerY,
+                Math.min(
+                        width,
+                        height
+                ) / 2f - dpStatic(
+                        getContext(),
+                        1
+                ),
+                circlePaint
+        );
+
+
+        /*
+         * =====================================================
+         * SUBTLE BORDER
+         * =====================================================
+         */
+
+        circlePaint.setStyle(
+                android.graphics.Paint.Style.STROKE
+        );
+
+        circlePaint.setStrokeWidth(
+                dpStatic(
+                        getContext(),
+                        1
+                )
+        );
+
+
+        circlePaint.setColor(
+                arrowEnabled
+                        ? Color.rgb(
+                                45,
+                                225,
+                                125
+                        )
+                        : Color.rgb(
+                                48,
+                                53,
+                                63
+                        )
+        );
+
+
+        canvas.drawCircle(
+                centerX,
+                centerY,
+                Math.min(
+                        width,
+                        height
+                ) / 2f - dpStatic(
+                        getContext(),
+                        1
+                ),
+                circlePaint
+        );
+
+
+        /*
+         * =====================================================
+         * SLIM ARROW
+         * =====================================================
+         */
+
+        arrowPaint.setColor(
+                arrowEnabled
+                        ? Color.WHITE
+                        : Color.rgb(
+                                145,
+                                150,
+                                160
+                        )
+        );
+
+
+        arrowPaint.setStrokeWidth(
+                dpStatic(
+                        getContext(),
+                        2
+                )
+        );
+
+
+        float arrowHalf =
+                dpStatic(
+                        getContext(),
+                        9
+                );
+
+
+        float head =
+                dpStatic(
+                        getContext(),
+                        5
+                );
+
+
+        /*
+         * Horizontal shaft.
+         */
+
+        float startX;
+
+        float endX;
+
+
+        if (forward) {
+
+            startX =
+                    centerX - arrowHalf;
+
+            endX =
+                    centerX + arrowHalf;
+
+        } else {
+
+            startX =
+                    centerX + arrowHalf;
+
+            endX =
+                    centerX - arrowHalf;
+        }
+
+
+        canvas.drawLine(
+                startX,
+                centerY,
+                endX,
+                centerY,
+                arrowPaint
+        );
+
+
+        /*
+         * Arrow head.
+         */
+
+        if (forward) {
+
+            canvas.drawLine(
+                    endX,
+                    centerY,
+                    endX - head,
+                    centerY - head,
+                    arrowPaint
+            );
+
+
+            canvas.drawLine(
+                    endX,
+                    centerY,
+                    endX - head,
+                    centerY + head,
+                    arrowPaint
+            );
+
+        } else {
+
+            canvas.drawLine(
+                    endX,
+                    centerY,
+                    endX + head,
+                    centerY - head,
+                    arrowPaint
+            );
+
+
+            canvas.drawLine(
+                    endX,
+                    centerY,
+                    endX + head,
+                    centerY + head,
+                    arrowPaint
+            );
+        }
+    }
+
+
+    private static int dpStatic(
+            Context context,
+            int value
+    ) {
+
+        float density =
+                context
+                        .getResources()
+                        .getDisplayMetrics()
+                        .density;
+
+
+        return (int) (
+                value * density + 0.5f
+        );
     }
 }
