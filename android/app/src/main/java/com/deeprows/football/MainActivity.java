@@ -729,28 +729,7 @@ mainWebView.loadUrl(
                      * =================================================
                      */
 
-                    @Override
-                    public void onPageCommitVisible(
-                            WebView view,
-                            String url
-                    ) {
-
-                        super.onPageCommitVisible(
-                                view,
-                                url
-                        );
-
-                        if (!webPageVisible) {
-
-                            webPageVisible =
-                                    true;
-
-                            hideCustomSplash();
-                        }
-                    }
-
-
-                    @Override
+                                       @Override
                     public void onPageFinished(
                             WebView view,
                             String url
@@ -769,10 +748,9 @@ mainWebView.loadUrl(
                             showingOfflinePage =
                                     false;
                         }
+
                         updateFloatingNavigation();
                     }
-
-                    updateFloatingNavigation();
                     /*
                      * =================================================
                      * NETWORK / IFRAME ERROR HANDLING
