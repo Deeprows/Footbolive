@@ -2948,7 +2948,7 @@ mainWebView.loadUrl(
         );
     }
 
-
+updateFloatingNavigation();
     /*
      * =========================================================
      * POPUP UI
@@ -3287,7 +3287,8 @@ mainWebView.loadUrl(
         hideStatusBar();
     }
 
-
+updateFloatingNavigation();
+    
     /*
      * =========================================================
      * STATUS BAR
