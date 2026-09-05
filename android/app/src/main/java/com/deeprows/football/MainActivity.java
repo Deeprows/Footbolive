@@ -220,6 +220,12 @@ if (customSplashView != null) {
     customSplashView.bringToFront();
 }
 
+createFloatingNavigation();
+
+if (customSplashView != null) {
+    customSplashView.bringToFront();
+}
+
 mainWebView.loadUrl(
         WEBSITE_URL
 );
