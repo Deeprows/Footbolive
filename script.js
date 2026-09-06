@@ -717,8 +717,19 @@ let screenLoadTimer = null;
 
 if (screenFrame) {
 
+  /*
+   * The homepage player URL is stored in
+   * data-src so the iframe does not load
+   * before our browser detection runs.
+   *
+   * Keep src as a fallback for compatibility
+   * with any older HTML.
+   */
+
   currentMainUrl =
-    screenFrame.getAttribute("src") || "";
+    screenFrame.dataset.src ||
+    screenFrame.getAttribute("src") ||
+    "";
 
   currentAltUrl =
     screenFrame.dataset.altUrl || "";
