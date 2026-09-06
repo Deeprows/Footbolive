@@ -10,6 +10,21 @@
     "date": "2026-09-05"
   },
   {
+    "name": "Arsenal vs Chelsea",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/27/16/27165bb4-dbd5-4eb2-a54c-3c0ed6833594/720p.m3u8",
+    "date": "2026-09-06"
+  },
+   {
+    "name": "Everton vs Manchester united",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/3a/fc/3afc78c8-02a2-4e89-9b6f-997a3ed6e86f/playlist.m3u8",
+    "date": "2026-09-06"
+  },
+  {
+    "name": "Valencia vs Barcelona",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/cb/75/cb751284-6582-4ca8-bc82-a71817100c6c/480p.m3u8",
+    "date": "2026-09-06"
+  },
+  {
     "name": "Newcastle United vs AFC Bournemouth",
     "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/71/fa/71fa749d-a9e0-40a8-83cc-98d67c3f52cb/480p.m3u8",
     "date": "2026-09-05"
