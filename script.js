@@ -726,6 +726,10 @@ if (screenFrame) {
   currentScreenType =
     "default";
 
+  prepareFullscreenIframe(
+    screenFrame
+  );
+
 }
   // Direct M3U8/HLS player state
   let hlsVideo = null;
@@ -2094,8 +2098,15 @@ function openAltScreen() {
     }
 
     if (altScreenFrame) {
-      altScreenFrame.src = currentAltUrl;
-    }
+
+  prepareFullscreenIframe(
+    altScreenFrame
+  );
+
+  altScreenFrame.src =
+    currentAltUrl;
+
+}
 
     if (altScreenOverlay) {
       altScreenOverlay.hidden = false;
@@ -2722,7 +2733,40 @@ if (altScreenButton) {
 
   }
 
+  /* =========================================================
+     PREPARE IFRAME FOR FULLSCREEN
+     ========================================================= */
 
+  function prepareFullscreenIframe(iframe) {
+
+    if (!iframe) {
+      return;
+    }
+
+    iframe.setAttribute(
+      "allowfullscreen",
+      "true"
+    );
+
+    const currentAllow =
+      iframe.getAttribute("allow") || "";
+
+    if (
+      !currentAllow
+        .toLowerCase()
+        .includes("fullscreen")
+    ) {
+
+      iframe.setAttribute(
+        "allow",
+        currentAllow
+          ? currentAllow + "; fullscreen"
+          : "fullscreen"
+      );
+
+    }
+
+  }
   /* =========================================================
      LOAD SCREEN
      ========================================================= */
@@ -2788,42 +2832,61 @@ if (altScreenButton) {
 
     else {
 
-      destroyM3U8Player();
+  destroyM3U8Player();
 
-      if (screenFrame) {
+  if (screenFrame) {
 
-        screenFrame.style.display =
-          "";
+    /*
+     * Make sure the iframe is allowed
+     * to enter fullscreen.
+     */
+    prepareFullscreenIframe(
+      screenFrame
+    );
 
-        screenFrame.style.opacity =
-          "0.25";
+    screenFrame.style.display =
+      "";
 
-        screenFrame.src =
-          "about:blank";
+    screenFrame.style.opacity =
+      "0.25";
 
-        screenLoadTimer =
-          setTimeout(
-            function () {
+    screenFrame.src =
+      "about:blank";
 
-              screenFrame.src =
-                url;
+    screenLoadTimer =
+      setTimeout(
+        function () {
 
-              screenFrame.style.opacity =
-                "1";
+          /*
+           * Set the player URL.
+           */
+          screenFrame.src =
+            url;
 
-              screenLoadTimer = null;
-
-              requestAnimationFrame(
-                updateStickyPositions
-              );
-
-            },
-            150
+          /*
+           * Keep fullscreen permission
+           * after changing the iframe URL.
+           */
+          prepareFullscreenIframe(
+            screenFrame
           );
 
-      }
+          screenFrame.style.opacity =
+            "1";
 
-    }
+          screenLoadTimer = null;
+
+          requestAnimationFrame(
+            updateStickyPositions
+          );
+
+        },
+        150
+      );
+
+  }
+
+}
 
 
     if (screenStatus) {
