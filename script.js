@@ -717,19 +717,8 @@ let screenLoadTimer = null;
 
 if (screenFrame) {
 
-  /*
-   * The homepage player URL is stored in
-   * data-src so the iframe does not load
-   * before our browser detection runs.
-   *
-   * Keep src as a fallback for compatibility
-   * with any older HTML.
-   */
-
   currentMainUrl =
-    screenFrame.dataset.src ||
-    screenFrame.getAttribute("src") ||
-    "";
+    screenFrame.getAttribute("src") || "";
 
   currentAltUrl =
     screenFrame.dataset.altUrl || "";
@@ -2733,337 +2722,7 @@ if (altScreenButton) {
 
   }
 
-  /* =========================================================
-     PLAYER ENVIRONMENT DETECTION
-     ========================================================= */
 
-  const PLAYER_USER_AGENT =
-    navigator.userAgent || "";
-
-  /*
-   * Facebook in-app browser detection.
-   *
-   * Check Facebook first because some Facebook
-   * Android browsers can also contain WebView
-   * markers.
-   */
-
-  const IS_FACEBOOK_BROWSER =
-    /FBAN|FBAV|FB_IAB|FBIOS|FB4A/i.test(
-      PLAYER_USER_AGENT
-    );
-
-
-  /*
-   * Android WebView detection.
-   *
-   * Primary marker:
-   *     ; wv)
-   *
-   * Secondary marker:
-   *     Version/4.0 + Chrome + Android
-   */
-
-  const IS_ANDROID_WEBVIEW =
-    /Android/i.test(
-      PLAYER_USER_AGENT
-    ) &&
-    (
-      /;\s*wv\)/i.test(
-        PLAYER_USER_AGENT
-      ) ||
-      (
-        /Version\/4\.0/i.test(
-          PLAYER_USER_AGENT
-        ) &&
-        /Chrome\/[\d.]+/i.test(
-          PLAYER_USER_AGENT
-        )
-      )
-    );
-
-
-  /*
-   * How long Android WebView should wait
-   * for the iframe before opening the player
-   * directly.
-   *
-   * 10 seconds gives slower streams enough time
-   * to respond while still recovering from
-   * WebView iframe restrictions.
-   */
-
-  const PLAYER_FALLBACK_DELAY =
-    10000;
-
-
-  /*
-   * Keep separate fallback timers for
-   * different iframe elements.
-   */
-
-  const iframeFallbackTimers =
-    new WeakMap();
-
-
-  /*
-   * Prevent an old player request from
-   * triggering a fallback after a newer
-   * player has already been selected.
-   */
-
-  const iframeLoadTokens =
-    new WeakMap();
-
-
-  /* =========================================================
-     CLEAR PLAYER FALLBACK
-     ========================================================= */
-
-  function clearPlayerFallback(frame) {
-
-    if (!frame) {
-      return;
-    }
-
-    const timer =
-      iframeFallbackTimers.get(
-        frame
-      );
-
-    if (timer) {
-
-      clearTimeout(
-        timer
-      );
-
-      iframeFallbackTimers.delete(
-        frame
-      );
-
-    }
-
-  }
-
-
-  /* =========================================================
-     OPEN PLAYER DIRECTLY
-     ========================================================= */
-
-  function openDirectPlayer(url) {
-
-    if (!url) {
-      return;
-    }
-
-    console.log(
-      "[Deeprowss] Opening player directly:",
-      url
-    );
-
-    /*
-     * Top-level navigation removes the iframe
-     * nesting restriction.
-     */
-
-    window.location.assign(
-      url
-    );
-
-  }
-
-
-  /* =========================================================
-     LOAD PLAYER FRAME
-     ========================================================= */
-
-  function loadPlayerFrame(
-    frame,
-    url
-  ) {
-
-    if (!frame || !url) {
-      return;
-    }
-
-
-    /*
-     * Create a unique token for this
-     * particular player request.
-     */
-
-    const token =
-      Symbol(url);
-
-    iframeLoadTokens.set(
-      frame,
-      token
-    );
-
-
-    /*
-     * Cancel any fallback belonging
-     * to the previous URL.
-     */
-
-    clearPlayerFallback(
-      frame
-    );
-
-
-    /* =======================================================
-       FACEBOOK IN-APP BROWSER
-       ======================================================= */
-
-    if (IS_FACEBOOK_BROWSER) {
-
-      console.log(
-        "[Deeprowss] Facebook in-app browser detected."
-      );
-
-      console.log(
-        "[Deeprowss] Opening player directly."
-      );
-
-      openDirectPlayer(
-        url
-      );
-
-      return;
-
-    }
-
-
-    /* =======================================================
-       NORMAL BROWSER / ANDROID WEBVIEW
-       ======================================================= */
-
-    frame.style.display =
-      "";
-
-    frame.style.opacity =
-      "0.25";
-
-
-    /*
-     * Clear the old iframe document first.
-     */
-
-    frame.src =
-      "about:blank";
-
-
-    /*
-     * Small delay prevents the browser from
-     * mixing the old and new iframe document.
-     */
-
-    setTimeout(
-      function () {
-
-        /*
-         * A newer URL may have been selected
-         * while the timer was waiting.
-         */
-
-        if (
-          iframeLoadTokens.get(
-            frame
-          ) !== token
-        ) {
-
-          return;
-
-        }
-
-
-        frame.src =
-          url;
-
-        frame.style.opacity =
-          "1";
-
-
-        requestAnimationFrame(
-          updateStickyPositions
-        );
-
-
-        /* =================================================
-           ANDROID WEBVIEW FALLBACK
-           ================================================= */
-
-        if (IS_ANDROID_WEBVIEW) {
-
-          console.log(
-            "[Deeprowss] Android WebView detected."
-          );
-
-          console.log(
-            "[Deeprowss] Trying iframe first."
-          );
-
-
-          const fallbackTimer =
-            setTimeout(
-              function () {
-
-                /*
-                 * Make sure this is still
-                 * the active player URL.
-                 */
-
-                if (
-                  iframeLoadTokens.get(
-                    frame
-                  ) !== token
-                ) {
-
-                  return;
-
-                }
-
-
-                /*
-                 * Clear the timer before
-                 * navigating directly.
-                 */
-
-                iframeFallbackTimers.delete(
-                  frame
-                );
-
-
-                console.warn(
-                  "[Deeprowss] Android WebView iframe did not load normally."
-                );
-
-                console.warn(
-                  "[Deeprowss] Falling back to direct player."
-                );
-
-
-                openDirectPlayer(
-                  url
-                );
-
-              },
-              PLAYER_FALLBACK_DELAY
-            );
-
-
-          iframeFallbackTimers.set(
-            frame,
-            fallbackTimer
-          );
-
-        }
-
-      },
-      150
-    );
-
-  }
   /* =========================================================
      LOAD SCREEN
      ========================================================= */
@@ -3117,10 +2776,6 @@ if (altScreenButton) {
       );
     }
 
-    /* =======================================================
-       M3U8 / NATIVE PLAYER
-       ======================================================= */
-
     if (isM3U8Url(url)) {
 
       createM3U8Player(url);
@@ -3131,135 +2786,71 @@ if (altScreenButton) {
 
     }
 
-    /* =======================================================
-       IFRAME / DIRECT PLAYER
-       ======================================================= */
-
     else {
 
       destroyM3U8Player();
 
       if (screenFrame) {
 
-        /*
-         * Use the new generic player loader.
-         *
-         * Facebook in-app browser:
-         *     → opens the player directly.
-         *
-         * Android WebView:
-         *     → tries iframe first.
-         *     → falls back to direct player after
-         *       the configured timeout.
-         *
-         * Normal browsers:
-         *     → keeps using the existing iframe.
-         */
+        screenFrame.style.display =
+          "";
 
-        if (
-          typeof loadPlayerFrame ===
-          "function"
-        ) {
+        screenFrame.style.opacity =
+          "0.25";
 
-          loadPlayerFrame(
-            screenFrame,
-            url
+        screenFrame.src =
+          "about:blank";
+
+        screenLoadTimer =
+          setTimeout(
+            function () {
+
+              screenFrame.src =
+                url;
+
+              screenFrame.style.opacity =
+                "1";
+
+              screenLoadTimer = null;
+
+              requestAnimationFrame(
+                updateStickyPositions
+              );
+
+            },
+            150
           );
-
-        }
-
-        else {
-
-          /*
-           * Safety fallback in case the
-           * player loader has not been
-           * initialized.
-           */
-
-          screenFrame.style.display =
-            "";
-
-          screenFrame.style.opacity =
-            "0.25";
-
-          screenFrame.src =
-            "about:blank";
-
-          screenLoadTimer =
-            setTimeout(
-              function () {
-
-                screenFrame.src =
-                  url;
-
-                screenFrame.style.opacity =
-                  "1";
-
-                screenLoadTimer =
-                  null;
-
-                requestAnimationFrame(
-                  updateStickyPositions
-                );
-
-              },
-              150
-            );
-
-        }
 
       }
 
     }
 
-
-    /* =======================================================
-       SCREEN STATUS
-       ======================================================= */
 
     if (screenStatus) {
 
       if (type === "tv") {
-
         screenStatus.textContent =
           "LIVE TV";
-
       }
 
       else if (type === "highlight") {
-
         screenStatus.textContent =
           "HIGHLIGHT";
-
       }
 
       else if (type === "movie") {
-
         screenStatus.textContent =
           "MOVIE";
-
       }
 
       else {
-
         screenStatus.textContent =
           "LIVE";
-
       }
 
     }
 
-
-    /* =======================================================
-       FOOTBALL CONTROLS
-       ======================================================= */
-
     updateFootballControls();
-
-
-    /* =======================================================
-       KEEP PLAYER VISIBLE
-       ======================================================= */
 
     if (screenPlayer) {
 
@@ -3274,15 +2865,12 @@ if (altScreenButton) {
       if (rect.top < headerHeight) {
 
         window.scrollBy({
-
           top:
             rect.top -
             headerHeight -
             10,
-
           behavior:
             "smooth"
-
         });
 
       }
@@ -3290,6 +2878,7 @@ if (altScreenButton) {
     }
 
   }
+
 
   /* =========================================================
      BIND CONTENT CARDS
