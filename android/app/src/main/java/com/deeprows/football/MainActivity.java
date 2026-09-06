@@ -461,15 +461,32 @@ private void showPlayerConnectionError(WebView webView, String failedUrl) {
     webView.evaluateJavascript(javascript, null);    
 }    
 
-private void configureWebView(WebView webView) {    
-    WebSettings settings = webView.getSettings();    
+private void configureWebView(WebView webView) {
+    WebSettings settings = webView.getSettings();
 
-    settings.setJavaScriptEnabled(true);    
-    settings.setDomStorageEnabled(true);    
-    settings.setDatabaseEnabled(true);    
-    settings.setJavaScriptCanOpenWindowsAutomatically(true);    
-    settings.setSupportMultipleWindows(true);    
-    settings.setMediaPlaybackRequiresUserGesture(false);    
+    settings.setJavaScriptEnabled(true);
+    settings.setDomStorageEnabled(true);
+    settings.setDatabaseEnabled(true);
+    settings.setJavaScriptCanOpenWindowsAutomatically(true);
+    settings.setSupportMultipleWindows(true);
+    settings.setMediaPlaybackRequiresUserGesture(false);
+
+    // Make Android WebView identify itself like Chrome.
+    // Some third-party iframe/video providers reject the
+    // default Android WebView user agent.
+    try {
+        String defaultUa = settings.getUserAgentString();
+
+        if (defaultUa != null &&
+                !defaultUa.toLowerCase(java.util.Locale.US).contains("chrome/")) {
+
+            settings.setUserAgentString(
+                    defaultUa +
+                    " Chrome/131.0.0.0 Mobile Safari/537.36"
+            );
+        }
+    } catch (Exception ignored) {
+    }    
     settings.setAllowFileAccess(true);    
     settings.setAllowContentAccess(true);    
     settings.setBuiltInZoomControls(false);    
