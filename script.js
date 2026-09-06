@@ -4218,3 +4218,246 @@ if (refreshPageBtn) {
 
 
 })();
+
+/* =========================================================
+   DEEPROWS GLOBAL FULLSCREEN + LANDSCAPE
+   Works with browser + Android WebView/Web-to-App wrappers
+   ========================================================= */
+
+(function () {
+  "use strict";
+
+  let fullscreenActive = false;
+
+  /*
+   * Make every iframe capable of fullscreen.
+   */
+  function enableIframeFullscreen() {
+    document.querySelectorAll("iframe").forEach(function (iframe) {
+
+      iframe.setAttribute("allowfullscreen", "true");
+
+      const currentAllow =
+        iframe.getAttribute("allow") || "";
+
+      if (!currentAllow.includes("fullscreen")) {
+        iframe.setAttribute(
+          "allow",
+          currentAllow
+            ? currentAllow + "; fullscreen"
+            : "fullscreen"
+        );
+      }
+
+    });
+  }
+
+  /*
+   * Lock device to landscape.
+   */
+  async function lockLandscape() {
+
+    try {
+
+      if (
+        screen.orientation &&
+        typeof screen.orientation.lock === "function"
+      ) {
+
+        await screen.orientation.lock("landscape");
+
+        console.log(
+          "Deeprows: landscape orientation locked"
+        );
+
+      }
+
+    } catch (error) {
+
+      /*
+       * Some WebViews/browsers don't allow
+       * orientation locking from the page.
+       *
+       * Do NOT break fullscreen if this happens.
+       */
+
+      console.log(
+        "Deeprows: landscape lock unavailable",
+        error
+      );
+
+    }
+  }
+
+  /*
+   * Unlock orientation when fullscreen ends.
+   */
+  function unlockOrientation() {
+
+    try {
+
+      if (
+        screen.orientation &&
+        typeof screen.orientation.unlock === "function"
+      ) {
+
+        screen.orientation.unlock();
+
+        console.log(
+          "Deeprows: orientation unlocked"
+        );
+
+      }
+
+    } catch (error) {
+
+      console.log(
+        "Deeprows: orientation unlock failed",
+        error
+      );
+
+    }
+  }
+
+  /*
+   * Enter fullscreen + landscape.
+   */
+  async function enterDeeprowsFullscreen(element) {
+
+    if (!element) {
+      return;
+    }
+
+    try {
+
+      /*
+       * Request fullscreen first.
+       *
+       * This should happen directly from the
+       * user's fullscreen/button click.
+       */
+
+      if (
+        document.fullscreenElement !== element &&
+        element.requestFullscreen
+      ) {
+
+        await element.requestFullscreen();
+
+      }
+
+    } catch (error) {
+
+      console.log(
+        "Deeprows: fullscreen request failed",
+        error
+      );
+
+    }
+
+    /*
+     * Now request landscape.
+     */
+    await lockLandscape();
+
+    fullscreenActive = true;
+
+  }
+
+  /*
+   * Exit fullscreen + restore orientation.
+   */
+  async function exitDeeprowsFullscreen() {
+
+    try {
+
+      if (document.fullscreenElement) {
+
+        await document.exitFullscreen();
+
+      }
+
+    } catch (error) {
+
+      console.log(
+        "Deeprows: fullscreen exit failed",
+        error
+      );
+
+    }
+
+    unlockOrientation();
+
+    fullscreenActive = false;
+
+  }
+
+  /*
+   * Detect fullscreen changes.
+   */
+  document.addEventListener(
+    "fullscreenchange",
+    function () {
+
+      const active =
+        !!document.fullscreenElement;
+
+      if (!active && fullscreenActive) {
+
+        unlockOrientation();
+
+        fullscreenActive = false;
+
+      }
+
+    }
+  );
+
+  /*
+   * Automatically make dynamically-created iframes
+   * fullscreen capable.
+   */
+  const observer =
+    new MutationObserver(function () {
+
+      enableIframeFullscreen();
+
+    });
+
+  observer.observe(
+    document.documentElement,
+    {
+      childList: true,
+      subtree: true
+    }
+  );
+
+  /*
+   * Initial pass.
+   */
+  document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+      enableIframeFullscreen();
+
+    }
+  );
+
+  /*
+   * Expose functions so your existing player code
+   * can call them.
+   */
+  window.DeeprowsFullscreen = {
+
+    enter: enterDeeprowsFullscreen,
+
+    exit: exitDeeprowsFullscreen,
+
+    lockLandscape: lockLandscape,
+
+    unlockOrientation: unlockOrientation
+
+  };
+
+})();
