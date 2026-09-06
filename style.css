@@ -2789,3 +2789,69 @@ body.light
   }
 
 }
+
+/* ================================
+   FACEBOOK / IN-APP BROWSER NOTICE
+   ================================ */
+
+#externalBrowserNotice {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: rgba(0, 0, 0, 0.94);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.external-browser-box {
+    width: 100%;
+    max-width: 420px;
+    background: #10141b;
+    border: 1px solid #333943;
+    border-radius: 20px;
+    padding: 30px 22px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.external-browser-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.external-browser-box h2 {
+    margin: 0 0 12px;
+    color: white;
+    font-size: 25px;
+}
+
+.external-browser-box p {
+    color: #aeb4c0;
+    line-height: 1.5;
+    font-size: 15px;
+    margin: 8px 0;
+}
+
+#openExternalBrowser {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    border: 0;
+    border-radius: 10px;
+    background: #1e5eff;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+#continueFacebook {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border: 0;
+    background: transparent;
+    color: #888;
+    font-size: 14px;
+}
