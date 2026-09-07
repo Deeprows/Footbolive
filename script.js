@@ -1909,7 +1909,15 @@ requestAnimationFrame(
     );
 
   }
+function openScores() {
 
+  showContent("scores");
+
+  setActiveButton(
+    scoresButton
+  );
+
+}
 
   /* =========================================================
      APP BUTTON EVENTS
