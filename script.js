@@ -654,6 +654,8 @@ if (movieSearchInput) {
 
   const moviesButton =
     document.getElementById("moviesButton");
+   const scoresButton =
+  document.getElementById("scoresButton");
 
 
   /* =========================================================
