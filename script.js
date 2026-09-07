@@ -1951,6 +1951,12 @@ function openScores() {
     );
   }
 
+if (scoresButton) {
+  scoresButton.addEventListener(
+    "click",
+    openScores
+  );
+}
 
   /* =========================================================
      NAVIGATION EVENTS
