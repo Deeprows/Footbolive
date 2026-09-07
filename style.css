@@ -2789,3 +2789,74 @@ body.light
   }
 
 }
+
+/* =========================================================
+   DEEPROWS — LIVE SCORES NAV BUTTON
+   ========================================================= */
+
+#liveScoresNav {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+/* Hover */
+#liveScoresNav:hover {
+    transform: translateY(-1px);
+}
+
+/* Press */
+#liveScoresNav:active {
+    transform: scale(0.96);
+}
+
+/* Active state */
+#liveScoresNav.active {
+    font-weight: 700;
+}
+
+/* Small LIVE indicator */
+#liveScoresNav::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff3030;
+    box-shadow: 0 0 6px rgba(255, 48, 48, 0.7);
+    animation: liveScoresPulse 1.5s infinite;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    #liveScoresNav {
+        gap: 5px;
+    }
+
+    #liveScoresNav::after {
+        width: 5px;
+        height: 5px;
+    }
+}
+
+@keyframes liveScoresPulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.35;
+        transform: scale(0.75);
+    }
+}
