@@ -1828,6 +1828,11 @@ requestAnimationFrame(
       moviesContent.hidden =
         section !== "movies";
     }
+     
+   if (scoresContent) {
+  scoresContent.hidden =
+    section !== "scores";
+}
 
     if (section !== "football") {
       hideAltScreen();
