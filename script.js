@@ -674,7 +674,9 @@ if (movieSearchInput) {
   const moviesContent =
     document.getElementById("moviesContent");
 
-
+const scoresContent =
+  document.getElementById("scoresContent");
+   
   /* =========================================================
      NAVIGATION
      ========================================================= */
