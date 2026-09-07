@@ -1756,7 +1756,8 @@ requestAnimationFrame(
       footballButton,
       highlightsButton,
       tvButton,
-      moviesButton
+      moviesButton,
+      scoresButton
     ].forEach(
       function (item) {
 
