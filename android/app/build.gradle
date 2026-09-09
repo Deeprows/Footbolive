@@ -38,6 +38,11 @@ android {
     }
 }
 
+ext {
+    geckoviewChannel = "stable"
+    geckoviewVersion = "154.0.20260824154132"
+}
+
 dependencies {
 
     // AndroidX
@@ -47,5 +52,6 @@ dependencies {
     implementation 'androidx.media3:media3-exoplayer:1.11.0'
     implementation 'androidx.media3:media3-ui:1.11.0'
 
-
+    // GeckoView
+    implementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
 }
