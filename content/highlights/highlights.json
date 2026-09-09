@@ -20,6 +20,26 @@
     "date": "2026-09-09"
   },
   {
+    "name": "Barcelona vs Feyenoord",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/41/e2/41e2b4f2-ecd9-4341-8444-5a169a3b67cc/playlist.m3u8",
+    "date": "2026-09-10"
+  },
+  {
+    "name": "Stuggart vs Viking",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/7c/e8/7ce88f62-72c3-46a7-8c89-8dd12d17245b/1080p.m3u8",
+    "date": "2026-09-10"
+  },
+  {
+    "name": "Napoli vs Arsenal",
+    "url": "hls-player/player.html#https://vod3.cf.dmcdn.net/sec2(HoUY-SFDVdLFFASx8z4PPiNKjnioYD349R2duq3i-C3fj2VE9NGukWM7PCk-qEmmKSp-IiNAcCx2gHP9wkjzVktvK1jN0QU5guYhHjZkI4JZ9EnRJci1rlyr6SrDnITJrTOBjwUEeZKQyeCwCNdP9RZ4icx2agXp5-FgRnW3PGKOPD7XUWdqLkumwX768R1S4VRlL94dDfErfUjJ7jwa-g)/video/fmp4/675570930/h264_sd/2/manifest.m3u8",
+    "date": "2026-09-10"
+  },
+  {
+    "name": "Liverpool vs Atletico Madrid",
+    "url": "hls-player/player.html#https://vod3.cf.dmcdn.net/sec2(WEp_orWM51Fo6VX3PqTJvEbtdGxbx_eZ9BX9p4rLOK04FV0V2jN9eF3HRMK0lAHrxePD2ihlMl0o_bYlUptg8i3UGhZnhstSn1jxmhy3-adqOBQbcwYKgyAhrLmlPrZq52Cs70BC3BOqU_67FBBURIuW63d1NPqWMt2AlDeSLH7dLG7LX650ZUJZ6iJs-YmSRZIYi_iDpltQEDaP72QSIQ)/video/fmp4/675570926/h264_hq/3/manifest.m3u8",
+    "date": "2026-09-10"
+  },
+  {
     "name": "FC Porto vs Manchester City",
     "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/d9/74/d97404ba-d75b-4eb1-9beb-43c73a56dc78/playlist.m3u8",
     "date": "2026-09-09"
