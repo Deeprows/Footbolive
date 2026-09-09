@@ -38,6 +38,11 @@ android {
     }
 }
 
+ext {
+    geckoviewChannel = "stable"
+    geckoviewVersion = "157.0.20260908154013"
+}
+
 dependencies {
 
     // AndroidX
@@ -50,5 +55,5 @@ dependencies {
     // =========================================================
     // DEEPROWS — GECKOVIEW
     // =========================================================
-  
+    implementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
 }
