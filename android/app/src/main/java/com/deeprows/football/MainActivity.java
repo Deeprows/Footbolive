@@ -1,46 +1,26 @@
-/*
-
-Deeprowss Football APK - MainActivity.java
-
-Media3 dependencies:
-
-implementation "androidx.media3:media3-exoplayer:1.8.0"
-
-implementation "androidx.media3:media3-ui:1.8.0"
-*/
-
-
 package com.deeprows.football;
 
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.CookieManager;
-import android.webkit.DownloadListener;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.splashscreen.SplashScreen;
 import androidx.media3.common.MediaItem;
@@ -48,1799 +28,1910 @@ import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
 
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoRuntimeSettings;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.GeckoView;
+import org.mozilla.geckoview.WebResponse;
+
+import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
 
-private static final String WEBSITE_URL = "https://deeprowss.com";    
-private static final String TELEGRAM_URL = "https://t.me/deeprows";    
-private static final int POPUP_BAR_HEIGHT_DP = 58;    
-private static final int BG_COLOR = Color.rgb(7, 9, 13);    
+    private static final String WEBSITE_URL = "https://deeprowss.com";
+    private static final String TELEGRAM_URL = "https://t.me/deeprows";
 
-private FrameLayout rootLayout;    
-private RefreshableWebViewContainer refreshContainer;    
+    /*
+     * This is intentionally Chrome-like because your WebToApk test showed
+     * that this UA stopped the iframe sandbox problem.
+     */
+    private static final String DEEPROWSS_USER_AGENT =
+            "Mozilla/5.0 (Linux; Android K) App{VERSION_CODE} "
+                    + "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    + "Chrome/120.0.6099.144 Mobile Safari/537.36";
 
-private FrameLayout floatingNavigation;    
-private FloatingArrowButton floatingBackButton;    
-private FloatingArrowButton floatingForwardButton;    
+    private static final int BG_COLOR = Color.rgb(7, 9, 13);
+    private static final int SURFACE_COLOR = Color.rgb(16, 20, 27);
+    private static final int ACCENT_COLOR = Color.rgb(255, 23, 68);
 
-private WebView mainWebView;    
-private WebView popupWebView;    
-private final List<WebView> popupWebViewStack = new ArrayList<>();    
-private FrameLayout popupContainer;    
+    private static GeckoRuntime geckoRuntime;
 
-private View customVideoView;    
-private WebChromeClient.CustomViewCallback customViewCallback;    
-
-private ExoPlayer nativePlayer;    
-private PlayerView nativePlayerView;    
-private boolean nativePlayerFullscreen = false;    
-
-private int popupBarHeight;    
-private boolean showingOfflinePage = false;    
-
-private boolean webPageVisible = false;    
-private View customSplashView;    
-private TextView splashLoadingText;    
-private ProgressBar splashLoadingProgress;    
-private Handler splashAnimationHandler;    
-private Runnable splashAnimationRunnable;    
-
-@Override    
-protected void onCreate(Bundle savedInstanceState) {    
-    SplashScreen splashScreen = SplashScreen.installSplashScreen(this);    
-
-    splashScreen.setKeepOnScreenCondition(() -> !webPageVisible);    
-
-    super.onCreate(savedInstanceState);    
-
-    getWindow().setBackgroundDrawable(new ColorDrawable(BG_COLOR));    
-    getWindow().setNavigationBarColor(BG_COLOR);    
-    getWindow().setStatusBarColor(BG_COLOR);    
-    getWindow().setFlags(    
-            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,    
-            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED    
-    );    
-
-    hideStatusBar();    
-    popupBarHeight = dp(POPUP_BAR_HEIGHT_DP);    
-
-    rootLayout = new FrameLayout(this);    
-    rootLayout.setBackgroundColor(BG_COLOR);    
-    setContentView(rootLayout);    
-
-    showCustomSplash();    
-    createMainWebView();    
-    createFloatingNavigation();    
-
-    if (mainWebView != null) {    
-        mainWebView.setBackgroundColor(BG_COLOR);    
-    }    
-
-    if (customSplashView != null) {    
-        customSplashView.bringToFront();    
-    }    
-
-    mainWebView.loadUrl(WEBSITE_URL);    
-}    
-
-private void showCustomSplash() {    
-    if (rootLayout == null || customSplashView != null) return;    
-
-    FrameLayout splashContainer = new FrameLayout(this);    
-    splashContainer.setBackgroundColor(BG_COLOR);    
-
-    ImageView splashImage = new ImageView(this);    
-
-    int splashResource = getResources().getIdentifier(    
-            "deeprowss_splash",    
-            "drawable",    
-            getPackageName()    
-    );    
-
-    if (splashResource != 0) {    
-        splashImage.setImageResource(splashResource);    
-    }    
-
-    splashImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);    
-    splashImage.setAdjustViewBounds(true);    
-    splashImage.setBackgroundColor(BG_COLOR);    
-
-    FrameLayout.LayoutParams imageParams = new FrameLayout.LayoutParams(    
-            FrameLayout.LayoutParams.MATCH_PARENT,    
-            dp(330),    
-            Gravity.CENTER    
-    );    
-
-    imageParams.setMargins(dp(32), dp(20), dp(32), dp(90));    
-    splashContainer.addView(splashImage, imageParams);    
-
-    LinearLayout loadingLayout = new LinearLayout(this);    
-    loadingLayout.setOrientation(LinearLayout.VERTICAL);    
-    loadingLayout.setGravity(Gravity.CENTER);    
-
-    splashLoadingProgress = new ProgressBar(this);    
-    splashLoadingProgress.setIndeterminate(true);    
-
-    LinearLayout.LayoutParams progressParams =    
-            new LinearLayout.LayoutParams(dp(32), dp(32));    
-    progressParams.gravity = Gravity.CENTER;    
-    loadingLayout.addView(splashLoadingProgress, progressParams);    
-
-    splashLoadingText = new TextView(this);    
-    splashLoadingText.setText("Loading...");    
-    splashLoadingText.setTextColor(Color.WHITE);    
-    splashLoadingText.setTextSize(14);    
-    splashLoadingText.setGravity(Gravity.CENTER);    
-    splashLoadingText.setTypeface(null, android.graphics.Typeface.BOLD);    
-
-    LinearLayout.LayoutParams textParams =    
-            new LinearLayout.LayoutParams(    
-                    LinearLayout.LayoutParams.WRAP_CONTENT,    
-                    LinearLayout.LayoutParams.WRAP_CONTENT    
-            );    
-    textParams.gravity = Gravity.CENTER;    
-    textParams.topMargin = dp(10);    
-    loadingLayout.addView(splashLoadingText, textParams);    
-
-    FrameLayout.LayoutParams loadingParams = new FrameLayout.LayoutParams(    
-            FrameLayout.LayoutParams.MATCH_PARENT,    
-            FrameLayout.LayoutParams.WRAP_CONTENT,    
-            Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM    
-    );    
-
-    loadingParams.bottomMargin = dp(55);    
-    splashContainer.addView(loadingLayout, loadingParams);    
-
-    customSplashView = splashContainer;    
-
-    rootLayout.addView(    
-            customSplashView,    
-            new FrameLayout.LayoutParams(    
-                    FrameLayout.LayoutParams.MATCH_PARENT,    
-                    FrameLayout.LayoutParams.MATCH_PARENT    
-            )    
-    );    
-
-    customSplashView.bringToFront();    
-
-    splashAnimationHandler = new Handler(Looper.getMainLooper());    
-
-    splashAnimationRunnable = new Runnable() {    
-        @Override    
-        public void run() {    
-            if (customSplashView == null || splashLoadingText == null) return;    
-
-            splashLoadingText.animate()    
-                    .alpha(0.35f)    
-                    .setDuration(550)    
-                    .withEndAction(() -> {    
-                        if (customSplashView == null || splashLoadingText == null) return;    
-
-                        splashLoadingText.animate()    
-                                .alpha(1f)    
-                                .setDuration(550)    
-                                .withEndAction(() -> {    
-                                    if (customSplashView != null &&    
-                                            splashAnimationHandler != null &&    
-                                            splashAnimationRunnable != null) {    
-                                        splashAnimationHandler.postDelayed(    
-                                                splashAnimationRunnable,    
-                                                50    
-                                        );    
-                                    }    
-                                })    
-                                .start();    
-                    })    
-                    .start();    
-        }    
-    };    
-
-    splashAnimationHandler.post(splashAnimationRunnable);    
-}    
-
-private void hideCustomSplash() {    
-    if (customSplashView == null) return;    
-
-    if (splashAnimationHandler != null && splashAnimationRunnable != null) {    
-        splashAnimationHandler.removeCallbacks(splashAnimationRunnable);    
-    }    
-
-    View splash = customSplashView;    
-    customSplashView = null;    
-
-    splash.animate()    
-            .alpha(0f)    
-            .setDuration(180)    
-            .withEndAction(() -> {    
-                if (rootLayout != null) rootLayout.removeView(splash);    
-
-                splashLoadingText = null;    
-                splashLoadingProgress = null;    
-                splashAnimationRunnable = null;    
-                splashAnimationHandler = null;    
-            })    
-            .start();    
-}    
-
-private void createMainWebView() {    
-    mainWebView = new WebView(this);    
-    mainWebView.setBackgroundColor(BG_COLOR);    
-    configureWebView(mainWebView);    
-
-    mainWebView.setWebViewClient(new WebViewClient() {    
-
-        @Override    
-        public boolean shouldOverrideUrlLoading(    
-                WebView view,    
-                WebResourceRequest request    
-        ) {    
-            if (request == null || request.getUrl() == null) return false;    
-
-            String url = request.getUrl().toString();    
-
-            if (showingOfflinePage) {    
-                showingOfflinePage = false;    
-                view.loadUrl(url);    
-                return true;    
-            }    
-
-            handleMainNavigation(url);    
-            return true;    
-        }    
-
-        @Override    
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {    
-            if (url == null) return false;    
-
-            if (showingOfflinePage) {    
-                showingOfflinePage = false;    
-                view.loadUrl(url);    
-                return true;    
-            }    
-
-            handleMainNavigation(url);    
-            return true;    
-        }    
-
-        @Override    
-        public void onPageStarted(    
-                WebView view,    
-                String url,    
-                android.graphics.Bitmap favicon    
-        ) {    
-            super.onPageStarted(view, url, favicon);    
-            view.setBackgroundColor(BG_COLOR);    
-        }    
-
-        @Override    
-        public void onPageFinished(WebView view, String url) {    
-            super.onPageFinished(view, url);    
-
-            if (url != null && url.startsWith(WEBSITE_URL)) {    
-                showingOfflinePage = false;    
-            }    
-
-            webPageVisible = true;    
-            hideCustomSplash();    
-            updateFloatingNavigation();    
-        }    
-
-        @Override    
-        public void onReceivedError(    
-                WebView view,    
-                WebResourceRequest request,    
-                android.webkit.WebResourceError error    
-        ) {    
-            super.onReceivedError(view, request, error);    
-
-            if (request == null) return;    
-
-            if (request.isForMainFrame()) {    
-                webPageVisible = true;    
-                hideCustomSplash();    
-                view.stopLoading();    
-                view.post(() -> showOfflinePage());    
-                return;    
-            }    
-
-            if (isPlayerEmbedUrl(request)) {    
-                String failedUrl = request.getUrl() != null    
-                        ? request.getUrl().toString()    
-                        : "";    
-
-                view.post(() -> showPlayerConnectionError(view, failedUrl));    
-            }    
-        }    
-
-        @Override    
-        public void onReceivedError(    
-                WebView view,    
-                int errorCode,    
-                String description,    
-                String failingUrl    
-        ) {    
-            super.onReceivedError(view, errorCode, description, failingUrl);    
-
-            if (android.os.Build.VERSION.SDK_INT < 23) {    
-                webPageVisible = true;    
-                hideCustomSplash();    
-                showOfflinePage();    
-            }    
-        }    
-    });    
-
-    mainWebView.setWebChromeClient(createChromeClient());    
-
-    refreshContainer = new RefreshableWebViewContainer(this);    
-    refreshContainer.setBackgroundColor(BG_COLOR);    
-    refreshContainer.setWebView(mainWebView);    
-
-    refreshContainer.setOnRefreshListener(() -> {    
-        if (mainWebView == null) return;    
-
-        if (showingOfflinePage) {    
-            showWebsiteAgain();    
-        } else {    
-            mainWebView.reload();    
-        }    
-
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {    
-            if (refreshContainer != null) {    
-                refreshContainer.stopRefreshing();    
-            }    
-        }, 900);    
-    });    
-
-    refreshContainer.addView(    
-            mainWebView,    
-            new FrameLayout.LayoutParams(    
-                    FrameLayout.LayoutParams.MATCH_PARENT,    
-                    FrameLayout.LayoutParams.MATCH_PARENT    
-            )    
-    );    
-
-    rootLayout.addView(    
-            refreshContainer,    
-            new FrameLayout.LayoutParams(    
-                    FrameLayout.LayoutParams.MATCH_PARENT,    
-                    FrameLayout.LayoutParams.MATCH_PARENT    
-            )    
-    );    
-}    
-
-private boolean isPlayerEmbedUrl(WebResourceRequest request) {    
-    if (request == null || request.getUrl() == null) return false;    
-
-    String url = request.getUrl().toString().toLowerCase(java.util.Locale.US);    
-    return url.contains("/embed/");    
-}    
-
-private void showPlayerConnectionError(WebView webView, String failedUrl) {    
-    if (webView == null || failedUrl == null || failedUrl.trim().isEmpty()) return;    
-
-    String escapedUrl = failedUrl    
-            .replace("\\", "\\\\")    
-            .replace("'", "\\'")    
-            .replace("\n", "")    
-            .replace("\r", "");    
-
-    String javascript =    
-            "(function() {" +    
-            "var frames=document.getElementsByTagName('iframe');" +    
-            "for(var i=0;i<frames.length;i++){" +    
-            "var frame=frames[i];" +    
-            "var src=frame.getAttribute('src')||'';" +    
-            "if(src==='" + escapedUrl + "'||" +    
-            "src.indexOf('" + escapedUrl + "')===0||" +    
-            "'" + escapedUrl + "'.indexOf(src)===0){" +    
-            "frame.style.display='none';" +    
-            "var parent=frame.parentElement;" +    
-            "if(!parent)continue;" +    
-            "parent.style.position='relative';" +    
-            "var old=parent.querySelector('.deeprowss-player-error');" +    
-            "if(old)continue;" +    
-            "var box=document.createElement('div');" +    
-            "box.className='deeprowss-player-error';" +    
-            "box.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;" +    
-            "min-height:220px;background:#07090d;color:#fff;display:flex;" +    
-            "align-items:center;justify-content:center;text-align:center;" +    
-            "z-index:999999;box-sizing:border-box;padding:25px;';" +    
-            "box.innerHTML='<div style=\"max-width:380px;\">" +    
-            "<div style=\"font-size:21px;font-weight:700;margin-bottom:10px;\">" +    
-            "Unable to connect at this time</div>" +    
-            "<div style=\"font-size:14px;line-height:1.6;color:#9299a8;margin-bottom:20px;\">" +    
-            "Check your network connection and refresh the page.</div>" +    
-            "<button onclick=\"location.reload()\" style=\"border:0;border-radius:10px;" +    
-            "background:#ff1744;color:#fff;padding:12px 25px;font-size:14px;font-weight:700;\">" +    
-            "REFRESH</button></div>';" +    
-            "parent.appendChild(box);" +    
-            "}}})();";    
-
-    webView.evaluateJavascript(javascript, null);    
-}    
-
-private void configureWebView(WebView webView) {
-    WebSettings settings = webView.getSettings();
-
-    settings.setJavaScriptEnabled(true);
-    settings.setDomStorageEnabled(true);
-    settings.setDatabaseEnabled(true);
-    settings.setJavaScriptCanOpenWindowsAutomatically(true);
-    settings.setSupportMultipleWindows(true);
-    settings.setMediaPlaybackRequiresUserGesture(false);
-
-    // Make Android WebView identify itself like Chrome.
-    // Some third-party iframe/video providers reject the
-    // default Android WebView user agent.
-    try {
-        String defaultUa = settings.getUserAgentString();
-
-        if (defaultUa != null &&
-                !defaultUa.toLowerCase(java.util.Locale.US).contains("chrome/")) {
-
-            settings.setUserAgentString(
-                    defaultUa +
-                    " Chrome/131.0.0.0 Mobile Safari/537.36"
+    private FrameLayout rootLayout;
+
+    private RefreshableGeckoContainer refreshContainer;
+    private GeckoView mainGeckoView;
+    private GeckoSession mainSession;
+
+    private FrameLayout popupContainer;
+    private LinearLayout popupTopBar;
+    private TextView popupTitle;
+    private final List<PopupEntry> popupStack = new ArrayList<>();
+
+    private View customFullscreenView;
+    private GeckoSession fullscreenSession;
+
+    private FrameLayout splashView;
+    private ProgressBar splashSpinner;
+    private TextView splashLoadingText;
+
+    private boolean pageVisible = false;
+    private boolean showingOfflinePage = false;
+    private boolean activityDestroyed = false;
+
+    private ExoPlayer exoPlayer;
+    private PlayerView nativePlayerView;
+    private boolean nativePlayerShowing = false;
+
+    private int popupBarHeight;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.installSplashScreen(this);
+
+        super.onCreate(savedInstanceState);
+
+        requestWindowFeatures(Window.FEATURE_NO_TITLE);
+
+        getWindow().setStatusBarColor(BG_COLOR);
+        getWindow().setNavigationBarColor(BG_COLOR);
+        getWindow().setBackgroundDrawableResource(android.R.color.black);
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        );
+
+        rootLayout = new FrameLayout(this);
+        rootLayout.setBackgroundColor(BG_COLOR);
+        setContentView(rootLayout);
+
+        popupBarHeight = dp(58);
+
+        showCustomSplash();
+
+        createMainGeckoView();
+
+        mainSession.loadUri(WEBSITE_URL);
+    }
+
+    // ============================================================
+    // GECKOVIEW RUNTIME
+    // ============================================================
+
+    private GeckoRuntime getGeckoRuntime() {
+        if (geckoRuntime == null) {
+
+            GeckoRuntimeSettings runtimeSettings =
+                    new GeckoRuntimeSettings.Builder()
+                            .build();
+
+            geckoRuntime = GeckoRuntime.create(
+                    getApplicationContext(),
+                    runtimeSettings
             );
         }
-    } catch (Exception ignored) {
-    }    
-    settings.setAllowFileAccess(true);    
-    settings.setAllowContentAccess(true);    
-    settings.setBuiltInZoomControls(false);    
-    settings.setDisplayZoomControls(false);    
-    settings.setSupportZoom(false);    
-    settings.setLoadWithOverviewMode(true);    
-    settings.setUseWideViewPort(true);    
-    settings.setTextZoom(100);    
-    settings.setDefaultTextEncodingName("UTF-8");    
-    settings.setCacheMode(WebSettings.LOAD_NO_CACHE);    
-
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {    
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);    
-    }    
-
-    webView.setClickable(true);    
-    webView.setFocusable(true);    
-    webView.setFocusableInTouchMode(true);    
-    webView.setEnabled(true);    
-
-    webView.setDownloadListener(    
-            (url, userAgent, contentDisposition, mimeType, contentLength) ->    
-                    handleWebDownload(    
-                            url,    
-                            userAgent,    
-                            contentDisposition,    
-                            mimeType    
-                    )    
-    );    
-
-    CookieManager cookieManager = CookieManager.getInstance();    
-    cookieManager.setAcceptCookie(true);    
-    cookieManager.setAcceptThirdPartyCookies(webView, true);    
-}    
-
-private void handleWebDownload(    
-        String url,    
-        String userAgent,    
-        String contentDisposition,    
-        String mimeType    
-) {    
-    if (url == null || url.trim().isEmpty()) return;    
-
-    try {    
-        if (isExternalExceptionUrl(url)) {    
-            openExternalUrl(url);    
-            return;    
-        }    
-
-        DownloadManager.Request request =    
-                new DownloadManager.Request(Uri.parse(url));    
-
-        if (mimeType != null && !mimeType.trim().isEmpty()) {    
-            request.setMimeType(mimeType);    
-        }    
-
-        if (userAgent != null && !userAgent.trim().isEmpty()) {    
-            request.addRequestHeader("User-Agent", userAgent);    
-        }    
-
-        String cookies = CookieManager.getInstance().getCookie(url);    
-
-        if (cookies != null && !cookies.trim().isEmpty()) {    
-            request.addRequestHeader("Cookie", cookies);    
-        }    
-
-        request.setDescription("Downloading from Deeprowss");    
-        request.setNotificationVisibility(    
-                DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED    
-        );    
-
-        String fileName = android.webkit.URLUtil.guessFileName(    
-                url,    
-                contentDisposition,    
-                mimeType    
-        );    
-
-        if (fileName == null || fileName.trim().isEmpty()) {    
-            fileName = "deeprowss_download";    
-        }    
-
-        request.setDestinationInExternalPublicDir(    
-                Environment.DIRECTORY_DOWNLOADS,    
-                fileName    
-        );    
-
-        DownloadManager manager =    
-                (DownloadManager) getSystemService(DOWNLOAD_SERVICE);    
-
-        if (manager != null) manager.enqueue(request);    
-
-    } catch (Exception ignored) {    
-    }    
-}    
-
-private void showOfflinePage() {    
-    if (mainWebView == null || showingOfflinePage) return;    
-
-    showingOfflinePage = true;    
-
-    String offlineHtml =    
-            "<!DOCTYPE html><html><head><meta charset='UTF-8'>" +    
-            "<meta name='viewport' content='width=device-width,initial-scale=1.0," +    
-            "maximum-scale=1.0,user-scalable=no'>" +    
-            "<style>" +    
-            "html,body{margin:0;padding:0;width:100%;height:100%;background:#07090d;" +    
-            "color:#fff;font-family:Arial,sans-serif;overflow:hidden;}" +    
-            "body{display:flex;align-items:center;justify-content:center;text-align:center;}" +    
-            ".box{width:88%;max-width:420px;padding:30px 20px;box-sizing:border-box;}" +    
-            ".logo{width:72px;height:72px;margin:0 auto 22px;border-radius:20px;" +    
-            "background:#ff1744;display:flex;align-items:center;justify-content:center;" +    
-            "font-size:32px;font-weight:800;color:#fff;}" +    
-            "h1{font-size:25px;font-weight:700;margin:0 0 12px;}" +    
-            "p{font-size:15px;line-height:1.6;color:#9299a8;margin:0 0 28px;}" +    
-            "button{border:0;outline:none;border-radius:12px;background:#ff1744;color:#fff;" +    
-            "font-size:15px;font-weight:700;padding:14px 30px;min-width:150px;}" +    
-            "</style></head><body><div class='box'>" +    
-            "<div class='logo'>D</div>" +    
-            "<h1>You're offline</h1>" +    
-            "<p>We couldn't connect to Deeprowss right now.<br>" +    
-            "Please check your internet connection and try again.</p>" +    
-            "<button onclick='location.href=\"" + WEBSITE_URL + "\"'>TRY AGAIN</button>" +    
-            "</div></body></html>";    
-
-    mainWebView.setBackgroundColor(BG_COLOR);    
-
-    mainWebView.loadDataWithBaseURL(    
-            WEBSITE_URL,    
-            offlineHtml,    
-            "text/html",    
-            "UTF-8",    
-            null    
-    );    
-}    
-
-private void showWebsiteAgain() {    
-    showingOfflinePage = false;    
-
-    if (mainWebView != null) {    
-        mainWebView.setBackgroundColor(BG_COLOR);    
-        mainWebView.loadUrl(WEBSITE_URL);    
-    }    
-}    
-
-private void handleMainNavigation(String url) {    
-    if (url == null || url.trim().isEmpty()) return;    
-
-    if (isExternalExceptionUrl(url)) {    
-        openExternalUrl(url);    
-        return;    
-    }    
-
-    if (url.startsWith("https://deeprows.github.io/")) {    
-        if (mainWebView != null) mainWebView.loadUrl(url);    
-        return;    
-    }    
-
-    openPopup(url);    
-}    
-
-private boolean isExternalExceptionUrl(String url) {    
-    if (url == null || url.trim().isEmpty()) return false;    
-
-    try {    
-        Uri uri = Uri.parse(url);    
-        String host = uri.getHost();    
-
-        if (host == null) return false;    
-
-        host = host.toLowerCase(java.util.Locale.US);    
-
-        return host.equals("t.me") ||    
-                host.equals("telegram.me") ||    
-                host.equals("www.telegram.me");    
-
-    } catch (Exception ignored) {    
-        return false;    
-    }    
-}    
-
-private boolean isHttpUrl(String url) {    
-    if (url == null) return false;    
-
-    String value = url.trim().toLowerCase(java.util.Locale.US);    
-
-    return value.startsWith("http://") ||    
-            value.startsWith("https://");    
-}    
-
-private void openExternalUrl(String url) {    
-    try {    
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));    
-        startActivity(intent);    
-    } catch (Exception ignored) {    
-        openPopup(url);    
-    }    
-}    
-
-private boolean isDirectMediaUrl(String url) {    
-    if (url == null || url.trim().isEmpty()) return false;    
-
-    String u = url.toLowerCase(java.util.Locale.US);    
-    int queryIndex = u.indexOf('?');    
-
-    if (queryIndex >= 0) {    
-        u = u.substring(0, queryIndex);    
-    }    
-
-    return u.endsWith(".mp4") ||    
-            u.endsWith(".m4v") ||    
-            u.endsWith(".webm") ||    
-            u.endsWith(".m3u8") ||    
-            u.endsWith(".mpd");    
-}    
-
-private void playNativeMedia(String url) {    
-    if (url == null || url.trim().isEmpty()) return;    
-
-    releaseNativePlayer();    
-
-    nativePlayer = new ExoPlayer.Builder(this).build();    
-    nativePlayerView = new PlayerView(this);    
-
-    nativePlayerView.setUseController(true);    
-    nativePlayerView.setPlayer(nativePlayer);    
-    nativePlayerView.setBackgroundColor(Color.BLACK);    
-
-    MediaItem mediaItem = MediaItem.fromUri(Uri.parse(url));    
-
-    nativePlayer.setMediaItem(mediaItem);    
-    nativePlayer.prepare();    
-    nativePlayer.setPlayWhenReady(true);    
-
-    nativePlayerFullscreen = true;    
-
-    if (refreshContainer != null) refreshContainer.setVisibility(View.GONE);    
-    if (popupContainer != null) popupContainer.setVisibility(View.GONE);    
-
-    rootLayout.addView(    
-            nativePlayerView,    
-            new FrameLayout.LayoutParams(    
-                    FrameLayout.LayoutParams.MATCH_PARENT,    
-                    FrameLayout.LayoutParams.MATCH_PARENT    
-            )    
-    );    
-
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);    
-    hideStatusBar();    
-
-    nativePlayer.addListener(new Player.Listener() {    
-        @Override    
-        public void onPlaybackStateChanged(int playbackState) {    
-            if (playbackState == Player.STATE_ENDED) {    
-                exitNativeMedia();    
-            }    
-        }    
-    });    
-}    
-
-private void exitNativeMedia() {    
-    if (!nativePlayerFullscreen && nativePlayerView == null) return;    
-
-    releaseNativePlayer();    
-    nativePlayerFullscreen = false;    
-
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);    
-
-    if (popupContainer != null) {    
-        popupContainer.setVisibility(View.VISIBLE);    
-    } else if (refreshContainer != null) {    
-        refreshContainer.setVisibility(View.VISIBLE);    
-    }    
-
-    hideStatusBar();    
-    updateFloatingNavigation();    
-}    
-
-private void releaseNativePlayer() {    
-    if (nativePlayer != null) {    
-        try {    
-            nativePlayer.stop();    
-        } catch (Exception ignored) {    
-        }    
-
-        nativePlayer.release();    
-        nativePlayer = null;    
-    }    
-
-    if (nativePlayerView != null) {    
-        try {    
-            nativePlayerView.setPlayer(null);    
-            if (rootLayout != null) {    
-                rootLayout.removeView(nativePlayerView);    
-            }    
-        } catch (Exception ignored) {    
-        }    
-
-        nativePlayerView = null;    
-    }    
-}    
-
-private WebChromeClient createChromeClient() {    
-    return new WebChromeClient() {    
-
-        @Override    
-        public boolean onCreateWindow(    
-                WebView view,    
-                boolean isDialog,    
-                boolean isUserGesture,    
-                android.os.Message resultMsg    
-        ) {    
-            WebView popup = createPopupWebView();    
-
-            WebView.WebViewTransport transport =    
-                    (WebView.WebViewTransport) resultMsg.obj;    
-
-            transport.setWebView(popup);    
-            resultMsg.sendToTarget();    
-
-            return true;    
-        }    
-
-        @Override    
-        public void onShowCustomView(    
-                View view,    
-                CustomViewCallback callback    
-        ) {    
-            showVideoFullscreen(view, callback);    
-        }    
-
-        @Override    
-        public void onHideCustomView() {    
-            exitVideoFullscreen();    
-        }    
-    };    
-}    
-
-private void showVideoFullscreen(    
-        View view,    
-        WebChromeClient.CustomViewCallback callback    
-) {    
-    if (customVideoView != null) {    
-        callback.onCustomViewHidden();    
-        return;    
-    }    
-
-    customVideoView = view;    
-    customViewCallback = callback;    
-
-    if (refreshContainer != null) refreshContainer.setVisibility(View.GONE);    
-    if (popupContainer != null) popupContainer.setVisibility(View.GONE);    
-
-    rootLayout.addView(    
-            customVideoView,    
-            new FrameLayout.LayoutParams(    
-                    FrameLayout.LayoutParams.MATCH_PARENT,    
-                    FrameLayout.LayoutParams.MATCH_PARENT    
-            )    
-    );    
-
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);    
-    hideStatusBar();    
-    updateFloatingNavigation();    
-}    
-
-private void exitVideoFullscreen() {    
-    if (customVideoView == null) return;    
-
-    rootLayout.removeView(customVideoView);    
-    customVideoView = null;    
-
-    if (customViewCallback != null) {    
-        customViewCallback.onCustomViewHidden();    
-        customViewCallback = null;    
-    }    
-
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);    
-
-    if (popupContainer != null) {    
-        popupContainer.setVisibility(View.VISIBLE);    
-    } else if (refreshContainer != null) {    
-        refreshContainer.setVisibility(View.VISIBLE);    
-    }    
-
-    hideStatusBar();    
-    updateFloatingNavigation();    
-}    
-
-private void openPopup(String url) {    
-    if (url == null || url.trim().isEmpty()) return;    
-
-    String targetUrl = url.trim();    
-
-    if (!isHttpUrl(targetUrl)) {    
-        openExternalUrl(targetUrl);    
-        return;    
-    }    
-
-    WebView browserWindow = createPopupWebView();    
-    browserWindow.loadUrl(targetUrl);    
-}    
-
-private WebView createPopupWebView() {    
-    final WebView newWebView = new WebView(this);    
-
-    newWebView.setBackgroundColor(Color.BLACK);    
-    newWebView.setClickable(true);    
-    newWebView.setFocusable(true);    
-    newWebView.setFocusableInTouchMode(true);    
-    newWebView.setEnabled(true);    
-    newWebView.setHapticFeedbackEnabled(true);    
-
-    configureWebView(newWebView);    
-
-    try {    
-        String defaultUa = newWebView.getSettings().getUserAgentString();    
-
-        if (defaultUa != null &&    
-                !defaultUa.toLowerCase(java.util.Locale.US).contains("chrome/")) {    
-
-            String chromeUa =    
-                    defaultUa + " Chrome/131.0.0.0 Mobile Safari/537.36";    
-
-            newWebView.getSettings().setUserAgentString(chromeUa);    
-        }    
-    } catch (Exception ignored) {    
-    }    
-
-    newWebView.setWebViewClient(new WebViewClient() {    
-
-        @Override    
-        public boolean shouldOverrideUrlLoading(    
-                WebView view,    
-                WebResourceRequest request    
-        ) {    
-            if (request == null || request.getUrl() == null) return false;    
-
-            String url = request.getUrl().toString();    
-
-            if (!isHttpUrl(url)) {    
-                openExternalUrl(url);    
-                return true;    
-            }    
-
-            return false;    
-        }    
-
-        @Override    
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {    
-            if (url == null || url.trim().isEmpty()) return false;    
-
-            if (!isHttpUrl(url)) {    
-                openExternalUrl(url);    
-                return true;    
-            }    
-
-            return false;    
-        }    
-
-        @Override    
-        public void onPageStarted(    
-                WebView view,    
-                String url,    
-                android.graphics.Bitmap favicon    
-        ) {    
-            super.onPageStarted(view, url, favicon);    
-            view.setBackgroundColor(Color.BLACK);    
-            view.bringToFront();    
-        }    
-
-        @Override    
-        public void onPageFinished(WebView view, String url) {    
-            super.onPageFinished(view, url);    
-
-            view.setBackgroundColor(Color.BLACK);    
-            view.setFocusable(true);    
-            view.setFocusableInTouchMode(true);    
-            view.requestFocus(View.FOCUS_DOWN);    
-            view.bringToFront();    
-
-            updateFloatingNavigation();    
-        }    
-
-        @Override    
-        public void onReceivedError(    
-                WebView view,    
-                WebResourceRequest request,    
-                android.webkit.WebResourceError error    
-        ) {    
-            super.onReceivedError(view, request, error);    
-
-            if (request == null) return;    
-
-            if (request.isForMainFrame()) {    
-                view.stopLoading();    
-                view.post(() -> showPopupConnectionError(view));    
-                return;    
-            }    
-
-            if (isPlayerEmbedUrl(request)) {    
-                String failedUrl = request.getUrl() != null    
-                        ? request.getUrl().toString()    
-                        : "";    
-
-                view.post(() -> showPlayerConnectionError(view, failedUrl));    
-            }    
-        }    
-
-        @Override    
-        public boolean shouldOverrideKeyEvent(    
-                WebView view,    
-                android.view.KeyEvent event    
-        ) {    
-            return false;    
-        }    
-    });    
-
-    newWebView.setWebChromeClient(createChromeClient());    
-
-    newWebView.setDownloadListener(    
-            (url, userAgent, contentDisposition, mimeType, contentLength) ->    
-                    handleWebDownload(    
-                            url,    
-                            userAgent,    
-                            contentDisposition,    
-                            mimeType    
-                    )    
-    );    
-
-    popupWebViewStack.add(newWebView);    
-    popupWebView = newWebView;    
-
-    showPopupContainer();    
-    attachPopupWebView(newWebView);    
-
-    newWebView.setVisibility(View.VISIBLE);    
-    newWebView.bringToFront();    
-
-    newWebView.post(() -> {    
-        newWebView.setFocusable(true);    
-        newWebView.setFocusableInTouchMode(true);    
-        newWebView.requestFocus(View.FOCUS_DOWN);    
-        newWebView.bringToFront();    
-    });    
-
-    updateFloatingNavigation();    
-
-    return newWebView;    
-}    
-
-private void showPopupConnectionError(WebView webView) {    
-    if (webView == null) return;    
-
-    String html =    
-            "<!DOCTYPE html><html><head>" +    
-            "<meta name='viewport' content='width=device-width,initial-scale=1.0'>" +    
-            "<style>" +    
-            "html,body{margin:0;padding:0;width:100%;height:100%;background:#07090d;" +    
-            "color:#fff;font-family:Arial,sans-serif;}" +    
-            "body{display:flex;align-items:center;justify-content:center;text-align:center;}" +    
-            ".box{width:88%;max-width:420px;}" +    
-            "h1{font-size:23px;margin:0 0 12px;}" +    
-            "p{font-size:14px;line-height:1.6;color:#9299a8;margin:0 0 25px;}" +    
-            "button{border:0;border-radius:10px;background:#ff1744;color:#fff;" +    
-            "padding:13px 26px;font-size:14px;font-weight:700;}" +    
-            "</style></head><body><div class='box'>" +    
-            "<h1>Unable to connect at this time</h1>" +    
-            "<p>Check your network connection and refresh the page.</p>" +    
-            "<button onclick='location.reload()'>REFRESH</button>" +    
-            "</div></body></html>";    
-
-    webView.loadDataWithBaseURL(    
-            WEBSITE_URL,    
-            html,    
-            "text/html",    
-            "UTF-8",    
-            null    
-    );    
-}    
-
-private void attachPopupWebView(WebView webView) {    
-    if (popupContainer == null || webView == null) return;    
-
-    if (webView.getParent() instanceof android.view.ViewGroup) {    
-        ((android.view.ViewGroup) webView.getParent()).removeView(webView);    
-    }    
-
-    for (WebView existing : popupWebViewStack) {    
-        if (existing != webView) existing.setVisibility(View.GONE);    
-    }    
-
-    FrameLayout.LayoutParams webParams = new FrameLayout.LayoutParams(    
-            FrameLayout.LayoutParams.MATCH_PARENT,    
-            FrameLayout.LayoutParams.MATCH_PARENT    
-    );    
-
-    webParams.topMargin = popupBarHeight;    
-
-    popupContainer.addView(webView, webParams);    
-    webView.setVisibility(View.VISIBLE);    
-    webView.bringToFront();    
-}    
-
-private void switchToPreviousPopupWindow() {    
-    if (popupWebViewStack.size() <= 1) {    
-        closePopup();    
-        return;    
-    }    
-
-    WebView current = popupWebViewStack.remove(    
-            popupWebViewStack.size() - 1    
-    );    
-
-    try {    
-        if (popupContainer != null) popupContainer.removeView(current);    
-
-        current.stopLoading();    
-        current.onPause();    
-        current.destroy();    
-    } catch (Exception ignored) {    
-    }    
-
-    popupWebView = popupWebViewStack.get(    
-            popupWebViewStack.size() - 1    
-    );    
-
-    attachPopupWebView(popupWebView);    
-    popupWebView.onResume();    
-
-    popupWebView.post(() -> {    
-        popupWebView.requestFocus(View.FOCUS_DOWN);    
-        popupWebView.bringToFront();    
-    });    
-
-    updateFloatingNavigation();    
-}    
-
-private void showPopupContainer() {    
-    if (popupContainer != null) return;    
-
-    popupContainer = new FrameLayout(this);    
-    popupContainer.setBackgroundColor(Color.BLACK);    
-
-    LinearLayout topBar = new LinearLayout(this);    
-    topBar.setOrientation(LinearLayout.HORIZONTAL);    
-    topBar.setGravity(Gravity.CENTER_VERTICAL);    
-    topBar.setPadding(dp(4), 0, dp(4), 0);    
-    topBar.setBackgroundColor(Color.rgb(15, 18, 24));    
-
-    ImageButton backButton = new ImageButton(this);    
-    backButton.setImageResource(android.R.drawable.ic_media_previous);    
-    backButton.setBackgroundColor(Color.TRANSPARENT);    
-    backButton.setColorFilter(Color.WHITE);    
-    backButton.setContentDescription("Back");    
-
-    backButton.setOnClickListener(v -> {    
-        if (popupWebView != null && popupWebView.canGoBack()) {    
-            popupWebView.goBack();    
-        } else {    
-            switchToPreviousPopupWindow();    
-        }    
-    });    
-
-    TextView title = new TextView(this);    
-    title.setText("Deeprowss");    
-    title.setTextColor(Color.WHITE);    
-    title.setTextSize(15);    
-    title.setGravity(Gravity.CENTER_VERTICAL);    
-    title.setSingleLine(true);    
-    title.setPadding(dp(8), 0, dp(8), 0);    
-
-    ImageButton closeButton = new ImageButton(this);    
-    closeButton.setImageResource(    
-            android.R.drawable.ic_menu_close_clear_cancel    
-    );    
-    closeButton.setBackgroundColor(Color.TRANSPARENT);    
-    closeButton.setColorFilter(Color.WHITE);    
-    closeButton.setContentDescription("Close");    
-    closeButton.setOnClickListener(v -> closePopup());    
-
-    topBar.addView(    
-            backButton,    
-            new LinearLayout.LayoutParams(    
-                    popupBarHeight,    
-                    popupBarHeight    
-            )    
-    );    
-
-    topBar.addView(    
-            title,    
-            new LinearLayout.LayoutParams(    
-                    0,    
-                    popupBarHeight,    
-                    1    
-            )    
-    );    
-
-    topBar.addView(    
-            closeButton,    
-            new LinearLayout.LayoutParams(    
-                    popupBarHeight,    
-                    popupBarHeight    
-            )    
-    );    
-
-    FrameLayout.LayoutParams barParams = new FrameLayout.LayoutParams(    
-            FrameLayout.LayoutParams.MATCH_PARENT,    
-            popupBarHeight,    
-            Gravity.TOP    
-    );    
-
-    popupContainer.addView(topBar, barParams);    
-
-    rootLayout.addView(    
-            popupContainer,    
-            new FrameLayout.LayoutParams(    
-                    FrameLayout.LayoutParams.MATCH_PARENT,    
-                    FrameLayout.LayoutParams.MATCH_PARENT    
-            )    
-    );    
-
-    if (refreshContainer != null) {    
-        refreshContainer.setVisibility(View.INVISIBLE);    
-    }    
-
-    hideStatusBar();    
-    updateFloatingNavigation();    
-}    
-
-private void closePopup() {    
-    if (popupContainer == null) return;    
-
-    if (customVideoView != null) exitVideoFullscreen();    
-
-    for (WebView browserWindow :    
-            new ArrayList<>(popupWebViewStack)) {    
-
-        try {    
-            if (popupContainer != null) {    
-                popupContainer.removeView(browserWindow);    
-            }    
-
-            browserWindow.stopLoading();    
-            browserWindow.onPause();    
-            browserWindow.destroy();    
-        } catch (Exception ignored) {    
-        }    
-    }    
-
-    popupWebViewStack.clear();    
-    popupWebView = null;    
-
-    rootLayout.removeView(popupContainer);    
-    popupContainer = null;    
-
-    if (refreshContainer != null) {    
-        refreshContainer.setVisibility(View.VISIBLE);    
-    }    
-
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);    
-    hideStatusBar();    
-    updateFloatingNavigation();    
-}    
-
-private void hideStatusBar() {    
-    getWindow().setFlags(    
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,    
-            WindowManager.LayoutParams.FLAG_FULLSCREEN    
-    );    
-
-    getWindow().getDecorView().setSystemUiVisibility(    
-            View.SYSTEM_UI_FLAG_FULLSCREEN    
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION    
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY    
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE    
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN    
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION    
-    );    
-}    
-
-/*    
- * =========================================================    
- * FLOATING NAVIGATION    
- * =========================================================    
- *    
- * This implementation uses only the Android View class.    
- * No external FloatingArrowButton dependency is required.    
- */    
-
-private void createFloatingNavigation() {    
-    if (rootLayout == null || floatingNavigation != null) return;    
-
-    floatingNavigation = new FrameLayout(this);    
-    floatingNavigation.setClipChildren(false);    
-    floatingNavigation.setClipToPadding(false);    
-
-    floatingBackButton = new FloatingArrowButton(this, false);    
-    floatingBackButton.setContentDescription("Back");    
-    floatingBackButton.setOnClickListener(v -> navigateBack());    
-
-    floatingForwardButton = new FloatingArrowButton(this, true);    
-    floatingForwardButton.setContentDescription("Forward");    
-    floatingForwardButton.setOnClickListener(v -> navigateForward());    
-
-    FrameLayout.LayoutParams backParams =    
-            new FrameLayout.LayoutParams(dp(52), dp(52));    
-
-    FrameLayout.LayoutParams forwardParams =    
-            new FrameLayout.LayoutParams(dp(52), dp(52));    
-
-    forwardParams.leftMargin = dp(7);    
-
-    floatingNavigation.addView(floatingBackButton, backParams);    
-    floatingNavigation.addView(floatingForwardButton, forwardParams);    
-
-    FrameLayout.LayoutParams navigationParams =    
-            new FrameLayout.LayoutParams(    
-                    FrameLayout.LayoutParams.WRAP_CONTENT,    
-                    FrameLayout.LayoutParams.WRAP_CONTENT,    
-                    Gravity.BOTTOM | Gravity.END    
-            );    
-
-    navigationParams.setMargins(dp(10), dp(10), dp(16), dp(20));    
-
-    rootLayout.addView(floatingNavigation, navigationParams);    
-    floatingNavigation.bringToFront();    
-
-    updateFloatingNavigation();    
-}    
-
-private WebView getActiveNavigationWebView() {    
-    if (popupContainer != null && popupWebView != null) {    
-        return popupWebView;    
-    }    
-
-    return mainWebView;    
-}    
-
-private void navigateBack() {    
-    if (nativePlayerFullscreen) {    
-        exitNativeMedia();    
-        return;    
-    }    
-
-    if (customVideoView != null) {    
-        exitVideoFullscreen();    
-        return;    
-    }    
-
-    if (popupContainer != null) {    
-        if (popupWebView != null && popupWebView.canGoBack()) {    
-            popupWebView.goBack();    
-            popupWebView.postDelayed(    
-                    this::updateFloatingNavigation,    
-                    120    
-            );    
-        } else {    
-            switchToPreviousPopupWindow();    
-        }    
-
-        return;    
-    }    
-
-    if (mainWebView != null && mainWebView.canGoBack()) {    
-        mainWebView.goBack();    
-        mainWebView.postDelayed(    
-                this::updateFloatingNavigation,    
-                120    
-        );    
-    }    
-}    
-
-private void navigateForward() {    
-    WebView activeWebView = getActiveNavigationWebView();    
-
-    if (activeWebView == null) return;    
-
-    if (activeWebView.canGoForward()) {    
-        activeWebView.goForward();    
-        activeWebView.postDelayed(    
-                this::updateFloatingNavigation,    
-                120    
-        );    
-    }    
-}    
-
-private void updateFloatingNavigation() {    
-    if (floatingNavigation == null ||    
-            floatingBackButton == null ||    
-            floatingForwardButton == null) {    
-        return;    
-    }    
-
-    if (!webPageVisible ||    
-            nativePlayerFullscreen ||    
-            customVideoView != null) {    
-
-        floatingNavigation.setVisibility(View.GONE);    
-        return;    
-    }    
-
-    floatingNavigation.setVisibility(View.VISIBLE);    
-    floatingNavigation.bringToFront();    
-
-    WebView activeWebView = getActiveNavigationWebView();    
-
-    boolean canGoBack = false;    
-    boolean canGoForward = false;    
-
-    if (activeWebView != null) {    
-        canGoBack = activeWebView.canGoBack();    
-        canGoForward = activeWebView.canGoForward();    
-    }    
-
-    if (popupContainer != null &&    
-            popupWebView != null &&    
-            !canGoBack) {    
-        canGoBack = true;    
-    }    
-
-    floatingBackButton.setArrowEnabled(canGoBack);    
-    floatingForwardButton.setArrowEnabled(canGoForward);    
-}    
-
-@Override    
-public void onBackPressed() {    
-    if (nativePlayerFullscreen) {    
-        exitNativeMedia();    
-        return;    
-    }    
-
-    if (customVideoView != null) {    
-        exitVideoFullscreen();    
-        return;    
-    }    
-
-    if (popupContainer != null) {    
-        if (popupWebView != null && popupWebView.canGoBack()) {    
-            popupWebView.goBack();    
-        } else {    
-            switchToPreviousPopupWindow();    
-        }    
-        return;    
-    }    
-
-    if (mainWebView != null && mainWebView.canGoBack()) {    
-        mainWebView.goBack();    
-    } else {    
-        super.onBackPressed();    
-    }    
-}    
-
-@Override    
-protected void onResume() {    
-    super.onResume();    
-
-    hideStatusBar();    
-
-    if (mainWebView != null) mainWebView.onResume();    
-    if (popupWebView != null) popupWebView.onResume();    
-
-    updateFloatingNavigation();    
-}    
-
-@Override    
-protected void onPause() {    
-    if (mainWebView != null) mainWebView.onPause();    
-    if (popupWebView != null) popupWebView.onPause();    
-
-    super.onPause();    
-}    
-
-@Override    
-protected void onDestroy() {    
-    if (splashAnimationHandler != null &&    
-            splashAnimationRunnable != null) {    
-        splashAnimationHandler.removeCallbacks(    
-                splashAnimationRunnable    
-        );    
-    }    
-
-    if (customSplashView != null) {    
-        try {    
-            rootLayout.removeView(customSplashView);    
-        } catch (Exception ignored) {    
-        }    
-        customSplashView = null;    
-    }    
-
-    releaseNativePlayer();    
-
-    if (customVideoView != null) {    
-        try {    
-            rootLayout.removeView(customVideoView);    
-        } catch (Exception ignored) {    
-        }    
-        customVideoView = null;    
-    }    
-
-    for (WebView browserWindow :    
-            new ArrayList<>(popupWebViewStack)) {    
-        try {    
-            browserWindow.stopLoading();    
-            browserWindow.destroy();    
-        } catch (Exception ignored) {    
-        }    
-    }    
-
-    popupWebViewStack.clear();    
-    popupWebView = null;    
-
-    if (mainWebView != null) {    
-        try {    
-            mainWebView.stopLoading();    
-            mainWebView.destroy();    
-        } catch (Exception ignored) {    
-        }    
-
-        mainWebView = null;    
-    }    
-
-    super.onDestroy();    
-}    
-
-private int dp(int value) {    
-    float density =    
-            getResources().getDisplayMetrics().density;    
-
-    return (int) (value * density + 0.5f);    
-}    
-
-private static class RefreshableWebViewContainer    
-        extends FrameLayout {    
-
-    private WebView webView;    
-    private float startY;    
-    private boolean dragging;    
-    private boolean refreshing;    
-    private ProgressBar progressBar;    
-    private OnRefreshListener listener;    
-
-    private static final float TRIGGER_DISTANCE = 180f;    
-    private static final float MAX_PULL_DISTANCE = 300f;    
-
-    interface OnRefreshListener {    
-        void onRefresh();    
-    }    
-
-    RefreshableWebViewContainer(Context context) {    
-        super(context);    
-
-        setClipChildren(false);    
-
-        progressBar = new ProgressBar(context);    
-        progressBar.setVisibility(View.GONE);    
-
-        LayoutParams progressParams =    
-                new LayoutParams(dp(context, 42), dp(context, 42));    
-
-        progressParams.gravity =    
-                Gravity.TOP | Gravity.CENTER_HORIZONTAL;    
-
-        progressParams.topMargin = dp(context, 16);    
-
-        addView(progressBar, progressParams);    
-    }    
-
-    void setWebView(WebView webView) {    
-        this.webView = webView;    
-    }    
-
-    void setOnRefreshListener(OnRefreshListener listener) {    
-        this.listener = listener;    
-    }    
-
-    void stopRefreshing() {    
-        refreshing = false;    
-        dragging = false;    
-
-        if (progressBar != null) {    
-            progressBar.setVisibility(View.GONE);    
-        }    
-
-        if (webView != null) {    
-            webView.animate()    
-                    .translationY(0)    
-                    .setDuration(180)    
-                    .start();    
-        }    
-    }    
-
-    @Override    
-    public boolean onInterceptTouchEvent(MotionEvent event) {    
-        if (webView == null || refreshing) return false;    
-
-        switch (event.getActionMasked()) {    
-            case MotionEvent.ACTION_DOWN:    
-                startY = event.getY();    
-                dragging = false;    
-                break;    
-
-            case MotionEvent.ACTION_MOVE:    
-                float distance = event.getY() - startY;    
-
-                if (distance > 0 && webView.getScrollY() <= 0) {    
-                    if (distance > 15) {    
-                        dragging = true;    
-                        return true;    
-                    }    
-                }    
-                break;    
-
-            case MotionEvent.ACTION_UP:    
-            case MotionEvent.ACTION_CANCEL:    
-                dragging = false;    
-                break;    
-        }    
-
-        return false;    
-    }    
-
-    @Override    
-    public boolean onTouchEvent(MotionEvent event) {    
-        if (webView == null || refreshing) return true;    
-
-        switch (event.getActionMasked()) {    
-            case MotionEvent.ACTION_DOWN:    
-                startY = event.getY();    
-                dragging = true;    
-                return true;    
-
-            case MotionEvent.ACTION_MOVE:    
-                float distance = event.getY() - startY;    
-
-                if (distance < 0) distance = 0;    
-                if (distance > MAX_PULL_DISTANCE) {    
-                    distance = MAX_PULL_DISTANCE;    
-                }    
-
-                if (distance > 0) {    
-                    float offset = distance * 0.55f;    
-                    webView.setTranslationY(offset);    
-
-                    if (distance >= TRIGGER_DISTANCE * 0.55f) {    
-                        progressBar.setVisibility(View.VISIBLE);    
-                    } else {    
-                        progressBar.setVisibility(View.GONE);    
-                    }    
-                }    
-
-                return true;    
-
-            case MotionEvent.ACTION_UP:    
-                float finalDistance = event.getY() - startY;    
-
-                if (finalDistance >= TRIGGER_DISTANCE) {    
-                    startRefreshing();    
-                } else {    
-                    stopRefreshing();    
-                }    
-
-                return true;    
-
-            case MotionEvent.ACTION_CANCEL:    
-                stopRefreshing();    
-                return true;    
-        }    
-
-        return true;    
-    }    
-
-    private void startRefreshing() {    
-        if (refreshing) return;    
-
-        refreshing = true;    
-
-        if (progressBar != null) {    
-            progressBar.setVisibility(View.VISIBLE);    
-        }    
-
-        if (webView != null) {    
-            webView.animate()    
-                    .translationY(dp(getContext(), 70))    
-                    .setDuration(150)    
-                    .start();    
-        }    
-
-        if (listener != null) listener.onRefresh();    
-    }    
-
-    private static int dp(Context context, int value) {    
-        float density =    
-                context.getResources().getDisplayMetrics().density;    
-
-        return (int) (value * density + 0.5f);    
-    }    
-}    
-
-/*    
- * =========================================================    
- * SELF-CONTAINED FLOATING ARROW BUTTON    
- * =========================================================    
- *    
- * This class is intentionally inside MainActivity.    
- * It removes the previous "cannot find symbol:    
- * FloatingArrowButton" compilation failure.    
- *    
- * UPDATED: no circular background is drawn any more.    
- * Only the arrow glyph itself is rendered, with a subtle    
- * drop shadow so it stays visible over any web content    
- * behind it.    
- */    
-
-private static class FloatingArrowButton extends View {    
-
-    private final boolean forward;    
-
-    private final android.graphics.Paint arrowPaint =    
-            new android.graphics.Paint(    
-                    android.graphics.Paint.ANTI_ALIAS_FLAG    
-            );    
-
-    private boolean arrowEnabled = false;    
-
-    FloatingArrowButton(Context context, boolean forward) {    
-        super(context);    
-
-        this.forward = forward;    
-
-        setClickable(true);    
-        setFocusable(true);    
-        setHapticFeedbackEnabled(true);    
-
-        // No elevation/shadow needed now that there is no    
-        // solid background shape casting it.    
-        setElevation(0f);    
-
-        arrowPaint.setStyle(    
-                android.graphics.Paint.Style.STROKE    
-        );    
-
-        arrowPaint.setStrokeWidth(    
-                dpStatic(context, 3)    
-        );    
-
-        arrowPaint.setStrokeCap(    
-                android.graphics.Paint.Cap.ROUND    
-        );    
-
-        arrowPaint.setStrokeJoin(    
-                android.graphics.Paint.Join.ROUND    
-        );    
-
-        // Drop shadow on the paint itself keeps the arrow    
-        // readable over light or busy web content without    
-        // needing a background circle.    
-        arrowPaint.setShadowLayer(    
-                dpStatic(context, 3),    
-                0f,    
-                0f,    
-                Color.argb(180, 0, 0, 0)    
-        );    
-
-        setLayerType(View.LAYER_TYPE_SOFTWARE, arrowPaint);    
-    }    
-
-    void setArrowEnabled(boolean enabled) {    
-        arrowEnabled = enabled;    
-
-        setEnabled(enabled);    
-        setAlpha(enabled ? 1f : 0.35f);    
-
-        invalidate();    
-    }    
-
-    @Override    
-    protected void onDraw(android.graphics.Canvas canvas) {    
-        super.onDraw(canvas);    
-
-        float width = getWidth();    
-        float height = getHeight();    
-
-        float centerX = width / 2f;    
-        float centerY = height / 2f;    
-
-        arrowPaint.setColor(    
-                arrowEnabled    
-                        ? Color.WHITE    
-                        : Color.rgb(200, 203, 210)    
-        );    
-
-        float arrowHalf = dpStatic(getContext(), 10);    
-        float head = dpStatic(getContext(), 6);    
-
-        float startX;    
-        float endX;    
-
-        if (forward) {    
-            startX = centerX - arrowHalf;    
-            endX = centerX + arrowHalf;    
-        } else {    
-            startX = centerX + arrowHalf;    
-            endX = centerX - arrowHalf;    
-        }    
-
-        canvas.drawLine(    
-                startX,    
-                centerY,    
-                endX,    
-                centerY,    
-                arrowPaint    
-        );    
-
-        if (forward) {    
-            canvas.drawLine(    
-                    endX,    
-                    centerY,    
-                    endX - head,    
-                    centerY - head,    
-                    arrowPaint    
-            );    
-
-            canvas.drawLine(    
-                    endX,    
-                    centerY,    
-                    endX - head,    
-                    centerY + head,    
-                    arrowPaint    
-            );    
-        } else {    
-            canvas.drawLine(    
-                    endX,    
-                    centerY,    
-                    endX + head,    
-                    centerY - head,    
-                    arrowPaint    
-            );    
-
-            canvas.drawLine(    
-                    endX,    
-                    centerY,    
-                    endX + head,    
-                    centerY + head,    
-                    arrowPaint    
-            );    
-        }    
-    }    
-
-    private static int dpStatic(Context context, int value) {    
-        float density =    
-                context.getResources().getDisplayMetrics().density;    
-
-        return (int) (value * density + 0.5f);    
-    }    
-}
 
+        return geckoRuntime;
+    }
+
+    private GeckoSessionSettings createSessionSettings() {
+
+        return new GeckoSessionSettings.Builder()
+                .allowJavascript(true)
+                .userAgentMode(
+                        GeckoSessionSettings.USER_AGENT_MODE_MOBILE
+                )
+                .viewportMode(
+                        GeckoSessionSettings.VIEWPORT_MODE_MOBILE
+                )
+                .userAgentOverride(DEEPROWSS_USER_AGENT)
+                .suspendMediaWhenInactive(false)
+                .useTrackingProtection(false)
+                .build();
+    }
+
+    // ============================================================
+    // MAIN GECKOVIEW
+    // ============================================================
+
+    private void createMainGeckoView() {
+
+        mainGeckoView = new GeckoView(this);
+        mainGeckoView.setBackgroundColor(BG_COLOR);
+
+        mainSession = new GeckoSession(createSessionSettings());
+
+        configureSession(mainSession, false);
+
+        mainSession.open(getGeckoRuntime());
+
+        mainGeckoView.setSession(mainSession);
+
+        refreshContainer =
+                new RefreshableGeckoContainer(this);
+
+        refreshContainer.setBackgroundColor(BG_COLOR);
+
+        refreshContainer.setOnRefreshListener(() -> {
+            if (mainSession != null) {
+                if (showingOfflinePage) {
+                    showingOfflinePage = false;
+                    mainSession.loadUri(WEBSITE_URL);
+                } else {
+                    mainSession.reload();
+                }
+            }
+        });
+
+        refreshContainer.addView(
+                mainGeckoView,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        rootLayout.addView(
+                refreshContainer,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+    }
+
+    private void configureSession(
+            GeckoSession session,
+            boolean popup
+    ) {
+
+        session.setNavigationDelegate(
+                new GeckoSession.NavigationDelegate() {
+
+                    @Override
+                    public GeckoSession.GeckoResult<AllowOrDeny> onLoadRequest(
+                            GeckoSession session,
+                            LoadRequest request
+                    ) {
+
+                        String url = request.uri;
+
+                        if (url == null || url.isEmpty()) {
+                            return GeckoSession.GeckoResult.fromValue(
+                                    AllowOrDeny.DENY
+                            );
+                        }
+
+                        /*
+                         * New-window request.
+                         */
+                        if (request.target == TARGET_WINDOW_NEW) {
+
+                            if (isTelegramUrl(url)) {
+                                openExternalUrl(url);
+
+                                return GeckoSession.GeckoResult.fromValue(
+                                        AllowOrDeny.DENY
+                                );
+                            }
+
+                            if (isDirectMediaUrl(url)) {
+                                playNativeMedia(url);
+
+                                return GeckoSession.GeckoResult.fromValue(
+                                        AllowOrDeny.DENY
+                                );
+                            }
+
+                            openPopup(url);
+
+                            return GeckoSession.GeckoResult.fromValue(
+                                    AllowOrDeny.DENY
+                            );
+                        }
+
+                        /*
+                         * Telegram always goes outside the app.
+                         */
+                        if (isTelegramUrl(url)) {
+                            openExternalUrl(url);
+
+                            return GeckoSession.GeckoResult.fromValue(
+                                    AllowOrDeny.DENY
+                            );
+                        }
+
+                        /*
+                         * Direct media URLs use the native Media3 player.
+                         */
+                        if (isDirectMediaUrl(url)) {
+                            playNativeMedia(url);
+
+                            return GeckoSession.GeckoResult.fromValue(
+                                    AllowOrDeny.DENY
+                            );
+                        }
+
+                        /*
+                         * Non-http schemes.
+                         */
+                        if (!isHttpUrl(url)) {
+                            openExternalUrl(url);
+
+                            return GeckoSession.GeckoResult.fromValue(
+                                    AllowOrDeny.DENY
+                            );
+                        }
+
+                        /*
+                         * Main Deeprowss page stays in the main GeckoView.
+                         */
+                        if (!popup) {
+
+                            if (isMainSiteUrl(url)
+                                    || url.startsWith(
+                                    "https://deeprows.github.io/"
+                            )) {
+                                return null;
+                            }
+
+                            /*
+                             * Preserve the previous app behavior:
+                             * external HTTP/HTTPS links opened in popup.
+                             */
+                            if (!request.isRedirect
+                                    && !request.isDirectNavigation) {
+
+                                openPopup(url);
+
+                                return GeckoSession.GeckoResult.fromValue(
+                                        AllowOrDeny.DENY
+                                );
+                            }
+                        }
+
+                        return null;
+                    }
+
+                    @Override
+                    public GeckoSession.GeckoResult<GeckoSession>
+                    onNewSession(
+                            GeckoSession session,
+                            String uri
+                    ) {
+
+                        if (uri == null || uri.isEmpty()) {
+                            return null;
+                        }
+
+                        GeckoSession newSession =
+                                createPopupSession();
+
+                        popupStack.add(
+                                new PopupEntry(
+                                        newSession,
+                                        null
+                                )
+                        );
+
+                        showPopupContainer();
+
+                        attachPopupSession(
+                                popupStack.get(
+                                        popupStack.size() - 1
+                                )
+                        );
+
+                        return GeckoSession.GeckoResult.fromValue(
+                                newSession
+                        );
+                    }
+
+                    @Override
+                    public GeckoSession.GeckoResult<String> onLoadError(
+                            GeckoSession session,
+                            String uri,
+                            org.mozilla.geckoview.WebRequestError error
+                    ) {
+
+                        if (session == mainSession) {
+                            showOfflinePage();
+                        } else {
+                            showPopupError(session);
+                        }
+
+                        return null;
+                    }
+                }
+        );
+
+        session.setProgressDelegate(
+                new GeckoSession.ProgressDelegate() {
+
+                    @Override
+                    public void onPageStart(
+                            GeckoSession session,
+                            String url
+                    ) {
+
+                        if (session == mainSession) {
+                            showingOfflinePage = false;
+                            pageVisible = true;
+
+                            if (splashView != null) {
+                                /*
+                                 * Keep splash until the first real page
+                                 * begins rendering.
+                                 */
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onPageStop(
+                            GeckoSession session,
+                            boolean success
+                    ) {
+
+                        if (session == mainSession) {
+
+                            if (success) {
+                                showingOfflinePage = false;
+
+                                pageVisible = true;
+
+                                hideCustomSplash();
+                            } else {
+                                showOfflinePage();
+                            }
+
+                        } else {
+
+                            if (success) {
+                                hidePopupError();
+                            }
+                        }
+                    }
+                }
+        );
+
+        session.setContentDelegate(
+                new GeckoSession.ContentDelegate() {
+
+                    @Override
+                    public void onTitleChange(
+                            GeckoSession session,
+                            String title
+                    ) {
+
+                        if (session != mainSession) {
+                            popupTitle = popupTitle == null
+                                    ? null
+                                    : popupTitle;
+
+                            if (popupTitle != null
+                                    && title != null
+                                    && !title.trim().isEmpty()) {
+
+                                popupTitle.setText(title);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFirstContentfulPaint(
+                            GeckoSession session
+                    ) {
+
+                        if (session == mainSession) {
+                            pageVisible = true;
+                            hideCustomSplash();
+                        }
+                    }
+
+                    @Override
+                    public void onFullScreen(
+                            GeckoSession session,
+                            boolean fullScreen
+                    ) {
+
+                        if (fullScreen) {
+                            enterGeckoFullscreen(session);
+                        } else {
+                            exitGeckoFullscreen();
+                        }
+                    }
+
+                    @Override
+                    public void onCloseRequest(
+                            GeckoSession session
+                    ) {
+
+                        if (session == mainSession) {
+                            finish();
+                        } else {
+                            removePopupSession(session);
+                        }
+                    }
+
+                    @Override
+                    public void onExternalResponse(
+                            GeckoSession session,
+                            WebResponse response
+                    ) {
+
+                        handleGeckoDownload(response);
+                    }
+
+                    @Override
+                    public void onCrash(
+                            GeckoSession session
+                    ) {
+
+                        if (session == mainSession) {
+                            showOfflinePage();
+                        } else {
+                            showPopupError(session);
+                        }
+                    }
+
+                    @Override
+                    public void onKill(
+                            GeckoSession session
+                    ) {
+
+                        if (session == mainSession) {
+                            showOfflinePage();
+                        }
+                    }
+                }
+        );
+    }
+
+    // ============================================================
+    // POPUP SESSIONS
+    // ============================================================
+
+    private GeckoSession createPopupSession() {
+
+        GeckoSession session =
+                new GeckoSession(createSessionSettings());
+
+        configureSession(session, true);
+
+        session.open(getGeckoRuntime());
+
+        return session;
+    }
+
+    private void openPopup(String url) {
+
+        if (!isHttpUrl(url)) {
+            openExternalUrl(url);
+            return;
+        }
+
+        GeckoSession session = createPopupSession();
+
+        PopupEntry entry =
+                new PopupEntry(session, null);
+
+        popupStack.add(entry);
+
+        showPopupContainer();
+
+        attachPopupSession(entry);
+
+        session.loadUri(url);
+    }
+
+    private void showPopupContainer() {
+
+        if (popupContainer == null) {
+
+            popupContainer = new FrameLayout(this);
+            popupContainer.setBackgroundColor(BG_COLOR);
+
+            rootLayout.addView(
+                    popupContainer,
+                    new FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT
+                    )
+            );
+
+            createPopupTopBar();
+
+        } else {
+
+            popupContainer.setVisibility(View.VISIBLE);
+        }
+
+        if (refreshContainer != null) {
+            refreshContainer.setVisibility(View.INVISIBLE);
+        }
+
+        popupContainer.bringToFront();
+    }
+
+    private void createPopupTopBar() {
+
+        popupTopBar = new LinearLayout(this);
+        popupTopBar.setOrientation(LinearLayout.HORIZONTAL);
+        popupTopBar.setGravity(Gravity.CENTER_VERTICAL);
+        popupTopBar.setPadding(
+                dp(8),
+                0,
+                dp(8),
+                0
+        );
+        popupTopBar.setBackgroundColor(SURFACE_COLOR);
+
+        /*
+         * Back button.
+         */
+        TextView backButton = new TextView(this);
+        backButton.setText("‹");
+        backButton.setTextColor(Color.WHITE);
+        backButton.setTextSize(34);
+        backButton.setGravity(Gravity.CENTER);
+        backButton.setPadding(
+                dp(6),
+                0,
+                dp(6),
+                dp(4)
+        );
+
+        backButton.setOnClickListener(v -> {
+
+            PopupEntry active = getActivePopup();
+
+            if (active == null) {
+                return;
+            }
+
+            if (active.session.canGoBack()) {
+                active.session.goBack();
+            } else {
+                switchToPreviousPopupWindow();
+            }
+        });
+
+        popupTopBar.addView(
+                backButton,
+                new LinearLayout.LayoutParams(
+                        dp(48),
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        popupTitle = new TextView(this);
+        popupTitle.setText("Deeprowss");
+        popupTitle.setTextColor(Color.WHITE);
+        popupTitle.setTextSize(15);
+        popupTitle.setGravity(Gravity.CENTER_VERTICAL);
+        popupTitle.setSingleLine(true);
+
+        LinearLayout.LayoutParams titleParams =
+                new LinearLayout.LayoutParams(
+                        0,
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        1
+                );
+
+        popupTopBar.addView(
+                popupTitle,
+                titleParams
+        );
+
+        /*
+         * Close button.
+         */
+        TextView closeButton = new TextView(this);
+        closeButton.setText("×");
+        closeButton.setTextColor(Color.WHITE);
+        closeButton.setTextSize(30);
+        closeButton.setGravity(Gravity.CENTER);
+
+        closeButton.setOnClickListener(
+                v -> closePopup()
+        );
+
+        popupTopBar.addView(
+                closeButton,
+                new LinearLayout.LayoutParams(
+                        dp(48),
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        popupContainer.addView(
+                popupTopBar,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        popupBarHeight,
+                        Gravity.TOP
+                )
+        );
+    }
+
+    private void attachPopupSession(PopupEntry entry) {
+
+        if (entry == null) {
+            return;
+        }
+
+        if (entry.view == null) {
+
+            entry.view = new GeckoView(this);
+            entry.view.setBackgroundColor(BG_COLOR);
+
+            entry.view.setSession(entry.session);
+        }
+
+        /*
+         * Remove all currently displayed popup browser views.
+         */
+        for (PopupEntry item : popupStack) {
+
+            if (item.view != null) {
+                item.view.setVisibility(View.GONE);
+
+                if (item.view.getParent() instanceof FrameLayout) {
+                    ((FrameLayout) item.view.getParent())
+                            .removeView(item.view);
+                }
+            }
+        }
+
+        FrameLayout.LayoutParams params =
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                );
+
+        params.topMargin = popupBarHeight;
+
+        popupContainer.addView(
+                entry.view,
+                params
+        );
+
+        entry.view.setVisibility(View.VISIBLE);
+        entry.view.bringToFront();
+
+        if (popupTopBar != null) {
+            popupTopBar.bringToFront();
+        }
+
+        entry.view.requestFocus();
+    }
+
+    private PopupEntry getActivePopup() {
+
+        if (popupStack.isEmpty()) {
+            return null;
+        }
+
+        return popupStack.get(
+                popupStack.size() - 1
+        );
+    }
+
+    private void switchToPreviousPopupWindow() {
+
+        if (popupStack.size() <= 1) {
+            closePopup();
+            return;
+        }
+
+        PopupEntry current =
+                popupStack.remove(
+                        popupStack.size() - 1
+                );
+
+        destroyPopupEntry(current);
+
+        PopupEntry previous =
+                getActivePopup();
+
+        if (previous != null) {
+            attachPopupSession(previous);
+        }
+    }
+
+    private void removePopupSession(
+            GeckoSession session
+    ) {
+
+        for (int i = popupStack.size() - 1;
+             i >= 0;
+             i--) {
+
+            PopupEntry entry =
+                    popupStack.get(i);
+
+            if (entry.session == session) {
+
+                popupStack.remove(i);
+                destroyPopupEntry(entry);
+
+                break;
+            }
+        }
+
+        if (popupStack.isEmpty()) {
+            closePopup();
+        } else {
+            attachPopupSession(
+                    getActivePopup()
+            );
+        }
+    }
+
+    private void destroyPopupEntry(
+            PopupEntry entry
+    ) {
+
+        if (entry == null) {
+            return;
+        }
+
+        if (entry.view != null) {
+
+            if (entry.view.getParent()
+                    instanceof FrameLayout) {
+
+                ((FrameLayout) entry.view.getParent())
+                        .removeView(entry.view);
+            }
+
+            entry.view.releaseSession();
+            entry.view = null;
+        }
+
+        try {
+            entry.session.close();
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void closePopup() {
+
+        exitGeckoFullscreen();
+
+        for (PopupEntry entry : popupStack) {
+            destroyPopupEntry(entry);
+        }
+
+        popupStack.clear();
+
+        if (popupContainer != null) {
+
+            if (popupContainer.getParent()
+                    instanceof FrameLayout) {
+
+                ((FrameLayout) popupContainer.getParent())
+                        .removeView(popupContainer);
+            }
+
+            popupContainer = null;
+        }
+
+        popupTopBar = null;
+        popupTitle = null;
+
+        if (refreshContainer != null) {
+            refreshContainer.setVisibility(View.VISIBLE);
+            refreshContainer.bringToFront();
+        }
+
+        setPortrait();
+    }
+
+    // ============================================================
+    // FULLSCREEN
+    // ============================================================
+
+    private void enterGeckoFullscreen(
+            GeckoSession session
+    ) {
+
+        fullscreenSession = session;
+
+        if (refreshContainer != null) {
+            refreshContainer.setVisibility(View.INVISIBLE);
+        }
+
+        if (popupContainer != null) {
+            popupContainer.setVisibility(View.INVISIBLE);
+        }
+
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
+
+        setLandscape();
+    }
+
+    private void exitGeckoFullscreen() {
+
+        fullscreenSession = null;
+
+        getWindow().clearFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
+
+        if (popupContainer != null
+                && !popupStack.isEmpty()) {
+
+            popupContainer.setVisibility(View.VISIBLE);
+
+        } else if (refreshContainer != null) {
+
+            refreshContainer.setVisibility(View.VISIBLE);
+        }
+
+        setPortrait();
+    }
+
+    // ============================================================
+    // OFFLINE SCREEN
+    // ============================================================
+
+    private void showOfflinePage() {
+
+        if (activityDestroyed) {
+            return;
+        }
+
+        showingOfflinePage = true;
+
+        /*
+         * Do not use WebView.loadData.
+         * GeckoSession can load a data document directly.
+         */
+        String html =
+                "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<meta name='viewport' content='width=device-width,initial-scale=1'>" +
+                "<style>" +
+                "html,body{" +
+                "margin:0;" +
+                "width:100%;" +
+                "height:100%;" +
+                "background:#07090d;" +
+                "color:white;" +
+                "font-family:Arial,sans-serif;" +
+                "}" +
+                "body{" +
+                "display:flex;" +
+                "align-items:center;" +
+                "justify-content:center;" +
+                "text-align:center;" +
+                "}" +
+                ".box{padding:30px;max-width:360px;}" +
+                ".logo{" +
+                "font-size:48px;" +
+                "font-weight:900;" +
+                "color:#ff1744;" +
+                "margin-bottom:18px;" +
+                "}" +
+                "h2{margin:0 0 12px;font-size:22px;}" +
+                "p{" +
+                "color:#aeb4bf;" +
+                "line-height:1.5;" +
+                "font-size:14px;" +
+                "}" +
+                "button{" +
+                "margin-top:15px;" +
+                "border:0;" +
+                "border-radius:8px;" +
+                "padding:13px 25px;" +
+                "background:#ff1744;" +
+                "color:white;" +
+                "font-weight:bold;" +
+                "}" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='box'>" +
+                "<div class='logo'>D</div>" +
+                "<h2>You're offline</h2>" +
+                "<p>" +
+                "We couldn't connect to Deeprowss right now. " +
+                "Please check your internet connection and try again." +
+                "</p>" +
+                "<button onclick=\"location.href='"
+                + WEBSITE_URL +
+                "'\">TRY AGAIN</button>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+
+        if (mainSession != null) {
+
+            mainSession.load(
+                    new GeckoSession.Loader()
+                            .data(
+                                    html,
+                                    "text/html"
+                            )
+            );
+        }
+
+        hideCustomSplash();
+    }
+
+    private void showPopupError(
+            GeckoSession session
+    ) {
+
+        /*
+         * Keep the browser usable instead of replacing the
+         * entire activity. The user can simply go back/reload.
+         */
+        Toast.makeText(
+                this,
+                "Unable to connect at this time",
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    private void hidePopupError() {
+        // Reserved for future popup error overlay.
+    }
+
+    // ============================================================
+    // DOWNLOADS
+    // ============================================================
+
+    private void handleGeckoDownload(
+            WebResponse response
+    ) {
+
+        if (response == null
+                || response.uri == null) {
+            return;
+        }
+
+        String url = response.uri;
+
+        if (!isHttpUrl(url)) {
+            openExternalUrl(url);
+            return;
+        }
+
+        try {
+
+            DownloadManager manager =
+                    (DownloadManager) getSystemService(
+                            DOWNLOAD_SERVICE
+                    );
+
+            if (manager == null) {
+                openExternalUrl(url);
+                return;
+            }
+
+            DownloadManager.Request request =
+                    new DownloadManager.Request(
+                            Uri.parse(url)
+                    );
+
+            request.setNotificationVisibility(
+                    DownloadManager.Request
+                            .VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+            );
+
+            request.setTitle(
+                    getDownloadFileName(response, url)
+            );
+
+            request.setDescription(
+                    "Downloading from Deeprowss"
+            );
+
+            request.setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    getDownloadFileName(response, url)
+            );
+
+            if (response.contentType != null
+                    && !response.contentType.isEmpty()) {
+
+                request.setMimeType(
+                        response.contentType
+                );
+            }
+
+            manager.enqueue(request);
+
+            Toast.makeText(
+                    this,
+                    "Download started",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+        } catch (Exception e) {
+
+            openExternalUrl(url);
+        }
+    }
+
+    private String getDownloadFileName(
+            WebResponse response,
+            String url
+    ) {
+
+        String filename = response.filename;
+
+        if (filename != null
+                && !filename.trim().isEmpty()) {
+
+            return sanitizeFilename(filename);
+        }
+
+        try {
+
+            String path =
+                    Uri.parse(url).getPath();
+
+            if (path != null) {
+
+                int slash = path.lastIndexOf('/');
+
+                if (slash >= 0
+                        && slash < path.length() - 1) {
+
+                    String name =
+                            path.substring(slash + 1);
+
+                    if (!name.isEmpty()) {
+                        return sanitizeFilename(name);
+                    }
+                }
+            }
+
+        } catch (Exception ignored) {
+        }
+
+        return "deeprowss-download";
+    }
+
+    private String sanitizeFilename(
+            String filename
+    ) {
+
+        return filename
+                .replace("/", "_")
+                .replace("\\", "_")
+                .replace(":", "_")
+                .replace("*", "_")
+                .replace("?", "_")
+                .replace("\"", "_")
+                .replace("<", "_")
+                .replace(">", "_")
+                .replace("|", "_");
+    }
+
+    // ============================================================
+    // MEDIA3 DIRECT PLAYER
+    // ============================================================
+
+    private boolean isDirectMediaUrl(
+            String url
+    ) {
+
+        if (url == null) {
+            return false;
+        }
+
+        String clean = url;
+
+        int query = clean.indexOf('?');
+
+        if (query >= 0) {
+            clean = clean.substring(0, query);
+        }
+
+        clean = clean.toLowerCase();
+
+        return clean.endsWith(".mp4")
+                || clean.endsWith(".m4v")
+                || clean.endsWith(".webm")
+                || clean.endsWith(".m3u8")
+                || clean.endsWith(".mpd");
+    }
+
+    private void playNativeMedia(
+            String url
+    ) {
+
+        if (!isDirectMediaUrl(url)) {
+            openPopup(url);
+            return;
+        }
+
+        releaseNativePlayer();
+
+        nativePlayerView =
+                new PlayerView(this);
+
+        nativePlayerView.setBackgroundColor(
+                Color.BLACK
+        );
+
+        nativePlayerView.setUseController(true);
+
+        exoPlayer =
+                new ExoPlayer.Builder(this)
+                        .build();
+
+        nativePlayerView.setPlayer(
+                exoPlayer
+        );
+
+        MediaItem mediaItem =
+                MediaItem.fromUri(
+                        Uri.parse(url)
+                );
+
+        exoPlayer.setMediaItem(
+                mediaItem
+        );
+
+        exoPlayer.addListener(
+                new Player.Listener() {
+
+                    @Override
+                    public void onPlaybackStateChanged(
+                            int state
+                    ) {
+
+                        if (state
+                                == Player.STATE_ENDED) {
+
+                            exitNativeMedia();
+                        }
+                    }
+
+                    @Override
+                    public void onPlayerError(
+                            androidx.media3.common.PlaybackException error
+                    ) {
+
+                        Toast.makeText(
+                                MainActivity.this,
+                                "Unable to play this video",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                }
+        );
+
+        rootLayout.addView(
+                nativePlayerView,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        nativePlayerView.bringToFront();
+
+        if (popupContainer != null) {
+            popupContainer.setVisibility(View.INVISIBLE);
+        }
+
+        if (refreshContainer != null) {
+            refreshContainer.setVisibility(View.INVISIBLE);
+        }
+
+        nativePlayerShowing = true;
+
+        setLandscape();
+
+        exoPlayer.prepare();
+        exoPlayer.play();
+    }
+
+    private void exitNativeMedia() {
+
+        if (!nativePlayerShowing) {
+            return;
+        }
+
+        releaseNativePlayer();
+
+        nativePlayerShowing = false;
+
+        if (popupContainer != null
+                && !popupStack.isEmpty()) {
+
+            popupContainer.setVisibility(
+                    View.VISIBLE
+            );
+
+            popupContainer.bringToFront();
+
+        } else if (refreshContainer != null) {
+
+            refreshContainer.setVisibility(
+                    View.VISIBLE
+            );
+
+            refreshContainer.bringToFront();
+        }
+
+        setPortrait();
+    }
+
+    private void releaseNativePlayer() {
+
+        if (exoPlayer != null) {
+
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayer = null;
+        }
+
+        if (nativePlayerView != null) {
+
+            if (nativePlayerView.getParent()
+                    instanceof FrameLayout) {
+
+                ((FrameLayout) nativePlayerView.getParent())
+                        .removeView(nativePlayerView);
+            }
+
+            nativePlayerView.setPlayer(null);
+            nativePlayerView = null;
+        }
+    }
+
+    // ============================================================
+    // EXTERNAL LINKS
+    // ============================================================
+
+    private boolean isTelegramUrl(
+            String url
+    ) {
+
+        try {
+
+            Uri uri = Uri.parse(url);
+
+            String host = uri.getHost();
+
+            if (host == null) {
+                return false;
+            }
+
+            host = host.toLowerCase();
+
+            return host.equals("t.me")
+                    || host.equals("telegram.me")
+                    || host.equals("www.telegram.me");
+
+        } catch (Exception e) {
+
+            return false;
+        }
+    }
+
+    private boolean isHttpUrl(
+            String url
+    ) {
+
+        if (url == null) {
+            return false;
+        }
+
+        return url.startsWith("http://")
+                || url.startsWith("https://");
+    }
+
+    private boolean isMainSiteUrl(
+            String url
+    ) {
+
+        try {
+
+            Uri uri = Uri.parse(url);
+
+            String host = uri.getHost();
+
+            if (host == null) {
+                return false;
+            }
+
+            host = host.toLowerCase();
+
+            return host.equals("deeprowss.com")
+                    || host.equals("www.deeprowss.com");
+
+        } catch (Exception e) {
+
+            return false;
+        }
+    }
+
+    private void openExternalUrl(
+            String url
+    ) {
+
+        try {
+
+            Intent intent =
+                    new Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(url)
+                    );
+
+            startActivity(intent);
+
+        } catch (Exception e) {
+
+            Toast.makeText(
+                    this,
+                    "Unable to open link",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+    }
+
+    // ============================================================
+    // BACK BUTTON
+    // ============================================================
+
+    @Override
+    public void onBackPressed() {
+
+        if (nativePlayerShowing) {
+            exitNativeMedia();
+            return;
+        }
+
+        if (fullscreenSession != null) {
+            exitGeckoFullscreen();
+            return;
+        }
+
+        PopupEntry activePopup =
+                getActivePopup();
+
+        if (activePopup != null) {
+
+            if (activePopup.session.canGoBack()) {
+
+                activePopup.session.goBack();
+
+            } else {
+
+                switchToPreviousPopupWindow();
+            }
+
+            return;
+        }
+
+        if (mainSession != null
+                && mainSession.canGoBack()) {
+
+            mainSession.goBack();
+            return;
+        }
+
+        super.onBackPressed();
+    }
+
+    // ============================================================
+    // LIFECYCLE
+    // ============================================================
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mainSession != null) {
+            mainSession.setActive(true);
+        }
+
+        for (PopupEntry entry : popupStack) {
+            entry.session.setActive(true);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+
+        if (mainSession != null) {
+            mainSession.setActive(false);
+        }
+
+        for (PopupEntry entry : popupStack) {
+            entry.session.setActive(false);
+        }
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        activityDestroyed = true;
+
+        releaseNativePlayer();
+
+        for (PopupEntry entry : popupStack) {
+            destroyPopupEntry(entry);
+        }
+
+        popupStack.clear();
+
+        if (mainGeckoView != null) {
+
+            try {
+                mainGeckoView.releaseSession();
+            } catch (Exception ignored) {
+            }
+
+            mainGeckoView = null;
+        }
+
+        if (mainSession != null) {
+
+            try {
+                mainSession.close();
+            } catch (Exception ignored) {
+            }
+
+            mainSession = null;
+        }
+
+        super.onDestroy();
+    }
+
+    // ============================================================
+    // SPLASH
+    // ============================================================
+
+    private void showCustomSplash() {
+
+        if (splashView != null) {
+            return;
+        }
+
+        splashView = new FrameLayout(this);
+        splashView.setBackgroundColor(BG_COLOR);
+
+        ImageView logo =
+                new ImageView(this);
+
+        try {
+
+            int drawableId =
+                    getResources().getIdentifier(
+                            "deeprowss_splash",
+                            "drawable",
+                            getPackageName()
+                    );
+
+            if (drawableId != 0) {
+                logo.setImageResource(drawableId);
+            }
+
+        } catch (Exception ignored) {
+        }
+
+        logo.setScaleType(
+                ImageView.ScaleType.CENTER_INSIDE
+        );
+
+        FrameLayout.LayoutParams logoParams =
+                new FrameLayout.LayoutParams(
+                        dp(330),
+                        dp(330),
+                        Gravity.CENTER
+                );
+
+        splashView.addView(
+                logo,
+                logoParams
+        );
+
+        splashSpinner =
+                new ProgressBar(this);
+
+        FrameLayout.LayoutParams spinnerParams =
+                new FrameLayout.LayoutParams(
+                        dp(32),
+                        dp(32),
+                        Gravity.CENTER
+                );
+
+        spinnerParams.topMargin = dp(185);
+
+        splashView.addView(
+                splashSpinner,
+                spinnerParams
+        );
+
+        splashLoadingText =
+                new TextView(this);
+
+        splashLoadingText.setText("Loading...");
+        splashLoadingText.setTextColor(
+                Color.WHITE
+        );
+        splashLoadingText.setTextSize(14);
+        splashLoadingText.setGravity(
+                Gravity.CENTER
+        );
+
+        FrameLayout.LayoutParams textParams =
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        dp(40),
+                        Gravity.CENTER
+                );
+
+        textParams.topMargin = dp(240);
+
+        splashView.addView(
+                splashLoadingText,
+                textParams
+        );
+
+        rootLayout.addView(
+                splashView,
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        splashView.bringToFront();
+    }
+
+    private void hideCustomSplash() {
+
+        if (splashView == null) {
+            return;
+        }
+
+        final View splash = splashView;
+
+        splash.animate()
+                .alpha(0f)
+                .setDuration(180)
+                .withEndAction(() -> {
+
+                    if (splash.getParent()
+                            instanceof FrameLayout) {
+
+                        ((FrameLayout) splash.getParent())
+                                .removeView(splash);
+                    }
+
+                    if (splashView == splash) {
+                        splashView = null;
+                    }
+
+                    splashSpinner = null;
+                    splashLoadingText = null;
+                })
+                .start();
+    }
+
+    // ============================================================
+    // ORIENTATION
+    // ============================================================
+
+    private void setLandscape() {
+
+        setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        );
+    }
+
+    private void setPortrait() {
+
+        setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        );
+    }
+
+    // ============================================================
+    // UTILITIES
+    // ============================================================
+
+    private int dp(int value) {
+
+        return Math.round(
+                value * getResources()
+                        .getDisplayMetrics()
+                        .density
+        );
+    }
+
+    // ============================================================
+    // POPUP ENTRY
+    // ============================================================
+
+    private static class PopupEntry {
+
+        final GeckoSession session;
+        GeckoView view;
+
+        PopupEntry(
+                GeckoSession session,
+                GeckoView view
+        ) {
+            this.session = session;
+            this.view = view;
+        }
+    }
+
+    // ============================================================
+    // PULL TO REFRESH
+    // ============================================================
+
+    private static class RefreshableGeckoContainer
+            extends FrameLayout {
+
+        private float downY;
+        private float currentDistance;
+
+        private boolean dragging;
+        private boolean refreshing;
+
+        private ProgressBar spinner;
+
+        private Runnable refreshListener;
+
+        RefreshableGeckoContainer(
+                Context context
+        ) {
+
+            super(context);
+
+            setClipChildren(false);
+
+            spinner =
+                    new ProgressBar(context);
+
+            spinner.setVisibility(
+                    View.GONE
+            );
+
+            LayoutParams spinnerParams =
+                    new LayoutParams(
+                            36,
+                            36,
+                            Gravity.TOP | Gravity.CENTER_HORIZONTAL
+                    );
+
+            spinnerParams.topMargin = 12;
+
+            addView(
+                    spinner,
+                    spinnerParams
+            );
+        }
+
+        void setOnRefreshListener(
+                Runnable listener
+        ) {
+            refreshListener = listener;
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(
+                MotionEvent event
+        ) {
+
+            if (refreshing) {
+                return true;
+            }
+
+            if (getChildCount() == 0) {
+                return super.onInterceptTouchEvent(event);
+            }
+
+            View child = getChildAt(0);
+
+            switch (event.getActionMasked()) {
+
+                case MotionEvent.ACTION_DOWN:
+
+                    downY = event.getY();
+                    currentDistance = 0;
+                    dragging = false;
+
+                    return super.onInterceptTouchEvent(event);
+
+                case MotionEvent.ACTION_MOVE:
+
+                    float dy =
+                            event.getY() - downY;
+
+                    if (dy > 0
+                            && !child.canScrollVertically(-1)) {
+
+                        dragging = true;
+                        return true;
+                    }
+
+                    break;
+
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+
+                    dragging = false;
+                    break;
+            }
+
+            return super.onInterceptTouchEvent(event);
+        }
+
+        @Override
+        public boolean onTouchEvent(
+                MotionEvent event
+        ) {
+
+            if (refreshing) {
+                return true;
+            }
+
+            switch (event.getActionMasked()) {
+
+                case MotionEvent.ACTION_DOWN:
+
+                    downY = event.getY();
+                    currentDistance = 0;
+
+                    return true;
+
+                case MotionEvent.ACTION_MOVE:
+
+                    float dy =
+                            event.getY() - downY;
+
+                    if (dy <= 0) {
+                        return true;
+                    }
+
+                    currentDistance =
+                            Math.min(
+                                    dy,
+                                    300
+                            );
+
+                    View child =
+                            getChildCount() > 0
+                                    ? getChildAt(0)
+                                    : null;
+
+                    if (child != null) {
+
+                        child.setTranslationY(
+                                currentDistance * 0.55f
+                        );
+                    }
+
+                    if (currentDistance > 80) {
+                        spinner.setVisibility(
+                                View.VISIBLE
+                        );
+                    }
+
+                    return true;
+
+                case MotionEvent.ACTION_UP:
+
+                    if (currentDistance >= 180) {
+
+                        startRefreshing();
+
+                    } else {
+
+                        resetPosition();
+                    }
+
+                    return true;
+
+                case MotionEvent.ACTION_CANCEL:
+
+                    resetPosition();
+                    return true;
+            }
+
+            return true;
+        }
+
+        private void startRefreshing() {
+
+            refreshing = true;
+
+            spinner.setVisibility(
+                    View.VISIBLE
+            );
+
+            View child =
+                    getChildCount() > 0
+                            ? getChildAt(0)
+                            : null;
+
+            if (child != null) {
+
+                child.animate()
+                        .translationY(70)
+                        .setDuration(180)
+                        .start();
+            }
+
+            if (refreshListener != null) {
+                refreshListener.run();
+            }
+
+            postDelayed(
+                    this::stopRefreshing,
+                    1000
+            );
+        }
+
+        private void stopRefreshing() {
+
+            refreshing = false;
+            resetPosition();
+        }
+
+        private void resetPosition() {
+
+            View child =
+                    getChildCount() > 0
+                            ? getChildAt(0)
+                            : null;
+
+            if (child != null) {
+
+                child.animate()
+                        .translationY(0)
+                        .setDuration(180)
+                        .start();
+            }
+
+            spinner.setVisibility(
+                    View.GONE
+            );
+
+            currentDistance = 0;
+            dragging = false;
+        }
+    }
 }
