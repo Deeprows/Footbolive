@@ -2856,3 +2856,11 @@ body.light
   }
 
 }
+
+/* Hide Alternative Screen button in landscape fullscreen */
+@media (orientation: landscape) {
+  .screen-player:fullscreen #altScreenButton,
+  .screen-player:-webkit-full-screen #altScreenButton {
+    display: none !important;
+  }
+}
