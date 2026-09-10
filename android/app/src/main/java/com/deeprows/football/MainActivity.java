@@ -14,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,6 +27,8 @@ import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
 
+import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
@@ -35,7 +36,6 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.GeckoView;
 import org.mozilla.geckoview.WebResponse;
 
-import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,8 @@ public class MainActivity extends Activity {
     private static final String TELEGRAM_URL = "https://t.me/deeprows";
 
     /*
-     * This is intentionally Chrome-like because your WebToApk test showed
+     * Chrome-like user agent.
+     * This is intentionally kept because your WebToApk test showed
      * that this UA stopped the iframe sandbox problem.
      */
     private static final String DEEPROWSS_USER_AGENT =
@@ -69,6 +70,7 @@ public class MainActivity extends Activity {
     private FrameLayout popupContainer;
     private LinearLayout popupTopBar;
     private TextView popupTitle;
+
     private final List<PopupEntry> popupStack = new ArrayList<>();
 
     private View customFullscreenView;
@@ -82,6 +84,12 @@ public class MainActivity extends Activity {
     private boolean showingOfflinePage = false;
     private boolean activityDestroyed = false;
 
+    /*
+     * GeckoView 153 does not expose canGoBack().
+     * NavigationDelegate.onCanGoBack() updates these values instead.
+     */
+    private boolean mainCanGoBack = false;
+
     private ExoPlayer exoPlayer;
     private PlayerView nativePlayerView;
     private boolean nativePlayerShowing = false;
@@ -94,7 +102,7 @@ public class MainActivity extends Activity {
 
         super.onCreate(savedInstanceState);
 
-        requestWindowFeatures(Window.FEATURE_NO_TITLE);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         getWindow().setStatusBarColor(BG_COLOR);
         getWindow().setNavigationBarColor(BG_COLOR);
@@ -175,11 +183,17 @@ public class MainActivity extends Activity {
         refreshContainer.setBackgroundColor(BG_COLOR);
 
         refreshContainer.setOnRefreshListener(() -> {
+
             if (mainSession != null) {
+
                 if (showingOfflinePage) {
+
                     showingOfflinePage = false;
+
                     mainSession.loadUri(WEBSITE_URL);
+
                 } else {
+
                     mainSession.reload();
                 }
             }
@@ -211,15 +225,16 @@ public class MainActivity extends Activity {
                 new GeckoSession.NavigationDelegate() {
 
                     @Override
-                    public GeckoSession.GeckoResult<AllowOrDeny> onLoadRequest(
+                    public GeckoResult<AllowOrDeny> onLoadRequest(
                             GeckoSession session,
-                            LoadRequest request
+                            GeckoSession.NavigationDelegate.LoadRequest request
                     ) {
 
                         String url = request.uri;
 
                         if (url == null || url.isEmpty()) {
-                            return GeckoSession.GeckoResult.fromValue(
+
+                            return GeckoResult.fromValue(
                                     AllowOrDeny.DENY
                             );
                         }
@@ -227,27 +242,30 @@ public class MainActivity extends Activity {
                         /*
                          * New-window request.
                          */
-                        if (request.target == TARGET_WINDOW_NEW) {
+                        if (request.target
+                                == GeckoSession.NavigationDelegate.TARGET_WINDOW_NEW) {
 
                             if (isTelegramUrl(url)) {
+
                                 openExternalUrl(url);
 
-                                return GeckoSession.GeckoResult.fromValue(
+                                return GeckoResult.fromValue(
                                         AllowOrDeny.DENY
                                 );
                             }
 
                             if (isDirectMediaUrl(url)) {
+
                                 playNativeMedia(url);
 
-                                return GeckoSession.GeckoResult.fromValue(
+                                return GeckoResult.fromValue(
                                         AllowOrDeny.DENY
                                 );
                             }
 
                             openPopup(url);
 
-                            return GeckoSession.GeckoResult.fromValue(
+                            return GeckoResult.fromValue(
                                     AllowOrDeny.DENY
                             );
                         }
@@ -256,20 +274,22 @@ public class MainActivity extends Activity {
                          * Telegram always goes outside the app.
                          */
                         if (isTelegramUrl(url)) {
+
                             openExternalUrl(url);
 
-                            return GeckoSession.GeckoResult.fromValue(
+                            return GeckoResult.fromValue(
                                     AllowOrDeny.DENY
                             );
                         }
 
                         /*
-                         * Direct media URLs use the native Media3 player.
+                         * Direct media URLs use native Media3.
                          */
                         if (isDirectMediaUrl(url)) {
+
                             playNativeMedia(url);
 
-                            return GeckoSession.GeckoResult.fromValue(
+                            return GeckoResult.fromValue(
                                     AllowOrDeny.DENY
                             );
                         }
@@ -278,9 +298,10 @@ public class MainActivity extends Activity {
                          * Non-http schemes.
                          */
                         if (!isHttpUrl(url)) {
+
                             openExternalUrl(url);
 
-                            return GeckoSession.GeckoResult.fromValue(
+                            return GeckoResult.fromValue(
                                     AllowOrDeny.DENY
                             );
                         }
@@ -294,19 +315,19 @@ public class MainActivity extends Activity {
                                     || url.startsWith(
                                     "https://deeprows.github.io/"
                             )) {
+
                                 return null;
                             }
 
                             /*
-                             * Preserve the previous app behavior:
-                             * external HTTP/HTTPS links opened in popup.
+                             * External HTTP/HTTPS links opened in popup.
                              */
                             if (!request.isRedirect
                                     && !request.isDirectNavigation) {
 
                                 openPopup(url);
 
-                                return GeckoSession.GeckoResult.fromValue(
+                                return GeckoResult.fromValue(
                                         AllowOrDeny.DENY
                                 );
                             }
@@ -315,9 +336,38 @@ public class MainActivity extends Activity {
                         return null;
                     }
 
+                    /*
+                     * GeckoView 153 history API.
+                     *
+                     * There is no session.canGoBack().
+                     * GeckoView tells us through this callback.
+                     */
                     @Override
-                    public GeckoSession.GeckoResult<GeckoSession>
-                    onNewSession(
+                    public void onCanGoBack(
+                            GeckoSession session,
+                            boolean canGoBack
+                    ) {
+
+                        if (session == mainSession) {
+
+                            mainCanGoBack = canGoBack;
+
+                            return;
+                        }
+
+                        for (PopupEntry entry : popupStack) {
+
+                            if (entry.session == session) {
+
+                                entry.canGoBack = canGoBack;
+
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public GeckoResult<GeckoSession> onNewSession(
                             GeckoSession session,
                             String uri
                     ) {
@@ -329,36 +379,36 @@ public class MainActivity extends Activity {
                         GeckoSession newSession =
                                 createPopupSession();
 
-                        popupStack.add(
+                        PopupEntry entry =
                                 new PopupEntry(
                                         newSession,
                                         null
-                                )
-                        );
+                                );
+
+                        popupStack.add(entry);
 
                         showPopupContainer();
 
-                        attachPopupSession(
-                                popupStack.get(
-                                        popupStack.size() - 1
-                                )
-                        );
+                        attachPopupSession(entry);
 
-                        return GeckoSession.GeckoResult.fromValue(
+                        return GeckoResult.fromValue(
                                 newSession
                         );
                     }
 
                     @Override
-                    public GeckoSession.GeckoResult<String> onLoadError(
+                    public GeckoResult<String> onLoadError(
                             GeckoSession session,
                             String uri,
                             org.mozilla.geckoview.WebRequestError error
                     ) {
 
                         if (session == mainSession) {
+
                             showOfflinePage();
+
                         } else {
+
                             showPopupError(session);
                         }
 
@@ -377,15 +427,9 @@ public class MainActivity extends Activity {
                     ) {
 
                         if (session == mainSession) {
+
                             showingOfflinePage = false;
                             pageVisible = true;
-
-                            if (splashView != null) {
-                                /*
-                                 * Keep splash until the first real page
-                                 * begins rendering.
-                                 */
-                            }
                         }
                     }
 
@@ -398,18 +442,21 @@ public class MainActivity extends Activity {
                         if (session == mainSession) {
 
                             if (success) {
-                                showingOfflinePage = false;
 
+                                showingOfflinePage = false;
                                 pageVisible = true;
 
                                 hideCustomSplash();
+
                             } else {
+
                                 showOfflinePage();
                             }
 
                         } else {
 
                             if (success) {
+
                                 hidePopupError();
                             }
                         }
@@ -427,9 +474,6 @@ public class MainActivity extends Activity {
                     ) {
 
                         if (session != mainSession) {
-                            popupTitle = popupTitle == null
-                                    ? null
-                                    : popupTitle;
 
                             if (popupTitle != null
                                     && title != null
@@ -446,7 +490,9 @@ public class MainActivity extends Activity {
                     ) {
 
                         if (session == mainSession) {
+
                             pageVisible = true;
+
                             hideCustomSplash();
                         }
                     }
@@ -458,8 +504,11 @@ public class MainActivity extends Activity {
                     ) {
 
                         if (fullScreen) {
+
                             enterGeckoFullscreen(session);
+
                         } else {
+
                             exitGeckoFullscreen();
                         }
                     }
@@ -470,8 +519,11 @@ public class MainActivity extends Activity {
                     ) {
 
                         if (session == mainSession) {
+
                             finish();
+
                         } else {
+
                             removePopupSession(session);
                         }
                     }
@@ -491,8 +543,11 @@ public class MainActivity extends Activity {
                     ) {
 
                         if (session == mainSession) {
+
                             showOfflinePage();
+
                         } else {
+
                             showPopupError(session);
                         }
                     }
@@ -503,6 +558,7 @@ public class MainActivity extends Activity {
                     ) {
 
                         if (session == mainSession) {
+
                             showOfflinePage();
                         }
                     }
@@ -517,11 +573,18 @@ public class MainActivity extends Activity {
     private GeckoSession createPopupSession() {
 
         GeckoSession session =
-                new GeckoSession(createSessionSettings());
+                new GeckoSession(
+                        createSessionSettings()
+                );
 
-        configureSession(session, true);
+        configureSession(
+                session,
+                true
+        );
 
-        session.open(getGeckoRuntime());
+        session.open(
+                getGeckoRuntime()
+        );
 
         return session;
     }
@@ -529,14 +592,20 @@ public class MainActivity extends Activity {
     private void openPopup(String url) {
 
         if (!isHttpUrl(url)) {
+
             openExternalUrl(url);
+
             return;
         }
 
-        GeckoSession session = createPopupSession();
+        GeckoSession session =
+                createPopupSession();
 
         PopupEntry entry =
-                new PopupEntry(session, null);
+                new PopupEntry(
+                        session,
+                        null
+                );
 
         popupStack.add(entry);
 
@@ -551,8 +620,12 @@ public class MainActivity extends Activity {
 
         if (popupContainer == null) {
 
-            popupContainer = new FrameLayout(this);
-            popupContainer.setBackgroundColor(BG_COLOR);
+            popupContainer =
+                    new FrameLayout(this);
+
+            popupContainer.setBackgroundColor(
+                    BG_COLOR
+            );
 
             rootLayout.addView(
                     popupContainer,
@@ -566,11 +639,16 @@ public class MainActivity extends Activity {
 
         } else {
 
-            popupContainer.setVisibility(View.VISIBLE);
+            popupContainer.setVisibility(
+                    View.VISIBLE
+            );
         }
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.INVISIBLE);
+
+            refreshContainer.setVisibility(
+                    View.INVISIBLE
+            );
         }
 
         popupContainer.bringToFront();
@@ -578,25 +656,36 @@ public class MainActivity extends Activity {
 
     private void createPopupTopBar() {
 
-        popupTopBar = new LinearLayout(this);
-        popupTopBar.setOrientation(LinearLayout.HORIZONTAL);
-        popupTopBar.setGravity(Gravity.CENTER_VERTICAL);
+        popupTopBar =
+                new LinearLayout(this);
+
+        popupTopBar.setOrientation(
+                LinearLayout.HORIZONTAL
+        );
+
+        popupTopBar.setGravity(
+                Gravity.CENTER_VERTICAL
+        );
+
         popupTopBar.setPadding(
                 dp(8),
                 0,
                 dp(8),
                 0
         );
-        popupTopBar.setBackgroundColor(SURFACE_COLOR);
 
-        /*
-         * Back button.
-         */
-        TextView backButton = new TextView(this);
+        popupTopBar.setBackgroundColor(
+                SURFACE_COLOR
+        );
+
+        TextView backButton =
+                new TextView(this);
+
         backButton.setText("‹");
         backButton.setTextColor(Color.WHITE);
         backButton.setTextSize(34);
         backButton.setGravity(Gravity.CENTER);
+
         backButton.setPadding(
                 dp(6),
                 0,
@@ -606,15 +695,19 @@ public class MainActivity extends Activity {
 
         backButton.setOnClickListener(v -> {
 
-            PopupEntry active = getActivePopup();
+            PopupEntry active =
+                    getActivePopup();
 
             if (active == null) {
                 return;
             }
 
-            if (active.session.canGoBack()) {
+            if (active.canGoBack) {
+
                 active.session.goBack();
+
             } else {
+
                 switchToPreviousPopupWindow();
             }
         });
@@ -627,11 +720,23 @@ public class MainActivity extends Activity {
                 )
         );
 
-        popupTitle = new TextView(this);
-        popupTitle.setText("Deeprowss");
-        popupTitle.setTextColor(Color.WHITE);
+        popupTitle =
+                new TextView(this);
+
+        popupTitle.setText(
+                "Deeprowss"
+        );
+
+        popupTitle.setTextColor(
+                Color.WHITE
+        );
+
         popupTitle.setTextSize(15);
-        popupTitle.setGravity(Gravity.CENTER_VERTICAL);
+
+        popupTitle.setGravity(
+                Gravity.CENTER_VERTICAL
+        );
+
         popupTitle.setSingleLine(true);
 
         LinearLayout.LayoutParams titleParams =
@@ -646,10 +751,9 @@ public class MainActivity extends Activity {
                 titleParams
         );
 
-        /*
-         * Close button.
-         */
-        TextView closeButton = new TextView(this);
+        TextView closeButton =
+                new TextView(this);
+
         closeButton.setText("×");
         closeButton.setTextColor(Color.WHITE);
         closeButton.setTextSize(30);
@@ -677,7 +781,9 @@ public class MainActivity extends Activity {
         );
     }
 
-    private void attachPopupSession(PopupEntry entry) {
+    private void attachPopupSession(
+            PopupEntry entry
+    ) {
 
         if (entry == null) {
             return;
@@ -685,21 +791,32 @@ public class MainActivity extends Activity {
 
         if (entry.view == null) {
 
-            entry.view = new GeckoView(this);
-            entry.view.setBackgroundColor(BG_COLOR);
+            entry.view =
+                    new GeckoView(this);
 
-            entry.view.setSession(entry.session);
+            entry.view.setBackgroundColor(
+                    BG_COLOR
+            );
+
+            entry.view.setSession(
+                    entry.session
+            );
         }
 
         /*
-         * Remove all currently displayed popup browser views.
+         * Remove currently displayed popup browser views.
          */
         for (PopupEntry item : popupStack) {
 
             if (item.view != null) {
-                item.view.setVisibility(View.GONE);
 
-                if (item.view.getParent() instanceof FrameLayout) {
+                item.view.setVisibility(
+                        View.GONE
+                );
+
+                if (item.view.getParent()
+                        instanceof FrameLayout) {
+
                     ((FrameLayout) item.view.getParent())
                             .removeView(item.view);
                 }
@@ -712,17 +829,22 @@ public class MainActivity extends Activity {
                         FrameLayout.LayoutParams.MATCH_PARENT
                 );
 
-        params.topMargin = popupBarHeight;
+        params.topMargin =
+                popupBarHeight;
 
         popupContainer.addView(
                 entry.view,
                 params
         );
 
-        entry.view.setVisibility(View.VISIBLE);
+        entry.view.setVisibility(
+                View.VISIBLE
+        );
+
         entry.view.bringToFront();
 
         if (popupTopBar != null) {
+
             popupTopBar.bringToFront();
         }
 
@@ -743,7 +865,9 @@ public class MainActivity extends Activity {
     private void switchToPreviousPopupWindow() {
 
         if (popupStack.size() <= 1) {
+
             closePopup();
+
             return;
         }
 
@@ -758,7 +882,10 @@ public class MainActivity extends Activity {
                 getActivePopup();
 
         if (previous != null) {
-            attachPopupSession(previous);
+
+            attachPopupSession(
+                    previous
+            );
         }
     }
 
@@ -776,15 +903,21 @@ public class MainActivity extends Activity {
             if (entry.session == session) {
 
                 popupStack.remove(i);
-                destroyPopupEntry(entry);
+
+                destroyPopupEntry(
+                        entry
+                );
 
                 break;
             }
         }
 
         if (popupStack.isEmpty()) {
+
             closePopup();
+
         } else {
+
             attachPopupSession(
                     getActivePopup()
             );
@@ -805,7 +938,9 @@ public class MainActivity extends Activity {
                     instanceof FrameLayout) {
 
                 ((FrameLayout) entry.view.getParent())
-                        .removeView(entry.view);
+                        .removeView(
+                                entry.view
+                        );
             }
 
             entry.view.releaseSession();
@@ -813,7 +948,9 @@ public class MainActivity extends Activity {
         }
 
         try {
+
             entry.session.close();
+
         } catch (Exception ignored) {
         }
     }
@@ -823,7 +960,10 @@ public class MainActivity extends Activity {
         exitGeckoFullscreen();
 
         for (PopupEntry entry : popupStack) {
-            destroyPopupEntry(entry);
+
+            destroyPopupEntry(
+                    entry
+            );
         }
 
         popupStack.clear();
@@ -834,7 +974,9 @@ public class MainActivity extends Activity {
                     instanceof FrameLayout) {
 
                 ((FrameLayout) popupContainer.getParent())
-                        .removeView(popupContainer);
+                        .removeView(
+                                popupContainer
+                        );
             }
 
             popupContainer = null;
@@ -844,7 +986,11 @@ public class MainActivity extends Activity {
         popupTitle = null;
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.VISIBLE);
+
+            refreshContainer.setVisibility(
+                    View.VISIBLE
+            );
+
             refreshContainer.bringToFront();
         }
 
@@ -859,14 +1005,21 @@ public class MainActivity extends Activity {
             GeckoSession session
     ) {
 
-        fullscreenSession = session;
+        fullscreenSession =
+                session;
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.INVISIBLE);
+
+            refreshContainer.setVisibility(
+                    View.INVISIBLE
+            );
         }
 
         if (popupContainer != null) {
-            popupContainer.setVisibility(View.INVISIBLE);
+
+            popupContainer.setVisibility(
+                    View.INVISIBLE
+            );
         }
 
         getWindow().setFlags(
@@ -888,11 +1041,15 @@ public class MainActivity extends Activity {
         if (popupContainer != null
                 && !popupStack.isEmpty()) {
 
-            popupContainer.setVisibility(View.VISIBLE);
+            popupContainer.setVisibility(
+                    View.VISIBLE
+            );
 
         } else if (refreshContainer != null) {
 
-            refreshContainer.setVisibility(View.VISIBLE);
+            refreshContainer.setVisibility(
+                    View.VISIBLE
+            );
         }
 
         setPortrait();
@@ -910,10 +1067,6 @@ public class MainActivity extends Activity {
 
         showingOfflinePage = true;
 
-        /*
-         * Do not use WebView.loadData.
-         * GeckoSession can load a data document directly.
-         */
         String html =
                 "<!DOCTYPE html>" +
                 "<html>" +
@@ -966,8 +1119,8 @@ public class MainActivity extends Activity {
                 "We couldn't connect to Deeprowss right now. " +
                 "Please check your internet connection and try again." +
                 "</p>" +
-                "<button onclick=\"location.href='"
-                + WEBSITE_URL +
+                "<button onclick=\"location.href='" +
+                WEBSITE_URL +
                 "'\">TRY AGAIN</button>" +
                 "</div>" +
                 "</body>" +
@@ -991,10 +1144,6 @@ public class MainActivity extends Activity {
             GeckoSession session
     ) {
 
-        /*
-         * Keep the browser usable instead of replacing the
-         * entire activity. The user can simply go back/reload.
-         */
         Toast.makeText(
                 this,
                 "Unable to connect at this time",
@@ -1016,13 +1165,17 @@ public class MainActivity extends Activity {
 
         if (response == null
                 || response.uri == null) {
+
             return;
         }
 
-        String url = response.uri;
+        String url =
+                response.uri;
 
         if (!isHttpUrl(url)) {
+
             openExternalUrl(url);
+
             return;
         }
 
@@ -1034,7 +1187,9 @@ public class MainActivity extends Activity {
                     );
 
             if (manager == null) {
+
                 openExternalUrl(url);
+
                 return;
             }
 
@@ -1048,8 +1203,14 @@ public class MainActivity extends Activity {
                             .VISIBILITY_VISIBLE_NOTIFY_COMPLETED
             );
 
+            String filename =
+                    getDownloadFileName(
+                            response,
+                            url
+                    );
+
             request.setTitle(
-                    getDownloadFileName(response, url)
+                    filename
             );
 
             request.setDescription(
@@ -1058,18 +1219,31 @@ public class MainActivity extends Activity {
 
             request.setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_DOWNLOADS,
-                    getDownloadFileName(response, url)
+                    filename
             );
 
-            if (response.contentType != null
-                    && !response.contentType.isEmpty()) {
+            /*
+             * GeckoView 153 WebResponse does not expose
+             * contentType directly.
+             *
+             * Guess the MIME type from the URL instead.
+             */
+            String mimeType =
+                    URLConnection.guessContentTypeFromName(
+                            url
+                    );
+
+            if (mimeType != null
+                    && !mimeType.isEmpty()) {
 
                 request.setMimeType(
-                        response.contentType
+                        mimeType
                 );
             }
 
-            manager.enqueue(request);
+            manager.enqueue(
+                    request
+            );
 
             Toast.makeText(
                     this,
@@ -1088,14 +1262,10 @@ public class MainActivity extends Activity {
             String url
     ) {
 
-        String filename = response.filename;
-
-        if (filename != null
-                && !filename.trim().isEmpty()) {
-
-            return sanitizeFilename(filename);
-        }
-
+        /*
+         * WebResponse in GeckoView 153 does not expose
+         * filename directly, so derive it from the URL.
+         */
         try {
 
             String path =
@@ -1103,16 +1273,27 @@ public class MainActivity extends Activity {
 
             if (path != null) {
 
-                int slash = path.lastIndexOf('/');
+                int slash =
+                        path.lastIndexOf('/');
 
                 if (slash >= 0
                         && slash < path.length() - 1) {
 
                     String name =
-                            path.substring(slash + 1);
+                            path.substring(
+                                    slash + 1
+                            );
 
                     if (!name.isEmpty()) {
-                        return sanitizeFilename(name);
+
+                        name = name.trim();
+
+                        if (!name.isEmpty()) {
+
+                            return sanitizeFilename(
+                                    name
+                            );
+                        }
                     }
                 }
             }
@@ -1151,15 +1332,23 @@ public class MainActivity extends Activity {
             return false;
         }
 
-        String clean = url;
+        String clean =
+                url;
 
-        int query = clean.indexOf('?');
+        int query =
+                clean.indexOf('?');
 
         if (query >= 0) {
-            clean = clean.substring(0, query);
+
+            clean =
+                    clean.substring(
+                            0,
+                            query
+                    );
         }
 
-        clean = clean.toLowerCase();
+        clean =
+                clean.toLowerCase();
 
         return clean.endsWith(".mp4")
                 || clean.endsWith(".m4v")
@@ -1173,7 +1362,9 @@ public class MainActivity extends Activity {
     ) {
 
         if (!isDirectMediaUrl(url)) {
+
             openPopup(url);
+
             return;
         }
 
@@ -1186,7 +1377,9 @@ public class MainActivity extends Activity {
                 Color.BLACK
         );
 
-        nativePlayerView.setUseController(true);
+        nativePlayerView.setUseController(
+                true
+        );
 
         exoPlayer =
                 new ExoPlayer.Builder(this)
@@ -1245,14 +1438,21 @@ public class MainActivity extends Activity {
         nativePlayerView.bringToFront();
 
         if (popupContainer != null) {
-            popupContainer.setVisibility(View.INVISIBLE);
+
+            popupContainer.setVisibility(
+                    View.INVISIBLE
+            );
         }
 
         if (refreshContainer != null) {
-            refreshContainer.setVisibility(View.INVISIBLE);
+
+            refreshContainer.setVisibility(
+                    View.INVISIBLE
+            );
         }
 
-        nativePlayerShowing = true;
+        nativePlayerShowing =
+                true;
 
         setLandscape();
 
@@ -1268,7 +1468,8 @@ public class MainActivity extends Activity {
 
         releaseNativePlayer();
 
-        nativePlayerShowing = false;
+        nativePlayerShowing =
+                false;
 
         if (popupContainer != null
                 && !popupStack.isEmpty()) {
@@ -1297,6 +1498,7 @@ public class MainActivity extends Activity {
 
             exoPlayer.stop();
             exoPlayer.release();
+
             exoPlayer = null;
         }
 
@@ -1306,10 +1508,15 @@ public class MainActivity extends Activity {
                     instanceof FrameLayout) {
 
                 ((FrameLayout) nativePlayerView.getParent())
-                        .removeView(nativePlayerView);
+                        .removeView(
+                                nativePlayerView
+                        );
             }
 
-            nativePlayerView.setPlayer(null);
+            nativePlayerView.setPlayer(
+                    null
+            );
+
             nativePlayerView = null;
         }
     }
@@ -1324,15 +1531,18 @@ public class MainActivity extends Activity {
 
         try {
 
-            Uri uri = Uri.parse(url);
+            Uri uri =
+                    Uri.parse(url);
 
-            String host = uri.getHost();
+            String host =
+                    uri.getHost();
 
             if (host == null) {
                 return false;
             }
 
-            host = host.toLowerCase();
+            host =
+                    host.toLowerCase();
 
             return host.equals("t.me")
                     || host.equals("telegram.me")
@@ -1362,15 +1572,18 @@ public class MainActivity extends Activity {
 
         try {
 
-            Uri uri = Uri.parse(url);
+            Uri uri =
+                    Uri.parse(url);
 
-            String host = uri.getHost();
+            String host =
+                    uri.getHost();
 
             if (host == null) {
                 return false;
             }
 
-            host = host.toLowerCase();
+            host =
+                    host.toLowerCase();
 
             return host.equals("deeprowss.com")
                     || host.equals("www.deeprowss.com");
@@ -1393,7 +1606,9 @@ public class MainActivity extends Activity {
                             Uri.parse(url)
                     );
 
-            startActivity(intent);
+            startActivity(
+                    intent
+            );
 
         } catch (Exception e) {
 
@@ -1413,12 +1628,16 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
 
         if (nativePlayerShowing) {
+
             exitNativeMedia();
+
             return;
         }
 
         if (fullscreenSession != null) {
+
             exitGeckoFullscreen();
+
             return;
         }
 
@@ -1427,7 +1646,7 @@ public class MainActivity extends Activity {
 
         if (activePopup != null) {
 
-            if (activePopup.session.canGoBack()) {
+            if (activePopup.canGoBack) {
 
                 activePopup.session.goBack();
 
@@ -1440,9 +1659,10 @@ public class MainActivity extends Activity {
         }
 
         if (mainSession != null
-                && mainSession.canGoBack()) {
+                && mainCanGoBack) {
 
             mainSession.goBack();
+
             return;
         }
 
@@ -1455,14 +1675,21 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onResume() {
+
         super.onResume();
 
         if (mainSession != null) {
-            mainSession.setActive(true);
+
+            mainSession.setActive(
+                    true
+            );
         }
 
         for (PopupEntry entry : popupStack) {
-            entry.session.setActive(true);
+
+            entry.session.setActive(
+                    true
+            );
         }
     }
 
@@ -1470,11 +1697,17 @@ public class MainActivity extends Activity {
     protected void onPause() {
 
         if (mainSession != null) {
-            mainSession.setActive(false);
+
+            mainSession.setActive(
+                    false
+            );
         }
 
         for (PopupEntry entry : popupStack) {
-            entry.session.setActive(false);
+
+            entry.session.setActive(
+                    false
+            );
         }
 
         super.onPause();
@@ -1483,12 +1716,16 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
 
-        activityDestroyed = true;
+        activityDestroyed =
+                true;
 
         releaseNativePlayer();
 
         for (PopupEntry entry : popupStack) {
-            destroyPopupEntry(entry);
+
+            destroyPopupEntry(
+                    entry
+            );
         }
 
         popupStack.clear();
@@ -1496,7 +1733,9 @@ public class MainActivity extends Activity {
         if (mainGeckoView != null) {
 
             try {
+
                 mainGeckoView.releaseSession();
+
             } catch (Exception ignored) {
             }
 
@@ -1506,7 +1745,9 @@ public class MainActivity extends Activity {
         if (mainSession != null) {
 
             try {
+
                 mainSession.close();
+
             } catch (Exception ignored) {
             }
 
@@ -1526,8 +1767,12 @@ public class MainActivity extends Activity {
             return;
         }
 
-        splashView = new FrameLayout(this);
-        splashView.setBackgroundColor(BG_COLOR);
+        splashView =
+                new FrameLayout(this);
+
+        splashView.setBackgroundColor(
+                BG_COLOR
+        );
 
         ImageView logo =
                 new ImageView(this);
@@ -1542,7 +1787,10 @@ public class MainActivity extends Activity {
                     );
 
             if (drawableId != 0) {
-                logo.setImageResource(drawableId);
+
+                logo.setImageResource(
+                        drawableId
+                );
             }
 
         } catch (Exception ignored) {
@@ -1574,7 +1822,8 @@ public class MainActivity extends Activity {
                         Gravity.CENTER
                 );
 
-        spinnerParams.topMargin = dp(185);
+        spinnerParams.topMargin =
+                dp(185);
 
         splashView.addView(
                 splashSpinner,
@@ -1584,11 +1833,18 @@ public class MainActivity extends Activity {
         splashLoadingText =
                 new TextView(this);
 
-        splashLoadingText.setText("Loading...");
+        splashLoadingText.setText(
+                "Loading..."
+        );
+
         splashLoadingText.setTextColor(
                 Color.WHITE
         );
-        splashLoadingText.setTextSize(14);
+
+        splashLoadingText.setTextSize(
+                14
+        );
+
         splashLoadingText.setGravity(
                 Gravity.CENTER
         );
@@ -1600,7 +1856,8 @@ public class MainActivity extends Activity {
                         Gravity.CENTER
                 );
 
-        textParams.topMargin = dp(240);
+        textParams.topMargin =
+                dp(240);
 
         splashView.addView(
                 splashLoadingText,
@@ -1624,7 +1881,8 @@ public class MainActivity extends Activity {
             return;
         }
 
-        final View splash = splashView;
+        final View splash =
+                splashView;
 
         splash.animate()
                 .alpha(0f)
@@ -1635,15 +1893,23 @@ public class MainActivity extends Activity {
                             instanceof FrameLayout) {
 
                         ((FrameLayout) splash.getParent())
-                                .removeView(splash);
+                                .removeView(
+                                        splash
+                                );
                     }
 
                     if (splashView == splash) {
-                        splashView = null;
+
+                        splashView =
+                                null;
                     }
 
-                    splashSpinner = null;
-                    splashLoadingText = null;
+                    splashSpinner =
+                            null;
+
+                    splashLoadingText =
+                            null;
+
                 })
                 .start();
     }
@@ -1673,7 +1939,8 @@ public class MainActivity extends Activity {
     private int dp(int value) {
 
         return Math.round(
-                value * getResources()
+                value
+                        * getResources()
                         .getDisplayMetrics()
                         .density
         );
@@ -1686,14 +1953,21 @@ public class MainActivity extends Activity {
     private static class PopupEntry {
 
         final GeckoSession session;
+
         GeckoView view;
+
+        boolean canGoBack = false;
 
         PopupEntry(
                 GeckoSession session,
                 GeckoView view
         ) {
-            this.session = session;
-            this.view = view;
+
+            this.session =
+                    session;
+
+            this.view =
+                    view;
         }
     }
 
@@ -1710,7 +1984,7 @@ public class MainActivity extends Activity {
         private boolean dragging;
         private boolean refreshing;
 
-        private ProgressBar spinner;
+        private final ProgressBar spinner;
 
         private Runnable refreshListener;
 
@@ -1720,10 +1994,14 @@ public class MainActivity extends Activity {
 
             super(context);
 
-            setClipChildren(false);
+            setClipChildren(
+                    false
+            );
 
             spinner =
-                    new ProgressBar(context);
+                    new ProgressBar(
+                            context
+                    );
 
             spinner.setVisibility(
                     View.GONE
@@ -1733,10 +2011,12 @@ public class MainActivity extends Activity {
                     new LayoutParams(
                             36,
                             36,
-                            Gravity.TOP | Gravity.CENTER_HORIZONTAL
+                            Gravity.TOP
+                                    | Gravity.CENTER_HORIZONTAL
                     );
 
-            spinnerParams.topMargin = 12;
+            spinnerParams.topMargin =
+                    12;
 
             addView(
                     spinner,
@@ -1747,7 +2027,9 @@ public class MainActivity extends Activity {
         void setOnRefreshListener(
                 Runnable listener
         ) {
-            refreshListener = listener;
+
+            refreshListener =
+                    listener;
         }
 
         @Override
@@ -1760,30 +2042,44 @@ public class MainActivity extends Activity {
             }
 
             if (getChildCount() == 0) {
-                return super.onInterceptTouchEvent(event);
+
+                return super.onInterceptTouchEvent(
+                        event
+                );
             }
 
-            View child = getChildAt(0);
+            View child =
+                    getChildAt(0);
 
             switch (event.getActionMasked()) {
 
                 case MotionEvent.ACTION_DOWN:
 
-                    downY = event.getY();
-                    currentDistance = 0;
-                    dragging = false;
+                    downY =
+                            event.getY();
 
-                    return super.onInterceptTouchEvent(event);
+                    currentDistance =
+                            0;
+
+                    dragging =
+                            false;
+
+                    return super.onInterceptTouchEvent(
+                            event
+                    );
 
                 case MotionEvent.ACTION_MOVE:
 
                     float dy =
-                            event.getY() - downY;
+                            event.getY()
+                                    - downY;
 
                     if (dy > 0
                             && !child.canScrollVertically(-1)) {
 
-                        dragging = true;
+                        dragging =
+                                true;
+
                         return true;
                     }
 
@@ -1792,11 +2088,15 @@ public class MainActivity extends Activity {
                 case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
 
-                    dragging = false;
+                    dragging =
+                            false;
+
                     break;
             }
 
-            return super.onInterceptTouchEvent(event);
+            return super.onInterceptTouchEvent(
+                    event
+            );
         }
 
         @Override
@@ -1812,15 +2112,19 @@ public class MainActivity extends Activity {
 
                 case MotionEvent.ACTION_DOWN:
 
-                    downY = event.getY();
-                    currentDistance = 0;
+                    downY =
+                            event.getY();
+
+                    currentDistance =
+                            0;
 
                     return true;
 
                 case MotionEvent.ACTION_MOVE:
 
                     float dy =
-                            event.getY() - downY;
+                            event.getY()
+                                    - downY;
 
                     if (dy <= 0) {
                         return true;
@@ -1840,11 +2144,13 @@ public class MainActivity extends Activity {
                     if (child != null) {
 
                         child.setTranslationY(
-                                currentDistance * 0.55f
+                                currentDistance
+                                        * 0.55f
                         );
                     }
 
                     if (currentDistance > 80) {
+
                         spinner.setVisibility(
                                 View.VISIBLE
                         );
@@ -1868,6 +2174,7 @@ public class MainActivity extends Activity {
                 case MotionEvent.ACTION_CANCEL:
 
                     resetPosition();
+
                     return true;
             }
 
@@ -1876,7 +2183,8 @@ public class MainActivity extends Activity {
 
         private void startRefreshing() {
 
-            refreshing = true;
+            refreshing =
+                    true;
 
             spinner.setVisibility(
                     View.VISIBLE
@@ -1896,6 +2204,7 @@ public class MainActivity extends Activity {
             }
 
             if (refreshListener != null) {
+
                 refreshListener.run();
             }
 
@@ -1907,7 +2216,9 @@ public class MainActivity extends Activity {
 
         private void stopRefreshing() {
 
-            refreshing = false;
+            refreshing =
+                    false;
+
             resetPosition();
         }
 
@@ -1930,8 +2241,11 @@ public class MainActivity extends Activity {
                     View.GONE
             );
 
-            currentDistance = 0;
-            dragging = false;
+            currentDistance =
+                    0;
+
+            dragging =
+                    false;
         }
     }
 }
