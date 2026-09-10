@@ -123,6 +123,76 @@ background:var(--accent);box-shadow:0 0 10px rgba(255,23,68,.8);
 display:block;width:100%;height:540px;border:0;background:#000;opacity:1;
 transition:opacity .25s ease;touch-action:manipulation;
 }
+/* =========================================================
+   APP PROMOTION MARQUEE OVER VIDEO
+   ========================================================= */
+
+.screen-app-marquee{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:20;
+  height:34px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+  pointer-events:none;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+.screen-app-marquee-track{
+  display:flex;
+  width:max-content;
+  white-space:nowrap;
+  animation:screenAppMarquee 18s linear infinite;
+  will-change:transform;
+}
+
+.screen-app-marquee-track span{
+  display:inline-flex;
+  align-items:center;
+  padding-right:100px;
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.3px;
+}
+
+@keyframes screenAppMarquee{
+  from{
+    transform:translateX(0);
+  }
+
+  to{
+    transform:translateX(-50%);
+  }
+}
+
+/* Keep marquee visible in fullscreen */
+.screen-player:fullscreen .screen-app-marquee,
+.screen-player:-webkit-full-screen .screen-app-marquee{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:100001;
+}
+
+/* Slightly smaller on phones */
+@media (max-width:550px){
+  .screen-app-marquee{
+    height:30px;
+  }
+
+  .screen-app-marquee-track span{
+    font-size:10px;
+    padding-right:70px;
+  }
+}
 .screen-placeholder{
 position:absolute;inset:0;z-index:3;
 display:flex;flex-direction:column;align-items:center;justify-content:center;
