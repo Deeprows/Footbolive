@@ -25,6 +25,21 @@
     "date": "2026-09-10"
   },
   {
+    "name": "Fenerbhace vs AS Roma",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/64/ba/64ba7407-4d6c-45f2-83cc-31d39fe2dba6/playlist.m3u8",
+    "date": "2026-09-11"
+  },
+  {
+    "name": "PSV vs Shakhtar Donetsk",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/3d/f5/3df57eb6-33b5-4cdf-95e3-d07b353282c1/720p.m3u8",
+    "date": "2026-09-11"
+  },
+   {
+    "name": "Manchester United vs Sabah",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/45/0d/450d48bd-2f1f-4efc-b2db-28e466d997f9/720p.m3u8",
+    "date": "2026-09-11"
+  },
+  {
     "name": "Stuggart vs Viking",
     "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/7c/e8/7ce88f62-72c3-46a7-8c89-8dd12d17245b/1080p.m3u8",
     "date": "2026-09-10"
