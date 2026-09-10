@@ -48,5 +48,5 @@ dependencies {
     implementation 'androidx.media3:media3-ui:1.11.0'
 
     // GeckoView
-    implementation "org.mozilla.geckoview:geckoview:154.0.20260824154132"
+    implementation "org.mozilla.geckoview:geckoview:153.0.20260810162159""
 }
