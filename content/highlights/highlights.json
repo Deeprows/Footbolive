@@ -34,9 +34,19 @@
     "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/3d/f5/3df57eb6-33b5-4cdf-95e3-d07b353282c1/720p.m3u8",
     "date": "2026-09-11"
   },
+  {
+    "name": "Como vs RB Leipzig",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/ae/5c/ae5cdbfb-ddf3-4705-bddb-5292d2bff352/playlist.m3u8",
+    "date": "2026-09-11"
+  },
    {
     "name": "Manchester United vs Sabah",
     "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/45/0d/450d48bd-2f1f-4efc-b2db-28e466d997f9/720p.m3u8",
+    "date": "2026-09-11"
+  },
+  {
+    "name": "Bayern Munich vs Bodo Glimt",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/bb/e9/bbe9ac51-65de-4d60-9b04-117d8a41c63c/playlist.m3u8",
     "date": "2026-09-11"
   },
   {
