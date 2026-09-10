@@ -133,7 +133,7 @@ transition:opacity .25s ease;touch-action:manipulation;
   overflow:hidden;
   display:flex;
   align-items:center;
-  background:rgba(0,0,0,.78);
+  background:rgba(0,0,0,.45);
   text-decoration:none;
   cursor:pointer;
 }
