@@ -3708,6 +3708,9 @@ if (backToMatches) {
             );
 
             openFootball();
+             
+             /* OPEN MATCH CHAT */
+openMatchChat(this);
 
           }
         );
@@ -3883,9 +3886,6 @@ if (backToMatches) {
 );
 
 openFootball();
-
-/* OPEN MATCH CHAT */
-openMatchChat(this);
 
           }
         );
