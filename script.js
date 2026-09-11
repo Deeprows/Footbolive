@@ -3517,16 +3517,29 @@ if (chatForm) {
 
         chatMessageInput.focus();
 
-      } catch (error) {
+     } catch (error) {
 
-        console.error(
-          "Could not send chat message:",
-          error
-        );
+  console.error(
+    "Could not send chat message:",
+    error
+  );
 
-        alert(
-          "Could not send your comment. Please try again."
-        );
+  console.error(
+    "Firebase error code:",
+    error?.code
+  );
+
+  console.error(
+    "Firebase error message:",
+    error?.message
+  );
+
+  alert(
+    "Could not send your comment.\n\n" +
+    (error?.code || "Unknown error") +
+    "\n" +
+    (error?.message || "Please try again.")
+  );
 
       } finally {
 
