@@ -3782,65 +3782,73 @@ openMatchChat(this);
     );
 
 
-    /* =======================================================
-       MOVIE CLICK
-       ======================================================= */
+   /* =======================================================
+   MOVIE CLICK
+   ======================================================= */
 
-    movieCards.forEach(
-      function (movie) {
+movieCards.forEach(
+  function (movie) {
 
-        if (movie.dataset.bound === "true") {
-          return;
-        }
+    if (movie.dataset.bound === "true") {
+      return;
+    }
 
-        movie.dataset.bound = "true";
+    movie.dataset.bound = "true";
 
-        movie.addEventListener(
-          "click",
-          function () {
+    movie.addEventListener(
+      "click",
+      function () {
 
-            const url =
-              this.dataset.url;
+        const url =
+          this.dataset.url ||
+          this.dataset.downloadUrl ||
+          "";
 
-            const name =
-              this.dataset.name ||
-              this.querySelector(
-                ".movie-title"
-              )?.textContent?.trim() ||
-              "Movie";
+        const name =
+          this.dataset.name ||
+          this.querySelector(
+            ".movie-title"
+          )?.textContent?.trim() ||
+          "Movie";
 
-            movieCards.forEach(
-              function (item) {
-                item.classList.remove(
-                  "active"
-                );
-              }
-            );
-
-            this.classList.add(
+        movieCards.forEach(
+          function (item) {
+            item.classList.remove(
               "active"
             );
-
-            currentMatchCard = null;
-            currentMainUrl = "";
-            currentAltUrl = "";
-
-           loadScreen(
-  url,
-  name,
-  "match",
-  true
-);
-
-openFootball();
-
           }
+        );
+
+        this.classList.add(
+          "active"
+        );
+
+        /* Clear football match state */
+        currentMatchCard = null;
+        currentMainUrl = url;
+        currentAltUrl = "";
+        currentScreenType = "movie";
+
+        /* Make sure match chat is NOT shown */
+        if (matchChat) {
+          matchChat.hidden = true;
+        }
+
+        /* Show movie section */
+        openMovies();
+
+        /* Load movie player */
+        loadScreen(
+          url,
+          name,
+          "movie"
         );
 
       }
     );
 
-
+  }
+);
     /* =======================================================
        ADD SHARE ICONS
        Runs every time cards are (re)bound — safe to call
