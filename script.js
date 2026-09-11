@@ -3154,38 +3154,48 @@ if (randomNameButton) {
    OPEN MATCH CHAT
    ========================================================= */
 
-function openMatchChat(card) {
+function openMatchChat(matchCard) {
 
-  if (!card || !matchChat || !matchList) {
+  if (!matchCard || !matchChat || !matchList) {
     return;
   }
 
-  const name =
-    card.dataset.name ||
-    card.querySelector(".match-teams")?.textContent?.trim() ||
+  currentChatMatch = matchCard;
+
+  currentChatSlug =
+    slugify(
+      matchCard.dataset.name || "match"
+    );
+
+  const matchName =
+    matchCard.dataset.name ||
     "Football Match";
 
-  currentChatMatch = card;
-  currentChatSlug = slugify(name);
-
   if (chatMatchName) {
-    chatMatchName.textContent = name;
+    chatMatchName.textContent =
+      matchName;
   }
 
-  // Save original location of chat
-  if (!matchChat.dataset.originalParent) {
-    matchChat.dataset.originalParent = "true";
-  }
+  /*
+   * Completely replace the match cards
+   * with the chat room.
+   */
+  matchList.hidden = true;
 
-  // Move chat to exactly where the match list is
+  /*
+   * Move chat directly into the match-list
+   * position so it occupies the same area.
+   */
   matchList.parentNode.insertBefore(
     matchChat,
     matchList
   );
 
-  // Hide match cards
-  matchList.hidden = true;
+  matchChat.hidden = false;
 
+  /*
+   * Hide football empty message if present.
+   */
   const footballEmpty =
     document.getElementById("footballEmpty");
 
@@ -3193,34 +3203,30 @@ function openMatchChat(card) {
     footballEmpty.hidden = true;
   }
 
-  // Show chat
-  matchChat.hidden = false;
+  /*
+   * Stop any previous chat listener.
+   */
+  stopChatListener();
 
-  const savedName =
-    localStorage.getItem(
-      "deeprowss_chat_username"
-    );
+  /*
+   * Clear previous messages.
+   */
+  if (chatMessages) {
+    chatMessages.innerHTML = "";
+  }
 
-  if (savedName && chatUserName) {
-    chatUserName.value = savedName;
+  /*
+   * Show username screen first.
+   */
+  if (chatNameSetup) {
+    chatNameSetup.hidden = false;
   }
 
   if (chatRoom) {
     chatRoom.hidden = true;
   }
 
-  if (chatNameSetup) {
-    chatNameSetup.hidden = false;
-  }
-
-  if (chatMessages) {
-    chatMessages.innerHTML =
-      '<div class="chat-loading">Enter the chat to see comments...</div>';
-  }
-
-  stopChatListener();
 }
-
   // Keep the user at the football section.
 // Do not scroll down to the physical chat element.
 
@@ -3567,9 +3573,14 @@ if (backToMatches) {
 
       stopChatListener();
 
+      /*
+       * Hide chat completely.
+       */
       matchChat.hidden = true;
 
-      // Put chat back after the match list
+      /*
+       * Put chat back after the match list.
+       */
       if (
         matchList.parentNode &&
         matchList.nextSibling !== matchChat
@@ -3580,8 +3591,14 @@ if (backToMatches) {
         );
       }
 
+      /*
+       * Bring match cards back.
+       */
       matchList.hidden = false;
 
+      /*
+       * Hide empty state.
+       */
       const footballEmpty =
         document.getElementById("footballEmpty");
 
@@ -3589,12 +3606,30 @@ if (backToMatches) {
         footballEmpty.hidden = true;
       }
 
+      /*
+       * Clear old chat messages.
+       */
       if (chatMessages) {
         chatMessages.innerHTML = "";
       }
 
+      /*
+       * Reset chat state.
+       */
       currentChatMatch = null;
       currentChatSlug = "";
+
+      /*
+       * Reset username screen.
+       */
+      if (chatNameSetup) {
+        chatNameSetup.hidden = false;
+      }
+
+      if (chatRoom) {
+        chatRoom.hidden = true;
+      }
+
     }
   );
 
