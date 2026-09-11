@@ -2992,7 +2992,653 @@ if (altScreenButton) {
       document.querySelectorAll(
         ".movie-card"
       );
+/* =========================================================
+   MATCH CHAT
+   ========================================================= */
 
+const matchChat =
+  document.getElementById("matchChat");
+
+const matchList =
+  document.getElementById("matchList");
+
+const backToMatches =
+  document.getElementById("backToMatches");
+
+const chatMatchName =
+  document.getElementById("chatMatchName");
+
+const chatNameSetup =
+  document.getElementById("chatNameSetup");
+
+const chatUserName =
+  document.getElementById("chatUserName");
+
+const randomNameButton =
+  document.getElementById("randomNameButton");
+
+const enterChatButton =
+  document.getElementById("enterChatButton");
+
+const chatRoom =
+  document.getElementById("chatRoom");
+
+const chatMessages =
+  document.getElementById("chatMessages");
+
+const chatForm =
+  document.getElementById("chatForm");
+
+const chatMessageInput =
+  document.getElementById("chatMessageInput");
+
+let currentChatMatch = null;
+let currentChatSlug = "";
+let chatListener = null;
+let chatUsername = "";
+
+const CHAT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBs9eSquNu2drJjM3vqFGDX1QU-VE1_F7U",
+  authDomain: "deeprows-4d37c.firebaseapp.com",
+  projectId: "deeprows-4d37c",
+  storageBucket: "deeprows-4d37c.firebasestorage.app",
+  messagingSenderId: "227439941748",
+  appId: "1:227439941748:web:dc00e8a6e620db2279921"
+};
+
+
+/* =========================================================
+   FIREBASE
+   ========================================================= */
+
+let chatDb = null;
+
+function getChatDatabase() {
+
+  try {
+
+    if (
+      typeof firebase === "undefined" ||
+      !firebase.firestore
+    ) {
+      console.error(
+        "Firebase Firestore is not available."
+      );
+      return null;
+    }
+
+    const app =
+      firebase.apps.length
+        ? firebase.app()
+        : firebase.initializeApp(
+            CHAT_FIREBASE_CONFIG
+          );
+
+    chatDb =
+      firebase.firestore(app);
+
+    return chatDb;
+
+  } catch (error) {
+
+    console.error(
+      "Could not initialize Match Chat Firebase:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+/* =========================================================
+   RANDOM USERNAME
+   ========================================================= */
+
+function generateChatName() {
+
+  const names = [
+    "Football Fan",
+    "Match Fan",
+    "Goal Hunter",
+    "Football Lover",
+    "Super Fan",
+    "Game Watcher",
+    "Goal Master",
+    "Football King",
+    "Football Queen",
+    "Match Expert"
+  ];
+
+  const name =
+    names[
+      Math.floor(
+        Math.random() * names.length
+      )
+    ];
+
+  const number =
+    Math.floor(
+      100 + Math.random() * 900
+    );
+
+  return name + " " + number;
+
+}
+
+
+if (randomNameButton) {
+
+  randomNameButton.addEventListener(
+    "click",
+    function () {
+
+      if (chatUserName) {
+
+        chatUserName.value =
+          generateChatName();
+
+        chatUserName.focus();
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   OPEN MATCH CHAT
+   ========================================================= */
+
+function openMatchChat(card) {
+
+  if (
+    !card ||
+    !matchChat ||
+    !matchList
+  ) {
+    return;
+  }
+
+  const name =
+    card.dataset.name ||
+    card.querySelector(
+      ".match-teams"
+    )?.textContent?.trim() ||
+    "Football Match";
+
+  currentChatMatch = card;
+
+  currentChatSlug =
+    slugify(name);
+
+  if (chatMatchName) {
+    chatMatchName.textContent =
+      name;
+  }
+
+  /*
+   * Hide the match cards.
+   */
+  matchList.hidden = true;
+
+  /*
+   * Hide the empty state while
+   * the chat is open.
+   */
+  const footballEmpty =
+    document.getElementById(
+      "footballEmpty"
+    );
+
+  if (footballEmpty) {
+    footballEmpty.hidden = true;
+  }
+
+  /*
+   * Show Match Chat.
+   */
+  matchChat.hidden = false;
+
+  /*
+   * Restore previously saved name.
+   */
+  const savedName =
+    localStorage.getItem(
+      "deeprowss_chat_username"
+    );
+
+  if (savedName && chatUserName) {
+
+    chatUserName.value =
+      savedName;
+
+  }
+
+  /*
+   * Reset chat room for the
+   * newly selected match.
+   */
+  if (chatRoom) {
+    chatRoom.hidden = true;
+  }
+
+  if (chatNameSetup) {
+    chatNameSetup.hidden = false;
+  }
+
+  /*
+   * Clear old messages.
+   */
+  if (chatMessages) {
+
+    chatMessages.innerHTML =
+      '<div class="chat-loading">' +
+      'Enter the chat to see comments...' +
+      '</div>';
+
+  }
+
+  /*
+   * Stop the previous match listener.
+   */
+  stopChatListener();
+
+  /*
+   * Scroll to the chat area.
+   */
+  setTimeout(
+    function () {
+
+      matchChat.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    },
+    50
+  );
+
+}
+
+
+/* =========================================================
+   STOP CHAT LISTENER
+   ========================================================= */
+
+function stopChatListener() {
+
+  if (
+    typeof chatListener === "function"
+  ) {
+
+    chatListener();
+
+    chatListener = null;
+
+  }
+
+}
+
+
+/* =========================================================
+   ENTER CHAT
+   ========================================================= */
+
+if (enterChatButton) {
+
+  enterChatButton.addEventListener(
+    "click",
+    function () {
+
+      if (!currentChatMatch) {
+        return;
+      }
+
+      const enteredName =
+        chatUserName
+          ? chatUserName.value.trim()
+          : "";
+
+      if (!enteredName) {
+
+        if (chatUserName) {
+          chatUserName.focus();
+        }
+
+        return;
+
+      }
+
+      chatUsername =
+        enteredName.substring(
+          0,
+          30
+        );
+
+      localStorage.setItem(
+        "deeprowss_chat_username",
+        chatUsername
+      );
+
+      if (chatNameSetup) {
+        chatNameSetup.hidden = true;
+      }
+
+      if (chatRoom) {
+        chatRoom.hidden = false;
+      }
+
+      startChatListener();
+
+      if (chatMessageInput) {
+
+        setTimeout(
+          function () {
+            chatMessageInput.focus();
+          },
+          100
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   LOAD MATCH MESSAGES
+   ========================================================= */
+
+function startChatListener() {
+
+  const db =
+    getChatDatabase();
+
+  if (
+    !db ||
+    !currentChatSlug ||
+    !chatMessages
+  ) {
+    return;
+  }
+
+  stopChatListener();
+
+  chatMessages.innerHTML =
+    '<div class="chat-loading">' +
+    'Loading messages...' +
+    '</div>';
+
+  const messagesRef =
+    db
+      .collection("match_chats")
+      .doc(currentChatSlug)
+      .collection("messages")
+      .orderBy(
+        "createdAt",
+        "asc"
+      )
+      .limitToLast(100);
+
+  chatListener =
+    messagesRef.onSnapshot(
+
+      function (snapshot) {
+
+        chatMessages.innerHTML = "";
+
+        if (snapshot.empty) {
+
+          chatMessages.innerHTML =
+            '<div class="chat-loading">' +
+            'No comments yet. Be the first to comment!' +
+            '</div>';
+
+          return;
+
+        }
+
+        snapshot.forEach(
+          function (doc) {
+
+            const data =
+              doc.data() || {};
+
+            const message =
+              document.createElement(
+                "div"
+              );
+
+            message.className =
+              "chat-message";
+
+            const username =
+              document.createElement(
+                "span"
+              );
+
+            username.className =
+              "chat-message-name";
+
+            username.textContent =
+              data.username ||
+              "Football Fan";
+
+            const text =
+              document.createElement(
+                "div"
+              );
+
+            text.className =
+              "chat-message-text";
+
+            text.textContent =
+              data.message || "";
+
+            message.appendChild(
+              username
+            );
+
+            message.appendChild(
+              text
+            );
+
+            chatMessages.appendChild(
+              message
+            );
+
+          }
+        );
+
+        chatMessages.scrollTop =
+          chatMessages.scrollHeight;
+
+      },
+
+      function (error) {
+
+        console.error(
+          "Match Chat listener error:",
+          error
+        );
+
+        chatMessages.innerHTML =
+          '<div class="chat-loading">' +
+          'Unable to load chat right now.' +
+          '</div>';
+
+      }
+
+    );
+
+}
+
+
+/* =========================================================
+   SEND MESSAGE
+   ========================================================= */
+
+if (chatForm) {
+
+  chatForm.addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+      if (
+        !currentChatSlug ||
+        !chatUsername ||
+        !chatMessageInput
+      ) {
+        return;
+      }
+
+      const message =
+        chatMessageInput.value.trim();
+
+      if (!message) {
+        return;
+      }
+
+      const safeMessage =
+        message.substring(
+          0,
+          300
+        );
+
+      const db =
+        getChatDatabase();
+
+      if (!db) {
+        return;
+      }
+
+      const sendButton =
+        document.getElementById(
+          "sendChatMessage"
+        );
+
+      if (sendButton) {
+        sendButton.disabled = true;
+      }
+
+      try {
+
+        await db
+          .collection("match_chats")
+          .doc(currentChatSlug)
+          .collection("messages")
+          .add({
+
+            username:
+              chatUsername,
+
+            message:
+              safeMessage,
+
+            matchName:
+              currentChatMatch?.dataset?.name ||
+              "",
+
+            createdAt:
+              firebase.firestore.FieldValue
+                .serverTimestamp()
+
+          });
+
+        chatMessageInput.value = "";
+
+        chatMessageInput.focus();
+
+      } catch (error) {
+
+        console.error(
+          "Could not send chat message:",
+          error
+        );
+
+        alert(
+          "Could not send your comment. Please try again."
+        );
+
+      } finally {
+
+        if (sendButton) {
+          sendButton.disabled = false;
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   BACK TO MATCHES
+   ========================================================= */
+
+if (backToMatches) {
+
+  backToMatches.addEventListener(
+    "click",
+    function () {
+
+      stopChatListener();
+
+      currentChatMatch = null;
+      currentChatSlug = "";
+
+      if (matchChat) {
+        matchChat.hidden = true;
+      }
+
+      if (matchList) {
+        matchList.hidden = false;
+      }
+
+      const footballEmpty =
+        document.getElementById(
+          "footballEmpty"
+        );
+
+      if (footballEmpty) {
+        footballEmpty.hidden = true;
+      }
+
+      /*
+       * Return to the football
+       * match list without changing
+       * the selected player.
+       */
+      requestAnimationFrame(
+        function () {
+
+          if (matchList) {
+
+            matchList.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+}
 
     /* =======================================================
        MATCH CLICK
@@ -3229,13 +3875,17 @@ if (altScreenButton) {
             currentMainUrl = "";
             currentAltUrl = "";
 
-            loadScreen(
-              url,
-              name,
-              "movie"
-            );
+           loadScreen(
+  url,
+  name,
+  "match",
+  true
+);
 
-            openMovies();
+openFootball();
+
+/* OPEN MATCH CHAT */
+openMatchChat(this);
 
           }
         );
