@@ -3156,73 +3156,55 @@ if (randomNameButton) {
 
 function openMatchChat(card) {
 
-  if (
-    !card ||
-    !matchChat ||
-    !matchList
-  ) {
+  if (!card || !matchChat || !matchList) {
     return;
   }
 
   const name =
     card.dataset.name ||
-    card.querySelector(
-      ".match-teams"
-    )?.textContent?.trim() ||
+    card.querySelector(".match-teams")?.textContent?.trim() ||
     "Football Match";
 
   currentChatMatch = card;
-
-  currentChatSlug =
-    slugify(name);
+  currentChatSlug = slugify(name);
 
   if (chatMatchName) {
-    chatMatchName.textContent =
-      name;
+    chatMatchName.textContent = name;
   }
 
-  /*
-   * Hide the match cards.
-   */
+  // Save original location of chat
+  if (!matchChat.dataset.originalParent) {
+    matchChat.dataset.originalParent = "true";
+  }
+
+  // Move chat to exactly where the match list is
+  matchList.parentNode.insertBefore(
+    matchChat,
+    matchList
+  );
+
+  // Hide match cards
   matchList.hidden = true;
 
-  /*
-   * Hide the empty state while
-   * the chat is open.
-   */
   const footballEmpty =
-    document.getElementById(
-      "footballEmpty"
-    );
+    document.getElementById("footballEmpty");
 
   if (footballEmpty) {
     footballEmpty.hidden = true;
   }
 
-  /*
-   * Show Match Chat.
-   */
+  // Show chat
   matchChat.hidden = false;
 
-  /*
-   * Restore previously saved name.
-   */
   const savedName =
     localStorage.getItem(
       "deeprowss_chat_username"
     );
 
   if (savedName && chatUserName) {
-
-    chatUserName.value =
-      savedName;
-
+    chatUserName.value = savedName;
   }
 
-  /*
-   * Reset chat room for the
-   * newly selected match.
-   */
   if (chatRoom) {
     chatRoom.hidden = true;
   }
@@ -3231,39 +3213,16 @@ function openMatchChat(card) {
     chatNameSetup.hidden = false;
   }
 
-  /*
-   * Clear old messages.
-   */
   if (chatMessages) {
-
     chatMessages.innerHTML =
-      '<div class="chat-loading">' +
-      'Enter the chat to see comments...' +
-      '</div>';
-
+      '<div class="chat-loading">Enter the chat to see comments...</div>';
   }
 
-  /*
-   * Stop the previous match listener.
-   */
   stopChatListener();
-
-  /*
-   * Scroll to the chat area.
-   */
-  setTimeout(
-    function () {
-
-      matchChat.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-    },
-    50
-  );
-
 }
+
+  // Keep the user at the football section.
+// Do not scroll down to the physical chat element.
 
 
 /* =========================================================
@@ -3595,46 +3554,34 @@ if (backToMatches) {
 
       stopChatListener();
 
-      currentChatMatch = null;
-      currentChatSlug = "";
+      matchChat.hidden = true;
 
-      if (matchChat) {
-        matchChat.hidden = true;
+      // Put chat back after the match list
+      if (
+        matchList.parentNode &&
+        matchList.nextSibling !== matchChat
+      ) {
+        matchList.parentNode.insertBefore(
+          matchChat,
+          matchList.nextSibling
+        );
       }
 
-      if (matchList) {
-        matchList.hidden = false;
-      }
+      matchList.hidden = false;
 
       const footballEmpty =
-        document.getElementById(
-          "footballEmpty"
-        );
+        document.getElementById("footballEmpty");
 
       if (footballEmpty) {
         footballEmpty.hidden = true;
       }
 
-      /*
-       * Return to the football
-       * match list without changing
-       * the selected player.
-       */
-      requestAnimationFrame(
-        function () {
+      if (chatMessages) {
+        chatMessages.innerHTML = "";
+      }
 
-          if (matchList) {
-
-            matchList.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
-
-          }
-
-        }
-      );
-
+      currentChatMatch = null;
+      currentChatSlug = "";
     }
   );
 
