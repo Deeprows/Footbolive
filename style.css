@@ -3228,3 +3228,58 @@ body.light
     flex-basis: 40px;
   }
 }
+
+/* =======================================================
+   FULL MATCH CHAT VIEW
+   ======================================================= */
+
+.match-chat {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.match-chat[hidden] {
+  display: none !important;
+}
+
+.match-chat-header {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#chatRoom {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#chatMessages {
+  width: 100%;
+  min-height: 320px;
+  max-height: 60vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Username setup fills the available chat area */
+#chatNameSetup {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Chat input stays full width */
+#chatForm {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+  #chatMessages {
+    min-height: 350px;
+    max-height: 65vh;
+  }
+
+}
