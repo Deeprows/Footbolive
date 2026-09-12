@@ -189,12 +189,12 @@ if (movieSearchInput) {
      SETTINGS
      ============================== */
 
-  // Do not trigger anything during
-  // the first 10 seconds.
-  const INITIAL_DELAY = 10 * 1000;
+  // Popunder becomes eligible only after 40 seconds.
+  // IMPORTANT: This does NOT trigger the popunder.
+  const INITIAL_DELAY = 40 * 1000;
 
-  // Allow another popunder after
-  // 30 seconds.
+  // After a popunder is triggered, wait 30 seconds
+  // before allowing another one.
   const POPUNDER_COOLDOWN = 30 * 1000;
 
   // EffectiveCPM popunder script
@@ -214,17 +214,14 @@ if (movieSearchInput) {
 
 
   /* ==============================
-     CHECK IF COOLDOWN HAS ENDED
+     CHECK COOLDOWN
      ============================== */
 
   function canShowPopunder() {
 
-    const lastShown =
-      Number(
-        localStorage.getItem(
-          STORAGE_KEY
-        )
-      );
+    const lastShown = Number(
+      localStorage.getItem(STORAGE_KEY)
+    );
 
     // No previous popunder
     if (!lastShown) {
@@ -235,7 +232,6 @@ if (movieSearchInput) {
       Date.now() - lastShown >=
       POPUNDER_COOLDOWN
     );
-
   }
 
 
@@ -245,10 +241,16 @@ if (movieSearchInput) {
 
   function markPopunderShown() {
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      Date.now().toString()
-    );
+    try {
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        Date.now().toString()
+      );
+
+    } catch (error) {
+      // Ignore storage errors
+    }
 
   }
 
@@ -259,31 +261,27 @@ if (movieSearchInput) {
 
   function triggerPopunder() {
 
-    // Popunder is not yet enabled
+    // Do nothing during the first 40 seconds.
     if (!popunderEnabled) {
       return;
     }
 
-    // Still inside the 30-second cooldown
+    // Respect cooldown.
     if (!canShowPopunder()) {
       return;
     }
 
-    // Prevent duplicate script loading
+    // Prevent duplicate loading.
     if (popunderLoading) {
       return;
     }
 
     popunderLoading = true;
 
-
     /*
-     * Mark the time immediately.
-     *
-     * This prevents multiple rapid clicks
-     * from loading the ad repeatedly.
+     * Mark immediately so rapid clicks cannot
+     * repeatedly request the ad.
      */
-
     markPopunderShown();
 
 
@@ -296,61 +294,60 @@ if (movieSearchInput) {
     script.async = true;
 
 
-    script.onload =
-      function () {
+    script.onload = function () {
 
-        popunderLoading = false;
+      popunderLoading = false;
 
-      };
-
-
-    script.onerror =
-      function () {
-
-        popunderLoading = false;
-
-      };
+    };
 
 
-    document.head.appendChild(
-      script
-    );
+    script.onerror = function () {
+
+      popunderLoading = false;
+
+    };
+
+
+    document.head.appendChild(script);
 
   }
 
 
   /* ==============================
-     ENABLE AFTER 10 SECONDS
+     ENABLE AFTER 40 SECONDS
      ============================== */
 
-  setTimeout(
-    function () {
+  setTimeout(function () {
 
-      popunderEnabled = true;
+    /*
+     * IMPORTANT:
+     * This ONLY makes the popunder eligible.
+     * It does NOT trigger the ad.
+     */
+    popunderEnabled = true;
 
-    },
-    INITIAL_DELAY
-  );
+  }, INITIAL_DELAY);
 
 
   /* ==============================
-     SITE-WIDE INTERACTIONS
+     USER CLICK ONLY
      ============================== */
 
   document.addEventListener(
     "click",
-    function () {
+    function (event) {
 
-      triggerPopunder();
-
-    },
-    true
-  );
-
-
-  document.addEventListener(
-    "pointerdown",
-    function () {
+      /*
+       * Only a genuine left/middle mouse click.
+       * Ignore right-clicks and unusual mouse buttons.
+       */
+      if (
+        event &&
+        event.button !== undefined &&
+        event.button !== 0
+      ) {
+        return;
+      }
 
       triggerPopunder();
 
