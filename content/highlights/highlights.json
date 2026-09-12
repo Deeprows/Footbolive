@@ -25,6 +25,21 @@
     "date": "2026-09-10"
   },
   {
+    "name": "Venezia vs Fiorentina",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/ee/1f/ee1ffad5-cc2e-4c46-b312-eede1b4f1981/1080p.m3u8",
+    "date": "2026-09-11"
+  },
+  {
+    "name": "Rennes vs Marseille",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/41/3d/413ddec6-5bbd-4286-b3e2-12e9b069f3c6/playlist.m3u8",
+    "date": "2026-09-11"
+  },
+  {
+    "name": "Sevilla vs Valencia",
+    "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/77/14/77145e3d-d6e5-4efd-be56-f96372355b8d/playlist.m3u8",
+    "date": "2026-09-11"
+  },
+  {
     "name": "Fenerbhace vs AS Roma",
     "url": "hls-player/player.html#https://cdn.videas.fr/v-medias/s5/hlsv1/64/ba/64ba7407-4d6c-45f2-83cc-31d39fe2dba6/playlist.m3u8",
     "date": "2026-09-11"
