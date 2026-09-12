@@ -3153,7 +3153,7 @@ if (randomNameButton) {
 
 function openMatchChat(matchCard) {
 
-  if (!matchCard || !matchChat || !matchList) {
+  if (!matchCard || !matchChat) {
     return;
   }
 
@@ -3169,52 +3169,62 @@ function openMatchChat(matchCard) {
     "Football Match";
 
   if (chatMatchName) {
-    chatMatchName.textContent =
-      matchName;
+    chatMatchName.textContent = matchName;
   }
 
-  /*
-   * Completely replace the match cards
-   * with the chat room.
-   */
-  matchList.hidden = true;
+  /* =========================================
+     COMPLETELY REMOVE ALL MATCH CARDS
+     FROM THE VISIBLE PAGE
+     ========================================= */
 
-  /*
-   * Move chat directly into the match-list
-   * position so it occupies the same area.
-   */
-  matchList.parentNode.insertBefore(
-    matchChat,
-    matchList
-  );
+  const allMatchCards =
+    document.querySelectorAll(".match-card");
 
-  matchChat.hidden = false;
+  allMatchCards.forEach(function (card) {
+    card.hidden = true;
+    card.style.display = "none";
+  });
 
-  /*
-   * Hide football empty message if present.
-   */
+  /* Hide match list itself */
+  if (matchList) {
+    matchList.hidden = true;
+    matchList.style.display = "none";
+  }
+
+  /* Hide football empty message */
   const footballEmpty =
     document.getElementById("footballEmpty");
 
   if (footballEmpty) {
     footballEmpty.hidden = true;
+    footballEmpty.style.display = "none";
   }
 
-  /*
-   * Stop any previous chat listener.
-   */
+  /* =========================================
+     MOVE CHAT INTO MATCH LIST POSITION
+     ========================================= */
+
+  if (
+    matchList &&
+    matchList.parentNode
+  ) {
+    matchList.parentNode.insertBefore(
+      matchChat,
+      matchList
+    );
+  }
+
+  matchChat.hidden = false;
+  matchChat.style.display = "block";
+
+  /* Clear previous listener/messages */
   stopChatListener();
 
-  /*
-   * Clear previous messages.
-   */
   if (chatMessages) {
     chatMessages.innerHTML = "";
   }
 
-  /*
-   * Show username screen first.
-   */
+  /* Show username setup */
   if (chatNameSetup) {
     chatNameSetup.hidden = false;
   }
@@ -3222,7 +3232,6 @@ function openMatchChat(matchCard) {
   if (chatRoom) {
     chatRoom.hidden = true;
   }
-
 }
   // Keep the user at the football section.
 // Do not scroll down to the physical chat element.
@@ -3568,57 +3577,59 @@ if (backToMatches) {
     "click",
     function () {
 
+      /* Stop Firebase listener */
       stopChatListener();
 
-      /*
-       * Hide chat completely.
-       */
-      matchChat.hidden = true;
+      /* =========================================
+         REMOVE CHAT FROM VIEW
+         ========================================= */
 
-      /*
-       * Put chat back after the match list.
-       */
-      if (
-        matchList.parentNode &&
-        matchList.nextSibling !== matchChat
-      ) {
-        matchList.parentNode.insertBefore(
-          matchChat,
-          matchList.nextSibling
-        );
+      matchChat.hidden = true;
+      matchChat.style.display = "none";
+
+      /* =========================================
+         RESTORE MATCH LIST
+         ========================================= */
+
+      if (matchList) {
+        matchList.hidden = false;
+        matchList.style.display = "";
       }
 
-      /*
-       * Bring match cards back.
-       */
-      matchList.hidden = false;
+      /* =========================================
+         RESTORE EVERY MATCH CARD
+         ========================================= */
 
-      /*
-       * Hide empty state.
-       */
+      const allMatchCards =
+        document.querySelectorAll(".match-card");
+
+      allMatchCards.forEach(function (card) {
+        card.hidden = false;
+        card.style.display = "";
+      });
+
+      /* =========================================
+         RESET EMPTY STATE
+         ========================================= */
+
       const footballEmpty =
         document.getElementById("footballEmpty");
 
       if (footballEmpty) {
         footballEmpty.hidden = true;
+        footballEmpty.style.display = "";
       }
 
-      /*
-       * Clear old chat messages.
-       */
+      /* Clear chat */
       if (chatMessages) {
         chatMessages.innerHTML = "";
       }
 
-      /*
-       * Reset chat state.
-       */
+      /* Reset chat state */
       currentChatMatch = null;
       currentChatSlug = "";
 
-      /*
-       * Reset username screen.
-       */
+      /* Reset username screen */
       if (chatNameSetup) {
         chatNameSetup.hidden = false;
       }
