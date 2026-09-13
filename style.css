@@ -3330,3 +3330,8 @@ body.light
   }
 
 }
+
+/* TEMPORARILY HIDE APP DOWNLOAD MARQUEE */
+.screen-app-marquee {
+  display: none !important;
+}
