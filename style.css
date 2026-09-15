@@ -3581,6 +3581,10 @@ body.light
   top: auto !important;
 }
 
+/* =========================================================
+   DRAGGABLE FLOATING CHAT HEADER
+   ========================================================= */
+
 #matchChat .match-chat-header {
   cursor: grab !important;
   touch-action: none !important;
