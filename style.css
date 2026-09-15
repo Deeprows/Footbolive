@@ -3581,12 +3581,13 @@ body.light
   top: auto !important;
 }
 
-/* Draggable chat header */
 #matchChat .match-chat-header {
-  cursor: grab;
-  touch-action: none;
+  cursor: grab !important;
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
 #matchChat .match-chat-header:active {
-  cursor: grabbing;
+  cursor: grabbing !important;
 }
