@@ -3598,9 +3598,9 @@ body.light
 
 /* Move floating chat slightly upward */
 #matchChat {
-  bottom: 60px !important;
+  bottom: 58px !important;
 }
 
 #minimizedChatBubble {
-  bottom: 60px !important;
+  bottom: 58px !important;
 }
