@@ -2999,8 +2999,14 @@ const matchChat =
 const matchList =
   document.getElementById("matchList");
 
-const backToMatches =
-  document.getElementById("backToMatches");
+const minimizeMatchChat =
+  document.getElementById("minimizeMatchChat");
+
+const minimizedChatBubble =
+  document.getElementById("minimizedChatBubble");
+
+const minimizedChatName =
+  document.getElementById("minimizedChatName");
 
 const chatMatchName =
   document.getElementById("chatMatchName");
@@ -3172,25 +3178,6 @@ function openMatchChat(matchCard) {
     chatMatchName.textContent = matchName;
   }
 
-  /* =========================================
-     COMPLETELY REMOVE ALL MATCH CARDS
-     FROM THE VISIBLE PAGE
-     ========================================= */
-
-  const allMatchCards =
-    document.querySelectorAll(".match-card");
-
-  allMatchCards.forEach(function (card) {
-    card.hidden = true;
-    card.style.display = "none";
-  });
-
-  /* Hide match list itself */
-  if (matchList) {
-    matchList.hidden = true;
-    matchList.style.display = "none";
-  }
-
   /* Hide football empty message */
   const footballEmpty =
     document.getElementById("footballEmpty");
@@ -3200,25 +3187,15 @@ function openMatchChat(matchCard) {
     footballEmpty.style.display = "none";
   }
 
-  /* =========================================
-     MOVE CHAT INTO MATCH LIST POSITION
-     ========================================= */
+ matchChat.hidden = false;
+matchChat.style.display = "flex";
 
-  if (
-    matchList &&
-    matchList.parentNode
-  ) {
-    matchList.parentNode.insertBefore(
-      matchChat,
-      matchList
-    );
-  }
+/* Hide minimized bubble */
+if (minimizedChatBubble) {
+  minimizedChatBubble.hidden = true;
+}
 
-  matchChat.hidden = false;
-  matchChat.style.display = "block";
-
-  /* Clear previous listener/messages */
-  stopChatListener();
+/* Clear previous listener/messages */
 
   if (chatMessages) {
     chatMessages.innerHTML = "";
@@ -3236,6 +3213,53 @@ function openMatchChat(matchCard) {
   // Keep the user at the football section.
 // Do not scroll down to the physical chat element.
 
+/* =========================================================
+   FLOATING CHAT MINIMIZE / RESTORE
+   ========================================================= */
+
+if (minimizeMatchChat) {
+  minimizeMatchChat.addEventListener(
+    "click",
+    function () {
+
+      if (!matchChat) {
+        return;
+      }
+
+      matchChat.hidden = true;
+      matchChat.style.display = "none";
+
+      if (minimizedChatName) {
+        minimizedChatName.textContent =
+          currentChatMatch?.dataset?.name ||
+          "Match Chat";
+      }
+
+      if (minimizedChatBubble) {
+        minimizedChatBubble.hidden = false;
+      }
+
+    }
+  );
+}
+
+if (minimizedChatBubble) {
+  minimizedChatBubble.addEventListener(
+    "click",
+    function () {
+
+      if (!matchChat) {
+        return;
+      }
+
+      matchChat.hidden = false;
+      matchChat.style.display = "flex";
+
+      minimizedChatBubble.hidden = true;
+
+    }
+  );
+}
 
 /* =========================================================
    STOP CHAT LISTENER
@@ -3566,82 +3590,6 @@ if (chatForm) {
 
 }
 
-
-/* =========================================================
-   BACK TO MATCHES
-   ========================================================= */
-
-if (backToMatches) {
-
-  backToMatches.addEventListener(
-    "click",
-    function () {
-
-      /* Stop Firebase listener */
-      stopChatListener();
-
-      /* =========================================
-         REMOVE CHAT FROM VIEW
-         ========================================= */
-
-      matchChat.hidden = true;
-      matchChat.style.display = "none";
-
-      /* =========================================
-         RESTORE MATCH LIST
-         ========================================= */
-
-      if (matchList) {
-        matchList.hidden = false;
-        matchList.style.display = "";
-      }
-
-      /* =========================================
-         RESTORE EVERY MATCH CARD
-         ========================================= */
-
-      const allMatchCards =
-        document.querySelectorAll(".match-card");
-
-      allMatchCards.forEach(function (card) {
-        card.hidden = false;
-        card.style.display = "";
-      });
-
-      /* =========================================
-         RESET EMPTY STATE
-         ========================================= */
-
-      const footballEmpty =
-        document.getElementById("footballEmpty");
-
-      if (footballEmpty) {
-        footballEmpty.hidden = true;
-        footballEmpty.style.display = "";
-      }
-
-      /* Clear chat */
-      if (chatMessages) {
-        chatMessages.innerHTML = "";
-      }
-
-      /* Reset chat state */
-      currentChatMatch = null;
-      currentChatSlug = "";
-
-      /* Reset username screen */
-      if (chatNameSetup) {
-        chatNameSetup.hidden = false;
-      }
-
-      if (chatRoom) {
-        chatRoom.hidden = true;
-      }
-
-    }
-  );
-
-}
 
     /* =======================================================
        MATCH CLICK
