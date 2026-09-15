@@ -3558,3 +3558,25 @@ body.light
   }
 
 }
+
+/* Floating chat must escape match-list stacking context */
+
+#matchChat {
+  position: fixed !important;
+  z-index: 999999 !important;
+  width: 360px !important;
+  height: 430px !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  left: auto !important;
+  top: auto !important;
+}
+
+#minimizedChatBubble {
+  position: fixed !important;
+  z-index: 999998 !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  left: auto !important;
+  top: auto !important;
+}
