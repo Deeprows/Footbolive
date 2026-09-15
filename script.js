@@ -5175,3 +5175,88 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(floatingChatBubble);
   }
 });
+
+/* =========================================================
+   DRAGGABLE FLOATING MATCH CHAT
+   ========================================================= */
+
+(function () {
+  const chatBox = document.getElementById("matchChat");
+  const chatHeader = chatBox?.querySelector(".match-chat-header");
+
+  if (!chatBox || !chatHeader) return;
+
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+  let startLeft = 0;
+  let startTop = 0;
+
+  function startDrag(event) {
+    if (event.target.closest("button, input, textarea")) return;
+
+    isDragging = true;
+
+    const point = event.touches ? event.touches[0] : event;
+
+    const rect = chatBox.getBoundingClientRect();
+
+    startX = point.clientX;
+    startY = point.clientY;
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    chatBox.style.right = "auto";
+    chatBox.style.bottom = "auto";
+    chatBox.style.left = `${startLeft}px`;
+    chatBox.style.top = `${startTop}px`;
+
+    document.body.style.userSelect = "none";
+    chatHeader.style.cursor = "grabbing";
+
+    event.preventDefault();
+  }
+
+  function moveDrag(event) {
+    if (!isDragging) return;
+
+    const point = event.touches ? event.touches[0] : event;
+
+    let newLeft = startLeft + (point.clientX - startX);
+    let newTop = startTop + (point.clientY - startY);
+
+    const maxLeft = window.innerWidth - chatBox.offsetWidth;
+    const maxTop = window.innerHeight - chatBox.offsetHeight;
+
+    newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+    newTop = Math.max(0, Math.min(newTop, maxTop));
+
+    chatBox.style.left = `${newLeft}px`;
+    chatBox.style.top = `${newTop}px`;
+
+    event.preventDefault();
+  }
+
+  function stopDrag() {
+    isDragging = false;
+    document.body.style.userSelect = "";
+    chatHeader.style.cursor = "grab";
+  }
+
+  chatHeader.style.cursor = "grab";
+  chatHeader.style.touchAction = "none";
+
+  chatHeader.addEventListener("mousedown", startDrag);
+  document.addEventListener("mousemove", moveDrag);
+  document.addEventListener("mouseup", stopDrag);
+
+  chatHeader.addEventListener("touchstart", startDrag, {
+    passive: false
+  });
+
+  document.addEventListener("touchmove", moveDrag, {
+    passive: false
+  });
+
+  document.addEventListener("touchend", stopDrag);
+})();
