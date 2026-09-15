@@ -5159,100 +5159,171 @@ if (refreshPageBtn) {
 })();
 
 /* =========================================================
-   MOVE FLOATING CHAT DIRECTLY TO BODY
-   WEBTOAPP / WEBVIEW FIX
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded", function () {
-  const floatingMatchChat = document.getElementById("matchChat");
-  const floatingChatBubble = document.getElementById("minimizedChatBubble");
-
-  if (floatingMatchChat && floatingMatchChat.parentElement !== document.body) {
-    document.body.appendChild(floatingMatchChat);
-  }
-
-  if (floatingChatBubble && floatingChatBubble.parentElement !== document.body) {
-    document.body.appendChild(floatingChatBubble);
-  }
-});
-
-/* =========================================================
-   DRAGGABLE FLOATING MATCH CHAT - POINTER EVENTS
+   FLOATING CHAT BODY MOVE + DRAG SUPPORT
+   WEBTOAPP / ANDROID WEBVIEW COMPATIBLE
    ========================================================= */
 
 (function () {
-  const chatBox = document.getElementById("matchChat");
+  "use strict";
 
-  if (!chatBox) return;
+  function setupFloatingChat() {
+    const chatBox = document.getElementById("matchChat");
+    const chatBubble = document.getElementById("minimizedChatBubble");
 
-  const chatHeader = chatBox.querySelector(".match-chat-header");
-
-  if (!chatHeader) return;
-
-  let dragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  chatHeader.style.cursor = "grab";
-  chatHeader.style.touchAction = "none";
-
-  chatHeader.addEventListener("pointerdown", function (event) {
-    if (
-      event.target.closest("button") ||
-      event.target.closest("input") ||
-      event.target.closest("textarea")
-    ) {
+    if (!chatBox) {
       return;
     }
 
-    const rect = chatBox.getBoundingClientRect();
+    /* Move both elements directly under BODY */
+    if (chatBox.parentElement !== document.body) {
+      document.body.appendChild(chatBox);
+    }
 
-    dragging = true;
+    if (
+      chatBubble &&
+      chatBubble.parentElement !== document.body
+    ) {
+      document.body.appendChild(chatBubble);
+    }
 
-    offsetX = event.clientX - rect.left;
-    offsetY = event.clientY - rect.top;
+    const chatHeader =
+      chatBox.querySelector(".match-chat-header");
 
-    chatBox.style.left = rect.left + "px";
-    chatBox.style.top = rect.top + "px";
-    chatBox.style.right = "auto";
-    chatBox.style.bottom = "auto";
+    if (!chatHeader) {
+      return;
+    }
 
-    chatHeader.style.cursor = "grabbing";
+    /* Prevent duplicate event binding */
+    if (chatHeader.dataset.dragReady === "true") {
+      return;
+    }
 
-    chatHeader.setPointerCapture(event.pointerId);
+    chatHeader.dataset.dragReady = "true";
 
-    event.preventDefault();
-  });
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let initialLeft = 0;
+    let initialTop = 0;
 
-  chatHeader.addEventListener("pointermove", function (event) {
-    if (!dragging) return;
-
-    let left = event.clientX - offsetX;
-    let top = event.clientY - offsetY;
-
-    const maxLeft = window.innerWidth - chatBox.offsetWidth;
-    const maxTop = window.innerHeight - chatBox.offsetHeight;
-
-    left = Math.max(0, Math.min(left, maxLeft));
-    top = Math.max(0, Math.min(top, maxTop));
-
-    chatBox.style.left = left + "px";
-    chatBox.style.top = top + "px";
-
-    event.preventDefault();
-  });
-
-  function stopDragging(event) {
-    if (!dragging) return;
-
-    dragging = false;
     chatHeader.style.cursor = "grab";
+    chatHeader.style.touchAction = "none";
+    chatHeader.style.userSelect = "none";
+    chatHeader.style.webkitUserSelect = "none";
 
-    try {
-      chatHeader.releasePointerCapture(event.pointerId);
-    } catch (error) {}
+    function startDrag(event) {
+      /* Do not drag when clicking the minimize button */
+      if (event.target.closest("button")) {
+        return;
+      }
+
+      const rect = chatBox.getBoundingClientRect();
+
+      isDragging = true;
+
+      startX = event.clientX;
+      startY = event.clientY;
+
+      initialLeft = rect.left;
+      initialTop = rect.top;
+
+      /* Convert from right/bottom positioning to left/top */
+      chatBox.style.left = initialLeft + "px";
+      chatBox.style.top = initialTop + "px";
+      chatBox.style.right = "auto";
+      chatBox.style.bottom = "auto";
+
+      chatHeader.style.cursor = "grabbing";
+
+      try {
+        chatHeader.setPointerCapture(event.pointerId);
+      } catch (error) {}
+
+      event.preventDefault();
+    }
+
+    function dragMove(event) {
+      if (!isDragging) {
+        return;
+      }
+
+      let newLeft =
+        initialLeft + (event.clientX - startX);
+
+      let newTop =
+        initialTop + (event.clientY - startY);
+
+      const maxLeft =
+        window.innerWidth - chatBox.offsetWidth;
+
+      const maxTop =
+        window.innerHeight - chatBox.offsetHeight;
+
+      newLeft = Math.max(
+        0,
+        Math.min(newLeft, maxLeft)
+      );
+
+      newTop = Math.max(
+        0,
+        Math.min(newTop, maxTop)
+      );
+
+      chatBox.style.left = newLeft + "px";
+      chatBox.style.top = newTop + "px";
+
+      event.preventDefault();
+    }
+
+    function stopDrag(event) {
+      if (!isDragging) {
+        return;
+      }
+
+      isDragging = false;
+      chatHeader.style.cursor = "grab";
+
+      try {
+        chatHeader.releasePointerCapture(event.pointerId);
+      } catch (error) {}
+    }
+
+    chatHeader.addEventListener(
+      "pointerdown",
+      startDrag,
+      { passive: false }
+    );
+
+    chatHeader.addEventListener(
+      "pointermove",
+      dragMove,
+      { passive: false }
+    );
+
+    chatHeader.addEventListener(
+      "pointerup",
+      stopDrag
+    );
+
+    chatHeader.addEventListener(
+      "pointercancel",
+      stopDrag
+    );
   }
 
-  chatHeader.addEventListener("pointerup", stopDragging);
-  chatHeader.addEventListener("pointercancel", stopDragging);
+  /* Run after page is ready */
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      setupFloatingChat
+    );
+  } else {
+    setupFloatingChat();
+  }
+
+  /* Retry because WebToApp/WebView may delay DOM rendering */
+  setTimeout(setupFloatingChat, 500);
+  setTimeout(setupFloatingChat, 1500);
+  setTimeout(setupFloatingChat, 3000);
+
 })();
