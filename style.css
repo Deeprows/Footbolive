@@ -3595,3 +3595,12 @@ body.light
 #matchChat .match-chat-header:active {
   cursor: grabbing !important;
 }
+
+/* Move floating chat slightly upward */
+#matchChat {
+  bottom: 90px !important;
+}
+
+#minimizedChatBubble {
+  bottom: 90px !important;
+}
