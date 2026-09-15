@@ -1141,6 +1141,7 @@
 
 
       </div>
+      
 <!-- =======================================================
      MATCH CHAT
      ======================================================= -->
@@ -1149,14 +1150,6 @@
 
   <!-- CHAT HEADER -->
   <div class="match-chat-header">
-
-    <button
-      type="button"
-      id="backToMatches"
-      class="chat-back-button"
-    >
-      ← Back to Matches
-    </button>
 
     <div class="match-chat-title">
       <span>⚽</span>
@@ -1172,24 +1165,31 @@
       </div>
     </div>
 
+    <button
+      type="button"
+      id="minimizeMatchChat"
+      class="minimize-chat-button"
+      aria-label="Minimize chat"
+    >
+      −
+    </button>
+
   </div>
 
 
   <!-- NAME SETUP -->
-
   <div
     id="chatNameSetup"
     class="chat-name-setup"
   >
 
     <h2>
-      Join the Match Chat ⚠️ +18
+      Join the Match Chat ⚠️ (+18)
     </h2>
 
     <p>
       Choose a name to chat with other football fans.
     </p>
-
 
     <input
       type="text"
@@ -1199,7 +1199,6 @@
       autocomplete="nickname"
     >
 
-
     <button
       type="button"
       id="randomNameButton"
@@ -1207,7 +1206,6 @@
     >
       🎲 Random Name
     </button>
-
 
     <button
       type="button"
@@ -1221,7 +1219,6 @@
 
 
   <!-- ACTUAL CHAT -->
-
   <div
     id="chatRoom"
     class="chat-room"
@@ -1229,7 +1226,6 @@
   >
 
     <!-- MESSAGES -->
-
     <div
       id="chatMessages"
       class="chat-messages"
@@ -1243,7 +1239,6 @@
 
 
     <!-- MESSAGE INPUT -->
-
     <form
       id="chatForm"
       class="chat-form"
@@ -1257,7 +1252,6 @@
         autocomplete="off"
       >
 
-
       <button
         type="submit"
         id="sendChatMessage"
@@ -1270,7 +1264,19 @@
   </div>
 
 </div>
-      
+
+
+<!-- MINIMIZED FLOATING MATCH CHAT -->
+<button
+  type="button"
+  id="minimizedChatBubble"
+  class="minimized-chat-bubble"
+  hidden
+>
+  💬 <span id="minimizedChatName">Match Chat</span>
+</button>
+
+    
     </section>
 
 
