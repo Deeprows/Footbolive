@@ -3213,6 +3213,15 @@ if (minimizedChatBubble) {
   // Keep the user at the football section.
 // Do not scroll down to the physical chat element.
 
+matchChat.hidden = false;
+matchChat.style.display = "flex";
+matchChat.style.position = "fixed";
+matchChat.style.zIndex = "2147483647";
+
+if (minimizedChatBubble) {
+  minimizedChatBubble.hidden = true;
+}
+
 /* =========================================================
    FLOATING CHAT MINIMIZE / RESTORE
    ========================================================= */
