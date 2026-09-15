@@ -3600,3 +3600,20 @@ body.light
   position: relative;
   z-index: 1 !important;
 }
+
+html,
+body {
+  overflow-x: visible !important;
+}
+
+main,
+section,
+.container,
+.app-container,
+.page,
+.content,
+.screen,
+#app {
+  overflow: visible !important;
+  transform: none !important;
+}
