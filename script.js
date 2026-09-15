@@ -5177,86 +5177,82 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* =========================================================
-   DRAGGABLE FLOATING MATCH CHAT
+   DRAGGABLE FLOATING MATCH CHAT - POINTER EVENTS
    ========================================================= */
 
 (function () {
   const chatBox = document.getElementById("matchChat");
-  const chatHeader = chatBox?.querySelector(".match-chat-header");
 
-  if (!chatBox || !chatHeader) return;
+  if (!chatBox) return;
 
-  let isDragging = false;
-  let startX = 0;
-  let startY = 0;
-  let startLeft = 0;
-  let startTop = 0;
+  const chatHeader = chatBox.querySelector(".match-chat-header");
 
-  function startDrag(event) {
-    if (event.target.closest("button, input, textarea")) return;
+  if (!chatHeader) return;
 
-    isDragging = true;
-
-    const point = event.touches ? event.touches[0] : event;
-
-    const rect = chatBox.getBoundingClientRect();
-
-    startX = point.clientX;
-    startY = point.clientY;
-    startLeft = rect.left;
-    startTop = rect.top;
-
-    chatBox.style.right = "auto";
-    chatBox.style.bottom = "auto";
-    chatBox.style.left = `${startLeft}px`;
-    chatBox.style.top = `${startTop}px`;
-
-    document.body.style.userSelect = "none";
-    chatHeader.style.cursor = "grabbing";
-
-    event.preventDefault();
-  }
-
-  function moveDrag(event) {
-    if (!isDragging) return;
-
-    const point = event.touches ? event.touches[0] : event;
-
-    let newLeft = startLeft + (point.clientX - startX);
-    let newTop = startTop + (point.clientY - startY);
-
-    const maxLeft = window.innerWidth - chatBox.offsetWidth;
-    const maxTop = window.innerHeight - chatBox.offsetHeight;
-
-    newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-    newTop = Math.max(0, Math.min(newTop, maxTop));
-
-    chatBox.style.left = `${newLeft}px`;
-    chatBox.style.top = `${newTop}px`;
-
-    event.preventDefault();
-  }
-
-  function stopDrag() {
-    isDragging = false;
-    document.body.style.userSelect = "";
-    chatHeader.style.cursor = "grab";
-  }
+  let dragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
 
   chatHeader.style.cursor = "grab";
   chatHeader.style.touchAction = "none";
 
-  chatHeader.addEventListener("mousedown", startDrag);
-  document.addEventListener("mousemove", moveDrag);
-  document.addEventListener("mouseup", stopDrag);
+  chatHeader.addEventListener("pointerdown", function (event) {
+    if (
+      event.target.closest("button") ||
+      event.target.closest("input") ||
+      event.target.closest("textarea")
+    ) {
+      return;
+    }
 
-  chatHeader.addEventListener("touchstart", startDrag, {
-    passive: false
+    const rect = chatBox.getBoundingClientRect();
+
+    dragging = true;
+
+    offsetX = event.clientX - rect.left;
+    offsetY = event.clientY - rect.top;
+
+    chatBox.style.left = rect.left + "px";
+    chatBox.style.top = rect.top + "px";
+    chatBox.style.right = "auto";
+    chatBox.style.bottom = "auto";
+
+    chatHeader.style.cursor = "grabbing";
+
+    chatHeader.setPointerCapture(event.pointerId);
+
+    event.preventDefault();
   });
 
-  document.addEventListener("touchmove", moveDrag, {
-    passive: false
+  chatHeader.addEventListener("pointermove", function (event) {
+    if (!dragging) return;
+
+    let left = event.clientX - offsetX;
+    let top = event.clientY - offsetY;
+
+    const maxLeft = window.innerWidth - chatBox.offsetWidth;
+    const maxTop = window.innerHeight - chatBox.offsetHeight;
+
+    left = Math.max(0, Math.min(left, maxLeft));
+    top = Math.max(0, Math.min(top, maxTop));
+
+    chatBox.style.left = left + "px";
+    chatBox.style.top = top + "px";
+
+    event.preventDefault();
   });
 
-  document.addEventListener("touchend", stopDrag);
+  function stopDragging(event) {
+    if (!dragging) return;
+
+    dragging = false;
+    chatHeader.style.cursor = "grab";
+
+    try {
+      chatHeader.releasePointerCapture(event.pointerId);
+    } catch (error) {}
+  }
+
+  chatHeader.addEventListener("pointerup", stopDragging);
+  chatHeader.addEventListener("pointercancel", stopDragging);
 })();
