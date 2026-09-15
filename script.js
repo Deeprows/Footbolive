@@ -5157,3 +5157,21 @@ if (refreshPageBtn) {
   };
 
 })();
+
+/* =========================================================
+   MOVE FLOATING CHAT DIRECTLY TO BODY
+   WEBTOAPP / WEBVIEW FIX
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+  const floatingMatchChat = document.getElementById("matchChat");
+  const floatingChatBubble = document.getElementById("minimizedChatBubble");
+
+  if (floatingMatchChat && floatingMatchChat.parentElement !== document.body) {
+    document.body.appendChild(floatingMatchChat);
+  }
+
+  if (floatingChatBubble && floatingChatBubble.parentElement !== document.body) {
+    document.body.appendChild(floatingChatBubble);
+  }
+});
