@@ -3580,3 +3580,13 @@ body.light
   left: auto !important;
   top: auto !important;
 }
+
+/* Draggable chat header */
+#matchChat .match-chat-header {
+  cursor: grab;
+  touch-action: none;
+}
+
+#matchChat .match-chat-header:active {
+  cursor: grabbing;
+}
