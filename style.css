@@ -3558,3 +3558,45 @@ body.light
   }
 
 }
+
+/* =========================================================
+   FORCE MATCH CHAT ABOVE EVERYTHING — WEBTOAPP FIX
+   ========================================================= */
+
+#matchChat {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  isolation: isolate !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+#minimizedChatBubble {
+  position: fixed !important;
+  z-index: 2147483646 !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  left: auto !important;
+  top: auto !important;
+  pointer-events: auto !important;
+}
+
+/* Prevent parent sections from covering the floating chat */
+#matchChat,
+#matchChat * {
+  box-sizing: border-box !important;
+}
+
+/* Ensure match content stays below the chat */
+.match-list,
+#matchList,
+.matches-section,
+.football-section,
+.match-card {
+  position: relative;
+  z-index: 1 !important;
+}
