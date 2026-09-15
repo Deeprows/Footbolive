@@ -3335,3 +3335,226 @@ body.light
 .screen-app-marquee {
   display: none !important;
 }
+
+
+/* =========================================================
+   DEEPROWSS FLOATING MINI MATCH CHAT
+   ========================================================= */
+
+.match-chat {
+  position: fixed !important;
+  z-index: 999999 !important;
+
+  width: 360px !important;
+  max-width: calc(100vw - 24px) !important;
+
+  height: 430px !important;
+  max-height: calc(100dvh - 90px) !important;
+
+  right: 18px !important;
+  bottom: 18px !important;
+  left: auto !important;
+  top: auto !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  background: #07090d !important;
+  border: 1px solid #303844 !important;
+  border-radius: 12px !important;
+
+  box-shadow: 0 12px 45px rgba(0, 0, 0, 0.65) !important;
+
+  overflow: hidden !important;
+}
+
+.match-chat[hidden] {
+  display: none !important;
+}
+
+/* HEADER */
+
+.match-chat-header {
+  flex: 0 0 44px !important;
+
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 6px 8px !important;
+
+  background: #10141b !important;
+  border-bottom: 1px solid #252c36 !important;
+}
+
+.match-chat-title {
+  flex: 1 !important;
+  min-width: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+}
+
+.match-chat-title > span {
+  font-size: 18px !important;
+}
+
+#chatMatchName {
+  display: block !important;
+  min-width: 0 !important;
+
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.match-chat-title small {
+  display: block !important;
+  font-size: 9px !important;
+  opacity: 0.6 !important;
+}
+
+/* MINIMIZE BUTTON */
+
+.minimize-chat-button {
+  flex: 0 0 28px !important;
+
+  width: 28px !important;
+  height: 28px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: 1px solid #303844 !important;
+  border-radius: 6px !important;
+
+  background: #1b2029 !important;
+  color: #fff !important;
+
+  font-size: 20px !important;
+  line-height: 24px !important;
+
+  cursor: pointer !important;
+}
+
+/* NAME SETUP */
+
+#chatNameSetup {
+  flex: 1 1 auto !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 18px !important;
+
+  overflow-y: auto !important;
+
+  background: #10141b !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* CHAT ROOM */
+
+#chatRoom {
+  flex: 1 1 auto !important;
+
+  min-height: 0 !important;
+  max-height: none !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* MESSAGES */
+
+#chatMessages {
+  flex: 1 1 auto !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  overflow-y: auto !important;
+
+  padding: 8px !important;
+}
+
+/* INPUT */
+
+#chatForm {
+  flex: 0 0 auto !important;
+
+  margin: 0 !important;
+  padding: 7px !important;
+
+  background: #10141b !important;
+}
+
+/* MINIMIZED BUBBLE */
+
+.minimized-chat-bubble {
+  position: fixed !important;
+  z-index: 999998 !important;
+
+  right: 18px !important;
+  bottom: 18px !important;
+
+  max-width: 230px !important;
+
+  padding: 11px 15px !important;
+
+  border: 1px solid #303844 !important;
+  border-radius: 22px !important;
+
+  background: #10141b !important;
+  color: #fff !important;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+
+  font-size: 12px !important;
+  font-weight: 700 !important;
+
+  cursor: pointer !important;
+}
+
+.minimized-chat-bubble:hover {
+  background: #1b2029 !important;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .match-chat {
+    width: 320px !important;
+    max-width: calc(100vw - 24px) !important;
+
+    height: 390px !important;
+    max-height: calc(100dvh - 80px) !important;
+
+    right: 12px !important;
+    bottom: 12px !important;
+
+    border-radius: 11px !important;
+  }
+
+  .minimized-chat-bubble {
+    right: 12px !important;
+    bottom: 12px !important;
+  }
+
+}
