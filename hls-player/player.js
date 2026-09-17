@@ -60,6 +60,23 @@
 
 
   /* =========================================================
+     TIMELINE ELEMENTS
+     ========================================================= */
+
+  const progressSlider =
+    document.getElementById("progressSlider");
+
+  const currentTimeDisplay =
+    document.getElementById("currentTime");
+
+  const durationTimeDisplay =
+    document.getElementById("durationTime");
+
+  const timelineContainer =
+    document.getElementById("timelineContainer");
+
+
+  /* =========================================================
      SETTINGS
      ========================================================= */
 
@@ -293,6 +310,293 @@
 
 
   /* =========================================================
+     TIME FORMATTER
+     ========================================================= */
+
+  function formatTime(seconds) {
+
+    if (
+      !Number.isFinite(seconds) ||
+      seconds < 0
+    ) {
+
+      return "0:00";
+
+    }
+
+
+    const hours =
+      Math.floor(seconds / 3600);
+
+    const minutes =
+      Math.floor(
+        (seconds % 3600) / 60
+      );
+
+    const secs =
+      Math.floor(seconds % 60);
+
+
+    if (hours > 0) {
+
+      return (
+        hours +
+        ":" +
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(secs).padStart(2, "0")
+      );
+
+    }
+
+
+    return (
+      minutes +
+      ":" +
+      String(secs).padStart(2, "0")
+    );
+
+  }
+
+
+  /* =========================================================
+     GET SEEKABLE RANGE
+     ========================================================= */
+
+  function getSeekRange() {
+
+    /*
+     * NORMAL VIDEO / VOD
+     */
+
+    if (
+      Number.isFinite(video.duration)
+    ) {
+
+      return {
+
+        start: 0,
+
+        end: video.duration
+
+      };
+
+    }
+
+
+    /*
+     * LIVE HLS WITH DVR
+     */
+
+    if (
+      video.seekable &&
+      video.seekable.length > 0
+    ) {
+
+      try {
+
+        const lastRange =
+          video.seekable.length - 1;
+
+
+        return {
+
+          start:
+            video.seekable.start(
+              lastRange
+            ),
+
+          end:
+            video.seekable.end(
+              lastRange
+            )
+
+        };
+
+      } catch (error) {
+
+        console.log(
+          "Unable to read seekable range:",
+          error
+        );
+
+      }
+
+    }
+
+
+    return null;
+
+  }
+
+
+  /* =========================================================
+     UPDATE TIMELINE
+     ========================================================= */
+
+  function updateTimeline() {
+
+    if (
+      !progressSlider ||
+      !currentTimeDisplay ||
+      !durationTimeDisplay
+    ) {
+
+      return;
+
+    }
+
+
+    const range =
+      getSeekRange();
+
+
+    /*
+     * NON-SEEKABLE LIVE STREAM
+     */
+
+    if (!range) {
+
+      currentTimeDisplay.textContent =
+        "LIVE";
+
+      durationTimeDisplay.textContent =
+        "LIVE";
+
+      progressSlider.disabled =
+        true;
+
+      return;
+
+    }
+
+
+    const start =
+      range.start;
+
+    const end =
+      range.end;
+
+
+    const duration =
+      Math.max(
+        0,
+        end - start
+      );
+
+
+    const current =
+      Math.max(
+        start,
+        Math.min(
+          video.currentTime,
+          end
+        )
+      );
+
+
+    const position =
+      Math.max(
+        0,
+        current - start
+      );
+
+
+    progressSlider.disabled =
+      duration <= 0;
+
+
+    progressSlider.min =
+      0;
+
+    progressSlider.max =
+      duration;
+
+    progressSlider.value =
+      Math.min(
+        position,
+        duration
+      );
+
+
+    currentTimeDisplay.textContent =
+      formatTime(position);
+
+
+    durationTimeDisplay.textContent =
+      formatTime(duration);
+
+  }
+
+
+  /* =========================================================
+     SEEK FROM TIMELINE
+     ========================================================= */
+
+  function seekFromTimeline() {
+
+    const range =
+      getSeekRange();
+
+
+    if (
+      !range ||
+      !progressSlider
+    ) {
+
+      return;
+
+    }
+
+
+    const duration =
+      range.end - range.start;
+
+
+    const position =
+      Number(
+        progressSlider.value
+      );
+
+
+    const target =
+      range.start +
+      Math.max(
+        0,
+        Math.min(
+          position,
+          duration
+        )
+      );
+
+
+    try {
+
+      video.currentTime =
+        Math.max(
+          range.start,
+          Math.min(
+            target,
+            range.end
+          )
+        );
+
+    } catch (error) {
+
+      console.log(
+        "Timeline seek error:",
+        error
+      );
+
+    }
+
+
+    showControls();
+
+  }
+
+
+  /* =========================================================
      SEEK / FORWARD / BACKWARD
      ========================================================= */
 
@@ -354,6 +658,8 @@
       }
 
 
+      updateTimeline();
+
       return;
 
     }
@@ -363,15 +669,6 @@
      * -------------------------------------------------------
      * LIVE HLS / DVR
      * -------------------------------------------------------
-     *
-     * Live streams can have a seekable window.
-     *
-     * Example:
-     *
-     *  start = 1000 seconds
-     *  end   = 1060 seconds
-     *
-     * We keep the seek inside that window.
      */
 
     if (
@@ -428,6 +725,9 @@
 
       }
 
+
+      updateTimeline();
+
       return;
 
     }
@@ -437,8 +737,6 @@
      * -------------------------------------------------------
      * NON-SEEKABLE LIVE STREAM
      * -------------------------------------------------------
-     *
-     * There is no DVR window.
      */
 
     console.log(
@@ -840,6 +1138,8 @@
 
           hideLoading();
 
+          updateTimeline();
+
         },
         {
           once: true
@@ -901,13 +1201,6 @@
           maxBufferLength:
             30,
 
-          /*
-           * Allow the player
-           * to maintain a seekable
-           * DVR window where
-           * the stream provides one.
-           */
-
           maxMaxBufferLength:
             60
 
@@ -940,6 +1233,9 @@
 
           hls.currentLevel =
             -1;
+
+
+          updateTimeline();
 
         }
       );
@@ -1294,6 +1590,160 @@
 
 
   /* =========================================================
+     TIMELINE EVENTS
+     ========================================================= */
+
+  /*
+   * Update timeline while playing.
+   */
+
+  video.addEventListener(
+    "timeupdate",
+    updateTimeline
+  );
+
+
+  /*
+   * Update when metadata becomes available.
+   */
+
+  video.addEventListener(
+    "loadedmetadata",
+    updateTimeline
+  );
+
+
+  /*
+   * Update when duration changes.
+   */
+
+  video.addEventListener(
+    "durationchange",
+    updateTimeline
+  );
+
+
+  /*
+   * Update when the seekable window changes.
+   */
+
+  video.addEventListener(
+    "progress",
+    updateTimeline
+  );
+
+
+  /*
+   * Update when seeking finishes.
+   */
+
+  video.addEventListener(
+    "seeked",
+    updateTimeline
+  );
+
+
+  /*
+   * While dragging the slider,
+   * update the visible current time.
+   */
+
+  progressSlider.addEventListener(
+    "input",
+    function (event) {
+
+      event.stopPropagation();
+
+
+      const range =
+        getSeekRange();
+
+
+      if (!range) {
+        return;
+      }
+
+
+      const position =
+        Number(
+          progressSlider.value
+        );
+
+
+      currentTimeDisplay.textContent =
+        formatTime(position);
+
+
+      showControlsForever();
+
+    }
+  );
+
+
+  /*
+   * When the user releases the slider,
+   * perform the actual seek.
+   */
+
+  progressSlider.addEventListener(
+    "change",
+    function (event) {
+
+      event.stopPropagation();
+
+      seekFromTimeline();
+
+    }
+  );
+
+
+  /*
+   * Keep controls visible while
+   * touching/dragging the timeline.
+   */
+
+  progressSlider.addEventListener(
+    "pointerdown",
+    function (event) {
+
+      event.stopPropagation();
+
+      showControlsForever();
+
+    }
+  );
+
+
+  progressSlider.addEventListener(
+    "pointerup",
+    function (event) {
+
+      event.stopPropagation();
+
+      seekFromTimeline();
+
+      showControls();
+
+    }
+  );
+
+
+  progressSlider.addEventListener(
+    "touchstart",
+    function (event) {
+
+      event.stopPropagation();
+
+      showControlsForever();
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  /* =========================================================
      VIDEO EVENTS
      ========================================================= */
 
@@ -1340,6 +1790,8 @@
       hideError();
 
       showControls();
+
+      updateTimeline();
 
     }
   );
@@ -1436,8 +1888,6 @@
 
         /*
          * Left arrow
-         *
-         * Back 10 seconds
          */
 
         case "ArrowLeft":
@@ -1451,8 +1901,6 @@
 
         /*
          * Right arrow
-         *
-         * Forward 10 seconds
          */
 
         case "ArrowRight":
@@ -1466,8 +1914,6 @@
 
         /*
          * M
-         *
-         * Mute
          */
 
         case "m":
@@ -1523,6 +1969,8 @@
   updateMuteButton();
 
   updatePlayButton();
+
+  updateTimeline();
 
   loadStream();
 
