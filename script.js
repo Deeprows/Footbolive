@@ -1916,6 +1916,294 @@ function openScores() {
 
 }
 
+/* =========================================================
+   LIVE SCORES
+   ========================================================= */
+
+const scoresList =
+  document.getElementById("scoresList");
+
+const scoresCount =
+  document.getElementById("scoresCount");
+
+const scoresEmpty =
+  document.getElementById("scoresEmpty");
+
+const scoresDateTabs =
+  document.getElementById("scoresDateTabs");
+
+let liveScoreMatches = [];
+let selectedScoreDate = "today";
+
+function getScoreDateOffset(offset) {
+  const date = new Date();
+
+  date.setDate(
+    date.getDate() + offset
+  );
+
+  return date
+    .toISOString()
+    .split("T")[0];
+}
+
+function getScoreDateKey(match) {
+  return String(match.kickoff || "")
+    .slice(0, 10);
+}
+
+function formatScoreTime(kickoff) {
+  if (!kickoff) {
+    return "--:--";
+  }
+
+  return new Date(kickoff)
+    .toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+}
+
+function getScoreStatusLabel(match) {
+  if (match.status === "live") {
+    return `
+      <span class="score-live">
+        🔴 ${match.minute || 0}'
+      </span>
+    `;
+  }
+
+  if (match.status === "finished") {
+    return `
+      <span class="score-finished">
+        FT
+      </span>
+    `;
+  }
+
+  return `
+    <span class="score-upcoming">
+      ${formatScoreTime(match.kickoff)}
+    </span>
+  `;
+}
+
+function renderLiveScores() {
+  if (!scoresList) {
+    return;
+  }
+
+  const targetDate =
+    selectedScoreDate === "today"
+      ? getScoreDateOffset(0)
+      : selectedScoreDate === "tomorrow"
+      ? getScoreDateOffset(1)
+      : getScoreDateOffset(-1);
+
+  const matches =
+    liveScoreMatches.filter(
+      function (match) {
+        return (
+          getScoreDateKey(match) ===
+          targetDate
+        );
+      }
+    );
+
+  scoresList.innerHTML = "";
+
+  if (scoresCount) {
+    scoresCount.textContent =
+      matches.length;
+  }
+
+  if (scoresEmpty) {
+    scoresEmpty.hidden =
+      matches.length !== 0;
+  }
+
+  if (!matches.length) {
+    return;
+  }
+
+  const leagues = {};
+
+  matches.forEach(
+    function (match) {
+      const league =
+        match.league || "Other Matches";
+
+      if (!leagues[league]) {
+        leagues[league] = [];
+      }
+
+      leagues[league].push(match);
+    }
+  );
+
+  Object.keys(leagues).forEach(
+    function (league) {
+
+      const leagueBlock =
+        document.createElement("div");
+
+      leagueBlock.className =
+        "score-league";
+
+      leagueBlock.innerHTML = `
+        <div class="score-league-header">
+          <strong>
+            ${escapeHtml(league)}
+          </strong>
+
+          <span>
+            ${escapeHtml(
+              leagues[league][0].country || ""
+            )}
+          </span>
+        </div>
+
+        <div class="score-match-list"></div>
+      `;
+
+      const matchList =
+        leagueBlock.querySelector(
+          ".score-match-list"
+        );
+
+      leagues[league].forEach(
+        function (match) {
+
+          const card =
+            document.createElement("div");
+
+          card.className =
+            "score-match";
+
+          card.innerHTML = `
+            <div class="score-team">
+              <span>
+                ${escapeHtml(match.homeTeam)}
+              </span>
+
+              <strong>
+                ${match.homeScore ?? "-"}
+              </strong>
+            </div>
+
+            <div class="score-status">
+              ${getScoreStatusLabel(match)}
+            </div>
+
+            <div class="score-team">
+              <span>
+                ${escapeHtml(match.awayTeam)}
+              </span>
+
+              <strong>
+                ${match.awayScore ?? "-"}
+              </strong>
+            </div>
+          `;
+
+          matchList.appendChild(card);
+        }
+      );
+
+      scoresList.appendChild(
+        leagueBlock
+      );
+    }
+  );
+}
+
+async function loadLiveScores() {
+  if (!scoresList) {
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        "content/livescores/scores.json?v=" +
+        Date.now()
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        "Unable to load scores"
+      );
+    }
+
+    const data =
+      await response.json();
+
+    liveScoreMatches =
+      Array.isArray(data)
+        ? data
+        : Array.isArray(data.matches)
+        ? data.matches
+        : [];
+
+    renderLiveScores();
+
+  } catch (error) {
+
+    console.error(
+      "Live scores error:",
+      error
+    );
+
+    liveScoreMatches = [];
+
+    renderLiveScores();
+  }
+}
+
+if (scoresDateTabs) {
+
+  scoresDateTabs.addEventListener(
+    "click",
+    function (event) {
+
+      const button =
+        event.target.closest(
+          "[data-score-date]"
+        );
+
+      if (!button) {
+        return;
+      }
+
+      selectedScoreDate =
+        button.dataset.scoreDate;
+
+      document
+        .querySelectorAll(
+          ".scores-date-tab"
+        )
+        .forEach(
+          function (tab) {
+            tab.classList.remove(
+              "active"
+            );
+          }
+        );
+
+      button.classList.add("active");
+
+      renderLiveScores();
+    }
+  );
+}
+
+loadLiveScores();
+
+setInterval(
+  loadLiveScores,
+  30000
+);
   /* =========================================================
      APP BUTTON EVENTS
      ========================================================= */
