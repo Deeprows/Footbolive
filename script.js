@@ -2391,66 +2391,47 @@ async function loadLiveScores() {
   }
 
   try {
-
     const dates = {
       today: getScoreDateOffset(0),
       tomorrow: getScoreDateOffset(1),
       yesterday: getScoreDateOffset(-1)
     };
 
-    const results =
-      await Promise.all([
-        fetch(
-          "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
-          dates.today +
-          "&s=Soccer"
-        ).then(res => res.json()),
+    const requests = await Promise.all(
+      Object.entries(dates).map(
+        async function ([key, date]) {
+          const response = await fetch(
+            "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
+            date +
+            "&s=Soccer"
+          );
 
-        fetch(
-          "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
-          dates.tomorrow +
-          "&s=Soccer"
-        ).then(res => res.json()),
-
-        fetch(
-          "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
-          dates.yesterday +
-          "&s=Soccer"
-        ).then(res => res.json()),
-
-        fetch(
-          "https://sportscore.com/api/widget/matches/?sport=football&limit=50"
-        ).then(res => res.json())
-      ]);
-
-    const todayData = results[0];
-    const tomorrowData = results[1];
-    const yesterdayData = results[2];
-    const liveData = results[3];
-
-    const allEvents = [
-      ...(todayData.events || []),
-      ...(tomorrowData.events || []),
-      ...(yesterdayData.events || [])
-    ];
-
-    const liveMatches =
-      liveData.matches || [];
-
-    liveScoreMatches =
-      allEvents.map(function (event) {
-
-        const liveMatch =
-          liveMatches.find(function (live) {
-
-            return (
-              normalizeTeamName(live.home) ===
-                normalizeTeamName(event.strHomeTeam) &&
-              normalizeTeamName(live.away) ===
-                normalizeTeamName(event.strAwayTeam)
+          if (!response.ok) {
+            throw new Error(
+              "TheSportsDB error: " + response.status
             );
+          }
 
-          });
+          const data = await response.json();
+
+          return {
+            key: key,
+            events: data.events || []
+          };
+        }
+      )
+    );
+
+    const allEvents = [];
+
+    requests.forEach(function (result) {
+      result.events.forEach(function (event) {
+        allEvents.push(event);
+      });
+    });
+
+    liveScoreMatches = allEvents.map(
+      function (event) {
 
         let status = "upcoming";
 
@@ -2468,33 +2449,26 @@ async function loadLiveScores() {
 
         let statusText = "";
 
+        const eventStatus =
+          String(event.strStatus || "").toLowerCase();
+
         if (
-          event.strStatus &&
-          (
-            event.strStatus.toLowerCase().includes("ft") ||
-            event.strStatus.toLowerCase().includes("finished") ||
-            event.strStatus.toLowerCase().includes("complete")
-          )
+          eventStatus.includes("ft") ||
+          eventStatus.includes("finished") ||
+          eventStatus.includes("complete")
         ) {
           status = "finished";
           statusText = "FT";
         }
 
         if (
-          liveMatch &&
-          liveMatch.status === "live"
+          eventStatus.includes("live") ||
+          eventStatus.includes("1h") ||
+          eventStatus.includes("2h") ||
+          eventStatus.includes("ht")
         ) {
-
           status = "live";
-
-          homeScore =
-            liveMatch.home_score ?? homeScore;
-
-          awayScore =
-            liveMatch.away_score ?? awayScore;
-
-          statusText =
-            liveMatch.status_text || "";
+          statusText = event.strStatus || "LIVE";
         }
 
         if (
@@ -2505,9 +2479,7 @@ async function loadLiveScores() {
         }
 
         return {
-
-          id:
-            event.idEvent,
+          id: event.idEvent,
 
           league:
             event.strLeague ||
@@ -2552,7 +2524,8 @@ async function loadLiveScores() {
 
           kickoff:
             event.strTimestamp ||
-            event.dateEvent + "T" +
+            event.dateEvent +
+            "T" +
             (event.strTime || "00:00:00"),
 
           venue:
@@ -2579,8 +2552,13 @@ async function loadLiveScores() {
             event.strTVStation ||
             ""
         };
+      }
+    );
 
-      });
+    console.log(
+      "Live scores loaded:",
+      liveScoreMatches.length
+    );
 
     renderLiveScores();
 
@@ -2591,14 +2569,22 @@ async function loadLiveScores() {
       error
     );
 
-    /*
-     * Keep the previous data
-     * if the API temporarily fails.
-     */
+    liveScoreMatches = [];
 
-    renderLiveScores();
+    if (scoresList) {
+      scoresList.innerHTML = "";
+    }
+
+    if (scoresCount) {
+      scoresCount.textContent = "0";
+    }
+
+    if (scoresEmpty) {
+      scoresEmpty.hidden = false;
+      scoresEmpty.textContent =
+        "Unable to load live scores. Please refresh.";
+    }
   }
-}
 
 
 function normalizeTeamName(name) {
