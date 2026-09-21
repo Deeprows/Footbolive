@@ -2124,89 +2124,195 @@ async function loadLiveScores() {
 
   try {
 
-    const response =
-      await fetch(
-        "https://sportscore.com/api/widget/matches/?sport=football&limit=50"
-      );
+    const dates = {
+      today: getScoreDateOffset(0),
+      tomorrow: getScoreDateOffset(1),
+      yesterday: getScoreDateOffset(-1)
+    };
 
-    if (!response.ok) {
-      throw new Error(
-        "Unable to load live scores"
-      );
-    }
+    const results =
+      await Promise.all([
+        fetch(
+          "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
+          dates.today +
+          "&s=Soccer"
+        ).then(res => res.json()),
 
-    const data =
-      await response.json();
+        fetch(
+          "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
+          dates.tomorrow +
+          "&s=Soccer"
+        ).then(res => res.json()),
+
+        fetch(
+          "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
+          dates.yesterday +
+          "&s=Soccer"
+        ).then(res => res.json()),
+
+        fetch(
+          "https://sportscore.com/api/widget/matches/?sport=football&limit=50"
+        ).then(res => res.json())
+      ]);
+
+    const todayData = results[0];
+    const tomorrowData = results[1];
+    const yesterdayData = results[2];
+    const liveData = results[3];
+
+    const allEvents = [
+      ...(todayData.events || []),
+      ...(tomorrowData.events || []),
+      ...(yesterdayData.events || [])
+    ];
+
+    const liveMatches =
+      liveData.matches || [];
 
     liveScoreMatches =
-      (data.matches || []).map(
-        function (match) {
+      allEvents.map(function (event) {
 
-          return {
+        const liveMatch =
+          liveMatches.find(function (live) {
 
-            id:
-              match.url ||
-              (
-                match.home +
-                "-" +
-                match.away
-              ),
+            return (
+              normalizeTeamName(live.home) ===
+                normalizeTeamName(event.strHomeTeam) &&
+              normalizeTeamName(live.away) ===
+                normalizeTeamName(event.strAwayTeam)
+            );
 
-            league:
-              match.competition ||
-              "Football",
+          });
 
-            country: "",
+        let status = "upcoming";
 
-            homeTeam:
-              match.home ||
-              "Home",
+        let homeScore =
+          event.intHomeScore !== null &&
+          event.intHomeScore !== undefined
+            ? Number(event.intHomeScore)
+            : null;
 
-            awayTeam:
-              match.away ||
-              "Away",
+        let awayScore =
+          event.intAwayScore !== null &&
+          event.intAwayScore !== undefined
+            ? Number(event.intAwayScore)
+            : null;
 
-            homeLogo:
-              match.home_logo ||
-              "",
+        let statusText = "";
 
-            awayLogo:
-              match.away_logo ||
-              "",
-
-            homeScore:
-              match.home_score !== undefined
-                ? Number(match.home_score)
-                : null,
-
-            awayScore:
-              match.away_score !== undefined
-                ? Number(match.away_score)
-                : null,
-
-            status:
-              match.status === "finished"
-                ? "finished"
-                : match.status === "live"
-                ? "live"
-                : "upcoming",
-
-            statusText:
-              match.status_text ||
-              "",
-
-            minute:
-              match.status === "live"
-                ? match.status_text ||
-                  null
-                : null,
-
-            kickoff:
-              match.time ||
-              null
-          };
+        if (
+          event.strStatus &&
+          (
+            event.strStatus.toLowerCase().includes("ft") ||
+            event.strStatus.toLowerCase().includes("finished") ||
+            event.strStatus.toLowerCase().includes("complete")
+          )
+        ) {
+          status = "finished";
+          statusText = "FT";
         }
-      );
+
+        if (
+          liveMatch &&
+          liveMatch.status === "live"
+        ) {
+
+          status = "live";
+
+          homeScore =
+            liveMatch.home_score ?? homeScore;
+
+          awayScore =
+            liveMatch.away_score ?? awayScore;
+
+          statusText =
+            liveMatch.status_text || "";
+        }
+
+        if (
+          event.strStatus === "Postponed"
+        ) {
+          status = "upcoming";
+          statusText = "POSTPONED";
+        }
+
+        return {
+
+          id:
+            event.idEvent,
+
+          league:
+            event.strLeague ||
+            "Football",
+
+          country:
+            event.strCountry ||
+            "",
+
+          homeTeam:
+            event.strHomeTeam ||
+            "Home",
+
+          awayTeam:
+            event.strAwayTeam ||
+            "Away",
+
+          homeLogo:
+            event.strHomeTeamBadge ||
+            "",
+
+          awayLogo:
+            event.strAwayTeamBadge ||
+            "",
+
+          homeScore:
+            homeScore,
+
+          awayScore:
+            awayScore,
+
+          status:
+            status,
+
+          statusText:
+            statusText,
+
+          minute:
+            status === "live"
+              ? statusText
+              : null,
+
+          kickoff:
+            event.strTimestamp ||
+            event.dateEvent + "T" +
+            (event.strTime || "00:00:00"),
+
+          venue:
+            event.strVenue ||
+            "",
+
+          round:
+            event.intRound ||
+            "",
+
+          eventThumb:
+            event.strThumb ||
+            "",
+
+          eventPoster:
+            event.strPoster ||
+            "",
+
+          description:
+            event.strDescriptionEN ||
+            "",
+
+          tvStation:
+            event.strTVStation ||
+            ""
+        };
+
+      });
 
     renderLiveScores();
 
@@ -2218,67 +2324,25 @@ async function loadLiveScores() {
     );
 
     /*
-     * Keep the previous scores on screen
+     * Keep the previous data
      * if the API temporarily fails.
      */
+
     renderLiveScores();
   }
 }
 
 
-if (scoresDateTabs) {
+function normalizeTeamName(name) {
 
-  scoresDateTabs.addEventListener(
-    "click",
-    function (event) {
+  return String(name || "")
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9]/g,
+      ""
+    );
 
-      const button =
-        event.target.closest(
-          "[data-score-date]"
-        );
-
-      if (!button) {
-        return;
-      }
-
-      selectedScoreDate =
-        button.dataset.scoreDate;
-
-      document
-        .querySelectorAll(
-          ".scores-date-tab"
-        )
-        .forEach(
-          function (tab) {
-
-            tab.classList.remove(
-              "active"
-            );
-
-          }
-        );
-
-      button.classList.add(
-        "active"
-      );
-
-      renderLiveScores();
-
-    }
-  );
 }
-
-
-loadLiveScores();
-
-
-/*
- * Refresh scores every 60 seconds
- */
-setInterval(
-  loadLiveScores,
-  60000
-);
   /* =========================================================
      APP BUTTON EVENTS
      ========================================================= */
