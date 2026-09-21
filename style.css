@@ -3752,3 +3752,141 @@ body.light
 .scores-provider a:hover {
   color: #ffffff;
 }
+
+/* =========================================================
+   SCORE CLICKABLE CARDS
+   ========================================================= */
+
+.score-match {
+  width: 100%;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: #10141b;
+  transition: background 0.2s ease;
+}
+
+.score-match:hover {
+  background: #151a22;
+}
+
+
+/* =========================================================
+   SCORE DETAILS
+   ========================================================= */
+
+.score-details {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.score-details-box {
+  position: relative;
+  width: min(500px, 100%);
+  background: #10141b;
+  border: 1px solid #1b2029;
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.score-details-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: #1b2029;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.score-details-league {
+  text-align: center;
+  color: #8d96a5;
+  font-size: 13px;
+  margin-bottom: 22px;
+}
+
+.score-details-teams {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.score-details-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 9px;
+  color: #fff;
+  font-size: 13px;
+}
+
+.score-details-team img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+}
+
+.score-details-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: #fff;
+}
+
+.score-details-score span {
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.score-details-score small {
+  color: #ff1744;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.score-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 13px 0;
+  margin-top: 12px;
+  border-top: 1px solid #1b2029;
+  color: #8d96a5;
+  font-size: 12px;
+}
+
+.score-detail-row strong {
+  color: #fff;
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+
+  .score-details {
+    padding: 12px;
+  }
+
+  .score-details-box {
+    padding: 20px 14px;
+  }
+
+  .score-details-teams {
+    grid-template-columns: 1fr 65px 1fr;
+  }
+
+}
