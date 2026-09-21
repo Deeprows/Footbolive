@@ -1,1 +1,40 @@
-
+{
+  "matches": [
+    {
+      "id": "demo-1",
+      "league": "Premier League",
+      "country": "England",
+      "homeTeam": "Liverpool",
+      "awayTeam": "Bournemouth",
+      "homeScore": 0,
+      "awayScore": 0,
+      "status": "upcoming",
+      "minute": null,
+      "kickoff": "2026-09-21T20:00:00+01:00"
+    },
+    {
+      "id": "demo-2",
+      "league": "LaLiga",
+      "country": "Spain",
+      "homeTeam": "Barcelona",
+      "awayTeam": "Sevilla",
+      "homeScore": 2,
+      "awayScore": 1,
+      "status": "live",
+      "minute": 67,
+      "kickoff": "2026-09-21T19:00:00+01:00"
+    },
+    {
+      "id": "demo-3",
+      "league": "Premier League",
+      "country": "England",
+      "homeTeam": "Manchester City",
+      "awayTeam": "Sunderland",
+      "homeScore": 5,
+      "awayScore": 3,
+      "status": "finished",
+      "minute": null,
+      "kickoff": "2026-09-20T16:30:00+01:00"
+    }
+  ]
+}
