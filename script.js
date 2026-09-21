@@ -2002,65 +2002,6 @@ function getScoreDateKey(match) {
 }
 
 
-/* =========================================================
-   SCORE DATE TABS
-   ========================================================= */
-
-if (scoresDateTabs) {
-
-  scoresDateTabs
-    .querySelectorAll("button")
-    .forEach(function (button) {
-
-      button.addEventListener(
-        "click",
-        function () {
-
-          scoresDateTabs
-            .querySelectorAll("button")
-            .forEach(function (tab) {
-
-              tab.classList.remove(
-                "active"
-              );
-
-              tab.setAttribute(
-                "aria-selected",
-                "false"
-              );
-
-            });
-
-
-          this.classList.add(
-            "active"
-          );
-
-          this.setAttribute(
-            "aria-selected",
-            "true"
-          );
-
-
-          selectedScoreDate =
-            this.dataset.scoreDate ||
-            "today";
-
-
-          renderLiveScores();
-
-        }
-      );
-
-    });
-
-}
-
-
-/* =========================================================
-   SCORE STATUS
-   ========================================================= */
-
 function getScoreStatusLabel(match) {
 
   if (
@@ -2116,6 +2057,63 @@ function getScoreStatusLabel(match) {
 
 
 /* =========================================================
+   DATE TABS
+   ========================================================= */
+
+if (scoresDateTabs) {
+
+  scoresDateTabs
+    .querySelectorAll("button")
+    .forEach(function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          scoresDateTabs
+            .querySelectorAll("button")
+            .forEach(
+              function (tab) {
+
+                tab.classList.remove(
+                  "active"
+                );
+
+                tab.setAttribute(
+                  "aria-selected",
+                  "false"
+                );
+
+              }
+            );
+
+
+          this.classList.add(
+            "active"
+          );
+
+          this.setAttribute(
+            "aria-selected",
+            "true"
+          );
+
+
+          selectedScoreDate =
+            this.dataset.scoreDate ||
+            "today";
+
+
+          renderLiveScores();
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
    RENDER LIVE SCORES
    ========================================================= */
 
@@ -2130,8 +2128,8 @@ function renderLiveScores() {
     selectedScoreDate === "today"
       ? getScoreDateOffset(0)
       : selectedScoreDate === "tomorrow"
-      ? getScoreDateOffset(1)
-      : getScoreDateOffset(-1);
+        ? getScoreDateOffset(1)
+        : getScoreDateOffset(-1);
 
 
   const matches =
@@ -2139,16 +2137,16 @@ function renderLiveScores() {
       function (match) {
 
         return (
-          getScoreDateKey(match) ===
-          targetDate
+          getScoreDateKey(
+            match
+          ) === targetDate
         );
 
       }
     );
 
 
-  scoresList.innerHTML =
-    "";
+  scoresList.innerHTML = "";
 
 
   if (scoresCount) {
@@ -2206,36 +2204,17 @@ function renderLiveScores() {
           "div"
         );
 
-
       leagueBlock.className =
         "score-league";
 
 
       leagueBlock.innerHTML = `
-        <div class="score-league-header">
-
-          <strong>
-            ${escapeHtml(
-              league
-            )}
-          </strong>
-
-          <span>
-            ${escapeHtml(
-              leagues[league][0].country || ""
-            )}
-          </span>
-
+        <div class="score-league-title">
+          ${escapeHtml(
+            league
+          )}
         </div>
-
-        <div class="score-match-list"></div>
       `;
-
-
-      const matchList =
-        leagueBlock.querySelector(
-          ".score-match-list"
-        );
 
 
       leagues[league].forEach(
@@ -2246,20 +2225,21 @@ function renderLiveScores() {
               "button"
             );
 
-
           card.type =
             "button";
 
-
           card.className =
-            "score-match";
-
-
-          card.dataset.eventId =
-            match.id;
+            "score-card";
 
 
           card.innerHTML = `
+
+            <div class="score-status">
+              ${getScoreStatusLabel(
+                match
+              )}
+            </div>
+
 
             <div class="score-team">
 
@@ -2273,23 +2253,10 @@ function renderLiveScores() {
                 ${
                   match.homeScore !== null &&
                   match.homeScore !== undefined
-                    ? escapeHtml(
-                        String(
-                          match.homeScore
-                        )
-                      )
+                    ? match.homeScore
                     : "-"
                 }
               </strong>
-
-            </div>
-
-
-            <div class="score-status">
-
-              ${getScoreStatusLabel(
-                match
-              )}
 
             </div>
 
@@ -2306,11 +2273,7 @@ function renderLiveScores() {
                 ${
                   match.awayScore !== null &&
                   match.awayScore !== undefined
-                    ? escapeHtml(
-                        String(
-                          match.awayScore
-                        )
-                      )
+                    ? match.awayScore
                     : "-"
                 }
               </strong>
@@ -2332,7 +2295,7 @@ function renderLiveScores() {
           );
 
 
-          matchList.appendChild(
+          leagueBlock.appendChild(
             card
           );
 
@@ -2346,259 +2309,6 @@ function renderLiveScores() {
 
     }
   );
-
-}
-
-
-/* =========================================================
-   SCORE DETAILS
-   ========================================================= */
-
-async function openScoreDetails(match) {
-
-  const existing =
-    document.getElementById(
-      "scoreDetails"
-    );
-
-
-  if (existing) {
-    existing.remove();
-  }
-
-
-  const details =
-    document.createElement(
-      "div"
-    );
-
-
-  details.id =
-    "scoreDetails";
-
-
-  details.className =
-    "score-details";
-
-
-  details.innerHTML = `
-
-    <div class="score-details-box">
-
-      <button
-        type="button"
-        class="score-details-close"
-        id="closeScoreDetails"
-      >
-        ×
-      </button>
-
-
-      <div class="score-details-league">
-
-        ${escapeHtml(
-          match.league ||
-          "Football"
-        )}
-
-      </div>
-
-
-      <div class="score-details-teams">
-
-
-        <div class="score-details-team">
-
-          ${
-            match.homeLogo
-              ? `
-                <img
-                  src="${escapeHtml(
-                    match.homeLogo
-                  )}"
-                  alt=""
-                >
-              `
-              : ""
-          }
-
-
-          <strong>
-
-            ${escapeHtml(
-              match.homeTeam
-            )}
-
-          </strong>
-
-        </div>
-
-
-        <div class="score-details-score">
-
-          <span>
-
-            ${
-              match.homeScore ??
-              "-"
-            }
-
-          </span>
-
-
-          <small>
-
-            ${
-              match.status === "live"
-                ? "LIVE " +
-                  (
-                    match.minute ||
-                    ""
-                  )
-                : match.status === "finished"
-                ? "FT"
-                : formatScoreTime(
-                    match.kickoff
-                  )
-            }
-
-          </small>
-
-
-          <span>
-
-            ${
-              match.awayScore ??
-              "-"
-            }
-
-          </span>
-
-        </div>
-
-
-        <div class="score-details-team">
-
-          ${
-            match.awayLogo
-              ? `
-                <img
-                  src="${escapeHtml(
-                    match.awayLogo
-                  )}"
-                  alt=""
-                >
-              `
-              : ""
-          }
-
-
-          <strong>
-
-            ${escapeHtml(
-              match.awayTeam
-            )}
-
-          </strong>
-
-        </div>
-
-
-      </div>
-
-
-      ${
-        match.venue
-          ? `
-            <div class="score-detail-row">
-
-              <span>
-                Venue
-              </span>
-
-              <strong>
-                ${escapeHtml(
-                  match.venue
-                )}
-              </strong>
-
-            </div>
-          `
-          : ""
-      }
-
-
-      ${
-        match.round
-          ? `
-            <div class="score-detail-row">
-
-              <span>
-                Round
-              </span>
-
-              <strong>
-                ${escapeHtml(
-                  String(
-                    match.round
-                  )
-                )}
-              </strong>
-
-            </div>
-          `
-          : ""
-      }
-
-
-      ${
-        match.tvStation
-          ? `
-            <div class="score-detail-row">
-
-              <span>
-                TV
-              </span>
-
-              <strong>
-                ${escapeHtml(
-                  match.tvStation
-                )}
-              </strong>
-
-            </div>
-          `
-          : ""
-      }
-
-    </div>
-
-  `;
-
-
-  document.body.appendChild(
-    details
-  );
-
-
-  const closeButton =
-    document.getElementById(
-      "closeScoreDetails"
-    );
-
-
-  if (closeButton) {
-
-    closeButton.addEventListener(
-      "click",
-      function () {
-
-        details.remove();
-
-      }
-    );
-
-  }
 
 }
 
@@ -2664,8 +2374,7 @@ async function loadLiveScores() {
 
             return {
 
-              key:
-                key,
+              key: key,
 
               events:
                 data.events || []
@@ -2730,15 +2439,12 @@ async function loadLiveScores() {
 
           const eventStatus =
             String(
-              event.strStatus ||
-              ""
+              event.strStatus || ""
             ).toLowerCase();
 
 
           if (
-            eventStatus.includes(
-              "ft"
-            ) ||
+            eventStatus.includes("ft") ||
             eventStatus.includes(
               "finished"
             ) ||
@@ -2898,6 +2604,25 @@ async function loadLiveScores() {
     );
 
 
+    liveScoreMatches = [];
+
+
+    if (scoresList) {
+
+      scoresList.innerHTML =
+        "";
+
+    }
+
+
+    if (scoresCount) {
+
+      scoresCount.textContent =
+        "0";
+
+    }
+
+
     if (scoresEmpty) {
 
       scoresEmpty.hidden =
@@ -2911,8 +2636,6 @@ async function loadLiveScores() {
   }
 
 }
-
-
 /* =========================================================
    TEAM NAME NORMALIZER
    ========================================================= */
