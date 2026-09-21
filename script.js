@@ -2126,13 +2126,12 @@ async function loadLiveScores() {
 
     const response =
       await fetch(
-        "content/livescores/scores.json?v=" +
-        Date.now()
+        "https://sportscore.com/api/widget/matches/?sport=football&limit=50"
       );
 
     if (!response.ok) {
       throw new Error(
-        "Unable to load scores"
+        "Unable to load live scores"
       );
     }
 
@@ -2140,11 +2139,74 @@ async function loadLiveScores() {
       await response.json();
 
     liveScoreMatches =
-      Array.isArray(data)
-        ? data
-        : Array.isArray(data.matches)
-        ? data.matches
-        : [];
+      (data.matches || []).map(
+        function (match) {
+
+          return {
+
+            id:
+              match.url ||
+              (
+                match.home +
+                "-" +
+                match.away
+              ),
+
+            league:
+              match.competition ||
+              "Football",
+
+            country: "",
+
+            homeTeam:
+              match.home ||
+              "Home",
+
+            awayTeam:
+              match.away ||
+              "Away",
+
+            homeLogo:
+              match.home_logo ||
+              "",
+
+            awayLogo:
+              match.away_logo ||
+              "",
+
+            homeScore:
+              match.home_score !== undefined
+                ? Number(match.home_score)
+                : null,
+
+            awayScore:
+              match.away_score !== undefined
+                ? Number(match.away_score)
+                : null,
+
+            status:
+              match.status === "finished"
+                ? "finished"
+                : match.status === "live"
+                ? "live"
+                : "upcoming",
+
+            statusText:
+              match.status_text ||
+              "",
+
+            minute:
+              match.status === "live"
+                ? match.status_text ||
+                  null
+                : null,
+
+            kickoff:
+              match.time ||
+              null
+          };
+        }
+      );
 
     renderLiveScores();
 
@@ -2155,11 +2217,14 @@ async function loadLiveScores() {
       error
     );
 
-    liveScoreMatches = [];
-
+    /*
+     * Keep the previous scores on screen
+     * if the API temporarily fails.
+     */
     renderLiveScores();
   }
 }
+
 
 if (scoresDateTabs) {
 
@@ -2185,24 +2250,34 @@ if (scoresDateTabs) {
         )
         .forEach(
           function (tab) {
+
             tab.classList.remove(
               "active"
             );
+
           }
         );
 
-      button.classList.add("active");
+      button.classList.add(
+        "active"
+      );
 
       renderLiveScores();
+
     }
   );
 }
 
+
 loadLiveScores();
 
+
+/*
+ * Refresh scores every 60 seconds
+ */
 setInterval(
   loadLiveScores,
-  30000
+  60000
 );
   /* =========================================================
      APP BUTTON EVENTS
