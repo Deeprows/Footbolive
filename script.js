@@ -1914,6 +1914,8 @@ function openScores() {
     scoresButton
   );
 
+  loadLiveScores();
+
 }
 
 /* =========================================================
@@ -1970,6 +1972,28 @@ function getLocalDateKey(dateInput) {
   );
 }
 
+  if (scoresDateTabs) {
+    scoresDateTabs
+      .querySelectorAll("button")
+      .forEach(function (button) {
+        button.addEventListener("click", function () {
+          scoresDateTabs
+            .querySelectorAll("button")
+            .forEach(function (tab) {
+              tab.classList.remove("active");
+              tab.setAttribute("aria-selected", "false");
+            });
+
+          this.classList.add("active");
+          this.setAttribute("aria-selected", "true");
+
+          selectedScoreDate =
+            this.dataset.scoreDate || "today";
+
+          renderLiveScores();
+        });
+      });
+  }   
 
 function getScoreDateOffset(offset) {
 
@@ -5030,9 +5054,17 @@ movieCards.forEach(
 
   bindContentCards();
 
-  loadExternalContent().then(
+   loadExternalContent().then(
     openFromShareLink
   );
+
+  // LOAD LIVE SCORES
+  loadLiveScores();
+
+  // Refresh live scores every 60 seconds
+  setInterval(function () {
+    loadLiveScores();
+  }, 60000);
 
   requestAnimationFrame(
     function () {
