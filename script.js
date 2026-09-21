@@ -1918,6 +1918,7 @@ function openScores() {
 
 }
 
+
 /* =========================================================
    LIVE SCORES
    ========================================================= */
@@ -1935,7 +1936,9 @@ const scoresDateTabs =
   document.getElementById("scoresDateTabs");
 
 let liveScoreMatches = [];
+
 let selectedScoreDate = "today";
+
 
 function getLocalDateKey(dateInput) {
 
@@ -1970,30 +1973,9 @@ function getLocalDateKey(dateInput) {
     "-" +
     day
   );
+
 }
 
-  if (scoresDateTabs) {
-    scoresDateTabs
-      .querySelectorAll("button")
-      .forEach(function (button) {
-        button.addEventListener("click", function () {
-          scoresDateTabs
-            .querySelectorAll("button")
-            .forEach(function (tab) {
-              tab.classList.remove("active");
-              tab.setAttribute("aria-selected", "false");
-            });
-
-          this.classList.add("active");
-          this.setAttribute("aria-selected", "true");
-
-          selectedScoreDate =
-            this.dataset.scoreDate || "today";
-
-          renderLiveScores();
-        });
-      });
-  }   
 
 function getScoreDateOffset(offset) {
 
@@ -2007,6 +1989,7 @@ function getScoreDateOffset(offset) {
   return getLocalDateKey(
     date
   );
+
 }
 
 
@@ -2017,35 +2000,131 @@ function getScoreDateKey(match) {
   );
 
 }
-   
+
+
+/* =========================================================
+   SCORE DATE TABS
+   ========================================================= */
+
+if (scoresDateTabs) {
+
+  scoresDateTabs
+    .querySelectorAll("button")
+    .forEach(function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          scoresDateTabs
+            .querySelectorAll("button")
+            .forEach(function (tab) {
+
+              tab.classList.remove(
+                "active"
+              );
+
+              tab.setAttribute(
+                "aria-selected",
+                "false"
+              );
+
+            });
+
+
+          this.classList.add(
+            "active"
+          );
+
+          this.setAttribute(
+            "aria-selected",
+            "true"
+          );
+
+
+          selectedScoreDate =
+            this.dataset.scoreDate ||
+            "today";
+
+
+          renderLiveScores();
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   SCORE STATUS
+   ========================================================= */
+
 function getScoreStatusLabel(match) {
-  if (match.status === "live") {
+
+  if (
+    match.status === "live"
+  ) {
+
     return `
       <span class="score-live">
-        🔴 ${match.minute || 0}'
+        🔴 ${escapeHtml(
+          match.minute || "LIVE"
+        )}
       </span>
     `;
+
   }
 
-  if (match.status === "finished") {
+
+  if (
+    match.status === "finished"
+  ) {
+
     return `
       <span class="score-finished">
         FT
       </span>
     `;
+
   }
+
+
+  if (
+    match.status === "postponed"
+  ) {
+
+    return `
+      <span class="score-upcoming">
+        POSTPONED
+      </span>
+    `;
+
+  }
+
 
   return `
     <span class="score-upcoming">
-      ${formatScoreTime(match.kickoff)}
+      ${formatScoreTime(
+        match.kickoff
+      )}
     </span>
   `;
+
 }
 
+
+/* =========================================================
+   RENDER LIVE SCORES
+   ========================================================= */
+
 function renderLiveScores() {
+
   if (!scoresList) {
     return;
   }
+
 
   const targetDate =
     selectedScoreDate === "today"
@@ -2054,60 +2133,91 @@ function renderLiveScores() {
       ? getScoreDateOffset(1)
       : getScoreDateOffset(-1);
 
+
   const matches =
     liveScoreMatches.filter(
       function (match) {
+
         return (
           getScoreDateKey(match) ===
           targetDate
         );
+
       }
     );
 
-  scoresList.innerHTML = "";
+
+  scoresList.innerHTML =
+    "";
+
 
   if (scoresCount) {
+
     scoresCount.textContent =
       matches.length;
+
   }
 
+
   if (scoresEmpty) {
+
     scoresEmpty.hidden =
       matches.length !== 0;
+
   }
+
 
   if (!matches.length) {
     return;
   }
 
+
   const leagues = {};
+
 
   matches.forEach(
     function (match) {
+
       const league =
-        match.league || "Other Matches";
+        match.league ||
+        "Other Matches";
+
 
       if (!leagues[league]) {
+
         leagues[league] = [];
+
       }
 
-      leagues[league].push(match);
+
+      leagues[league].push(
+        match
+      );
+
     }
   );
+
 
   Object.keys(leagues).forEach(
     function (league) {
 
       const leagueBlock =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       leagueBlock.className =
         "score-league";
 
+
       leagueBlock.innerHTML = `
         <div class="score-league-header">
+
           <strong>
-            ${escapeHtml(league)}
+            ${escapeHtml(
+              league
+            )}
           </strong>
 
           <span>
@@ -2115,72 +2225,112 @@ function renderLiveScores() {
               leagues[league][0].country || ""
             )}
           </span>
+
         </div>
 
         <div class="score-match-list"></div>
       `;
+
 
       const matchList =
         leagueBlock.querySelector(
           ".score-match-list"
         );
 
-            leagues[league].forEach(
+
+      leagues[league].forEach(
         function (match) {
 
           const card =
-            document.createElement("button");
+            document.createElement(
+              "button"
+            );
 
-          card.type = "button";
+
+          card.type =
+            "button";
+
 
           card.className =
             "score-match";
 
+
           card.dataset.eventId =
             match.id;
 
+
           card.innerHTML = `
+
             <div class="score-team">
+
               <span>
-                ${escapeHtml(match.homeTeam)}
+                ${escapeHtml(
+                  match.homeTeam
+                )}
               </span>
 
               <strong>
                 ${
                   match.homeScore !== null &&
                   match.homeScore !== undefined
-                    ? escapeHtml(match.homeScore)
+                    ? escapeHtml(
+                        String(
+                          match.homeScore
+                        )
+                      )
                     : "-"
                 }
               </strong>
+
             </div>
+
 
             <div class="score-status">
-              ${getScoreStatusLabel(match)}
+
+              ${getScoreStatusLabel(
+                match
+              )}
+
             </div>
 
+
             <div class="score-team">
+
               <span>
-                ${escapeHtml(match.awayTeam)}
+                ${escapeHtml(
+                  match.awayTeam
+                )}
               </span>
 
               <strong>
                 ${
                   match.awayScore !== null &&
                   match.awayScore !== undefined
-                    ? escapeHtml(match.awayScore)
+                    ? escapeHtml(
+                        String(
+                          match.awayScore
+                        )
+                      )
                     : "-"
                 }
               </strong>
+
             </div>
+
           `;
+
 
           card.addEventListener(
             "click",
             function () {
-              openScoreDetails(match);
+
+              openScoreDetails(
+                match
+              );
+
             }
           );
+
 
           matchList.appendChild(
             card
@@ -2189,11 +2339,14 @@ function renderLiveScores() {
         }
       );
 
-           scoresList.appendChild(
+
+      scoresList.appendChild(
         leagueBlock
       );
+
     }
   );
+
 }
 
 
@@ -2208,20 +2361,28 @@ async function openScoreDetails(match) {
       "scoreDetails"
     );
 
+
   if (existing) {
     existing.remove();
   }
 
+
   const details =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
+
 
   details.id =
     "scoreDetails";
 
+
   details.className =
     "score-details";
 
+
   details.innerHTML = `
+
     <div class="score-details-box">
 
       <button
@@ -2232,13 +2393,19 @@ async function openScoreDetails(match) {
         ×
       </button>
 
+
       <div class="score-details-league">
+
         ${escapeHtml(
-          match.league || "Football"
+          match.league ||
+          "Football"
         )}
+
       </div>
 
+
       <div class="score-details-teams">
+
 
         <div class="score-details-team">
 
@@ -2246,31 +2413,41 @@ async function openScoreDetails(match) {
             match.homeLogo
               ? `
                 <img
-                  src="${escapeHtml(match.homeLogo)}"
+                  src="${escapeHtml(
+                    match.homeLogo
+                  )}"
                   alt=""
                 >
               `
               : ""
           }
 
+
           <strong>
+
             ${escapeHtml(
               match.homeTeam
             )}
+
           </strong>
 
         </div>
 
+
         <div class="score-details-score">
 
           <span>
+
             ${
               match.homeScore ??
               "-"
             }
+
           </span>
 
+
           <small>
+
             ${
               match.status === "live"
                 ? "LIVE " +
@@ -2278,23 +2455,27 @@ async function openScoreDetails(match) {
                     match.minute ||
                     ""
                   )
-                : match.status ===
-                  "finished"
+                : match.status === "finished"
                 ? "FT"
                 : formatScoreTime(
                     match.kickoff
                   )
             }
+
           </small>
 
+
           <span>
+
             ${
               match.awayScore ??
               "-"
             }
+
           </span>
 
         </div>
+
 
         <div class="score-details-team">
 
@@ -2302,265 +2483,412 @@ async function openScoreDetails(match) {
             match.awayLogo
               ? `
                 <img
-                  src="${escapeHtml(match.awayLogo)}"
+                  src="${escapeHtml(
+                    match.awayLogo
+                  )}"
                   alt=""
                 >
               `
               : ""
           }
 
+
           <strong>
+
             ${escapeHtml(
               match.awayTeam
             )}
+
           </strong>
 
         </div>
 
+
       </div>
+
 
       ${
         match.venue
           ? `
             <div class="score-detail-row">
-              <span>Venue</span>
+
+              <span>
+                Venue
+              </span>
+
               <strong>
                 ${escapeHtml(
                   match.venue
                 )}
               </strong>
+
             </div>
           `
           : ""
       }
+
 
       ${
         match.round
           ? `
             <div class="score-detail-row">
-              <span>Round</span>
+
+              <span>
+                Round
+              </span>
+
               <strong>
                 ${escapeHtml(
-                  match.round
+                  String(
+                    match.round
+                  )
                 )}
               </strong>
+
             </div>
           `
           : ""
       }
 
+
       ${
         match.tvStation
           ? `
             <div class="score-detail-row">
-              <span>TV</span>
+
+              <span>
+                TV
+              </span>
+
               <strong>
                 ${escapeHtml(
                   match.tvStation
                 )}
               </strong>
+
             </div>
           `
           : ""
       }
 
     </div>
+
   `;
+
 
   document.body.appendChild(
     details
   );
 
-  document
-    .getElementById(
+
+  const closeButton =
+    document.getElementById(
       "closeScoreDetails"
-    )
-    .addEventListener(
+    );
+
+
+  if (closeButton) {
+
+    closeButton.addEventListener(
       "click",
       function () {
+
         details.remove();
+
       }
     );
+
+  }
 
 }
 
 
+/* =========================================================
+   LOAD LIVE SCORES
+   ========================================================= */
+
 async function loadLiveScores() {
+
   if (!scoresList) {
     return;
   }
 
+
   try {
+
     const dates = {
-      today: getScoreDateOffset(0),
-      tomorrow: getScoreDateOffset(1),
-      yesterday: getScoreDateOffset(-1)
+
+      today:
+        getScoreDateOffset(0),
+
+      tomorrow:
+        getScoreDateOffset(1),
+
+      yesterday:
+        getScoreDateOffset(-1)
+
     };
 
-    const requests = await Promise.all(
-      Object.entries(dates).map(
-        async function ([key, date]) {
-          const response = await fetch(
-            "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
-            date +
-            "&s=Soccer"
-          );
 
-          if (!response.ok) {
-            throw new Error(
-              "TheSportsDB error: " + response.status
-            );
+    const requests =
+      await Promise.all(
+
+        Object.entries(
+          dates
+        ).map(
+          async function (
+            [key, date]
+          ) {
+
+            const response =
+              await fetch(
+                "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=" +
+                date +
+                "&s=Soccer"
+              );
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                "TheSportsDB error: " +
+                response.status
+              );
+
+            }
+
+
+            const data =
+              await response.json();
+
+
+            return {
+
+              key:
+                key,
+
+              events:
+                data.events || []
+
+            };
+
           }
+        )
 
-          const data = await response.json();
+      );
 
-          return {
-            key: key,
-            events: data.events || []
-          };
-        }
-      )
-    );
 
     const allEvents = [];
 
-    requests.forEach(function (result) {
-      result.events.forEach(function (event) {
-        allEvents.push(event);
-      });
-    });
 
-    liveScoreMatches = allEvents.map(
-      function (event) {
+    requests.forEach(
+      function (result) {
 
-        let status = "upcoming";
+        result.events.forEach(
+          function (event) {
 
-        let homeScore =
-          event.intHomeScore !== null &&
-          event.intHomeScore !== undefined
-            ? Number(event.intHomeScore)
-            : null;
+            allEvents.push(
+              event
+            );
 
-        let awayScore =
-          event.intAwayScore !== null &&
-          event.intAwayScore !== undefined
-            ? Number(event.intAwayScore)
-            : null;
+          }
+        );
 
-        let statusText = "";
-
-        const eventStatus =
-          String(event.strStatus || "").toLowerCase();
-
-        if (
-          eventStatus.includes("ft") ||
-          eventStatus.includes("finished") ||
-          eventStatus.includes("complete")
-        ) {
-          status = "finished";
-          statusText = "FT";
-        }
-
-        if (
-          eventStatus.includes("live") ||
-          eventStatus.includes("1h") ||
-          eventStatus.includes("2h") ||
-          eventStatus.includes("ht")
-        ) {
-          status = "live";
-          statusText = event.strStatus || "LIVE";
-        }
-
-        if (
-          event.strStatus === "Postponed"
-        ) {
-          status = "upcoming";
-          statusText = "POSTPONED";
-        }
-
-        return {
-          id: event.idEvent,
-
-          league:
-            event.strLeague ||
-            "Football",
-
-          country:
-            event.strCountry ||
-            "",
-
-          homeTeam:
-            event.strHomeTeam ||
-            "Home",
-
-          awayTeam:
-            event.strAwayTeam ||
-            "Away",
-
-          homeLogo:
-            event.strHomeTeamBadge ||
-            "",
-
-          awayLogo:
-            event.strAwayTeamBadge ||
-            "",
-
-          homeScore:
-            homeScore,
-
-          awayScore:
-            awayScore,
-
-          status:
-            status,
-
-          statusText:
-            statusText,
-
-          minute:
-            status === "live"
-              ? statusText
-              : null,
-
-          kickoff:
-            event.strTimestamp ||
-            event.dateEvent +
-            "T" +
-            (event.strTime || "00:00:00"),
-
-          venue:
-            event.strVenue ||
-            "",
-
-          round:
-            event.intRound ||
-            "",
-
-          eventThumb:
-            event.strThumb ||
-            "",
-
-          eventPoster:
-            event.strPoster ||
-            "",
-
-          description:
-            event.strDescriptionEN ||
-            "",
-
-          tvStation:
-            event.strTVStation ||
-            ""
-        };
       }
     );
+
+
+    liveScoreMatches =
+      allEvents.map(
+        function (event) {
+
+          let status =
+            "upcoming";
+
+
+          let homeScore =
+            event.intHomeScore !== null &&
+            event.intHomeScore !== undefined
+              ? Number(
+                  event.intHomeScore
+                )
+              : null;
+
+
+          let awayScore =
+            event.intAwayScore !== null &&
+            event.intAwayScore !== undefined
+              ? Number(
+                  event.intAwayScore
+                )
+              : null;
+
+
+          let statusText =
+            "";
+
+
+          const eventStatus =
+            String(
+              event.strStatus ||
+              ""
+            ).toLowerCase();
+
+
+          if (
+            eventStatus.includes(
+              "ft"
+            ) ||
+            eventStatus.includes(
+              "finished"
+            ) ||
+            eventStatus.includes(
+              "complete"
+            )
+          ) {
+
+            status =
+              "finished";
+
+            statusText =
+              "FT";
+
+          }
+
+
+          if (
+            eventStatus.includes(
+              "live"
+            ) ||
+            eventStatus.includes(
+              "1h"
+            ) ||
+            eventStatus.includes(
+              "2h"
+            ) ||
+            eventStatus.includes(
+              "ht"
+            )
+          ) {
+
+            status =
+              "live";
+
+            statusText =
+              event.strStatus ||
+              "LIVE";
+
+          }
+
+
+          if (
+            eventStatus.includes(
+              "postponed"
+            )
+          ) {
+
+            status =
+              "postponed";
+
+            statusText =
+              "POSTPONED";
+
+          }
+
+
+          return {
+
+            id:
+              event.idEvent,
+
+            league:
+              event.strLeague ||
+              "Football",
+
+            country:
+              event.strCountry ||
+              "",
+
+            homeTeam:
+              event.strHomeTeam ||
+              "Home",
+
+            awayTeam:
+              event.strAwayTeam ||
+              "Away",
+
+            homeLogo:
+              event.strHomeTeamBadge ||
+              "",
+
+            awayLogo:
+              event.strAwayTeamBadge ||
+              "",
+
+            homeScore:
+              homeScore,
+
+            awayScore:
+              awayScore,
+
+            status:
+              status,
+
+            statusText:
+              statusText,
+
+            minute:
+              status === "live"
+                ? statusText
+                : null,
+
+            kickoff:
+              event.strTimestamp ||
+              event.dateEvent +
+              "T" +
+              (
+                event.strTime ||
+                "00:00:00"
+              ),
+
+            venue:
+              event.strVenue ||
+              "",
+
+            round:
+              event.intRound ||
+              "",
+
+            eventThumb:
+              event.strThumb ||
+              "",
+
+            eventPoster:
+              event.strPoster ||
+              "",
+
+            description:
+              event.strDescriptionEN ||
+              "",
+
+            tvStation:
+              event.strTVStation ||
+              ""
+
+          };
+
+        }
+      );
+
 
     console.log(
       "Live scores loaded:",
       liveScoreMatches.length
     );
 
+
     renderLiveScores();
+
 
   } catch (error) {
 
@@ -2569,27 +2897,31 @@ async function loadLiveScores() {
       error
     );
 
-    liveScoreMatches = [];
-
-    if (scoresList) {
-      scoresList.innerHTML = "";
-    }
-
-    if (scoresCount) {
-      scoresCount.textContent = "0";
-    }
 
     if (scoresEmpty) {
-      scoresEmpty.hidden = false;
+
+      scoresEmpty.hidden =
+        false;
+
       scoresEmpty.textContent =
         "Unable to load live scores. Please refresh.";
+
     }
+
   }
 
+}
+
+
+/* =========================================================
+   TEAM NAME NORMALIZER
+   ========================================================= */
 
 function normalizeTeamName(name) {
 
-  return String(name || "")
+  return String(
+    name || ""
+  )
     .toLowerCase()
     .replace(
       /[^a-z0-9]/g,
