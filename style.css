@@ -3737,3 +3737,18 @@ body.light
     font-size: 16px;
   }
 }
+
+.scores-provider {
+  text-align: center;
+  margin: 18px 0 10px;
+  font-size: 11px;
+}
+
+.scores-provider a {
+  color: #8d96a5;
+  text-decoration: none;
+}
+
+.scores-provider a:hover {
+  color: #ffffff;
+}
