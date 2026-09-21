@@ -5887,9 +5887,9 @@
 
       </div>
 
-    </section>
+   </section>
 
-    <!-- =======================================================
+<!-- =======================================================
      LIVE SCORES
      ======================================================= -->
 
@@ -5907,32 +5907,62 @@
         Live Scores
       </h1>
 
-      <span class="content-count">
-        SOON
+      <span
+        class="content-count"
+        id="scoresCount"
+      >
+        0
       </span>
 
     </div>
 
+    <!-- DATE TABS -->
+    <div
+      class="scores-date-tabs"
+      id="scoresDateTabs"
+    >
 
-    <div class="scores-coming-soon">
+      <button
+        type="button"
+        class="scores-date-tab active"
+        data-score-date="today"
+      >
+        Today
+      </button>
 
-      <div class="scores-coming-soon-icon">
-        ⚽
-      </div>
+      <button
+        type="button"
+        class="scores-date-tab"
+        data-score-date="tomorrow"
+      >
+        Tomorrow
+      </button>
 
-      <h2>
-        Live Scores Coming Soon
-      </h2>
+      <button
+        type="button"
+        class="scores-date-tab"
+        data-score-date="yesterday"
+      >
+        Yesterday
+      </button>
 
-      <p>
-        Live football scores, match results and fixtures
-        will be available here soon.
-      </p>
+    </div>
 
-      <span class="scores-coming-soon-badge">
-        COMING SOON
-      </span>
 
+    <!-- LIVE / UPCOMING / FINISHED MATCHES -->
+    <div
+      class="scores-list"
+      id="scoresList"
+    ></div>
+
+
+    <!-- EMPTY STATE -->
+    <div
+      class="empty-state"
+      id="scoresEmpty"
+      hidden
+    >
+      No matches available.
     </div>
 
   </div>
