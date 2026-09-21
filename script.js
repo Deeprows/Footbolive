@@ -2104,7 +2104,7 @@ function renderLiveScores() {
       leagues[league].forEach(
         function (match) {
 
-          const card =
+         const card =
   document.createElement("button");
 
 card.type = "button";
@@ -2115,91 +2115,12 @@ card.className =
 card.dataset.eventId =
   match.id;
 
-card.innerHTML = `
-  <div class="score-team">
-
-    ${
-      match.homeLogo
-        ? `
-          <img
-            src="${escapeHtml(match.homeLogo)}"
-            alt=""
-            class="score-team-logo"
-          >
-        `
-        : ""
-    }
-
-    <span>
-      ${escapeHtml(match.homeTeam)}
-    </span>
-
-    <strong>
-      ${match.homeScore ?? "-"}
-    </strong>
-
-  </div>
-
-  <div class="score-status">
-
-    ${getScoreStatusLabel(match)}
-
-  </div>
-
-  <div class="score-team">
-
-    ${
-      match.awayLogo
-        ? `
-          <img
-            src="${escapeHtml(match.awayLogo)}"
-            alt=""
-            class="score-team-logo"
-          >
-        `
-        : ""
-    }
-
-    <span>
-      ${escapeHtml(match.awayTeam)}
-    </span>
-
-    <strong>
-      ${match.awayScore ?? "-"}
-    </strong>
-
-  </div>
-`;
-
 card.addEventListener(
   "click",
   function () {
     openScoreDetails(match);
   }
 );
-
-matchList.appendChild(card);
-              </strong>
-            </div>
-
-            <div class="score-status">
-              ${getScoreStatusLabel(match)}
-            </div>
-
-            <div class="score-team">
-              <span>
-                ${escapeHtml(match.awayTeam)}
-              </span>
-
-              <strong>
-                ${match.awayScore ?? "-"}
-              </strong>
-            </div>
-          `;
-
-          matchList.appendChild(card);
-        }
-      );
 
       scoresList.appendChild(
         leagueBlock
