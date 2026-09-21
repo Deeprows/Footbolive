@@ -1935,35 +1935,65 @@ const scoresDateTabs =
 let liveScoreMatches = [];
 let selectedScoreDate = "today";
 
+function getLocalDateKey(dateInput) {
+
+  const date =
+    new Date(dateInput);
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+    return "";
+  }
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, "0");
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, "0");
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+}
+
+
 function getScoreDateOffset(offset) {
-  const date = new Date();
+
+  const date =
+    new Date();
 
   date.setDate(
     date.getDate() + offset
   );
 
-  return date
-    .toISOString()
-    .split("T")[0];
+  return getLocalDateKey(
+    date
+  );
 }
+
 
 function getScoreDateKey(match) {
-  return String(match.kickoff || "")
-    .slice(0, 10);
+
+  return getLocalDateKey(
+    match.kickoff
+  );
+
 }
-
-function formatScoreTime(kickoff) {
-  if (!kickoff) {
-    return "--:--";
-  }
-
-  return new Date(kickoff)
-    .toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-}
-
+   
 function getScoreStatusLabel(match) {
   if (match.status === "live") {
     return `
