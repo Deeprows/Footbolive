@@ -2105,19 +2105,80 @@ function renderLiveScores() {
         function (match) {
 
           const card =
-            document.createElement("div");
+  document.createElement("button");
 
-          card.className =
-            "score-match";
+card.type = "button";
 
-          card.innerHTML = `
-            <div class="score-team">
-              <span>
-                ${escapeHtml(match.homeTeam)}
-              </span>
+card.className =
+  "score-match";
 
-              <strong>
-                ${match.homeScore ?? "-"}
+card.dataset.eventId =
+  match.id;
+
+card.innerHTML = `
+  <div class="score-team">
+
+    ${
+      match.homeLogo
+        ? `
+          <img
+            src="${escapeHtml(match.homeLogo)}"
+            alt=""
+            class="score-team-logo"
+          >
+        `
+        : ""
+    }
+
+    <span>
+      ${escapeHtml(match.homeTeam)}
+    </span>
+
+    <strong>
+      ${match.homeScore ?? "-"}
+    </strong>
+
+  </div>
+
+  <div class="score-status">
+
+    ${getScoreStatusLabel(match)}
+
+  </div>
+
+  <div class="score-team">
+
+    ${
+      match.awayLogo
+        ? `
+          <img
+            src="${escapeHtml(match.awayLogo)}"
+            alt=""
+            class="score-team-logo"
+          >
+        `
+        : ""
+    }
+
+    <span>
+      ${escapeHtml(match.awayTeam)}
+    </span>
+
+    <strong>
+      ${match.awayScore ?? "-"}
+    </strong>
+
+  </div>
+`;
+
+card.addEventListener(
+  "click",
+  function () {
+    openScoreDetails(match);
+  }
+);
+
+matchList.appendChild(card);
               </strong>
             </div>
 
@@ -5784,3 +5845,186 @@ if (refreshPageBtn) {
   setTimeout(setupFloatingChat, 3000);
 
 })();
+
+async function openScoreDetails(match) {
+
+  const existing =
+    document.getElementById(
+      "scoreDetails"
+    );
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const details =
+    document.createElement("div");
+
+  details.id =
+    "scoreDetails";
+
+  details.className =
+    "score-details";
+
+  details.innerHTML = `
+    <div class="score-details-box">
+
+      <button
+        type="button"
+        class="score-details-close"
+        id="closeScoreDetails"
+      >
+        ×
+      </button>
+
+      <div class="score-details-league">
+        ${escapeHtml(
+          match.league || "Football"
+        )}
+      </div>
+
+      <div class="score-details-teams">
+
+        <div class="score-details-team">
+
+          ${
+            match.homeLogo
+              ? `
+                <img
+                  src="${escapeHtml(match.homeLogo)}"
+                  alt=""
+                >
+              `
+              : ""
+          }
+
+          <strong>
+            ${escapeHtml(
+              match.homeTeam
+            )}
+          </strong>
+
+        </div>
+
+        <div class="score-details-score">
+
+          <span>
+            ${
+              match.homeScore ??
+              "-"
+            }
+          </span>
+
+          <small>
+            ${
+              match.status === "live"
+                ? "LIVE " +
+                  (
+                    match.minute ||
+                    ""
+                  )
+                : match.status ===
+                  "finished"
+                ? "FT"
+                : formatScoreTime(
+                    match.kickoff
+                  )
+            }
+          </small>
+
+          <span>
+            ${
+              match.awayScore ??
+              "-"
+            }
+          </span>
+
+        </div>
+
+        <div class="score-details-team">
+
+          ${
+            match.awayLogo
+              ? `
+                <img
+                  src="${escapeHtml(match.awayLogo)}"
+                  alt=""
+                >
+              `
+              : ""
+          }
+
+          <strong>
+            ${escapeHtml(
+              match.awayTeam
+            )}
+          </strong>
+
+        </div>
+
+      </div>
+
+      ${
+        match.venue
+          ? `
+            <div class="score-detail-row">
+              <span>Venue</span>
+              <strong>
+                ${escapeHtml(
+                  match.venue
+                )}
+              </strong>
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        match.round
+          ? `
+            <div class="score-detail-row">
+              <span>Round</span>
+              <strong>
+                ${escapeHtml(
+                  match.round
+                )}
+              </strong>
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        match.tvStation
+          ? `
+            <div class="score-detail-row">
+              <span>TV</span>
+              <strong>
+                ${escapeHtml(
+                  match.tvStation
+                )}
+              </strong>
+            </div>
+          `
+          : ""
+      }
+
+    </div>
+  `;
+
+  document.body.appendChild(
+    details
+  );
+
+  document
+    .getElementById(
+      "closeScoreDetails"
+    )
+    .addEventListener(
+      "click",
+      function () {
+        details.remove();
+      }
+    );
+
+}
