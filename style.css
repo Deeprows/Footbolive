@@ -3604,3 +3604,136 @@ body.light
 #minimizedChatBubble {
   bottom: 58px !important;
 }
+
+/* =========================================================
+   LIVE SCORES
+   ========================================================= */
+
+.scores-date-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.scores-date-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.scores-date-tab {
+  border: 1px solid #2a2e37;
+  background: #10141b;
+  color: #8d96a5;
+  padding: 9px 15px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.scores-date-tab.active {
+  background: #e9003f;
+  border-color: #e9003f;
+  color: #ffffff;
+}
+
+.scores-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.score-league {
+  background: #10141b;
+  border: 1px solid #1b2029;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.score-league-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #151a22;
+  border-bottom: 1px solid #1b2029;
+}
+
+.score-league-header strong {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.score-league-header span {
+  color: #8d96a5;
+  font-size: 11px;
+}
+
+.score-match-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.score-match {
+  display: grid;
+  grid-template-columns: 1fr 70px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border-bottom: 1px solid #1b2029;
+}
+
+.score-match:last-child {
+  border-bottom: 0;
+}
+
+.score-team {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.score-team strong {
+  font-size: 17px;
+}
+
+.score-status {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.score-live {
+  color: #ff1744;
+}
+
+.score-finished {
+  color: #8d96a5;
+}
+
+.score-upcoming {
+  color: #ffffff;
+}
+
+@media (max-width: 600px) {
+  .score-match {
+    grid-template-columns: 1fr 55px 1fr;
+    gap: 6px;
+    padding: 12px 10px;
+  }
+
+  .score-team {
+    font-size: 12px;
+  }
+
+  .score-team strong {
+    font-size: 16px;
+  }
+}
