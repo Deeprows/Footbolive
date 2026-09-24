@@ -181,7 +181,6 @@ if (movieSearchInput) {
    SITE-WIDE POPUNDER
    Deeprowss controlled popunder system
    ========================================================= */
-
 (function () {
   "use strict";
 
@@ -189,13 +188,15 @@ if (movieSearchInput) {
      SETTINGS
      ============================== */
 
-  // Popunder becomes eligible only after 40 seconds.
-  // IMPORTANT: This does NOT trigger the popunder.
-  const INITIAL_DELAY = 40 * 1000;
+  // First popunder after page load
+  const INITIAL_DELAY = 7 * 1000;
 
-  // After a popunder is triggered, wait 30 seconds
-  // before allowing another one.
-  const POPUNDER_COOLDOWN = 30 * 1000;
+  // User must be inactive for this long
+  // before another popunder becomes eligible.
+  const INACTIVITY_DELAY = 60 * 1000;
+
+  // Minimum time between popunders
+  const POPUNDER_COOLDOWN = 60 * 1000;
 
   // EffectiveCPM popunder script
   const POPUNDER_SCRIPT =
@@ -209,8 +210,14 @@ if (movieSearchInput) {
   const STORAGE_KEY =
     "deeprowss_popunder_last_shown";
 
-  let popunderEnabled = false;
+
+  /* ==============================
+     STATE
+     ============================== */
+
   let popunderLoading = false;
+  let inactivityTimer = null;
+  let initialTimer = null;
 
 
   /* ==============================
@@ -223,7 +230,6 @@ if (movieSearchInput) {
       localStorage.getItem(STORAGE_KEY)
     );
 
-    // No previous popunder
     if (!lastShown) {
       return true;
     }
@@ -232,6 +238,7 @@ if (movieSearchInput) {
       Date.now() - lastShown >=
       POPUNDER_COOLDOWN
     );
+
   }
 
 
@@ -261,26 +268,19 @@ if (movieSearchInput) {
 
   function triggerPopunder() {
 
-    // Do nothing during the first 40 seconds.
-    if (!popunderEnabled) {
-      return;
-    }
-
-    // Respect cooldown.
-    if (!canShowPopunder()) {
-      return;
-    }
-
-    // Prevent duplicate loading.
     if (popunderLoading) {
+      return;
+    }
+
+    if (!canShowPopunder()) {
       return;
     }
 
     popunderLoading = true;
 
     /*
-     * Mark immediately so rapid clicks cannot
-     * repeatedly request the ad.
+     * Mark immediately so multiple
+     * triggers cannot fire together.
      */
     markPopunderShown();
 
@@ -314,45 +314,106 @@ if (movieSearchInput) {
 
 
   /* ==============================
-     ENABLE AFTER 40 SECONDS
+     RESET INACTIVITY TIMER
      ============================== */
 
-  setTimeout(function () {
+  function resetInactivityTimer() {
 
-    /*
-     * IMPORTANT:
-     * This ONLY makes the popunder eligible.
-     * It does NOT trigger the ad.
-     */
-    popunderEnabled = true;
+    if (inactivityTimer) {
 
-  }, INITIAL_DELAY);
+      clearTimeout(
+        inactivityTimer
+      );
+
+    }
+
+
+    inactivityTimer =
+      setTimeout(function () {
+
+        /*
+         * User has been inactive.
+         * Try another popunder.
+         */
+        triggerPopunder();
+
+      }, INACTIVITY_DELAY);
+
+  }
 
 
   /* ==============================
-     USER CLICK ONLY
+     FIRST POPUNDER
      ============================== */
 
-  document.addEventListener(
-    "click",
-    function (event) {
-
-      /*
-       * Only a genuine left/middle mouse click.
-       * Ignore right-clicks and unusual mouse buttons.
-       */
-      if (
-        event &&
-        event.button !== undefined &&
-        event.button !== 0
-      ) {
-        return;
-      }
+  initialTimer =
+    setTimeout(function () {
 
       triggerPopunder();
 
-    },
-    true
+      resetInactivityTimer();
+
+    }, INITIAL_DELAY);
+
+
+  /* ==============================
+     USER ACTIVITY
+     ============================== */
+
+  const activityEvents = [
+    "click",
+    "touchstart",
+    "mousemove",
+    "scroll",
+    "keydown"
+  ];
+
+
+  activityEvents.forEach(
+    function (eventName) {
+
+      document.addEventListener(
+        eventName,
+        function () {
+
+          /*
+           * User is active again.
+           * Restart inactivity countdown.
+           */
+          resetInactivityTimer();
+
+        },
+        {
+          passive: true
+        }
+      );
+
+    }
+  );
+
+
+  /* ==============================
+     TAB VISIBILITY
+     ============================== */
+
+  document.addEventListener(
+    "visibilitychange",
+    function () {
+
+      /*
+       * When the user returns to the site,
+       * restart inactivity monitoring.
+       */
+      if (
+        document.visibilityState ===
+        "visible"
+      ) {
+
+        resetInactivityTimer();
+
+      }
+
+    }
   );
 
 
