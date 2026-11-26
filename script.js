@@ -6175,7 +6175,7 @@ if (refreshPageBtn) {
         let count = 0;
         cards.forEach(card=>{
           const searchable = [card.innerText,card.textContent,card.dataset.name,card.dataset.team,card.dataset.league,card.dataset.genre,card.dataset.category].filter(Boolean).join(" ").toLocaleLowerCase();
-          const match = searchable.includes(query) || (query === "football" && group.label === "Football") || (query === "movie" && group.label === "Movies") || (query === "tv" && group.label === "TV channels");
+          const match = searchable.includes(query) || (["football","match","matches","live events"].includes(query) && group.label === "Football") || (["movie","movies","film","films"].includes(query) && group.label === "Movies") || (["tv","channel","channels","tv channels"].includes(query) && group.label === "TV channels");
           card.classList.toggle("global-search-hidden",!match);
           if(match){count++;total++;}
         });
