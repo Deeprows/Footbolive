@@ -3898,3 +3898,16 @@ body.light
     display: none !important;
   }
 }
+
+
+/* SITE-WIDE SEARCH — responsive on mobile, desktop and WebView */
+.global-search-wrap{position:relative;z-index:20;padding-top:12px;padding-bottom:2px}
+.global-search-box{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:0 14px;border:1px solid rgba(255,255,255,.12);border-radius:13px;background:#10141b;color:#aeb6c3}
+.global-search-box>span{font-size:25px;line-height:1;color:#ff1744}
+.global-search-box input{flex:1;min-width:0;height:46px;border:0;outline:0;background:transparent;color:#fff;font:inherit;font-size:14px;user-select:text;-webkit-user-select:text}
+.global-search-box input::placeholder{color:#8d96a5}
+.global-search-box button{width:30px;height:30px;border-radius:8px;background:#252b36;color:#fff;font-size:22px;cursor:pointer}
+.global-search-status{min-height:0;margin:5px 2px 0;color:#aeb6c3;font-size:12px}
+.global-search-status:empty{display:none}
+.global-search-hidden{display:none!important}
+@media(max-width:550px){.global-search-wrap{padding-top:9px}.global-search-box{min-height:44px;padding:0 11px}.global-search-box input{height:42px;font-size:13px}}
