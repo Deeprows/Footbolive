@@ -825,7 +825,17 @@
     </section>
 
 
-    <!-- Refresh Content Button -->
+    <!-- SITE-WIDE SEARCH -->
+<div class="container global-search-wrap" id="globalSearchWrap">
+  <label class="global-search-box" for="globalSearch">
+    <span aria-hidden="true">⌕</span>
+    <input id="globalSearch" type="search" placeholder="Search movies, football, highlights or TV channels..." autocomplete="off" aria-label="Search all Deeprowss content">
+    <button type="button" id="clearGlobalSearch" aria-label="Clear search" hidden>×</button>
+  </label>
+  <p id="globalSearchStatus" class="global-search-status" aria-live="polite"></p>
+</div>
+
+<!-- Refresh Content Button -->
 <button
   id="refreshPageBtn"
   class="refresh-page-btn"
