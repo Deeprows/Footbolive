@@ -6132,3 +6132,63 @@ if (refreshPageBtn) {
   setTimeout(setupFloatingChat, 3000);
 
 })();
+
+
+/* =========================================================
+   DEEPROWSS SITE-WIDE SEARCH
+   Searches matches, highlights, TV channels and movies.
+   Works with static cards and cards loaded later from JSON.
+   ========================================================= */
+(function () {
+  "use strict";
+  function initGlobalSearch() {
+    const input = document.getElementById("globalSearch");
+    const clear = document.getElementById("clearGlobalSearch");
+    const status = document.getElementById("globalSearchStatus");
+    if (!input || input.dataset.ready === "1") return;
+    input.dataset.ready = "1";
+    const groups = [
+      {id:"footballContent",selector:".match-card",label:"Football"},
+      {id:"highlightsContent",selector:".highlight-card",label:"Highlights"},
+      {id:"tvContent",selector:".tv-channel",label:"TV channels"},
+      {id:"moviesContent",selector:".movie-card",label:"Movies"}
+    ];
+    const sections = groups.map(g=>document.getElementById(g.id)).filter(Boolean);
+    let originalVisibility = null;
+    function runSearch() {
+      const query = input.value.trim().toLocaleLowerCase();
+      clear.hidden = !query;
+      if (!query) {
+        document.querySelectorAll(".global-search-hidden").forEach(el=>el.classList.remove("global-search-hidden"));
+        sections.forEach(section=>{ if(section) section.hidden = originalVisibility ? originalVisibility.get(section.id) : section.id !== "footballContent"; });
+        status.textContent = "";
+        originalVisibility = null;
+        return;
+      }
+      if (!originalVisibility) originalVisibility = new Map(sections.map(section=>[section.id,section.hidden]));
+      let total = 0;
+      const found = [];
+      groups.forEach(group=>{
+        const section = document.getElementById(group.id);
+        if (!section) return;
+        const cards = Array.from(section.querySelectorAll(group.selector));
+        let count = 0;
+        cards.forEach(card=>{
+          const searchable = [card.innerText,card.textContent,card.dataset.name,card.dataset.team,card.dataset.league,card.dataset.genre,card.dataset.category].filter(Boolean).join(" ").toLocaleLowerCase();
+          const match = searchable.includes(query) || (query === "football" && group.label === "Football") || (query === "movie" && group.label === "Movies") || (query === "tv" && group.label === "TV channels");
+          card.classList.toggle("global-search-hidden",!match);
+          if(match){count++;total++;}
+        });
+        section.hidden = count === 0;
+        if(count) found.push(group.label+" ("+count+")");
+      });
+      status.textContent = total ? total+" result"+(total===1?"":"s")+" found · "+found.join(" · ") : "No results found. Try another title or keyword.";
+    }
+    input.addEventListener("input",runSearch);
+    clear.addEventListener("click",()=>{input.value="";runSearch();input.focus();});
+    const observer = new MutationObserver(()=>{if(input.value.trim()) runSearch();});
+    groups.forEach(group=>{const section=document.getElementById(group.id);const list=section&&section.querySelector(group.selector)?.parentElement;if(list)observer.observe(list,{childList:true,subtree:true});});
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",initGlobalSearch,{once:true});
+  else initGlobalSearch();
+})();
