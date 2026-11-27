@@ -3911,3 +3911,13 @@ body.light
 .global-search-status:empty{display:none}
 .global-search-hidden{display:none!important}
 @media(max-width:550px){.global-search-wrap{padding-top:9px}.global-search-box{min-height:44px;padding:0 11px}.global-search-box input{height:42px;font-size:13px}}
+
+
+/* Mobile homepage: keep site-wide search immediately beneath the header. */
+@media (max-width: 767px) {
+  .global-search-wrap {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 0;
+  }
+}
