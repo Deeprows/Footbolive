@@ -835,6 +835,28 @@
   <p id="globalSearchStatus" class="global-search-status" aria-live="polite"></p>
 </div>
 
+<script>
+/* Keep the global search directly below the homepage header on mobile only. */
+(() => {
+  const search = document.getElementById('globalSearchWrap');
+  const header = document.querySelector('.site-header');
+  const refresh = document.getElementById('refreshPageBtn');
+  if (!search || !header || !refresh) return;
+
+  const mobile = window.matchMedia('(max-width: 767px)');
+  const placeSearch = () => {
+    if (mobile.matches) {
+      if (search.previousElementSibling !== header) header.insertAdjacentElement('afterend', search);
+    } else if (search.nextElementSibling !== refresh) {
+      refresh.parentNode.insertBefore(search, refresh);
+    }
+  };
+
+  placeSearch();
+  mobile.addEventListener('change', placeSearch);
+})();
+</script>
+
 <!-- Refresh Content Button -->
 <button
   id="refreshPageBtn"
